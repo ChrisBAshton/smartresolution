@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="<?php echo $ENCODING; ?>" />
+		<title>ODR Test</title>
+		<base href="<?php echo $SCHEME.'://'.$HOST.':'.$PORT.$BASE.'/'; ?>" />
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/ui/css/style.css">
+	</head>
+	<body>
+		<header>
+		    <a href="/">
+		    	<img src="ui/images/logo.png">
+		    </a>
+		</header>
+
+		<div class="container">
+			<?php echo $this->render(Base::instance()->get('content')); ?>
+		</div>
+
+		<footer>
+		    <p>
+		    	Proudly powered by <?php echo $PACKAGE; ?>, v<?php echo $VERSION; ?>. Licensed under the terms of the GPLv3. Copyright &copy; 2015
+			</p>
+		    <p class="stats">
+		    	<code><?php echo Base::instance()->format('Page rendered in {0} msecs / Memory usage {1} Kibytes',round(1e3*(microtime(TRUE)-$TIME),2),round(memory_get_usage(TRUE)/1e3,1)); ?></code>
+		    </p>
+		</footer>
+	</body>
+</html>

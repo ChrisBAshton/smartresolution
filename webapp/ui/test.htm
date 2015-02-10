@@ -1,0 +1,31 @@
+<h1>Login</h1>
+
+<?php
+    if (Base::instance()->get('user_logged_in') === true) {
+        $message = array(
+            'class'   => 'bg-padded bg-success',
+            'details' => 'You have logged in successfully.'
+        );
+    }
+    else if (Base::instance()->get('user_logged_in') === false) {
+        $message = array(
+            'class'   => 'bg-padded bg-danger',
+            'details' => 'Incorrect login details.'
+        );
+    }
+    else {
+        $message = array(
+            'class'   => 'bg-padded bg-info',
+            'details' => 'Welcome to the login screen.'
+        );
+    }
+?>
+<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+
+<form name="login" method="post">
+    <label for="email" class="sr-only">Email:</label> <input type="text" name="email" id="email" class="form-control" placeholder="Email" />
+
+    <label for="password" class="sr-only">Password:</label> <input type="password" name="password" id="password" class="form-control" placeholder="Password" />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+</form>
