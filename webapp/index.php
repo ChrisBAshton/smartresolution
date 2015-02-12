@@ -1,7 +1,7 @@
 <?php
 
 // Kickstart the framework
-$f3 = require('lib/base.php');
+$f3 = require('lib/f3/base.php');
 
 $f3->set('DEBUG',1);
 if ((float)PCRE_VERSION<7.9) {
@@ -13,8 +13,8 @@ $f3->config('config.ini');
 
 $f3->route('GET /',
 	function($f3) {
-		$f3->set('content','welcome.htm');
-		echo View::instance()->render('layout.htm');
+		$f3->set('content','welcome.html');
+		echo View::instance()->render('layout.html');
 	}
 );
 
@@ -35,8 +35,8 @@ $f3->route('GET|POST /login',
 			}
 		}
 
-		$f3->set('content','test.htm');
-		echo View::instance()->render('layout.htm');
+		$f3->set('content','test.html');
+		echo View::instance()->render('layout.html');
 	}
 );
 
