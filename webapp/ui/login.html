@@ -1,13 +1,7 @@
 <h1>Login</h1>
 
 <?php
-    if (Base::instance()->get('user_logged_in') === true) {
-        $message = array(
-            'class'   => 'bg-padded bg-success',
-            'details' => 'You have logged in successfully.'
-        );
-    }
-    else if (Base::instance()->get('error_message')) {
+    if (Base::instance()->get('error_message')) {
         $message = array(
             'class'   => 'bg-padded bg-danger',
             'details' => Base::instance()->get('error_message')

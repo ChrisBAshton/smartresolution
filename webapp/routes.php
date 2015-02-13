@@ -1,18 +1,10 @@
 <?php
-require_once __DIR__ . '/classes/User.php';
-require_once __DIR__ . '/classes/Session.php';
 $session = new Session();
 
 $f3->route('GET /',
     function($f3) {
-        global $session;
-        if ($session->loggedIn()) {
-            header('Location: /home');
-        }
-        else {
-            $f3->set('content','welcome.html');
-            echo View::instance()->render('layout.html');
-        }
+        $f3->set('content','welcome.html');
+        echo View::instance()->render('layout.html');
     }
 );
 
