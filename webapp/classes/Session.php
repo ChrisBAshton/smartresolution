@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/autoload.php';
 
+session_start();
+
 class Session {
 
     private $loggedIn;
@@ -8,33 +10,33 @@ class Session {
     function __construct() {
         $this->loggedIn = false;
 
-        if(isset($_COOKIE['ODR_Email']))  {
+        if(isset($_SESSION['ODR_Logged_In']))  {
             try {
-                $username = $_COOKIE['ODR_Email']; 
-                $password = $_COOKIE['ODR_Password'];
+                $username = $_SESSION['ODR_Email']; 
+                $password = $_SESSION['ODR_Password'];
                 $user = new Agent($username, $password);
-                $this->loggedIn = true;
+                $this->loggedIn = $_SESSION['ODR_Logged_In'];
             } catch (Exception $e) {
             }
         }
     }
 
+    public function create($email, $password) {
+        $_SESSION['ODR_Email']     = $email;
+        $_SESSION['ODR_Password']  = $password;
+        $_SESSION['ODR_Logged_In'] = true;
+    }
+
+    public function clear() {
+        $_SESSION['ODR_Password']  = false;
+        $_SESSION['ODR_Logged_In'] = false;
+    }
+
+    public function lastKnownEmail() {
+        return isset($_SESSION['ODR_Email']) ? $_SESSION['ODR_Email'] : false;
+    }
+
     public function loggedIn() {
         return $this->loggedIn;
     }
-
-    public function initSession($email, $password) {
-        // now set a cookie to log the user in
-        $cookieLength = 0; // unlimited login
-        setcookie('ODR_Email',     $email,    $cookieLength, '/');
-        setcookie('ODR_Password',  $password, $cookieLength, '/');
-    }
-
-    public function clearSession() {
-        // make the time in the past to destroy the cookie
-        $past = time() - 100000;
-        setcookie('ODR_Email',    'delete', $past, '/');
-        setcookie('ODR_Password', 'delete', $past, '/');
-    }
-
 }

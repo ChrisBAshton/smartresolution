@@ -10,13 +10,20 @@ abstract class User {
      * Parameters are either passed directly from the POST login screen, or
      * passed via cookies if user is already logged in.
      * 
-     * @param [String] $email    User email
-     * @param [String] $password User's encrypted password.
+     * @param [String]  $email    User email
+     * @param [String]  $password User's encrypted password.
+     * @param [boolean] $newUser  If true, a new User record is created.
      */
-    function __construct($email, $password) {
+    function __construct($email, $password, $newUser = false) {
         $db = new \DB\SQL('sqlite:' . __DIR__ . '/../../data/production.db');
-        $user = $this->authenticate($db, $email, $password);
-        $this->email = $user['email'];
+
+        if ($newUser) {
+            $this->register($db, $email, $password);
+        }
+        else {
+            $user = $this->authenticate($db, $email, $password);
+            $this->email = $user['email'];
+        }
     }
 
     private function authenticate($db, $email, $password) {
