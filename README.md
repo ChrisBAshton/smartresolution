@@ -11,9 +11,15 @@ Online Dispute Resolution for Maritime Collisions will attempt to introduce that
 
 Please see my [Outline Project Specification](http://ashton.codes/blog/outline-project-specification/) for more details. For (almost) daily updates, read my [Dissertation Diary](http://ashton.codes/blog/category/dissertation/).
 
+## Pre-requisites
+
+* PHP
+* Composer
+
 ## Installation
 
 * download repository
-* cd into `webapp`
-* run `php -S 127.0.0.1:8000 -t .`
+* install dependencies with Composer (`composer install`)
+* run `php -S 127.0.0.1:8000 -t webapp`
 * go to http://127.0.0.1:8000/ in your browser
+
