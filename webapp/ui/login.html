@@ -1,0 +1,25 @@
+<h1>Login</h1>
+
+<?php
+    if (Base::instance()->get('error_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-danger',
+            'details' => Base::instance()->get('error_message')
+        );
+    }
+    else {
+        $message = array(
+            'class'   => 'bg-padded bg-info',
+            'details' => 'Welcome to the login screen.'
+        );
+    }
+?>
+<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+
+<form name="login" method="post">
+    <label for="email" class="sr-only">Email:</label> <input type="text" name="email" id="email" class="form-control" placeholder="Email" value="<?php $email = Base::instance()->get('user_email'); echo $email ? $email : ''; ?>" />
+
+    <label for="password" class="sr-only">Password:</label> <input type="password" name="password" id="password" class="form-control" placeholder="Password" />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+</form>

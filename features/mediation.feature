@@ -37,7 +37,10 @@ Feature: Dispute (under Mediation)
     Given I am a Mediator
     And both Agents have completed the type-specific module forms
     Then I should see the results of the AI in the type-specific module
-    And I should be able to advise each Agent individually # @TODO how - does the Mediator decide an overall resolution, and each Agent sees the overall resolution, or does the Mediator decide individual resolutions and each Agent only sees the resolution they've been offered?
+    #And I should be able to advise each Agent individually
+    # Commented out the above line because it isn't testable. Essentially, the Mediator can send a
+    # private message to either Agent, negotiating a resolution. It is up to the Agents to formally
+    # send an offer through the "Propose Resolution" facility.
 
   Scenario: Accepting the Mediator's offer
     Given the Mediator has given me an offer
@@ -51,8 +54,9 @@ Feature: Dispute (under Mediation)
 
   Scenario: Sending an offer for round-table communication
     Given I am a Mediator
-    And an Agent has declined my offer
-    Then I should be able to offer round-table communication # @TODO - should this only be an option after an offer has been made and declined? Or should the Mediator always be able to propose this?
+    Then I should be able to offer round-table communication
+    # The Mediator should (through a dedicated facility) be able to propose round-table negotation,
+    # whereby the free communication of all parties is enabled.
 
   Scenario: Accepting the offer for round-table communication
     Given the Mediator has suggested round-table communication
@@ -62,4 +66,4 @@ Feature: Dispute (under Mediation)
   Scenario: Declining the offer for round-table communication
     Given the Mediator has suggested round-table communication
     Then I should be able to decline the offer
-    And the Dispute should remain open # @TODO or should it? What happens next?
+    And the Dispute should remain open and under Mediation

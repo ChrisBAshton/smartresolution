@@ -10,3 +10,16 @@ These platforms already exist; they allow lawyers to open disputes on behalf of 
 Online Dispute Resolution for Maritime Collisions will attempt to introduce that business logic in an abstract way so that a module containing maritime law business logic can be plugged into the system. It will ask relevant, structured questions, interpret the answers by both parties and play out a ”court simulation” indicating the outcome of the case should the dispute be taken to court. It may also retrieve similar historic cases which can be fed into the simulation.
 
 Please see my [Outline Project Specification](http://ashton.codes/blog/outline-project-specification/) for more details. For (almost) daily updates, read my [Dissertation Diary](http://ashton.codes/blog/category/dissertation/).
+
+## Pre-requisites
+
+* PHP
+* Composer
+
+## Installation
+
+* download repository
+* install dependencies with Composer (`composer install`)
+* run `php -S 127.0.0.1:8000 -t webapp`
+* go to http://127.0.0.1:8000/ in your browser
+

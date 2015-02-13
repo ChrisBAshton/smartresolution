@@ -1,0 +1,7 @@
+users:
+    - email:    cba1@aber.ac.uk
+      password: test
+    - email:    cba2@aber.ac.uk
+      password: test2
+    - email:    chris@ashton.codes
+      password: password
