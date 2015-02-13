@@ -10,3 +10,7 @@ Feature: Processes relevant to the Dispute but that are not dependent on the cur
     Given the Dispute has not yet been resolved
     Then I should be able to Take the Dispute to Court
     And the Dispute should close unsuccessfully
+
+  Scenario: Communication with the Company
+    Given I am an Agent
+    Then I should be able to communicate freely with my Company
