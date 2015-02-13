@@ -21,6 +21,4 @@ Feature: Negotiating a Dispute lifespan
   Scenario: Renegotiating the Dispute lifespan mid-Dispute
     Given the Dispute is fully underway
     Then I should be able to make a lifespan offer
-    # @TODO delete as appropriate:
-    And the Dispute should be on hold
     And the Dispute should continue normally despite the renegotiation offer

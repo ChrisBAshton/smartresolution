@@ -6,6 +6,16 @@ Feature: Dispute (pre-Mediation)
     Given the Dispute is fully underway
     And the Dispute is not in Mediation
 
+  Scenario: Free communication
+    Then I should be able to communicate with the other Agent freely
+
+  # The "Propose Resolution" mechanism outlined below is a separate facility to above.
+  # Think of the free communication as a private messaging system (which gets blocked when
+  # we go into Mediation, then re-opened with the additional Mediator person when entering
+  # round-table communication).
+  # The offer mechanism is a more formalised communication, where you offer a certain amount,
+  # under X conditions - Accept | Deny | Propose Counter Offer
+
   Scenario: Make an offer
     Then I should be able to send the other Agent an offer
 
