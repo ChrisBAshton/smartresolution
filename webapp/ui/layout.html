@@ -16,6 +16,10 @@
 		</header>
 
 		<div class="container">
+			<?php
+				echo isset($user) ? $user->email : '...';
+			?>
+
 			<?php echo $this->render(Base::instance()->get('content')); ?>
 		</div>
 

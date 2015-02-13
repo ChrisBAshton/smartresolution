@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../webapp/lib/autoload.php';
+require __DIR__ . '/../webapp/classes/autoload.php';
 
 use Symfony\Component\Yaml\Parser;
 

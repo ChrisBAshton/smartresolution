@@ -6,19 +6,25 @@ session_start();
 class Session {
 
     private $loggedIn;
+    private $user;
 
     function __construct() {
         $this->loggedIn = false;
 
-        if(isset($_SESSION['ODR_Logged_In']))  {
+        if($_SESSION['ODR_Logged_In'])  {
             try {
                 $username = $_SESSION['ODR_Email']; 
                 $password = $_SESSION['ODR_Password'];
                 $user = new Agent($username, $password);
                 $this->loggedIn = $_SESSION['ODR_Logged_In'];
+                $this->user = $user;
             } catch (Exception $e) {
             }
         }
+    }
+
+    public function getUser() {
+        return $this->user;
     }
 
     public function create($email, $password) {

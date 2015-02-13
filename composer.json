@@ -4,11 +4,14 @@
     "homepage": "http://ashton.codes",
     "license": "GPL-3.0",
     "require": {
-        "php":            ">=5.3.6",
-        "bcosca/fatfree": "3.4.0",
-        "symfony/yaml":   "2.6.4"
+        "php":             ">=5.3.6",
+        "bcosca/fatfree":  "3.4.0",
+        "symfony/yaml":    "2.6.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.5.*"
     },
     "config": {
-        "vendor-dir": "webapp/lib"
+        "vendor-dir": "vendor"
     }
 }

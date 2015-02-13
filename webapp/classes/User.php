@@ -3,7 +3,7 @@ require_once __DIR__ . '/autoload.php';
 
 abstract class User {
 
-    private $email;
+    public $email;
 
     /**
      * Instantiates User object, populating attributes from database row.
@@ -14,20 +14,27 @@ abstract class User {
      * @param [String]  $password User's encrypted password.
      * @param [boolean] $newUser  If true, a new User record is created.
      */
-    function __construct($email, $password, $newUser = false) {
-        $db = new \DB\SQL('sqlite:' . __DIR__ . '/../../data/production.db');
+    function __construct($email, $password) {
 
-        if ($newUser) {
-            $this->register($db, $email, $password);
+        $user = $this->getUserFromDatabase($email);
+        if (!$user) {
+            throw new Exception("We have no record of that email address.");
         }
-        else {
-            $user = $this->authenticate($db, $email, $password);
-            $this->email = $user['email'];
+
+        if(!$this->correctPassword($password, $user['password'])) {
+            throw new Exception("Incorrect password.");
         }
+        
+        $this->setAttributes($user);
     }
 
-    private function authenticate($db, $email, $password) {
-        $crypt = \Bcrypt::instance();
+    private function setAttributes($user) {
+        $this->email = $user['email'];
+        // etc
+    }
+
+    private function getUserFromDatabase($email) {
+        $db = Database::instance();
 
         $users = $db->exec(
             'SELECT * FROM users WHERE email = :email',
@@ -37,19 +44,20 @@ abstract class User {
         );
 
         if (count($users) === 0) {
-            throw new Exception("We have no record of that email address.");
+            return false;
         }
-        else if (!$crypt->verify($password, $users[0]['password'])) {
-            throw new Exception("Incorrect password.");
+        else {
+            return $users[0];
         }
+    }
 
-        return $users[0];
+    public function correctPassword($inputtedPassword, $encryptedPassword) {
+        $crypt = \Bcrypt::instance();
+        return $crypt->verify($inputtedPassword, $encryptedPassword);
     }
 
     public function __toString() {
-
     }
-
 }
 
 class Agent extends User {
