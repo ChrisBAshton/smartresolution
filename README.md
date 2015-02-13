@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ChrisBAshton/major-project.svg?branch=master)](https://travis-ci.org/ChrisBAshton/major-project)
+
 # Online Dispute Resolution for Maritime Collisions
 This repository contains the codebase for my Major Project (i.e. dissertation) at Aberystwyth University, and is currently a work in progress.
 
@@ -23,3 +25,6 @@ Please see my [Outline Project Specification](http://ashton.codes/blog/outline-p
 * run `php -S 127.0.0.1:8000 -t webapp`
 * go to http://127.0.0.1:8000/ in your browser
 
+## Running tests
+
+Still a work in progress to make this more elegant. See .travis.yml for current progress.
