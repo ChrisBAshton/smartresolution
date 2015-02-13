@@ -7,10 +7,10 @@
             'details' => 'You have logged in successfully.'
         );
     }
-    else if (Base::instance()->get('user_logged_in') === false) {
+    else if (Base::instance()->get('error_message')) {
         $message = array(
             'class'   => 'bg-padded bg-danger',
-            'details' => 'Incorrect login details.'
+            'details' => Base::instance()->get('error_message')
         );
     }
     else {

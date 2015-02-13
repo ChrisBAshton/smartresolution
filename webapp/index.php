@@ -4,61 +4,10 @@ require __DIR__ . '/lib/autoload.php';
 
 // globals
 $f3 = \Base::instance();
-$db = new \DB\SQL('sqlite:' . __DIR__ . '/../data/production.db');
-
-
-
-
-
-
-$f3->set('DEBUG',1);
-// if ((float)PCRE_VERSION<7.9) {
-// 	trigger_error('PCRE version is out of date');
-// }
-
-
-
-
 // Load configuration
+$f3->set('DEBUG',1);
 $f3->config('config.ini');
 
-$f3->route('GET /',
-	function($f3) {
-		$f3->set('content','welcome.html');
-		echo View::instance()->render('layout.html');
-	}
-);
-
-$f3->route('GET|POST /login',
-	function($f3) {
-		if ($f3->get('POST.email')) {
-
-			// @TODO - this block contains both Model and Controller logic
-			// Should move the authentication, SQL stuff to a User class
-
-			global $db;
-
-			$crypt = \Bcrypt::instance();
-
-			$currentUser = $db->exec(
-				'SELECT * FROM users WHERE email = :email',
-				array(
-					':email' => $f3->get('POST.email')
-				)
-			)[0]; // get first user that matches
-
-			if ($crypt->verify($f3->get('POST.password'), $currentUser['password'])) {
-				$f3->set('user_logged_in', true);
-			}
-			else {
-				$f3->set('user_logged_in', false);
-			}
-			$f3->set('user_email', $f3->get('POST.email'));
-		}
-
-		$f3->set('content','login.html');
-		echo View::instance()->render('layout.html');
-	}
-);
+require __DIR__ . '/routes.php';
 
 $f3->run();
