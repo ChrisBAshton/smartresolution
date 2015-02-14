@@ -37,7 +37,7 @@ abstract class User {
         $db = Database::instance();
 
         $users = $db->exec(
-            'SELECT * FROM users WHERE email = :email',
+            'SELECT * FROM account_details WHERE email = :email',
             array(
                 ':email' => $email
             )

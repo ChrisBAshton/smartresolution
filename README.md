@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ChrisBAshton/major-project.svg?branch=master)](https://travis-ci.org/ChrisBAshton/major-project)
+[![Build Status](https://travis-ci.org/ChrisBAshton/major-project.svg?branch=master)](https://travis-ci.org/ChrisBAshton/major-project) [![Code Climate](https://codeclimate.com/github/ChrisBAshton/major-project/badges/gpa.svg)](https://codeclimate.com/github/ChrisBAshton/major-project) [![Dependency Status](https://gemnasium.com/ChrisBAshton/major-project.svg)](https://gemnasium.com/ChrisBAshton/major-project)
 
 # Online Dispute Resolution for Maritime Collisions
 This repository contains the codebase for my Major Project (i.e. dissertation) at Aberystwyth University, and is currently a work in progress.
