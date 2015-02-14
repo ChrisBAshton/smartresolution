@@ -15,16 +15,28 @@ Please see my [Outline Project Specification](http://ashton.codes/blog/outline-p
 
 ## Pre-requisites
 
-* PHP
-* Composer
+* PHP (version >= 5.4)
+* Composer (version >= 1.0)
+* SQLite3 (version >= 3.7)
 
 ## Installation
 
+Note: all of the commands in the rest of this README are relative to the root of the repository. Therefore, when you've downloaded the repo, make sure you `cd major-project` to go into the top level of the repository.
+
 * download repository
 * install dependencies with Composer (`composer install`)
+* create production database: `sqlite3 data/production.db < data/db.sql`
+* unfortunately, this is still a manual process - use an SQLite browser (I use [DB Browser for SQLite](http://sqlitebrowser.org/)) and add a new record to the account_details table (e.g. email => admin, password => $2y$10$md2.JKnCBFH5IGU9MeV50OUtx35VdVcThXeeQG9QUbpm9DwYmBlq. - this is the BCrypted version of 'test'). You can now log into the application as 'admin','test'
+
+## Seeing is believing
+
 * run `php -S 127.0.0.1:8000 -t webapp`
 * go to http://127.0.0.1:8000/ in your browser
 
 ## Running tests
 
-Still a work in progress to make this more elegant. See .travis.yml for current progress.
+Run the unit tests:
+
+`./vendor/phpunit/phpunit/phpunit test/unit_tests/`
+
+Run the Cucumber tests: TBC
