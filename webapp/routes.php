@@ -38,6 +38,20 @@ $f3->route('GET /register',
 
 $f3->route('POST /register',
     function($f3) {
+
+        $email    = $f3->get('POST.email');
+        $password = $f3->get('POST.password');
+        $orgName  = $f3->get('POST.organisation_name');
+        $orgType  = $f3->get('POST.organisation_type');
+
+        if (!$email || !$password || !$orgName || !$orgType) {
+            $f3->set('error_message', 'Please fill in all fields.');
+            $f3->set('content','register.html');
+            echo View::instance()->render('layout.html');
+        }
+        else {
+            
+        }
         // try {
         //     $email    = $f3->get('POST.email');
         //     $password = $f3->get('POST.password');

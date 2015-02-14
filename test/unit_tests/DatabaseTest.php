@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../webapp/classes/autoload.php';
 
 class DatabaseTest extends PHPUnit_Framework_TestCase
 {
-
     private $db;
 
     protected function setUp()
