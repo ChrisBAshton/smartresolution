@@ -9,5 +9,5 @@ script:
   - sqlite3 data/test.db < data/db.sql 
   # populate the test database
   - php test/seed.php
-  # run our tests. @TODO - this obviously needs expanding to cover more areas
-  - ./vendor/phpunit/phpunit/phpunit test/unit_tests/User.php 
+  # run our tests
+  - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
