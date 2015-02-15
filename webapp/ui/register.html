@@ -8,6 +8,12 @@
                 'details' => Base::instance()->get('error_message')
             );
         }
+        else if (Base::instance()->get('success_message')) {
+            $message = array(
+                'class'   => 'bg-padded bg-success',
+                'details' => Base::instance()->get('success_message')
+            );
+        }
         else {
             $message = array(
                 'class'   => 'bg-padded bg-info',

@@ -43,23 +43,24 @@ $f3->route('POST /register',
 
         if (!$email || !$password || !$orgName || !$orgType) {
             $f3->set('error_message', 'Please fill in all fields.');
-            $f3->set('content','register.html');
-            echo View::instance()->render('layout.html');
         }
         else {
-            
+            try {
+                Register::organisation(array(
+                    'email'       => $email,
+                    'password'    => $password,
+                    'name'        => $orgName,
+                    'type'        => $orgType
+                ));
+
+                $f3->set('success_message', 'You have successfully registered an account.');
+            } catch(Exception $e) {
+                $f3->set('error_message', $e->getMessage());
+            }
         }
-        // try {
-        //     $email    = $f3->get('POST.email');
-        //     $password = $f3->get('POST.password');
-        //     $user = new Agent($email, $password, true);
-        // }
-        // catch (Exception $e) {
-        //     $f3->set('error_message', $e->getMessage());
-        //     $f3->set('user_email', $f3->get('POST.email'));
-        //     $f3->set('content','register.html');
-        //     echo View::instance()->render('layout.html');
-        // }
+
+        $f3->set('content','register.html');
+        echo View::instance()->render('layout.html');
     }
 );
 
