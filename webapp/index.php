@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/classes/autoload.php';
 
+Database::setEnvironment('production');
 $f3 = \Base::instance();
 $f3->config('config.ini');
 $f3->set('DEBUG',1);

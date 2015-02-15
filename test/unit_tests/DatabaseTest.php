@@ -9,8 +9,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
     {
         Database::setEnvironment('test');
         Database::clear();
-        $this->db = Database::instance();
-        $this->db->exec(
+        Database::instance()->exec(
             'INSERT INTO account_details (login_id, email, password) VALUES (NULL, :email, :password)',
             array(
                 ':email'    => 'test@test.com',
@@ -25,7 +24,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
      */
     public function testOrganisationsTypeConstraint()
     {
-        $this->db->exec('INSERT INTO organisations (type) VALUES ("fail")');
+        Database::instance()->exec('INSERT INTO organisations (type) VALUES ("fail")');
     }
 
     /**
@@ -34,7 +33,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
      */
     public function testOrganisationsForeignKeyConstraint()
     {
-        $this->db->exec('INSERT INTO organisations (login_id) VALUES (1337)');
+        Database::instance()->exec('INSERT INTO organisations (login_id) VALUES (1337)');
     }
 
     /**
@@ -43,7 +42,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
      */
     public function testIndividualsTypeConstraint()
     {
-        $this->db->exec('INSERT INTO individuals (type) VALUES ("fail")');
+        Database::instance()->exec('INSERT INTO individuals (type) VALUES ("fail")');
     }
 
     /**
@@ -52,12 +51,12 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
      */
     public function testIndividualsForeignKeyConstraint()
     {
-        $this->db->exec('INSERT INTO individuals (login_id) VALUES (1337)');
+        Database::instance()->exec('INSERT INTO individuals (login_id) VALUES (1337)');
     }
 
     public function testCorrectOrganisationsEntry()
     {
-        $this->db->exec(
+        Database::instance()->exec(
             'INSERT INTO organisations (organisation_id, login_id, type, name, description) VALUES (NULL, :login_id, :type, :name, :description)',
             array(
                 ':login_id'    => '1',
@@ -70,7 +69,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
 
     public function testCorrectIndividualsEntry()
     {
-        $this->db->exec(
+        Database::instance()->exec(
             'INSERT INTO individuals (individual_id, login_id, type, surname, forename) VALUES (NULL, :login_id, :type, :surname, :forename)',
             array(
                 ':login_id' => '1',

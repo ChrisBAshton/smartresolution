@@ -3,7 +3,7 @@ require_once __DIR__ . '/autoload.php';
 
 class AccountDetails {
 
-    public static function register($object, $db) {
+    public static function register($object) {
         if (!$object['email'] || !$object['password']) {
             throw new Exception("The minimum required to register is an email and password!");
         }
@@ -11,13 +11,9 @@ class AccountDetails {
         if (AccountDetails::getAccountFromDatabase($object['email'])) {
             throw new Exception("An account is already registered to that email address.");
         }
-
-        if (!$db) {
-            throw new Exception("Programmer error: need to pass db in the subclass.");
-        }
         
         $crypt = \Bcrypt::instance();
-        $db->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
+        Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
             ':email'    => $object['email'],
             ':password' => $crypt->hash($object['password'])
         ));
@@ -52,15 +48,13 @@ class AccountDetails {
 
     // @TODO - test getting different account types
     public static function getAccountFromDatabase($email) {
-        $db = Database::instance();
-
-        $individual = $db->exec(
+        $individual = Database::instance()->exec(
             'SELECT * FROM account_details INNER JOIN individuals ON account_details.login_id = individuals.login_id WHERE email = :email',
             array(
                 ':email' => $email
             )
         );
-        $organisation = $db->exec(
+        $organisation = Database::instance()->exec(
             'SELECT * FROM account_details INNER JOIN organisations ON account_details.login_id = organisations.login_id WHERE email = :email',
             array(
                 ':email' => $email

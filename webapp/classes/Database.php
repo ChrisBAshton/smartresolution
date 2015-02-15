@@ -3,12 +3,11 @@
 class Database {
 
     private static $db = false;
-
-    private static $environment = 'production'; // production by default
+    private static $environment = 'test'; // default value, use setEnvironment to override
 
     public static function setEnvironment($env) {
-        Database::$environment = $env;
         Database::$db = false;
+        Database::$environment = $env;
     }
 
     public static function instance() {
