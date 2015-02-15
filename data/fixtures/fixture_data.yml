@@ -1,0 +1,28 @@
+organisations:
+    - account_details:
+        email:    law_firm_email
+        password: test
+      details:
+        type:     law_firm
+        name:     Webdapper Ltd
+    - account_details:
+        email:    mediation_centre_email
+        password: test
+      details:
+        type:     mediation_centre
+        name:     CompanyCo
+individuals:
+    - account_details:
+        email:    agent_email
+        password: test
+      details:
+        type:     agent
+        forename: Chris
+        surname:  Ashton
+    - account_details:
+        email:    mediator_email
+        password: test
+      details:
+        type:     mediator
+        forename: John
+        surname:  Smith

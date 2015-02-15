@@ -5,46 +5,44 @@ session_start();
 
 class Session {
 
-    private $loggedIn;
-    private $user;
-
-    function __construct() {
-        $this->loggedIn = false;
-
-        if(isset($_SESSION['ODR_Logged_In']))  {
-            if ($_SESSION['ODR_Logged_In']) {
-                try {
-                    $username = $_SESSION['ODR_Email']; 
-                    $password = $_SESSION['ODR_Password'];
-                    $user = new Agent($username, $password);
-                    $this->loggedIn = $_SESSION['ODR_Logged_In'];
-                    $this->user = $user;
-                } catch (Exception $e) {
-                }
-            }
+    public static function getAccount() {
+        $account = AccountDetails::getAccountFromDatabase($_SESSION['ODR_Email']);
+        switch($account['type']) {
+            // @TODO - instantiate specific types
+            case "mediator":
+            case "agent":
+                return new Individual($account);
+            case "law_firm":
+            case "mediation_centre":
+                return new Organisation($account);
+            default:
+                var_dump($account);
+                throw new Exception("Invalid account type.");
         }
     }
 
-    public function getUser() {
-        return $this->user;
-    }
-
-    public function create($email, $password) {
+    public static function create($email, $password) {
         $_SESSION['ODR_Email']     = $email;
         $_SESSION['ODR_Password']  = $password;
         $_SESSION['ODR_Logged_In'] = true;
     }
 
-    public function clear() {
+    public static function clear() {
         $_SESSION['ODR_Password']  = false;
         $_SESSION['ODR_Logged_In'] = false;
     }
 
-    public function lastKnownEmail() {
+    public static function lastKnownEmail() {
         return isset($_SESSION['ODR_Email']) ? $_SESSION['ODR_Email'] : false;
     }
 
-    public function loggedIn() {
-        return $this->loggedIn;
+    public static function loggedIn() {
+        $loggedIn = false;
+        if(isset($_SESSION['ODR_Logged_In']))  {
+            if ($_SESSION['ODR_Logged_In']) {
+                $loggedIn = $_SESSION['ODR_Logged_In'];
+            }
+        }
+        return $loggedIn;
     }
 }

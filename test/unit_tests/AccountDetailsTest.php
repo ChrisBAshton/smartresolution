@@ -10,12 +10,17 @@ class AccountDetailsTest extends PHPUnit_Framework_TestCase
 
     // @TODO - need to extensively test the register() function
 
+    public function testGetIdFromEmail() {
+        $testUser = AccountDetails::emailToId('law_firm_email');
+        $this->assertEquals(1, $testUser);
+    }
+
     public function testGetAccountDetails()
     {
-        $testUser = AccountDetails::getAccountFromDatabase('test1@test.com');
-        $this->assertEquals($testUser['login_id'], 1);
-        $testUser = AccountDetails::getAccountFromDatabase('test2@test.com');
-        $this->assertEquals($testUser['login_id'], 2);
+        $testUser = AccountDetails::getAccountFromDatabase('law_firm_email');
+        $this->assertEquals(1, $testUser['login_id']);
+        $testUser = AccountDetails::getAccountFromDatabase('mediation_centre_email');
+        $this->assertEquals(2, $testUser['login_id']);
         $testUser = AccountDetails::getAccountFromDatabase('user_does_not_exist@t.co');
         $this->assertFalse($testUser);
     }

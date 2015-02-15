@@ -9,7 +9,6 @@ class RegisterTest extends PHPUnit_Framework_TestCase
     {
         Database::setEnvironment('test');
         Database::clear();
-        $db = Database::instance();
     }
 
     public function testRegisterOrganisation()

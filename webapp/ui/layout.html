@@ -17,7 +17,9 @@
 
 		<div class="container">
 			<?php
-				echo isset($user) ? $user->email : '...';
+				if (isset($account)) {
+					echo 'Welcome back, ' . $account->getName() . ' (type: ' . get_class($account) . ').';
+				}
 			?>
 
 			<?php echo $this->render(Base::instance()->get('content')); ?>

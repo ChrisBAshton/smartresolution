@@ -1,7 +1,0 @@
-users:
-    - email:    test1@test.com
-      password: test1pass
-    - email:    test2@test.com
-      password: test2pass
-    - email:    chris@ashton.codes
-      password: password

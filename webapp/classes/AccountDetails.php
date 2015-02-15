@@ -22,32 +22,59 @@ class AccountDetails {
             ':password' => $crypt->hash($object['password'])
         ));
         
-        $login_id = $db->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
-            ':email' => $object['email']
-        ));
+        $login_id = AccountDetails::emailToId($object['email']);
         if (!$login_id) {
             throw new Exception("Could not retrieve login_id. Abort.");
         }
-        
-        $login_id = $login_id[0]['login_id'];
         return $login_id;
     }
 
+    public static function validCredentials($email, $password) {
+        $account = AccountDetails::getAccountFromDatabase($email);
+        if (!$account) {
+            return false;
+        }
+        else {
+            return AccountDetails::correctPassword($password, $account['password']);
+        }
+    }
+
+    public static function emailToId($email) {
+        $login_id = Database::instance()->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
+            ':email' => $email
+        ));
+        if (!$login_id) {
+            return false;
+        }
+        $login_id = (int) $login_id[0]['login_id'];
+        return $login_id;
+    }
+
+    // @TODO - test getting different account types
     public static function getAccountFromDatabase($email) {
         $db = Database::instance();
 
-        $accounts = $db->exec(
-            'SELECT * FROM account_details WHERE email = :email',
+        $individual = $db->exec(
+            'SELECT * FROM account_details INNER JOIN individuals ON account_details.login_id = individuals.login_id WHERE email = :email',
+            array(
+                ':email' => $email
+            )
+        );
+        $organisation = $db->exec(
+            'SELECT * FROM account_details INNER JOIN organisations ON account_details.login_id = organisations.login_id WHERE email = :email',
             array(
                 ':email' => $email
             )
         );
 
-        if (count($accounts) === 0) {
-            return false;
+        if (count($individual) === 1) {
+            return $individual[0];
+        }
+        else if (count($organisation) === 1) {
+            return $organisation[0];
         }
         else {
-            return $accounts[0];
+            return false;
         }
     }
 
