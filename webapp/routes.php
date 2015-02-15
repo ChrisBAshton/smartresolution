@@ -1,10 +1,8 @@
 <?php
-$session = new Session();
 
 $f3->route('GET /',
     function($f3) {
-        global $session;
-        if ($session->loggedIn()) {
+        if (Session::loggedIn()) {
             header('Location: /home');
         }
         else {
@@ -16,9 +14,8 @@ $f3->route('GET /',
 
 $f3->route('GET /home',
     function($f3) {
-        global $session;
-        if ($session->loggedIn()) {
-            $f3->set('user', $session->getUser());
+        if (Session::loggedIn()) {
+            $f3->set('account', Session::getAccount());
         }
         else {
             header('Location: /logout');
@@ -38,24 +35,38 @@ $f3->route('GET /register',
 
 $f3->route('POST /register',
     function($f3) {
-        // try {
-        //     $email    = $f3->get('POST.email');
-        //     $password = $f3->get('POST.password');
-        //     $user = new Agent($email, $password, true);
-        // }
-        // catch (Exception $e) {
-        //     $f3->set('error_message', $e->getMessage());
-        //     $f3->set('user_email', $f3->get('POST.email'));
-        //     $f3->set('content','register.html');
-        //     echo View::instance()->render('layout.html');
-        // }
+
+        $email    = $f3->get('POST.email');
+        $password = $f3->get('POST.password');
+        $orgName  = $f3->get('POST.organisation_name');
+        $orgType  = $f3->get('POST.organisation_type');
+
+        if (!$email || !$password || !$orgName || !$orgType) {
+            $f3->set('error_message', 'Please fill in all fields.');
+        }
+        else {
+            try {
+                Register::organisation(array(
+                    'email'       => $email,
+                    'password'    => $password,
+                    'name'        => $orgName,
+                    'type'        => $orgType
+                ));
+
+                $f3->set('success_message', 'You have successfully registered an account.');
+            } catch(Exception $e) {
+                $f3->set('error_message', $e->getMessage());
+            }
+        }
+
+        $f3->set('content','register.html');
+        echo View::instance()->render('layout.html');
     }
 );
 
 $f3->route('GET /login',
     function($f3) {
-        global $session;
-        $f3->set('user_email', $session->lastKnownEmail());
+        $f3->set('user_email', Session::lastKnownEmail());
         $f3->set('content','login.html');
         echo View::instance()->render('layout.html');
     }
@@ -63,18 +74,17 @@ $f3->route('GET /login',
 
 $f3->route('POST /login',
     function($f3) {
-        global $session;
-
-        try {
-            $email = $f3->get('POST.email');
-            $password = $f3->get('POST.password');
-            $user = new Agent($email, $password);
-            $session->create($email, $password);
+        $email = $f3->get('POST.email');
+        $password = $f3->get('POST.password');
+        $validCredentials = AccountDetails::validCredentials($email, $password);
+        
+        if ($validCredentials) {
+            Session::create($email, $password);
             header('Location: /home');
         }
-        catch (Exception $e) {
-            $f3->set('error_message', $e->getMessage());
-            $f3->set('user_email', $f3->get('POST.email'));
+        else {
+            $f3->set('error_message', 'Invalid login details.');
+            $f3->set('user_email', $email);
             $f3->set('content','login.html');
             echo View::instance()->render('layout.html');
         }
@@ -83,8 +93,7 @@ $f3->route('POST /login',
 
 $f3->route('GET /logout',
     function ($f3) {
-        global $session;
-        $session->clear();
+        Session::clear();
         header('Location: /');
     }
 );
