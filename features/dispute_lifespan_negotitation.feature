@@ -1,5 +1,5 @@
 Feature: Negotiating a Dispute lifespan
-    When a Dispute is opened and each Company has allocated an Agent
+    When a Dispute is opened and each Law Firm has allocated an Agent
     The Agents need to negotiate a Dispute lifespan
     i.e. the maximum length of time the Dispute can continue without resolution 
     before being automatically taken to Court.

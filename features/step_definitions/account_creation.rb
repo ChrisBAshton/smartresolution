@@ -1,8 +1,4 @@
-Given(/^I am an authorised representative of the Company$/) do
-  # nothing to do - just provides a nice background to the scenario
-end
-
-When(/^I attempt to create a new Company account$/) do
+When(/^I attempt to create a new Law Firm account$/) do
   visit 'http://127.0.0.1:8000/register'
 end
 
@@ -10,19 +6,19 @@ Then(/^the account should be created$/) do
   pending # express the regexp above with the code you wish you had
 end
 
-Given(/^I have not yet registered a Company account$/) do
+Given(/^I have not yet registered a Law Firm account$/) do
   pending # express the regexp above with the code you wish you had
 end
 
-Given(/^a Dispute has been initiated against my Company$/) do
+Given(/^a Dispute has been initiated against my Law Firm$/) do
   pending # express the regexp above with the code you wish you had
 end
 
-Then(/^the my Company should be automatically linked to the dispute$/) do
+Then(/^the my Law Firm should be automatically linked to the dispute$/) do
   pending # express the regexp above with the code you wish you had
 end
 
-Given(/^I have registered a Company account$/) do
+Given(/^I have registered a Law Firm account$/) do
   pending # express the regexp above with the code you wish you had
 end
 
@@ -42,7 +38,7 @@ Then(/^an authentication error should be displayed$/) do
   pending # express the regexp above with the code you wish you had
 end
 
-Given(/^I have logged into a Company account$/) do
+Given(/^I have logged into a Law Firm account$/) do
   pending # express the regexp above with the code you wish you had
 end
 

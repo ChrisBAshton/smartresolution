@@ -8,5 +8,7 @@ script:
   - sqlite3 data/production.db < data/db.sql
   # populate the test database
   - php data/fixtures/seed.php
-  # run our tests
+  # run our unit tests
   - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
+  # run our integration tests
+  - cucumber features/

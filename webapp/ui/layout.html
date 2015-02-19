@@ -9,19 +9,28 @@
 		<link rel="stylesheet" href="/ui/css/style.css">
 	</head>
 	<body>
-		<header>
-		    <a href="/">
-		    	<img src="ui/images/logo.png">
-		    </a>
+		<header class="container">
+			<div class="col-sm-6">
+			    <a href="/">
+			    	<img class="logo" src="ui/images/logo.png">
+			    </a>
+			</div>
+
+		    <div class="col-sm-6 alignright">
+				<p>
+					<?php
+						if (isset($account)) {
+							echo 'Welcome back, ' . $account->getName() . '. <a href="/logout">Logout</a>';
+						}
+						else {
+							echo '<a href="/login">Login</a> | <a href="/register">Register</a>';
+						}
+					?>
+				</p>
+			</div>
 		</header>
 
 		<div class="container">
-			<?php
-				if (isset($account)) {
-					echo 'Welcome back, ' . $account->getName() . ' (type: ' . get_class($account) . ').';
-				}
-			?>
-
 			<?php echo $this->render(Base::instance()->get('content')); ?>
 		</div>
 

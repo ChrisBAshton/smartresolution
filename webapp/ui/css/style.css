@@ -1,9 +1,23 @@
-header, footer {
-	text-align: center;
+p {
+    padding: 12px 0;
 }
 
 footer {
+	text-align: center;
 	padding-top: 3em;
+}
+
+.stats {
+    display: none;
+}
+
+/* @TODO - put environment in body class */
+.env--test .stats {
+    display: block;
+}
+
+.alignright {
+    text-align: right;
 }
 
 .bg-padded {
@@ -20,4 +34,9 @@ footer {
     display: block;
     max-width: 200px;
     margin: 0 auto;
+}
+
+.logo {
+    max-width: 230px;
+    padding: 12px 0;
 }
