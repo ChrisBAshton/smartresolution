@@ -5,6 +5,12 @@ install:
   - composer install
   - gem install bundler
   - bundle install
+before_script:
+  # start a web server. See http://knpuniversity.com/screencast/question-answer-day/travis-ci
+  - sudo apt-get update > /dev/null
+  - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-intl
+  - sudo sed -i -e "s,/var/www,$(pwd)/web,g" /etc/apache2/sites-available/default
+  - sudo /etc/init.d/apache2 restart
 script:
   # create our databases
   - sqlite3 data/production.db < data/db.sql
@@ -12,7 +18,5 @@ script:
   - php data/fixtures/seed.php
   # run our unit tests
   - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
-  # start our server
-  - php -S 127.0.0.1:8000 -t webapp > /dev/null
   # run our integration tests
   - cucumber features/
