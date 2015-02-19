@@ -1,5 +1,10 @@
 When(/^I attempt to create a new Law Firm account$/) do
+  page.driver.headers = { "User-Agent" => "Poltergeist" }
   visit '/register'
+  assert page.has_content?('Welcome to the registration screen')
+  fill_in 'Email', :with => 'admin'
+  fill_in 'Password', :with => 'test'
+  page.driver.save_screenshot 'features/screenshots/test.jpg'
 end
 
 Then(/^the account should be created$/) do
