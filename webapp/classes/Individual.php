@@ -1,7 +1,7 @@
 <?php
 
 // @TODO - make this a base class and make subclasses Mediator and Agent inherit from it.
-class Individual {
+class Individual implements AccountInterface {
 
     function __construct($account) {
         $this->email = $account['email'];

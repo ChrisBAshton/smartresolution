@@ -6,19 +6,7 @@ session_start();
 class Session {
 
     public static function getAccount() {
-        $account = AccountDetails::getAccountFromDatabase($_SESSION['ODR_Email']);
-        switch($account['type']) {
-            // @TODO - instantiate specific types
-            case "mediator":
-            case "agent":
-                return new Individual($account);
-            case "law_firm":
-            case "mediation_centre":
-                return new Organisation($account);
-            default:
-                var_dump($account);
-                throw new Exception("Invalid account type.");
-        }
+        return AccountDetails::getAccountFromDatabase($_SESSION['ODR_Email']);
     }
 
     public static function create($email, $password) {

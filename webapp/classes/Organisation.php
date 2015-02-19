@@ -1,7 +1,7 @@
 <?php
 
 // @TODO - make this a base class and make subclasses LawFirm and MediationCentre inherit from it.
-class Organisation {
+class Organisation implements AccountInterface {
 
     function __construct($account) {
         $this->email = $account['email'];

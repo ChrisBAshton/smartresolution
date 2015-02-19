@@ -13,7 +13,8 @@ class Database {
     public static function instance() {
         if(!Database::$db) {
             Database::$db = new \DB\SQL('sqlite:' . __DIR__ . '/../../data/' . Database::$environment . '.db');
-            // enable foreign key constraints (to raise errors if corresponding entry in foreign table does not exist)
+            // enable foreign key constraints
+            // (to raise errors if corresponding entry in foreign table does not exist)
             Database::$db->exec('PRAGMA foreign_keys = ON;');
             // we want to raise exceptions that we can catch with PHP
             Database::$db->pdo()->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -4,6 +4,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 // manually load all our internal libraries
 require_once __DIR__ . '/AccountDetails.php';
+require_once __DIR__ . '/AccountInterface.php';
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/Individual.php';
 require_once __DIR__ . '/Organisation.php';
