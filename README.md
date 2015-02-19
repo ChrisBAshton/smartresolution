@@ -26,12 +26,12 @@ Note: all of the commands in the rest of this README are relative to the root of
 * download repository
 * install dependencies with Composer (`composer install`)
 * create production database: `sqlite3 data/production.db < data/db.sql`
-* unfortunately, this is still a manual process - use an SQLite browser (I use [DB Browser for SQLite](http://sqlitebrowser.org/)) and add a new record to the account_details table (e.g. email => admin, password => $2y$10$md2.JKnCBFH5IGU9MeV50OUtx35VdVcThXeeQG9QUbpm9DwYmBlq. - this is the BCrypted version of 'test'). You can now log into the application as 'admin','test'
 
 ## Seeing is believing
 
 * run `php -S 127.0.0.1:8000 -t webapp`
 * go to http://127.0.0.1:8000/ in your browser
+* you should now be able to register an account and log in using the forms provided
 
 ## Running tests
 

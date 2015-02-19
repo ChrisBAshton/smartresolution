@@ -5,8 +5,7 @@ install:
   - composer install
 script:
   # create our databases
-  - sqlite3 data/production.db < data/db.sql 
-  - sqlite3 data/test.db < data/db.sql 
+  - sqlite3 data/production.db < data/db.sql
   # populate the test database
   - php data/fixtures/seed.php
   # run our tests
