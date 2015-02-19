@@ -26,6 +26,8 @@ Note: all of the commands in the rest of this README are relative to the root of
 * download repository
 * install dependencies with Composer (`composer install`)
 * create production database: `sqlite3 data/production.db < data/db.sql`
+* gem install bundler
+* bundle install
 
 ## Seeing is believing
 

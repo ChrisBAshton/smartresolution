@@ -1,5 +1,5 @@
 When(/^I attempt to create a new Law Firm account$/) do
-  visit 'http://127.0.0.1:8000/register'
+  visit '/register'
 end
 
 Then(/^the account should be created$/) do
