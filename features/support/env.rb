@@ -7,5 +7,5 @@ require 'test/unit/assertions'
 World(Test::Unit::Assertions)
 
 Capybara.default_driver = :poltergeist
-Capybara.app_host = "http://localhost:8000"
+Capybara.app_host = "http://127.0.0.1:8000"
 World(Capybara)

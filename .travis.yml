@@ -12,5 +12,7 @@ script:
   - php data/fixtures/seed.php
   # run our unit tests
   - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
+  # start our server
+  - php -S 127.0.0.1:8000 -t webapp > /dev/null
   # run our integration tests
   - cucumber features/
