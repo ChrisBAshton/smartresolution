@@ -4,11 +4,14 @@ When(/^I attempt to create a new Law Firm account$/) do
   assert page.has_content?('Welcome to the registration screen')
   fill_in 'Email', :with => 'admin'
   fill_in 'Password', :with => 'test'
-  page.driver.save_screenshot 'features/screenshots/test.jpg'
+  fill_in 'Organisation Name', :with => 'A Company Name Ltd'
+  page.driver.save_screenshot 'features/screenshots/registration--before.jpg'
+  click_button 'Register'
 end
 
 Then(/^the account should be created$/) do
-  pending # express the regexp above with the code you wish you had
+  page.driver.save_screenshot 'features/screenshots/registration--after.jpg'
+  assert page.has_content?('You have successfully registered an account.')
 end
 
 Given(/^I have not yet registered a Law Firm account$/) do

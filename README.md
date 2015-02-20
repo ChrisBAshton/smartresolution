@@ -41,4 +41,8 @@ Run the unit tests:
 
 `./vendor/phpunit/phpunit/phpunit test/unit_tests/`
 
-Run the Cucumber tests: TBC
+Run the Cucumber tests:
+
+`cucumber features`
+
+...or just leave it to Travis!
