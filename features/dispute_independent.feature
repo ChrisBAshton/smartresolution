@@ -12,6 +12,6 @@ Feature: Processes relevant to the Dispute but that are not dependent on the cur
     And the Dispute should close unsuccessfully
 
   # Low priority
-  Scenario: Communication with the Company
+  Scenario: Communication with the Law Firm
     Given I am an Agent
-    Then I should be able to communicate freely with my Company
+    Then I should be able to communicate freely with my Law Firm

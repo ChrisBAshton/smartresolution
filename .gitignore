@@ -2,3 +2,5 @@
 composer.lock
 vendor
 *.db
+Gemfile.lock
+features/screenshots

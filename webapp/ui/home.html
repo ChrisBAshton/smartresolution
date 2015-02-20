@@ -1,7 +1,7 @@
 <h1>Home</h1>
 
 <p>
-    Hello, logged in user. <a href="/logout">Logout</a> @TODO - make this a menu!
+    <strong>Hello</strong>. Your account type is: <?php echo isset($account) ? get_class($account) : 'unknown'; ?>.
 </p>
 
 <p>

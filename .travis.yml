@@ -3,10 +3,18 @@ php:
   - 5.4
 install:
   - composer install
+  - gem install bundler
+  - bundle install
+before_script:
+  # start a web server. See http://robbiemackay.com/2013/05/03/automating-behat-and-mink-tests-with-travis-ci/
+  - php -S 127.0.0.1:8000 -t webapp &
+  - sleep 3
 script:
   # create our databases
   - sqlite3 data/production.db < data/db.sql
   # populate the test database
   - php data/fixtures/seed.php
-  # run our tests
+  # run our unit tests
   - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
+  # run our integration tests
+  - cucumber features/
