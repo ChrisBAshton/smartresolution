@@ -18,6 +18,7 @@ Please see my [Outline Project Specification](http://ashton.codes/blog/outline-p
 * PHP (version >= 5.4)
 * Composer (version >= 1.0)
 * SQLite3 (version >= 3.7)
+* RubyGems (version >= 2.2.2)
 
 ## Installation
 

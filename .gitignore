@@ -1,6 +1,4 @@
 .DS_Store
-composer.lock
 vendor
 *.db
-Gemfile.lock
 features/screenshots
