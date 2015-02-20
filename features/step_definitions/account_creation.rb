@@ -1,15 +1,24 @@
-When(/^I attempt to create a new Law Firm account$/) do
+When(/^I fill in the details for a new Law Firm account$/) do
   visit '/register'
   assert page.has_content?('Welcome to the registration screen')
   fill_in 'Email', :with => 'admin'
   fill_in 'Password', :with => 'test'
   fill_in 'Organisation Name', :with => 'A Company Name Ltd'
-  page.driver.save_screenshot 'features/screenshots/registration--before.jpg'
+end
+
+When(/^I try to register$/) do
   click_button 'Register'
 end
 
+When(/^I leave the '(.+)' field blank$/) do |field_label|
+  fill_in field_label, :with => ''
+end
+
+Then(/^I should see the message '(.+)'$/) do |expected_message|
+  assert page.has_content?(expected_message)
+end
+
 Then(/^the account should be created$/) do
-  page.driver.save_screenshot 'features/screenshots/registration--after.jpg'
   assert page.has_content?('You have successfully registered an account.')
 end
 

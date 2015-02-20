@@ -2,9 +2,22 @@ Feature: Account Creation
     I should be able to register an account of a certain type, e.g. Law Firm/Agent
     And I should be able to log into said account
 
+  Scenario Outline: Not all fields filled in on registration
+    When I fill in the details for a new Law Firm account
+    And I leave the '<field_label>' field blank
+    And I try to register
+    Then I should see the message 'Please fill in all fields.'
+    
+    Examples:
+      | field_label       |
+      | Email             |
+      | Password          |
+      | Organisation Name |
+
   @clear
   Scenario: Law Firm registration
-    When I attempt to create a new Law Firm account
+    When I fill in the details for a new Law Firm account
+    And I try to register
     Then the account should be created
     # As discussed in the supervisor meeting, we could add an admin verification stage after account creation.
     # This could be as complicated as we want to make it, so for now, let's add a boolean in the database that
