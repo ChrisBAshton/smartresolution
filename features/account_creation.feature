@@ -14,6 +14,12 @@ Feature: Account Creation
       | Password          |
       | Organisation Name |
 
+  Scenario: Trying to register with an email address that already exists
+    When I fill in the details for a new Law Firm account
+    And I provide an email that is already registered to the system
+    And I try to register
+    Then I should see the message 'An account is already registered to that email address.'
+
   @clear
   Scenario: Law Firm registration
     When I fill in the details for a new Law Firm account

@@ -10,6 +10,10 @@ When(/^I try to register$/) do
   click_button 'Register'
 end
 
+And(/^I provide an email that is already registered to the system$/) do
+  fill_in 'Email', :with => 'law_firm_email'
+end
+
 When(/^I leave the '(.+)' field blank$/) do |field_label|
   fill_in field_label, :with => ''
 end
