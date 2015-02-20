@@ -2,6 +2,7 @@ Feature: Account Creation
     I should be able to register an account of a certain type, e.g. Law Firm/Agent
     And I should be able to log into said account
 
+  @clear
   Scenario: Law Firm registration
     When I attempt to create a new Law Firm account
     Then the account should be created
