@@ -13,14 +13,17 @@ foreach($data['organisations'] as $org) {
         'type'     => $org['details']['type'],
         'name'     => $org['details']['name']
     ));
-}
 
-foreach($data['individuals'] as $single) {
-    Register::individual(array(
-        'email'    => $single['account_details']['email'],
-        'password' => $single['account_details']['password'],
-        'type'     => $single['details']['type'],
-        'forename' => $single['details']['forename'],
-        'surname'  => $single['details']['surname']
-    ));
+    $organisationId = AccountDetails::emailToId($org['account_details']['email']);
+
+    foreach($org['individuals'] as $individual) {
+        Register::individual(array(
+            'email'           => $individual['account_details']['email'],
+            'password'        => $individual['account_details']['password'],
+            'organisation_id' => $organisationId,
+            'type'            => $individual['details']['type'],
+            'forename'        => $individual['details']['forename'],
+            'surname'         => $individual['details']['surname']
+        ));
+    }
 }

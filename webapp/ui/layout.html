@@ -14,6 +14,7 @@
 			    <a href="/">
 			    	<img class="logo" src="ui/images/logo.png">
 			    </a>
+			    Alpha version <?php echo $VERSION; ?>
 			</div>
 
 		    <div class="col-sm-6 alignright">
@@ -36,7 +37,7 @@
 
 		<footer>
 		    <p>
-		    	Proudly powered by <?php echo $PACKAGE; ?>, v<?php echo $VERSION; ?>. Licensed under the terms of the GPLv3. Copyright &copy; 2015
+		    	Proudly powered by <?php echo $PACKAGE; ?>. Licensed under the terms of the GPLv3. Copyright &copy; 2015
 			</p>
 		    <p class="stats">
 		    	<code><?php echo Base::instance()->format('Page rendered in {0} msecs / Memory usage {1} Kibytes',round(1e3*(microtime(TRUE)-$TIME),2),round(memory_get_usage(TRUE)/1e3,1)); ?></code>

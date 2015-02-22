@@ -1,11 +1,15 @@
 <?php
 
-// @TODO - make this a base class and make subclasses LawFirm and MediationCentre inherit from it.
 class Organisation implements AccountInterface {
 
     function __construct($account) {
+        $this->loginId = (int) $account['login_id'];
         $this->email = $account['email'];
         $this->name = $account['name'];
+    }
+
+    public function getLoginId() {
+        return $this->loginId;
     }
 
     public function getEmail() {
@@ -15,4 +19,12 @@ class Organisation implements AccountInterface {
     public function getName() {
         return $this->name;
     }
+}
+
+class LawFirm extends Organisation {
+
+}
+
+class MediationCentre extends Organisation {
+
 }

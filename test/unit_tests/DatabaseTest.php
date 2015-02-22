@@ -57,7 +57,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
     public function testCorrectOrganisationsEntry()
     {
         Database::instance()->exec(
-            'INSERT INTO organisations (organisation_id, login_id, type, name, description) VALUES (NULL, :login_id, :type, :name, :description)',
+            'INSERT INTO organisations (login_id, type, name, description) VALUES (:login_id, :type, :name, :description)',
             array(
                 ':login_id'    => '1',
                 ':type'        => 'law_firm',
@@ -70,7 +70,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
     public function testCorrectIndividualsEntry()
     {
         Database::instance()->exec(
-            'INSERT INTO individuals (individual_id, login_id, type, surname, forename) VALUES (NULL, :login_id, :type, :surname, :forename)',
+            'INSERT INTO individuals (login_id, type, surname, forename) VALUES (:login_id, :type, :surname, :forename)',
             array(
                 ':login_id' => '1',
                 ':type'     => 'mediator',
