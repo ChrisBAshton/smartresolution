@@ -29,5 +29,5 @@ Feature: Dispute (pre-Mediation)
     Then I should be able to propose a different offer
 
   # Note:
-  # I can also Decline an offer by taking the Case to Court - see dispute_independent.feature "Take the Dispute to Court".
+  # I can also Decline an offer by taking the Dispute to Court - see dispute_independent.feature "Take the Dispute to Court".
   # I can also propose Mediation. See dispute_independent.feature "Start the Mediation Process"

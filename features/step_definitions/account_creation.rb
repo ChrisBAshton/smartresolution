@@ -1,4 +1,4 @@
-When(/^I fill in the details for a new Law Firm account$/) do
+When(/^I fill in the details for a new Organisation account$/) do
   visit '/register'
   assert page.has_content?('Welcome to the registration screen')
   fill_in 'Email', :with => 'admin'
@@ -26,7 +26,7 @@ Then(/^the account should be created$/) do
   assert page.has_content?('You have successfully registered an account.')
 end
 
-Given(/^I have registered a Law Firm account$/) do
+Given(/^I have registered an Organisation account$/) do
   visit '/login'
 end
 
