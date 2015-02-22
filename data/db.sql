@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS account_details (
 );
 
 CREATE TABLE IF NOT EXISTS organisations (
-    organisation_id INTEGER PRIMARY KEY NOT NULL,
     login_id        INTEGER,
     type            VARCHAR(30),
     name            VARCHAR(140),
@@ -21,15 +20,16 @@ CREATE TABLE IF NOT EXISTS organisations (
 );
 
 CREATE TABLE IF NOT EXISTS individuals (
-    individual_id INTEGER PRIMARY KEY NOT NULL,
-    login_id      INTEGER,
-    type          VARCHAR(30),
-    surname       VARCHAR(140),
-    forename      VARCHAR(140),
-    path_to_cv    VARCHAR(300),
+    login_id        INTEGER,
+    organisation_id INTEGER,
+    type            VARCHAR(30),
+    surname         VARCHAR(140),
+    forename        VARCHAR(140),
+    path_to_cv      VARCHAR(300),
     -- etc
     CHECK (type in ("agent", "mediator")),
-    FOREIGN KEY(login_id) REFERENCES account_details(login_id)
+    FOREIGN KEY(login_id) REFERENCES account_details(login_id),
+    FOREIGN KEY(organisation_id) REFERENCES account_details(login_id)
 );
 
 -- #######################################################################

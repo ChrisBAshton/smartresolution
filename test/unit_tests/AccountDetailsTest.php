@@ -8,58 +8,6 @@ class AccountDetailsTest extends PHPUnit_Framework_TestCase
         Database::clear();
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage The minimum required to register is an email and password!
-     */
-    public function testRegisterWithEmptyArray() {
-        $agent = array();
-        AccountDetails::register($agent);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage The minimum required to register is an email and password!
-     */
-    public function testRegisterWithPasswordMissing() {
-        $agent = array(
-            'email' => 'test@test.com'
-        );
-        AccountDetails::register($agent);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage The minimum required to register is an email and password!
-     */
-    public function testRegisterWithEmailMissing() {
-        $agent = array(
-            'password' => 'secret'
-        );
-        AccountDetails::register($agent);
-    }
-
-    public function testRegisterWithValidInputs() {
-        $agent = array(
-            'email'    => 'test@test.com',
-            'password' => 'secret'
-        );
-        $loginID = AccountDetails::register($agent);
-        $this->assertTrue(is_int($loginID));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage An account is already registered to that email address.
-     */
-    public function testRegisterWithExistingEmail() {
-        $agent = array(
-            'email'    => 'law_firm_email',
-            'password' => 'secret'
-        );
-        AccountDetails::register($agent);
-    }
-
     public function testValidCredentials() {
         $validCredentials = AccountDetails::validCredentials('law_firm_email', 'wrong password');
         $this->assertFalse($validCredentials);
@@ -84,14 +32,28 @@ class AccountDetailsTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($testUser);
     }
 
-    // @TODO - when I add Mediator/Agent subclasses, these tests should still pass but
-    // should also be extended.
     public function testGetAccountDetailsTypes()
     {
         $testUser = AccountDetails::getAccountFromDatabase('law_firm_email');
         $this->assertTrue($testUser instanceof Organisation);
+        $this->assertTrue($testUser instanceof LawFirm);
+        $this->assertFalse($testUser instanceof Individual);
+        $this->assertFalse($testUser instanceof MediationCentre);
+        $testUser = AccountDetails::getAccountFromDatabase('mediation_centre_email');
+        $this->assertTrue($testUser instanceof Organisation);
+        $this->assertTrue($testUser instanceof MediationCentre);
+        $this->assertFalse($testUser instanceof Individual);
+        $this->assertFalse($testUser instanceof LawFirm);
         $testUser = AccountDetails::getAccountFromDatabase('agent_email');
         $this->assertTrue($testUser instanceof Individual);
+        $this->assertTrue($testUser instanceof Agent);
+        $this->assertFalse($testUser instanceof Organisation);
+        $this->assertFalse($testUser instanceof Mediator);
+        $testUser = AccountDetails::getAccountFromDatabase('mediator_email');
+        $this->assertTrue($testUser instanceof Individual);
+        $this->assertTrue($testUser instanceof Mediator);
+        $this->assertFalse($testUser instanceof Organisation);
+        $this->assertFalse($testUser instanceof Agent);
     }
 
     public function testUserPasswordCheck()

@@ -4,34 +4,6 @@ require_once __DIR__ . '/autoload.php';
 class AccountDetails {
 
     /**
-     * Stores account details in the database.
-     * 
-     * @param  Array $object An array of registration values, including email and password.
-     * @return int           The login ID associated with the newly registered account.
-     */
-    public static function register($object) {
-        if (!isset($object['email']) || !isset($object['password'])) {
-            throw new Exception("The minimum required to register is an email and password!");
-        }
-
-        if (AccountDetails::getAccountFromDatabase($object['email'])) {
-            throw new Exception("An account is already registered to that email address.");
-        }
-        
-        $crypt = \Bcrypt::instance();
-        Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
-            ':email'    => $object['email'],
-            ':password' => $crypt->hash($object['password'])
-        ));
-        
-        $login_id = AccountDetails::emailToId($object['email']);
-        if (!$login_id) {
-            throw new Exception("Could not retrieve login_id. Abort.");
-        }
-        return $login_id;
-    }
-
-    /**
      * @TODO - instantiate specific types
      * 
      * Returns an object that implements the AccountInterface interface, populating it with data retrieved from the database that corresponds to the given email. Calls getDetailsByEmail internally.
@@ -47,11 +19,13 @@ class AccountDetails {
         }
         switch($account['type']) {
             case "mediator":
+                return new Mediator($account);
             case "agent":
-                return new Individual($account);
+                return new Agent($account);
             case "law_firm":
+                return new LawFirm($account);
             case "mediation_centre":
-                return new Organisation($account);
+                return new MediationCentre($account);
             default:
                 var_dump($account);
                 throw new Exception("Invalid account type.");

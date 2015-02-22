@@ -1,5 +1,29 @@
 <?php
 
+function mustBeLoggedIn() {
+    global $f3;
+    if (Session::loggedIn()) {
+        $f3->set('account', Session::getAccount());
+    }
+    else {
+        $f3->set('error_message', 'You do not have permission to see this page. Please log in first.');
+        $f3->set('content','error.html');
+        echo View::instance()->render('layout.html');
+        die();
+    }
+}
+
+function mustBeLoggedInAsAnOrganisation() {
+    global $f3;
+    mustBeLoggedIn();
+    if ( ! (Session::getAccount() instanceof Organisation) ) {
+        $f3->set('error_message', 'You do not have permission to see this page. You must be logged into an Organisation account.');
+        $f3->set('content','error.html');
+        echo View::instance()->render('layout.html');
+        die();
+    }
+}
+
 $f3->route('GET /',
     function($f3) {
         if (Session::loggedIn()) {
@@ -21,14 +45,20 @@ $f3->route('GET /home',
             header('Location: /logout');
         }
 
-        $f3->set('content','home.html');
+        if (Session::getAccount() instanceof Organisation) {
+            $f3->set('content','home_organisation.html');
+        }
+        else {
+            $f3->set('content','home_individual.html');
+        }
+
         echo View::instance()->render('layout.html');
     }
 );
 
 $f3->route('GET /register',
     function($f3) {
-        $f3->set('content','register.html');
+        $f3->set('content','register_organisation.html');
         echo View::instance()->render('layout.html');
     }
 );
@@ -59,7 +89,52 @@ $f3->route('POST /register',
             }
         }
 
-        $f3->set('content','register.html');
+        $f3->set('content','register_organisation.html');
+        echo View::instance()->render('layout.html');
+    }
+);
+
+$f3->route('GET /register/individual',
+    function($f3) {
+        mustBeLoggedInAsAnOrganisation();
+        $f3->set('content','register_individual.html');
+        echo View::instance()->render('layout.html');
+    }
+);
+
+$f3->route('POST /register/individual',
+    function($f3) {
+
+        mustBeLoggedInAsAnOrganisation();
+
+        $email    = $f3->get('POST.email');
+        $password = $f3->get('POST.password');
+        $surname  = $f3->get('POST.surname');
+        $forename = $f3->get('POST.forename');
+
+        if (!$email || !$password || !$surname || !$forename) {
+            $f3->set('error_message', 'Please fill in all fields.');
+        }
+        else {
+            try {
+                $organisation = Session::getAccount();
+
+                Register::individual(array(
+                    'email'           => $email,
+                    'password'        => $password,
+                    'organisation_id' => $organisation->getLoginId(),
+                    'type'            => $organisation instanceof LawFirm ? 'agent' : 'mediator',
+                    'surname'         => $surname,
+                    'forename'        => $forename
+                ));
+
+                $f3->set('success_message', 'You have successfully registered an account.');
+            } catch(Exception $e) {
+                $f3->set('error_message', $e->getMessage());
+            }
+        }
+
+        $f3->set('content','register_individual.html');
         echo View::instance()->render('layout.html');
     }
 );
