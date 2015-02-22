@@ -13,3 +13,12 @@ Feature: Routing
       | /register/individual |
     
   # @TODO - add more pages
+
+  Scenario Outline: Accessing Organisation-only pages
+    Given I am logged into an Individual account
+    When I try to visit '<organisation_only_page>'
+    Then I should see the message 'You do not have permission to see this page. You must be logged into an Organisation account.'
+
+    Examples:
+      | organisation_only_page |
+      | /register/individual   |

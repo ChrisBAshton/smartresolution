@@ -1,28 +1,40 @@
 <?php
 
 function mustBeLoggedIn() {
-    global $f3;
     if (Session::loggedIn()) {
+        global $f3;
         $f3->set('account', Session::getAccount());
     }
     else {
-        $f3->set('error_message', 'You do not have permission to see this page. Please log in first.');
-        $f3->set('content','error.html');
-        echo View::instance()->render('layout.html');
-        die();
+        errorPage('You do not have permission to see this page. Please log in first.');
     }
 }
 
 function mustBeLoggedInAsAnOrganisation() {
-    global $f3;
     mustBeLoggedIn();
     if ( ! (Session::getAccount() instanceof Organisation) ) {
-        $f3->set('error_message', 'You do not have permission to see this page. You must be logged into an Organisation account.');
-        $f3->set('content','error.html');
-        echo View::instance()->render('layout.html');
-        die();
+        errorPage('You do not have permission to see this page. You must be logged into an Organisation account.');
     }
 }
+
+function errorPage($errorMessage) {
+    global $f3;
+    $f3->set('error_message', $errorMessage);
+    $f3->set('content','error.html');
+    echo View::instance()->render('layout.html');
+    die();
+}
+
+
+
+$f3->route('GET /test','Test->testAction');
+class Test {
+    function testAction($f3, $args) {//<-- $f3 is the framework instance, $args are the route tokens
+        echo 'yellow';
+        echo isset($args['file']) ? $args['file'] : '';
+    }
+}
+
 
 $f3->route('GET /',
     function($f3) {
