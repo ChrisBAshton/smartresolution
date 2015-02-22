@@ -4,7 +4,7 @@ class RouteSession {
 
     function index ($f3) {
         if (Session::loggedIn()) {
-            header('Location: /home');
+            header('Location: /dashboard');
         }
         else {
             $f3->set('content','index.html');
@@ -12,20 +12,103 @@ class RouteSession {
         }
     }
 
-    function home ($f3) {
+    function dashboard ($f3) {
         if (Session::loggedIn()) {
-            $f3->set('account', Session::getAccount());
+            $account = Session::getAccount();
+            $f3->set('account', $account);
         }
         else {
             header('Location: /logout');
         }
 
-        if (Session::getAccount() instanceof Organisation) {
-            $f3->set('content','home_organisation.html');
+        if ($account instanceof LawFirm) {
+            $dashboardActions = array(
+                array(
+                    'href'  => '/register/individual',
+                    'image' => '/ui/images/mail.png',
+                    'title' => 'Register Agent account'
+                ),
+                array(
+                    'href'  => '/disputes/new',
+                    'image' => '/ui/images/mail.png',
+                    'title' => 'Create Dispute'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                )
+            );
         }
-        else {
-            $f3->set('content','home_individual.html');
+        elseif ($account instanceof MediationCentre) {
+            $dashboardActions = array(
+                array(
+                    'href'  => '/register/individual',
+                    'image' => '/ui/images/mail.png',
+                    'title' => 'Register Mediator account'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                )
+            );
         }
+        elseif ($account instanceof Agent) {
+            $dashboardActions = array(
+                array(
+                    'title' => 'Communication'
+                ),
+                array(
+                    'title' => 'Propose Resolution'
+                ),
+                array(
+                    'title' => 'Propose Mediation'
+                ),
+                array(
+                    'title' => 'Renegotiate Dispute Lifespan'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                )
+            );
+        }
+        elseif ($account instanceof Mediator) {
+            $dashboardActions = array(
+                array(
+                    'title' => 'Something'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
+                )
+            );
+        }
+
+        $f3->set('dashboardActions', $dashboardActions);
+        $f3->set('content','dashboard.html');
 
         echo View::instance()->render('layout.html');
     }
@@ -43,7 +126,7 @@ class RouteSession {
         
         if ($validCredentials) {
             Session::create($email, $password);
-            header('Location: /home');
+            header('Location: /dashboard');
         }
         else {
             $f3->set('error_message', 'Invalid login details.');

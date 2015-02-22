@@ -2,11 +2,6 @@
 
 class RouteRegister {
 
-    function testAction ($f3, $args) {//<-- $f3 is the framework instance, $args are the route tokens
-        echo 'yellow';
-        echo isset($args['file']) ? $args['file'] : '';
-    }
-
     function organisationForm ($f3) {
         $f3->set('content','register_organisation.html');
         echo View::instance()->render('layout.html');

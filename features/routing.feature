@@ -22,3 +22,4 @@ Feature: Routing
     Examples:
       | organisation_only_page |
       | /register/individual   |
+      | /disputes/new          |

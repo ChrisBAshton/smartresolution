@@ -1,12 +1,13 @@
 <?php
 require 'functions.php';
+require 'dispute.php';
 require 'register.php';
 require 'session.php';
 
 $routes = array(
     // index pages
     'GET  /'                    => 'RouteSession->index',
-    'GET  /home'                => 'RouteSession->home',
+    'GET  /dashboard'           => 'RouteSession->dashboard',
 
     // session handling
     'GET  /login'               => 'RouteSession->loginForm',
@@ -17,7 +18,11 @@ $routes = array(
     'GET  /register'            => 'RouteRegister->organisationForm',
     'POST /register'            => 'RouteRegister->organisationPost',
     'GET  /register/individual' => 'RouteRegister->individualForm',
-    'POST /register/individual' => 'RouteRegister->individualPost'
+    'POST /register/individual' => 'RouteRegister->individualPost',
+
+    // disputes
+    'GET  /disputes/new'        => 'RouteDispute->newDisputeForm',
+    'POST /disputes/new'        => 'RouteDispute->newDisputePost'
 );
 
 foreach($routes as $request => $handler) {
