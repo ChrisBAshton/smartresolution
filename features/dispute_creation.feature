@@ -2,6 +2,7 @@ Feature: Dispute creation
     Given I am logged into an authorised account
     Then I should be able to create a Dispute
     
+  @clear
   Scenario: Creating a Dispute
     Given I am logged into a Law Firm account
     And I have created at least one Agent account
