@@ -24,11 +24,13 @@
         <label for="dispute_type">Dispute type:</label>
     </div>
     <div class="col-lg-8">
-        <!-- @TODO - populate from installed plugins -->
         <select name="dispute_type" id="dispute_type" class="form-control">
             <option value="---">Select a Dispute type:</option>
-            <option value="mediation_centre">Maritime Collision</option>
-            <option value="mediation_centre">Simple Test</option>
+            <?php
+                foreach($modules as $module) {
+                    echo '<option value="' . $module->key() . '">' . $module->title() . '</option>';
+                }
+            ?>
         </select>
     </div>
 

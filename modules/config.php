@@ -6,6 +6,7 @@
  */
 
 $modules = array(
+    'other'              => true,
     'simple_test'        => true,
     'maritime_collision' => false
 );
