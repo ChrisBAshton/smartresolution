@@ -10,9 +10,9 @@ end
 
 Then(/^I should be able to create a new Dispute$/) do
   visit '/disputes/new'
-  fill_in('title', :with => 'Davies versus Jones')
-  select('Chris Ashton',    :from => 'Agent overseeing Dispute:')
-  select('Other',           :from => 'Dispute type:')
+  fill_in('title',       :with => 'Davies versus Jones')
+  select('Chris Ashton', :from => 'Agent overseeing Dispute:')
+  select('Other',        :from => 'Dispute type:')
   click_button 'Create Dispute'
 
   assert_equal 'http://127.0.0.1:8000/disputes/view/1', current_url
