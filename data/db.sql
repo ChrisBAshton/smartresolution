@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS individuals (
 CREATE TABLE IF NOT EXISTS disputes (
     dispute_id    INTEGER PRIMARY KEY NOT NULL,
     type          VARCHAR(100) NOT NULL,
+    title         VARCHAR(140) NOT NULL,
     law_firm_a    INTEGER NOT NULL,
     agent_a       INTEGER NOT NULL,
     law_firm_b    INTEGER, -- NULL until Agent A has assigned the Dispute to Law Firm B

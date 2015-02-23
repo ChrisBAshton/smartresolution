@@ -69,6 +69,8 @@ class Register {
     /**
      * Gets the value of the given key from the given array, defaulting to the given default value if no value exists. If no default is provided and no value exists, an exception is raised.
      *
+     * @TODO  - move to a helper module, as this is called from Dispute.php too.
+     * 
      * Example:
      *     $arr = array('foo' => 'bar');
      *     $val = getValue($arr, 'foo');        // $val === 'bar'
