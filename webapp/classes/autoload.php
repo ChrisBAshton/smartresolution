@@ -7,6 +7,7 @@ require_once __DIR__ . '/AccountDetails.php';
 require_once __DIR__ . '/AccountInterface.php';
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/Individual.php';
+require_once __DIR__ . '/ModuleController.php';
 require_once __DIR__ . '/Organisation.php';
 require_once __DIR__ . '/Register.php';
 require_once __DIR__ . '/Session.php';
