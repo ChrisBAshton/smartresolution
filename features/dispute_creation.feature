@@ -4,7 +4,13 @@ Feature: Dispute creation
     
   Scenario: Creating a Dispute
     Given I am logged into a Law Firm account
+    And I have created at least one Agent account
     Then I should be able to create a new Dispute
+
+  Scenario: Attempting to create a Dispute with no Agent
+    Given I am logged into a Law Firm account
+    And I have created NO Agent accounts
+    Then I should see the message 'You must create an Agent account before you can create a Dispute!'
 
   # Scenario: Allocating a Dispute to an Agent
   #   Given I have created a Dispute

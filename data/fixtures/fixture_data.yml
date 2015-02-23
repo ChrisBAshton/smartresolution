@@ -21,6 +21,12 @@ organisations:
             forename: John
             surname:  Smith
     - account_details:
+        email:    law_firm_email_with_no_agents
+        password: test
+      details:
+        type:     law_firm
+        name:     Lonely Inc
+    - account_details:
         email:    mediation_centre_email
         password: test
       details:
