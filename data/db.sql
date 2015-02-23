@@ -36,47 +36,18 @@ CREATE TABLE IF NOT EXISTS individuals (
 -- #################################################### Disputes #########
 -- #######################################################################
 
--- CREATE TABLE IF NOT EXISTS disputes (
---     -- rowid
---     company_a INT,
---     company_b INT,
---     agent_a   INT,
---     agent_b   INT,
---     status    VARCHAR(30), -- preparing, in_progress, in_mediation, closed_successfully, closed_unsuccessfully
---     lifespan  INT -- Foreign Key
--- );
-
--- -- ONLY ONE "NEGOTIATING" DISPUTE LIFESPAN CAN BE OPEN AT ANY ONE TIME.
--- CREATE TABLE IF NOT EXISTS dispute_lifespans (
---     -- rowid
---     dispute_id INT, -- foreign key, see disputes table
---     status     VARCHAR(30), -- active, negotiating, inactive (can be inactive when Dispute is closed OR when another lifespan is negotiated and takes precedence) @TODO this can all be inferred from the other fields, so could lead to redundancy. Consider removing this.
---     accepted_by_agent_a BOOLEAN,
---     accepted_by_agent_b BOOLEAN,
---     start_time INT, -- UNIX timestamp
---     end_time   INT, -- UNIX timestamp
---     timestamp  INT  -- UNIX timestamp of when the Lifespan is finally agreed by both Agents - used in deciding which Lifespan takes precedence.
--- );
-
--- CREATE TABLE IF NOT EXISTS chatrooms (
---     -- rowid
---     dispute_id INT,         -- foreign key
---     status     VARCHAR(30), -- active, blocked
---     type       VARCHAR(30)  -- communication, mediation @TODO maybe this should be a separate table
--- );
-
--- -- This model is good because it allows us to add a third person (i.e. the Mediator) to the chatroom, for round-table communication.
--- CREATE TABLE IF NOT EXISTS chatroom_participants (
---     -- rowid,
---     chatroom_id    INT, -- foreign key
---     participant_id INT, -- foreign key relating to account_details.rowid
--- );
-
--- @TODO offers
-
--- #######################################################################
--- #################################################### Mediation ########
--- #######################################################################
-
--- @TODO choosing a Mediation Centre, Mediator, etc. Maybe I can extract the common "negotiation" and syncrhonisation logic into another table? Since this is repeated for choosing mediation centre, mediator, Dispute lifespan, Dispute Resolution propositions, etc.
-
+CREATE TABLE IF NOT EXISTS disputes (
+    dispute_id    INTEGER PRIMARY KEY NOT NULL,
+    type          VARCHAR(100) NOT NULL,
+    law_firm_a    INTEGER NOT NULL,
+    agent_a       INTEGER NOT NULL,
+    law_firm_b    INTEGER, -- NULL until Agent A has assigned the Dispute to Law Firm B
+    agent_b       INTEGER, -- NULL until an Agent has been assigned by Law Firm B
+    lifespan_id   INTEGER, -- NULL until a Lifespan has been negotiated
+    resolution_id INTEGER, -- NULL until resolved
+    mediation_id  INTEGER, -- NULL until in Mediation
+    FOREIGN KEY(law_firm_a) REFERENCES account_details(login_id),
+    FOREIGN KEY(agent_a)    REFERENCES account_details(login_id),
+    FOREIGN KEY(law_firm_a) REFERENCES account_details(login_id),
+    FOREIGN KEY(agent_b)    REFERENCES account_details(login_id)
+);

@@ -12,6 +12,7 @@ function declare_module($config, $moduleDefinitionFunction) {
 }
 
 /**
+ * Subscribes an anonymous function (defined within a module) to a given event.
  * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
  * @param  String     $event    
  * @param  String     $action   
@@ -19,6 +20,23 @@ function declare_module($config, $moduleDefinitionFunction) {
  */
 function on($event, $action, $priority = 'medium') {
     ModuleController::subscribe($event, $action, $priority);
+}
+
+class ModuleController {
+
+    private static $modules = array();
+
+    public static function registerModule($config) {
+        ModuleController::$modules[] = new Module($config);
+    }
+
+    public static function getModules() {
+        return ModuleController::$modules;
+    }
+
+    public static function subscribe($event, $action, $priority) {
+
+    }
 }
 
 class Module {
@@ -39,22 +57,5 @@ class Module {
 
     public function description() {
         return $this->description;
-    }
-}
-
-class ModuleController {
-
-    private static $modules = array();
-
-    public static function registerModule($config) {
-        ModuleController::$modules[] = new Module($config);
-    }
-
-    public static function getModules() {
-        return ModuleController::$modules;
-    }
-
-    public static function subscribe($event, $action, $priority) {
-
     }
 }
