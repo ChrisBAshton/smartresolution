@@ -21,8 +21,10 @@ $routes = array(
     'POST /register/individual' => 'RouteRegister->individualPost',
 
     // disputes
-    'GET  /disputes/new'        => 'RouteDispute->newDisputeForm',
-    'POST /disputes/new'        => 'RouteDispute->newDisputePost'
+    'GET  /disputes/new'             => 'RouteDispute->newDisputeForm',
+    'POST /disputes/new'             => 'RouteDispute->newDisputePost',
+    'GET  /disputes/view'            => 'RouteDispute->viewDisputes',
+    'GET  /disputes/view/@disputeID' => 'RouteDispute->viewDispute'
 );
 
 foreach($routes as $request => $handler) {

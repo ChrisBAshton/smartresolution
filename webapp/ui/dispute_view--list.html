@@ -1,0 +1,9 @@
+<?php
+if (count($disputes) === 0) {
+    echo '<h2>No disputes yet.</h2>';
+}
+else {
+    foreach($disputes as $dispute) {
+        echo '<h2>' . $dispute->getTitle() . '</h2>';
+    }
+}

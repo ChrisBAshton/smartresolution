@@ -24,14 +24,19 @@ class RouteSession {
         if ($account instanceof LawFirm) {
             $dashboardActions = array(
                 array(
-                    'href'  => '/register/individual',
+                    'href'  => '/disputes/view',
                     'image' => '/ui/images/mail.png',
-                    'title' => 'Register Agent account'
+                    'title' => 'View Disputes'
                 ),
                 array(
                     'href'  => '/disputes/new',
                     'image' => '/ui/images/mail.png',
                     'title' => 'Create Dispute'
+                ),
+                array(
+                    'href'  => '/register/individual',
+                    'image' => '/ui/images/mail.png',
+                    'title' => 'Register Agent account'
                 ),
                 array(
                     'title' => 'Something else'
@@ -62,11 +67,19 @@ class RouteSession {
                 ),
                 array(
                     'title' => 'Something else'
+                ),
+                array(
+                    'title' => 'Something else'
                 )
             );
         }
         elseif ($account instanceof Agent) {
             $dashboardActions = array(
+                array(
+                    'href'  => '/disputes/view',
+                    'image' => '/ui/images/mail.png',
+                    'title' => 'View Disputes'
+                ),
                 array(
                     'title' => 'Communication'
                 ),
@@ -81,9 +94,6 @@ class RouteSession {
                 ),
                 array(
                     'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
                 )
             );
         }
@@ -91,6 +101,9 @@ class RouteSession {
             $dashboardActions = array(
                 array(
                     'title' => 'Something'
+                ),
+                array(
+                    'title' => 'Something else'
                 ),
                 array(
                     'title' => 'Something else'

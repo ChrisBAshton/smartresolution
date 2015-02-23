@@ -17,6 +17,7 @@ else {
     Database::setEnvironment('production');
 }
 
+require __DIR__ . '/../modules/config.php';
 require __DIR__ . '/routes/autoload.php';
 
 $f3->run();
