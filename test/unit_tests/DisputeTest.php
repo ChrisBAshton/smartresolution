@@ -20,7 +20,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
             'title'      => 'Smith versus Jones'
         ));
 
-        $this->assertTrue(is_int($disputeId));
+        $this->assertTrue($disputeId instanceof Dispute);
     }
 
     /**

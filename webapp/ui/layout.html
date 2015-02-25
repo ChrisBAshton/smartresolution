@@ -10,12 +10,27 @@
 	</head>
 	<body>
 		<header class="container">
-			<div class="col-sm-6">
+			<div class="col-sm-4">
 			    <a href="/"><img class="logo" src="ui/images/logo.png"></a>
 			    Alpha version <?php //echo $VERSION; ?>
 			</div>
 
-		    <div class="col-sm-6 alignright">
+		    <div class="col-sm-4">
+				<p>
+					<?php
+						if (isset($notifications)) {
+							if (count($notifications) > 0) {
+								echo 'You have <a href="/notifications">' . count($notifications) . ' new notifications</a>.';
+							}
+							else {
+								echo 'No new notifications.';
+							}
+						}
+					?>
+				</p>
+			</div>
+
+		    <div class="col-sm-4 alignright">
 				<p>
 					<?php
 						if (isset($account)) {

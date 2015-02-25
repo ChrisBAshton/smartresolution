@@ -1,6 +1,8 @@
 <?php
 require 'functions.php';
 require 'dispute.php';
+require 'notifications.php';
+require 'on_each_page_load.php';
 require 'register.php';
 require 'session.php';
 
@@ -24,7 +26,10 @@ $routes = array(
     'GET  /disputes/new'             => 'RouteDispute->newDisputeForm',
     'POST /disputes/new'             => 'RouteDispute->newDisputePost',
     'GET  /disputes/view'            => 'RouteDispute->viewDisputes',
-    'GET  /disputes/view/@disputeID' => 'RouteDispute->viewDispute'
+    'GET  /disputes/view/@disputeID' => 'RouteDispute->viewDispute',
+
+    // notifications
+    'GET /notifications' => 'notificationsList'
 );
 
 foreach($routes as $request => $handler) {

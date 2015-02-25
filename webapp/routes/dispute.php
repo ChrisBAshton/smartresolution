@@ -32,14 +32,20 @@ class RouteDispute {
         }
         else {
             try {
-                $disputeId = Dispute::create(array(
+                $dispute = Dispute::create(array(
                     'title'      => $title,
                     'law_firm_a' => $f3->get('account')->getLoginId(),
                     'agent_a'    => $agent,
                     'type'       => $type
                 ));
 
-                header('Location: /disputes/view/' . $disputeId);
+                Notification::create(array(
+                    'recipient_id' => $agent,
+                    'message'      => 'A new dispute has been assigned to you.',
+                    'url'          => $dispute->getUrl()
+                ));
+
+                header('Location: ' . $dispute->getUrl());
             } catch(Exception $e) {
                 $f3->set('error_message', $e->getMessage());
             }
