@@ -15,11 +15,6 @@ Feature: Dispute creation
     And I have created NO Agent accounts
     Then I should see the message 'You must create an Agent account before you can create a Dispute!'
 
-  Scenario: Being notified of a Dispute
-    Given I am logged into an Agent account
-    When a Dispute has been assigned to me
-    Then I should get a notification about the Dispute
-
   # Scenario: Submitting a Dispute
   #   Given a Dispute has been assigned to me # by my Law Firm, regardless of who instigated the Dispute
   #   When I write a Dispute summary

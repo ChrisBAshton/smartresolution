@@ -36,7 +36,7 @@ end
 
 Then(/^I should be logged into the system$/) do
   page.driver.save_screenshot 'features/screenshots/login_success--after.jpg'
-  assert_equal 'http://127.0.0.1:8000/dashboard', current_url
+  assert_equal '/dashboard', get_current_uri_path
 end
 
 When(/^I attempt to log in with invalid credentials$/) do
@@ -75,7 +75,7 @@ And(/^I should be able to log into that account$/) do
   fill_in 'Email', :with => 'agent_email@email.com'
   fill_in 'Password', :with => 'test'
   click_button 'Login'
-  assert_equal 'http://127.0.0.1:8000/dashboard', current_url
+  assert_equal '/dashboard', get_current_uri_path
   assert page.has_content?('Welcome back, Chris Ashton.')
 end
 

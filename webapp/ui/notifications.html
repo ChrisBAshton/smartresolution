@@ -6,6 +6,6 @@ if (count($notifications) === 0) {
 }
 else {
     foreach($notifications as $notification) {
-        echo '<p><a href="' . $notification->getUrl() . '?mark_notification_as_read=' . $notification->getNotificationId() . '">' . $notification->getMessage() . '</a></p>';
+        echo '<p><a class="notification__link" href="' . $notification->getUrl() . '?mark_notification_as_read=' . $notification->getNotificationId() . '">' . $notification->getMessage() . '</a></p>';
     }
 }

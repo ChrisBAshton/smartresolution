@@ -15,22 +15,6 @@ Then(/^I should be able to create a new Dispute$/) do
   select('Other',        :from => 'Dispute type:')
   click_button 'Create Dispute'
 
-  assert_equal 'http://127.0.0.1:8000/disputes/view/1', current_url
+  assert_equal '/disputes/view/2', get_current_uri_path # 2 because we've already defined 1 in the YAML fixture data
   assert page.has_content?('Davies versus Jones')
-end
-
-Then(/^the Agent should be allocated to that Dispute$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-Given(/^I am logged into an Agent account$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-When(/^a Dispute has been assigned to me$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then(/^I should get a notification about the Dispute$/) do
-  pending # express the regexp above with the code you wish you had
 end
