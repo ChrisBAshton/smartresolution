@@ -121,6 +121,13 @@ class RouteDispute {
         }
         else {
             $dispute->setAgentB((int) $agent);
+
+            Notification::create(array(
+                'recipient_id' => $agent,
+                'message'      => 'A new dispute has been assigned to you.',
+                'url'          => $dispute->getUrl()
+            ));
+
             header('Location: ' . $dispute->getUrl());
         }
     }

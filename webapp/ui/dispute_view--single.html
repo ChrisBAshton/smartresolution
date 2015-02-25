@@ -2,11 +2,13 @@
 
 <h2><?php echo $dispute->getTitle(); ?></h2>
 
-<p>
-    Initiatiated by company: <?php echo $dispute->getLawFirmA()->getName(); ?>, represented by <?php echo $dispute->getAgentA()->getName(); ?>
-</p>
-<p>
-    Initiated against company: <?php echo $dispute->getLawFirmB()->getName(); ?>, represented by <?php echo $dispute->getAgentB()->getName(); ?>
-</p>
+<?php if (!$dispute->waitingForLawFirmB()) : ?>
+    <p>
+        Initiatiated by company: <?php echo $dispute->getLawFirmA()->getName(); ?>, represented by <?php echo $dispute->getAgentA()->getName(); ?>
+    </p>
+    <p>
+        Initiated against company: <?php echo $dispute->getLawFirmB()->getName(); ?>, represented by <?php echo $dispute->getAgentB()->getName(); ?>
+    </p>
+<?php endif; ?>
 
 <?php echo $this->render('dashboard.html'); ?>
