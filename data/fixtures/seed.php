@@ -29,3 +29,18 @@ foreach($data['organisations'] as $org) {
         }
     }
 }
+
+foreach($data['disputes'] as $dataItem) {
+    $dispute = Dispute::create(array(
+        'title'      => $dataItem['title'],
+        'law_firm_a' => AccountDetails::emailToId($dataItem['law_firm_a']),
+        'agent_a'    => AccountDetails::emailToId($dataItem['agent_a']),
+        'type'       => $dataItem['type']
+    ));
+
+    Notification::create(array(
+        'recipient_id' => AccountDetails::emailToId($dataItem['agent_a']),
+        'message'      => 'A notification should be made when a dispute is created and assigned to an Agent',
+        'url'          => $dispute->getUrl()
+    ));
+}

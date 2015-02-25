@@ -1,9 +1,11 @@
+<h1>Disputes</h1>
+
 <?php
 if (count($disputes) === 0) {
-    echo '<h2>No disputes yet.</h2>';
+    echo '<p class="bg-padded bg-info">No disputes yet.</p>';
 }
 else {
     foreach($disputes as $dispute) {
-        echo '<h2>' . $dispute->getTitle() . '</h2>';
+        echo '<p><a href="' . $dispute->getUrl() . '">' . $dispute->getTitle() . '</a></p>';
     }
 }

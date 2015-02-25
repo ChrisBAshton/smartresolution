@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../webapp/classes/autoload.php';
 
 class AccountDetailsTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp() {
+    public static function setUpBeforeClass() {
         Database::setEnvironment('test');
         Database::clear();
     }

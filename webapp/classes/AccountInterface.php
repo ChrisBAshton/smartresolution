@@ -6,5 +6,6 @@ interface AccountInterface {
     public function getLoginId();
     public function getEmail();
     public function getName();
+    public function getNotifications();
     
 }

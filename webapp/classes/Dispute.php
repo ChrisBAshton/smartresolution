@@ -4,13 +4,19 @@ class Dispute {
 
     function __construct($disputeID) {
         $dispute = Database::instance()->exec('SELECT * FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID));
+
         if (count($dispute) !== 1) {
-            throw new Exception("Something went wrong. Please contact an admin.");
+            throw new Exception("The dispute you are trying to view does not exist.");
         }
         else {
-            $dispute = $dispute[0];
-            $this->title = $dispute['title'];
+            $dispute         = $dispute[0];
+            $this->disputeId = (int) $dispute['dispute_id'];
+            $this->title     = $dispute['title'];
         }
+    }
+
+    public function getDisputeId() {
+        return $this->disputeId;
     }
 
     public function getTitle() {
@@ -18,12 +24,24 @@ class Dispute {
     }
 
     public function canBeViewedBy($loginID) {
-        return true; // @TODO
+        $viewableDisputes = Dispute::getAllDisputesConcerning($loginID);
+
+        foreach($viewableDisputes as $dispute) {
+            if ($dispute->getDisputeId() === $this->getDisputeId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getUrl() {
+        return '/disputes/view/' . $this->getDisputeId();
     }
 
     public static function getAllDisputesConcerning($loginID) {
         $disputes = array();
-        $disputesDetails = Database::instance()->exec('SELECT dispute_id FROM disputes WHERE law_firm_a = :login_id OR agent_a = :login_id OR law_firm_b = :login_id OR agent_b = :login_id', array(':login_id' => $loginID));
+        $disputesDetails = Database::instance()->exec('SELECT dispute_id FROM disputes WHERE law_firm_a = :login_id OR agent_a = :login_id OR law_firm_b = :login_id OR agent_b = :login_id ORDER BY dispute_id DESC', array(':login_id' => $loginID));
         foreach($disputesDetails as $dispute) {
             $disputes[] = new Dispute($dispute['dispute_id']);
         }
@@ -58,7 +76,7 @@ class Dispute {
         }
         else {
             $db->commit();
-            return (int) $newDispute['dispute_id'];
+            return new Dispute((int) $newDispute['dispute_id']);
         }
     }
 

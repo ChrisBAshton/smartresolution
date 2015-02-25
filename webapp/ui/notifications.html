@@ -1,0 +1,11 @@
+<h1>Notifications</h1>
+
+<?php
+if (count($notifications) === 0) {
+    echo '<p class="bg-padded bg-info">You have no new notifications.</p>';
+}
+else {
+    foreach($notifications as $notification) {
+        echo '<p><a class="notification__link" href="' . $notification->getUrl() . '?mark_notification_as_read=' . $notification->getNotificationId() . '">' . $notification->getMessage() . '</a></p>';
+    }
+}

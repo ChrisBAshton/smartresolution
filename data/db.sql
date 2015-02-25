@@ -52,3 +52,16 @@ CREATE TABLE IF NOT EXISTS disputes (
     FOREIGN KEY(law_firm_a) REFERENCES account_details(login_id),
     FOREIGN KEY(agent_b)    REFERENCES account_details(login_id)
 );
+
+-- #######################################################################
+-- #################################################### Miscellaneous ####
+-- #######################################################################
+
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id INTEGER PRIMARY KEY NOT NULL,
+    recipient_id    INTEGER NOT NULL,
+    message         VARCHAR(300) NOT NULL,
+    url             VARCHAR(300) NOT NULL,
+    read            BOOLEAN DEFAULT false,
+    FOREIGN KEY(recipient_id) REFERENCES account_details(login_id)
+);

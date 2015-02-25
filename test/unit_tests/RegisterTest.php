@@ -5,7 +5,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
 {
     private $db;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         Database::setEnvironment('test');
         Database::clear();
@@ -96,6 +96,8 @@ class RegisterTest extends PHPUnit_Framework_TestCase
 
     public function testRegisterOrganisation()
     {
+        Database::setEnvironment('test');
+        Database::clear();
         Register::organisation(array(
             'email'       => 'cba12@aber.ac.uk',
             'password'    => 'test',
@@ -107,6 +109,8 @@ class RegisterTest extends PHPUnit_Framework_TestCase
 
     public function testRegisterIndividual()
     {
+        Database::setEnvironment('test');
+        Database::clear();
         Register::individual(array(
             'email'           => 'cba12@aber.ac.uk',
             'password'        => 'test',

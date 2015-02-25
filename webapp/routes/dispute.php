@@ -32,14 +32,20 @@ class RouteDispute {
         }
         else {
             try {
-                $disputeId = Dispute::create(array(
+                $dispute = Dispute::create(array(
                     'title'      => $title,
                     'law_firm_a' => $f3->get('account')->getLoginId(),
                     'agent_a'    => $agent,
                     'type'       => $type
                 ));
 
-                header('Location: /disputes/view/' . $disputeId);
+                Notification::create(array(
+                    'recipient_id' => $agent,
+                    'message'      => 'A new dispute has been assigned to you.',
+                    'url'          => $dispute->getUrl()
+                ));
+
+                header('Location: ' . $dispute->getUrl());
             } catch(Exception $e) {
                 $f3->set('error_message', $e->getMessage());
             }
@@ -50,16 +56,21 @@ class RouteDispute {
 
     function viewDispute ($f3, $params) {
         mustBeLoggedIn();
-        $disputeID = (int)$params['disputeID'];
-        $dispute = new Dispute($disputeID);
+        try {
+            $disputeID = (int)$params['disputeID'];
+            $dispute = new Dispute($disputeID); // if dispute does not exist, throws exception
 
-        if (!$dispute->canBeViewedBy($f3->get('account')->getLoginId())) {
-            errorPage('You do not have permission to view this Dispute!');
+            if (!$dispute->canBeViewedBy($f3->get('account')->getLoginId())) {
+                throw new Exception('You do not have permission to view this Dispute!');
+            }
+            else {
+                $f3->set('dispute', $dispute);
+                $f3->set('content', 'dispute_view--single.html');
+                echo View::instance()->render('layout.html');
+            }
         }
-        else {
-            $f3->set('dispute', $dispute);
-            $f3->set('content', 'dispute_view--single.html');
-            echo View::instance()->render('layout.html');
+        catch(Exception $e) {
+            errorPage($e->getMessage());
         }
     }
 
