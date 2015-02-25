@@ -56,16 +56,21 @@ class RouteDispute {
 
     function viewDispute ($f3, $params) {
         mustBeLoggedIn();
-        $disputeID = (int)$params['disputeID'];
-        $dispute = new Dispute($disputeID);
+        try {
+            $disputeID = (int)$params['disputeID'];
+            $dispute = new Dispute($disputeID); // if dispute does not exist, throws exception
 
-        if (!$dispute->canBeViewedBy($f3->get('account')->getLoginId())) {
-            errorPage('You do not have permission to view this Dispute!');
+            if (!$dispute->canBeViewedBy($f3->get('account')->getLoginId())) {
+                throw new Exception('You do not have permission to view this Dispute!');
+            }
+            else {
+                $f3->set('dispute', $dispute);
+                $f3->set('content', 'dispute_view--single.html');
+                echo View::instance()->render('layout.html');
+            }
         }
-        else {
-            $f3->set('dispute', $dispute);
-            $f3->set('content', 'dispute_view--single.html');
-            echo View::instance()->render('layout.html');
+        catch(Exception $e) {
+            errorPage($e->getMessage());
         }
     }
 

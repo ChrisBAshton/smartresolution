@@ -18,3 +18,15 @@ Then(/^I should be able to create a new Dispute$/) do
   assert_equal '/disputes/view/2', get_current_uri_path # 2 because we've already defined 1 in the YAML fixture data
   assert page.has_content?('Davies versus Jones')
 end
+
+When(/^I try to view a Dispute I've not been allocated to yet$/) do
+  visit '/disputes/view/1'
+end
+
+When(/^I try to view a Dispute that does not exist$/) do
+  visit '/disputes/view/1337'
+end
+
+Then(/^I should see the following message: '(.+)'$/) do |message|
+  assert page.has_content?(message)
+end

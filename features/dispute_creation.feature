@@ -15,6 +15,16 @@ Feature: Dispute creation
     And I have created NO Agent accounts
     Then I should see the message 'You must create an Agent account before you can create a Dispute!'
 
+  Scenario: Trying to view a dispute I shouldn't have access to
+    Given I am logged into a Mediation Centre account
+    When I try to view a Dispute I've not been allocated to yet
+    Then I should see the following message: 'You do not have permission to view this Dispute!'
+  
+  Scenario: Trying to view a dispute that does not exist
+    Given I am logged into a Law Firm account
+    When I try to view a Dispute that does not exist
+    Then I should see the following message: 'The dispute you are trying to view does not exist.'
+
   # Scenario: Submitting a Dispute
   #   Given a Dispute has been assigned to me # by my Law Firm, regardless of who instigated the Dispute
   #   When I write a Dispute summary

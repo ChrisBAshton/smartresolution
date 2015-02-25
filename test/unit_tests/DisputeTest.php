@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../webapp/classes/autoload.php';
 
 class DisputeTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp() {
+    public static function setUpBeforeClass() {
         Database::setEnvironment('test');
         Database::clear();
     }
@@ -13,14 +13,31 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $lawFirm = AccountDetails::emailToId('law_firm_email');
         $agent   = AccountDetails::emailToId('agent_email');
 
-        $disputeId = Dispute::create(array(
+        $dispute = Dispute::create(array(
             'law_firm_a' => $lawFirm,
             'agent_a'    => $agent,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
         ));
 
-        $this->assertTrue($disputeId instanceof Dispute);
+        $this->assertTrue($dispute instanceof Dispute);
+    }
+
+    public function testDisputeAuthorisation() {
+        
+        $lawFirm = AccountDetails::emailToId('law_firm_email');
+        $agent   = AccountDetails::emailToId('agent_email');
+
+        $dispute = Dispute::create(array(
+            'law_firm_a' => $lawFirm,
+            'agent_a'    => $agent,
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
+
+        $this->assertTrue($dispute->canBeViewedBy($lawFirm));
+        $this->assertTrue($dispute->canBeViewedBy($agent));
+        $this->assertFalse($dispute->canBeViewedBy(1337));
     }
 
     /**

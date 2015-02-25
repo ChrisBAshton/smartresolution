@@ -4,12 +4,13 @@ class Dispute {
 
     function __construct($disputeID) {
         $dispute = Database::instance()->exec('SELECT * FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID));
+
         if (count($dispute) !== 1) {
-            throw new Exception("Something went wrong. Please contact an admin.");
+            throw new Exception("The dispute you are trying to view does not exist.");
         }
         else {
             $dispute         = $dispute[0];
-            $this->disputeId = $dispute['dispute_id'];
+            $this->disputeId = (int) $dispute['dispute_id'];
             $this->title     = $dispute['title'];
         }
     }
@@ -23,7 +24,15 @@ class Dispute {
     }
 
     public function canBeViewedBy($loginID) {
-        return true; // @TODO
+        $viewableDisputes = Dispute::getAllDisputesConcerning($loginID);
+
+        foreach($viewableDisputes as $dispute) {
+            if ($dispute->getDisputeId() === $this->getDisputeId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getUrl() {
