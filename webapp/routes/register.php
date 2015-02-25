@@ -2,7 +2,7 @@
 
 class RouteRegister {
 
-    function organisationForm ($f3) {
+    function organisationGet ($f3) {
         $f3->set('content','register_organisation.html');
         echo View::instance()->render('layout.html');
     }
@@ -35,7 +35,7 @@ class RouteRegister {
         echo View::instance()->render('layout.html');
     }
 
-    function individualForm ($f3) {
+    function individualGet ($f3) {
         mustBeLoggedInAsAnOrganisation();
         $f3->set('content','register_individual.html');
         echo View::instance()->render('layout.html');

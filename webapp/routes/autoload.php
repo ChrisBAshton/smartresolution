@@ -12,21 +12,27 @@ $routes = array(
     'GET  /dashboard'           => 'RouteSession->dashboard',
 
     // session handling
-    'GET  /login'               => 'RouteSession->loginForm',
+    'GET  /login'               => 'RouteSession->loginGet',
     'POST /login'               => 'RouteSession->loginPost',
     'GET  /logout'              => 'RouteSession->logout',
 
     // individual and organisation registration
-    'GET  /register'            => 'RouteRegister->organisationForm',
+    'GET  /register'            => 'RouteRegister->organisationGet',
     'POST /register'            => 'RouteRegister->organisationPost',
-    'GET  /register/individual' => 'RouteRegister->individualForm',
+    'GET  /register/individual' => 'RouteRegister->individualGet',
     'POST /register/individual' => 'RouteRegister->individualPost',
 
     // disputes
-    'GET  /disputes/new'             => 'RouteDispute->newDisputeForm',
-    'POST /disputes/new'             => 'RouteDispute->newDisputePost',
-    'GET  /disputes/view'            => 'RouteDispute->viewDisputes',
-    'GET  /disputes/view/@disputeID' => 'RouteDispute->viewDispute',
+    'GET  /disputes/new'               => 'RouteDispute->newDisputeGet',
+    'POST /disputes/new'               => 'RouteDispute->newDisputePost',
+    'GET  /disputes'                   => 'RouteDispute->viewDisputes',
+    'GET  /disputes/@disputeID'        => 'RouteDispute->viewDispute',
+    'GET  /disputes/@disputeID/open'   => 'RouteDispute->openDisputeGet',
+    'POST /disputes/@disputeID/open'   => 'RouteDispute->openDisputePost',
+    'GET  /disputes/@disputeID/assign' => 'RouteDispute->assignDisputeGet',
+    'POST /disputes/@disputeID/assign' => 'RouteDispute->assignDisputePost',
+    'GET  /disputes/@disputeID/close'  => 'RouteDispute->closeDisputeGet',
+    'POST /disputes/@disputeID/close'  => 'RouteDispute->closeDisputePost',
 
     // notifications
     'GET /notifications' => 'notificationsList'

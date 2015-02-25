@@ -1,6 +1,8 @@
-<p>
-    <strong>Hello</strong>. Your account type is: <?php echo get_class($account); ?>.
-</p>
+<?php
+    if (isset($status)) {
+        echo '<p class="' . $status['class'] . '">' . $status['message'] . '</p>';
+    }
+?>
 
 <div class="row">
     <?php

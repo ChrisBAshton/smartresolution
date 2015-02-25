@@ -45,6 +45,35 @@
 		</header>
 
 		<div class="container">
+			<?php
+				$breadcrumbs = array();
+
+				$urlParts = explode('/', $_SERVER['REQUEST_URI']);
+				$i = 1;
+				$url = '';
+				foreach($urlParts as $part){
+					if (strlen($part) > 0) {
+						$url = $url . '/' . $part;
+						if ($i < count($urlParts)) {
+							$breadcrumbs[] = array(
+								'url'   => $url,
+								'title' => ucfirst($part)
+							);
+						}
+						$i++;
+					}
+				}
+
+				if (count($breadcrumbs) > 0) {
+					echo '<a href="/">Home</a>';
+				}
+				foreach($breadcrumbs as $crumb) {
+					echo ' / <a href="' . $crumb['url'] .'">' . $crumb['title'] . '</a>';
+				}
+			?>
+		</div>
+
+		<div class="container">
 			<?php echo $this->render(Base::instance()->get('content')); ?>
 		</div>
 
