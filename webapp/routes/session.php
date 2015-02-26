@@ -24,7 +24,7 @@ class RouteSession {
         if ($account instanceof LawFirm) {
             $dashboardActions = array(
                 array(
-                    'href'  => '/disputes/view',
+                    'href'  => '/disputes',
                     'image' => '/ui/images/mail.png',
                     'title' => 'View Disputes'
                 ),
@@ -76,7 +76,7 @@ class RouteSession {
         elseif ($account instanceof Agent) {
             $dashboardActions = array(
                 array(
-                    'href'  => '/disputes/view',
+                    'href'  => '/disputes',
                     'image' => '/ui/images/mail.png',
                     'title' => 'View Disputes'
                 ),
@@ -126,7 +126,7 @@ class RouteSession {
         echo View::instance()->render('layout.html');
     }
 
-    function loginForm ($f3) {
+    function loginGet ($f3) {
         $f3->set('user_email', Session::lastKnownEmail());
         $f3->set('content','login.html');
         echo View::instance()->render('layout.html');

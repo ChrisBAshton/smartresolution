@@ -3,6 +3,10 @@
 class Dispute {
 
     function __construct($disputeID) {
+        $this->setVariables($disputeID);
+    }
+
+    private function setVariables($disputeID) {
         $dispute = Database::instance()->exec('SELECT * FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID));
 
         if (count($dispute) !== 1) {
@@ -11,8 +15,74 @@ class Dispute {
         else {
             $dispute         = $dispute[0];
             $this->disputeId = (int) $dispute['dispute_id'];
+            $this->lawFirmA  = (int) $dispute['law_firm_a'];
+            $this->lawFirmB  = (int) $dispute['law_firm_b'];
+            $this->agentA    = (int) $dispute['agent_a'];
+            $this->agentB    = (int) $dispute['agent_b'];
             $this->title     = $dispute['title'];
         }
+    }
+
+    public function setLawFirmB($loginID) {
+        $this->updateField('law_firm_b', $loginID);
+    }
+
+    public function getAgentA() {
+        return new Agent($this->getAgentAId());
+    }
+
+    public function getAgentB() {
+        return new Agent($this->getAgentBId());
+    }
+
+    public function getAgentAId() {
+        return $this->agentA;
+    }
+
+    public function getAgentBId() {
+        return $this->agentB;
+    }
+
+    public function setAgentB($loginID) {
+        $this->updateField('agent_b', $loginID);
+    }
+
+    private function updateField($key, $value) {
+        Database::instance()->exec('UPDATE disputes SET ' . $key . ' = :new_value WHERE dispute_id = :dispute_id',
+            array(
+                ':new_value' => $value,
+                'dispute_id' => $this->getDisputeId()
+            )
+        );
+        $this->setVariables($this->getDisputeId());
+    }
+
+    public function waitingForLawFirmB() {
+        return $this->agentB === 0 && Session::getAccount() !== $this->getLawFirmBId();
+    }
+
+    public function getLawFirmA() {
+        return new LawFirm($this->getLawFirmAId());
+    }
+
+    public function getLawFirmB() {
+        return new LawFirm($this->getLawFirmBId());
+    }
+
+    public function getLawFirmAId() {
+        return $this->lawFirmA;
+    }
+
+    public function getLawFirmBId() {
+        return $this->lawFirmB;
+    }
+
+    public function hasNotBeenOpened() {
+        return !$this->hasBeenOpened();
+    }
+
+    public function hasBeenOpened() {
+        return $this->lawFirmA > 0 && $this->lawFirmB > 0;
     }
 
     public function getDisputeId() {
@@ -36,7 +106,7 @@ class Dispute {
     }
 
     public function getUrl() {
-        return '/disputes/view/' . $this->getDisputeId();
+        return '/disputes/' . $this->getDisputeId();
     }
 
     public static function getAllDisputesConcerning($loginID) {

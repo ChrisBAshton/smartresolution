@@ -25,6 +25,6 @@ Then(/^the notification should be marked as read$/) do
 end
 
 Then(/^the URL should be clean, with no notification parameters$/) do
-  assert_equal '/disputes/view/1', get_current_uri_path
+  assert_equal '/disputes/1', get_current_uri_path
   assert_nil get_current_uri_params
 end

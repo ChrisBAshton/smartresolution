@@ -3,17 +3,26 @@
 function mustBeLoggedIn() {
     if (Session::loggedIn()) {
         global $f3;
-        $f3->set('account', Session::getAccount());
+        $account = Session::getAccount();
+        $f3->set('account', $account);
     }
     else {
         errorPage('You do not have permission to see this page. Please log in first.');
     }
+    return $account;
 }
 
 function mustBeLoggedInAsAnOrganisation() {
     mustBeLoggedIn();
     if ( ! (Session::getAccount() instanceof Organisation) ) {
         errorPage('You do not have permission to see this page. You must be logged into an Organisation account.');
+    }
+}
+
+function mustBeLoggedInAsAnIndividual() {
+    mustBeLoggedIn();
+    if ( ! (Session::getAccount() instanceof Individual) ) {
+        errorPage('You do not have permission to see this page. You must be logged into an Individual account.');
     }
 }
 

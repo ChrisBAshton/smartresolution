@@ -4,11 +4,9 @@ require_once __DIR__ . '/autoload.php';
 class AccountDetails {
 
     /**
-     * @TODO - instantiate specific types
-     * 
      * Returns an object that implements the AccountInterface interface, populating it with data retrieved from the database that corresponds to the given email. Calls getDetailsByEmail internally.
      * 
-     * @param  String $email The email address.
+     * @param  String $email The email address associated with the account.
      * @return Object        Either an Organisation or Individual type object, or one of their subclasses.
      */
     public static function getAccountFromDatabase($email) {
@@ -37,7 +35,7 @@ class AccountDetails {
      * @param  String $email
      * @return Array
      */
-    private static function getDetailsByEmail($email) {
+    public static function getDetailsByEmail($email) {
         $individual = Database::instance()->exec(
             'SELECT * FROM account_details INNER JOIN individuals ON account_details.login_id = individuals.login_id WHERE email = :email',
             array(
@@ -60,6 +58,31 @@ class AccountDetails {
         else {
             return false;
         }        
+    }
+
+    public static function getDetailsById($id) {
+        $individual = Database::instance()->exec(
+            'SELECT * FROM account_details INNER JOIN individuals ON account_details.login_id = individuals.login_id WHERE account_details.login_id = :id',
+            array(
+                ':id' => $id
+            )
+        );
+        $organisation = Database::instance()->exec(
+            'SELECT * FROM account_details INNER JOIN organisations ON account_details.login_id = organisations.login_id WHERE account_details.login_id = :id',
+            array(
+                ':id' => $id
+            )
+        );
+
+        if (count($individual) === 1) {
+            return $individual[0];
+        }
+        else if (count($organisation) === 1) {
+            return $organisation[0];
+        }
+        else {
+            return false;
+        }          
     }
 
     /**
