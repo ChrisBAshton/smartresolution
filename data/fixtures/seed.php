@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../../webapp/classes/autoload.php';
+require __DIR__ . '/../../webapp/autoload.php';
 Database::setEnvironment('test');
 
 use Symfony\Component\Yaml\Parser;

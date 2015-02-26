@@ -1,9 +1,8 @@
 <?php
-require_once __DIR__ . '/classes/autoload.php';
+require_once __DIR__ . '/autoload.php';
 
 $f3 = \Base::instance();
 $f3->config('config.ini');
-$f3->set('DEBUG',1);
 
 // support for Cucumber features
 if ($f3->get('AGENT') === 'Poltergeist--clear') {
@@ -18,6 +17,7 @@ else {
 }
 
 require __DIR__ . '/../modules/config.php';
-require __DIR__ . '/routes/autoload.php';
+require __DIR__ . '/on_each_page_load.php';
+require __DIR__ . '/routes.php';
 
 $f3->run();

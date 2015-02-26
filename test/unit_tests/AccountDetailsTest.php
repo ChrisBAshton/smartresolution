@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../webapp/classes/autoload.php';
+require_once __DIR__ . '/../../webapp/autoload.php';
 
 class AccountDetailsTest extends PHPUnit_Framework_TestCase
 {
