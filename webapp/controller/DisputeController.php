@@ -1,6 +1,6 @@
 <?php
 
-class RouteDispute {
+class DisputeController {
 
     function newDisputeGet ($f3) {
         mustBeLoggedInAsAnOrganisation();

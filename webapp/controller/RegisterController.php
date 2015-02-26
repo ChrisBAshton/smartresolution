@@ -1,6 +1,6 @@
 <?php
 
-class RouteRegister {
+class RegisterController {
 
     function organisationGet ($f3) {
         $f3->set('content','register_organisation.html');

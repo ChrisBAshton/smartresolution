@@ -1,6 +1,6 @@
 <?php
 
-class RouteSession {
+class SessionController {
 
     function index ($f3) {
         if (Session::loggedIn()) {
@@ -25,17 +25,17 @@ class RouteSession {
             $dashboardActions = array(
                 array(
                     'href'  => '/disputes',
-                    'image' => '/ui/images/mail.png',
+                    'image' => '/view/images/mail.png',
                     'title' => 'View Disputes'
                 ),
                 array(
                     'href'  => '/disputes/new',
-                    'image' => '/ui/images/mail.png',
+                    'image' => '/view/images/mail.png',
                     'title' => 'Create Dispute'
                 ),
                 array(
                     'href'  => '/register/individual',
-                    'image' => '/ui/images/mail.png',
+                    'image' => '/view/images/mail.png',
                     'title' => 'Register Agent account'
                 ),
                 array(
@@ -53,7 +53,7 @@ class RouteSession {
             $dashboardActions = array(
                 array(
                     'href'  => '/register/individual',
-                    'image' => '/ui/images/mail.png',
+                    'image' => '/view/images/mail.png',
                     'title' => 'Register Mediator account'
                 ),
                 array(
@@ -77,7 +77,7 @@ class RouteSession {
             $dashboardActions = array(
                 array(
                     'href'  => '/disputes',
-                    'image' => '/ui/images/mail.png',
+                    'image' => '/view/images/mail.png',
                     'title' => 'View Disputes'
                 ),
                 array(

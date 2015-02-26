@@ -8,7 +8,7 @@
     <?php
         foreach(Base::instance()->get('dashboardActions') as $action) :
             $action['href']  = isset($action['href'])  ? $action['href']  : '.'; 
-            $action['image'] = isset($action['image']) ? $action['image'] : '/ui/images/mail.png';
+            $action['image'] = isset($action['image']) ? $action['image'] : '/view/images/mail.png';
     ?>
         <div class="col-sm-4 dispute__option">
             <a href="<?php echo $action['href']; ?>">
