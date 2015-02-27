@@ -31,17 +31,19 @@ Then(/^I should see the following message: '(.+)'$/) do |message|
   assert page.has_content?(message)
 end
 
-Given(/^I have submitted a Dispute$/) do
-  visit '/logout'
-  visit '/login'
-  login_with_credentials 'agent_email', 'test'
-end
-
-Then(/^I should be able to initiate it against another Law Firm$/) do
+def open_dispute
   visit '/disputes/1/open'
   select('Maritime Collision Specialists Inc', :from => 'Select the opposing company:')
   click_button 'Open Dispute'
   assert page.has_content?('You are waiting for Maritime Collision Specialists Inc to assign an agent to the dispute.')
+end
+
+Given(/^I have submitted a Dispute$/) do
+  login_as_agent
+end
+
+Then(/^I should be able to initiate it against another Law Firm$/) do
+  open_dispute
 end
 
 And(/^I shouldn't be able to reinitiate it against a different Law Firm$/) do
@@ -50,13 +52,20 @@ And(/^I shouldn't be able to reinitiate it against a different Law Firm$/) do
 end
 
 Given(/^a Dispute has been initiated against my Law Firm$/) do
-  pending # express the regexp above with the code you wish you had
+  login_as_agent
+  open_dispute # against company B. Then login as company B
+  clear_session_before_login
+  login_with_credentials 'another_law_firm_email', 'test'
 end
 
 Given(/^I have created an Agent$/) do
-  pending # express the regexp above with the code you wish you had
+  # covered in the YAML fixtures
 end
 
 Then(/^I should be able to allocate the Agent to the Dispute$/) do
-  pending # express the regexp above with the code you wish you had
+  visit '/disputes/1/assign'
+  select('James Smith', :from => 'Agent overseeing Dispute:')
+  click_button 'Assign Dispute'
+  assert page.has_content?('Initiatiated by company: Webdapper Ltd, represented by Chris Ashton')
+  assert page.has_content?('Initiated against company: Maritime Collision Specialists Inc, represented by James Smith')
 end

@@ -36,6 +36,7 @@ Feature: Dispute creation
     Then I should be able to initiate it against another Law Firm
     And I shouldn't be able to reinitiate it against a different Law Firm
 
+  @clear
   Scenario: Being initiated a Dispute
     Given a Dispute has been initiated against my Law Firm
     And I have created an Agent
