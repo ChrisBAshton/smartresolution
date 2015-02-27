@@ -70,8 +70,7 @@ Then(/^I should be able to create a(?:n)? (Agent|Mediator) account$/) do |accoun
 end
 
 And(/^I should be able to log into that account$/) do
-  visit '/logout'
-  visit '/login'
+  clear_session_before_login
   fill_in 'Email', :with => 'agent_email@email.com'
   fill_in 'Password', :with => 'test'
   click_button 'Login'
