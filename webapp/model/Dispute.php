@@ -6,25 +6,16 @@ class Dispute {
         $this->setVariables($disputeID);
     }
 
-    private function setVariables($disputeID) {
-        $dispute = Database::instance()->exec('SELECT * FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID));
-
-        if (count($dispute) !== 1) {
-            throw new Exception("The dispute you are trying to view does not exist.");
-        }
-        else {
-            $dispute         = $dispute[0];
-            $this->disputeId = (int) $dispute['dispute_id'];
-            $this->lawFirmA  = (int) $dispute['law_firm_a'];
-            $this->lawFirmB  = (int) $dispute['law_firm_b'];
-            $this->agentA    = (int) $dispute['agent_a'];
-            $this->agentB    = (int) $dispute['agent_b'];
-            $this->title     = $dispute['title'];
-        }
+    public function getDisputeId() {
+        return $this->disputeId;
     }
 
-    public function setLawFirmB($loginID) {
-        $this->updateField('law_firm_b', $loginID);
+    public function getUrl() {
+        return '/disputes/' . $this->getDisputeId();
+    }
+
+    public function getTitle() {
+        return $this->title;
     }
 
     public function getAgentA() {
@@ -43,24 +34,6 @@ class Dispute {
         return $this->agentB;
     }
 
-    public function setAgentB($loginID) {
-        $this->updateField('agent_b', $loginID);
-    }
-
-    private function updateField($key, $value) {
-        Database::instance()->exec('UPDATE disputes SET ' . $key . ' = :new_value WHERE dispute_id = :dispute_id',
-            array(
-                ':new_value' => $value,
-                'dispute_id' => $this->getDisputeId()
-            )
-        );
-        $this->setVariables($this->getDisputeId());
-    }
-
-    public function waitingForLawFirmB() {
-        return $this->agentB === 0 && Session::getAccount() !== $this->getLawFirmBId();
-    }
-
     public function getLawFirmA() {
         return new LawFirm($this->getLawFirmAId());
     }
@@ -77,20 +50,24 @@ class Dispute {
         return $this->lawFirmB;
     }
 
-    public function hasNotBeenOpened() {
-        return !$this->hasBeenOpened();
+    public function setLawFirmB($loginID) {
+        $this->updateField('law_firm_b', $loginID);
+    }
+
+    public function setAgentB($loginID) {
+        $this->updateField('agent_b', $loginID);
+    }
+
+    public function waitingForLawFirmB() {
+        return $this->agentB === 0;// && Session::getAccount() !== $this->getLawFirmBId();
     }
 
     public function hasBeenOpened() {
         return $this->lawFirmA > 0 && $this->lawFirmB > 0;
     }
 
-    public function getDisputeId() {
-        return $this->disputeId;
-    }
-
-    public function getTitle() {
-        return $this->title;
+    public function hasNotBeenOpened() {
+        return !$this->hasBeenOpened();
     }
 
     public function canBeViewedBy($loginID) {
@@ -105,8 +82,31 @@ class Dispute {
         return false;
     }
 
-    public function getUrl() {
-        return '/disputes/' . $this->getDisputeId();
+    private function updateField($key, $value) {
+        Database::instance()->exec('UPDATE disputes SET ' . $key . ' = :new_value WHERE dispute_id = :dispute_id',
+            array(
+                ':new_value' => $value,
+                'dispute_id' => $this->getDisputeId()
+            )
+        );
+        $this->setVariables($this->getDisputeId());
+    }
+
+    private function setVariables($disputeID) {
+        $dispute = Database::instance()->exec('SELECT * FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID));
+
+        if (count($dispute) !== 1) {
+            throw new Exception("The dispute you are trying to view does not exist.");
+        }
+        else {
+            $dispute         = $dispute[0];
+            $this->disputeId = (int) $dispute['dispute_id'];
+            $this->lawFirmA  = (int) $dispute['law_firm_a'];
+            $this->lawFirmB  = (int) $dispute['law_firm_b'];
+            $this->agentA    = (int) $dispute['agent_a'];
+            $this->agentB    = (int) $dispute['agent_b'];
+            $this->title     = $dispute['title'];
+        }
     }
 
     public static function getAllDisputesConcerning($loginID) {
@@ -118,7 +118,14 @@ class Dispute {
         return $disputes;
     }
 
+    /**
+     * Creates a new Dispute, saving it to the database.
+     * 
+     * @param  Array $details Array of details to populate the database with.
+     * @return Dispute        The Dispute object associated with the new entry.
+     */
     public static function create($details) {
+        // required fields
         $lawFirmA = (int) Register::getValue($details, 'law_firm_a');
         $agentA   = (int) Register::getValue($details, 'agent_a');
         $type     = Register::getValue($details, 'type');
@@ -138,6 +145,7 @@ class Dispute {
             'SELECT * FROM disputes ORDER BY dispute_id DESC LIMIT 1'
         )[0];
         
+        // sanity check
         if ((int)$newDispute['law_firm_a'] !== $lawFirmA ||
             (int)$newDispute['agent_a']    !== $agentA   ||
             $newDispute['type']            !== $type     ||
@@ -149,5 +157,4 @@ class Dispute {
             return new Dispute((int) $newDispute['dispute_id']);
         }
     }
-
 }
