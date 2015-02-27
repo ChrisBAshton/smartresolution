@@ -2,15 +2,17 @@
 
 class AccountDetails {
 
-    /**
-     * Returns an object that implements the AccountInterface interface, populating it with data retrieved from the database that corresponds to the given email. Calls getDetailsByEmail internally.
-     * 
-     * @param  String $email The email address associated with the account.
-     * @return Object        Either an Organisation or Individual type object, or one of their subclasses.
-     */
-    public static function getAccountFromDatabase($email) {
-        $account = AccountDetails::getDetailsByEmail($email);
+    public static function getAccountById($id) {
+        $account = AccountDetails::getDetailsById($id);
+        return AccountDetails::arrayToObject($account);
+    }
 
+    public static function getAccountByEmail($email) {
+        $account = AccountDetails::getDetailsByEmail($email);
+        return AccountDetails::arrayToObject($account);
+    }
+
+    public static function arrayToObject($account) {
         if (!$account) {
             return false;
         }
@@ -30,7 +32,7 @@ class AccountDetails {
     }
 
     /**
-     * Returns an array of details corresponding to the account's email address. Not to be confused with getAccountFromDatabase, which uses the details to instantiate and return a PHP object.
+     * Returns an array of details corresponding to the account's email address. Not to be confused with getAccountByEmail, which uses the details to instantiate and return a PHP object.
      * @param  String $email
      * @return Array
      */

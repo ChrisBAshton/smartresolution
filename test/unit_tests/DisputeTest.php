@@ -41,11 +41,11 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
         $this->assertEquals(
-            AccountDetails::getAccountFromDatabase('law_firm_email')->getLoginId(),
+            AccountDetails::getAccountByEmail('law_firm_email')->getLoginId(),
             $dispute->getLawFirmA()->getLoginId()
         );
         $this->assertEquals(
-            AccountDetails::getAccountFromDatabase('agent_email')->getLoginId(),
+            AccountDetails::getAccountByEmail('agent_email')->getLoginId(),
             $dispute->getAgentA()->getLoginId()
         );
     }
@@ -98,6 +98,40 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dispute->canBeViewedBy($lawFirm));
         $this->assertTrue($dispute->canBeViewedBy($agent));
         $this->assertFalse($dispute->canBeViewedBy(1337));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testSettingDisputeAgentToLawFirm() {
+        $lawFirmA = AccountDetails::emailToId('law_firm_email');
+        $lawFirmB = AccountDetails::emailToId('another_law_firm_email');
+        $agentA   = AccountDetails::emailToId('agent_email');
+        $agentB   = AccountDetails::emailToId('another_agent_email');
+
+        return Dispute::create(array(
+            'law_firm_a' => $agentA, // shouldn't be able to set law firm to an agent
+            'agent_a'    => $agentB,
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testSettingDisputeLawFirmToAgent() {
+        $lawFirmA = AccountDetails::emailToId('law_firm_email');
+        $lawFirmB = AccountDetails::emailToId('another_law_firm_email');
+        $agentA   = AccountDetails::emailToId('agent_email');
+        $agentB   = AccountDetails::emailToId('another_agent_email');
+
+        return Dispute::create(array(
+            'law_firm_a' => $lawFirmA,
+            'agent_a'    => $lawFirmB, // shouldn't be able to set agent to a law firm
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
     }
 
     /**

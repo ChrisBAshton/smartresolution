@@ -126,10 +126,15 @@ class Dispute {
      */
     public static function create($details) {
         // required fields
-        $lawFirmA = (int) Register::getValue($details, 'law_firm_a');
-        $agentA   = (int) Register::getValue($details, 'agent_a');
-        $type     = Register::getValue($details, 'type');
-        $title    = Register::getValue($details, 'title');
+        $lawFirmA = (int) Utils::getValue($details, 'law_firm_a');
+        $agentA   = (int) Utils::getValue($details, 'agent_a');
+        $type     = Utils::getValue($details, 'type');
+        $title    = Utils::getValue($details, 'title');
+
+        Dispute::ensureCorrectAccountTypes(array(
+            'law_firm_a' => $lawFirmA,
+            'agent_a'    => $agentA
+        ));
 
         $db = Database::instance();
         $db->begin();
@@ -155,6 +160,16 @@ class Dispute {
         else {
             $db->commit();
             return new Dispute((int) $newDispute['dispute_id']);
+        }
+    }
+
+    public static function ensureCorrectAccountTypes($accountTypes) {
+        $correctAccountTypes = 
+            AccountDetails::getAccountById($accountTypes['law_firm_a']) instanceof LawFirm && 
+            AccountDetails::getAccountById($accountTypes['agent_a'])    instanceof Agent;
+
+        if (!$correctAccountTypes) {
+            throw new Exception('Invalid account types were set.');
         }
     }
 }

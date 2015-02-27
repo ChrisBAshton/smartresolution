@@ -45,9 +45,9 @@ class Notification {
 
     public static function create($options) {
 
-        $recipientId = Register::getValue($options, 'recipient_id');
-        $message     = Register::getValue($options, 'message');
-        $url         = Register::getValue($options, 'url');
+        $recipientId = Utils::getValue($options, 'recipient_id');
+        $message     = Utils::getValue($options, 'message');
+        $url         = Utils::getValue($options, 'url');
 
         Database::instance()->exec('INSERT INTO notifications (recipient_id, message, url) VALUES (:recipient_id, :message, :url)',
             array(

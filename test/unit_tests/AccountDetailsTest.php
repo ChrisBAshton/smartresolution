@@ -24,32 +24,32 @@ class AccountDetailsTest extends PHPUnit_Framework_TestCase
 
     public function testGetAccountDetailsIds()
     {
-        $testUser = AccountDetails::getAccountFromDatabase('law_firm_email');
+        $testUser = AccountDetails::getAccountByEmail('law_firm_email');
         $this->assertEquals('Webdapper Ltd', $testUser->getName());
-        $testUser = AccountDetails::getAccountFromDatabase('agent_email');
+        $testUser = AccountDetails::getAccountByEmail('agent_email');
         $this->assertEquals('Chris Ashton', $testUser->getName());
-        $testUser = AccountDetails::getAccountFromDatabase('user_does_not_exist@t.co');
+        $testUser = AccountDetails::getAccountByEmail('user_does_not_exist@t.co');
         $this->assertFalse($testUser);
     }
 
     public function testGetAccountDetailsTypes()
     {
-        $testUser = AccountDetails::getAccountFromDatabase('law_firm_email');
+        $testUser = AccountDetails::getAccountByEmail('law_firm_email');
         $this->assertTrue($testUser instanceof Organisation);
         $this->assertTrue($testUser instanceof LawFirm);
         $this->assertFalse($testUser instanceof Individual);
         $this->assertFalse($testUser instanceof MediationCentre);
-        $testUser = AccountDetails::getAccountFromDatabase('mediation_centre_email');
+        $testUser = AccountDetails::getAccountByEmail('mediation_centre_email');
         $this->assertTrue($testUser instanceof Organisation);
         $this->assertTrue($testUser instanceof MediationCentre);
         $this->assertFalse($testUser instanceof Individual);
         $this->assertFalse($testUser instanceof LawFirm);
-        $testUser = AccountDetails::getAccountFromDatabase('agent_email');
+        $testUser = AccountDetails::getAccountByEmail('agent_email');
         $this->assertTrue($testUser instanceof Individual);
         $this->assertTrue($testUser instanceof Agent);
         $this->assertFalse($testUser instanceof Organisation);
         $this->assertFalse($testUser instanceof Mediator);
-        $testUser = AccountDetails::getAccountFromDatabase('mediator_email');
+        $testUser = AccountDetails::getAccountByEmail('mediator_email');
         $this->assertTrue($testUser instanceof Individual);
         $this->assertTrue($testUser instanceof Mediator);
         $this->assertFalse($testUser instanceof Organisation);
