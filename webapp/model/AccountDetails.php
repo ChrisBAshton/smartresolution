@@ -12,6 +12,37 @@ class AccountDetails {
         return AccountDetails::arrayToObject($account);
     }
 
+    public static function getDetailsById($value) {
+        return AccountDetails::getDetailsBy('login_id', $value);
+    }
+    public static function getDetailsByEmail($value) {
+        return AccountDetails::getDetailsBy('email', $value);
+    }
+
+    public static function getDetailsBy($key, $value) {
+        $individual   = AccountDetails::getRowsFromTable('individuals', $key, $value);
+        $organisation = AccountDetails::getRowsFromTable('organisations', $key, $value);
+        $details      = false;
+
+        if (count($individual) === 1) {
+            $details = $individual[0];
+        }
+        else if (count($organisation) === 1) {
+            $details = $organisation[0];
+        }
+
+        return $details;
+    }
+
+    public static function getRowsFromTable($table, $key, $value) {
+        return Database::instance()->exec(
+            'SELECT * FROM account_details INNER JOIN ' . $table . ' ON account_details.login_id = ' . $table . '.login_id WHERE account_details.' . $key . ' = :value',
+            array(
+                ':value' => $value
+            )
+        );
+    }
+
     public static function arrayToObject($account) {
         if (!$account) {
             return false;
@@ -32,68 +63,15 @@ class AccountDetails {
     }
 
     /**
-     * Returns an array of details corresponding to the account's email address. Not to be confused with getAccountByEmail, which uses the details to instantiate and return a PHP object.
-     * @param  String $email
-     * @return Array
-     */
-    public static function getDetailsByEmail($email) {
-        $individual = Database::instance()->exec(
-            'SELECT * FROM account_details INNER JOIN individuals ON account_details.login_id = individuals.login_id WHERE email = :email',
-            array(
-                ':email' => $email
-            )
-        );
-        $organisation = Database::instance()->exec(
-            'SELECT * FROM account_details INNER JOIN organisations ON account_details.login_id = organisations.login_id WHERE email = :email',
-            array(
-                ':email' => $email
-            )
-        );
-
-        if (count($individual) === 1) {
-            return $individual[0];
-        }
-        else if (count($organisation) === 1) {
-            return $organisation[0];
-        }
-        else {
-            return false;
-        }        
-    }
-
-    public static function getDetailsById($id) {
-        $individual = Database::instance()->exec(
-            'SELECT * FROM account_details INNER JOIN individuals ON account_details.login_id = individuals.login_id WHERE account_details.login_id = :id',
-            array(
-                ':id' => $id
-            )
-        );
-        $organisation = Database::instance()->exec(
-            'SELECT * FROM account_details INNER JOIN organisations ON account_details.login_id = organisations.login_id WHERE account_details.login_id = :id',
-            array(
-                ':id' => $id
-            )
-        );
-
-        if (count($individual) === 1) {
-            return $individual[0];
-        }
-        else if (count($organisation) === 1) {
-            return $organisation[0];
-        }
-        else {
-            return false;
-        }          
-    }
-
-    /**
      * Given an email, returns the login ID of the account.
+     * 
+     * NOTE: It may be tempting to move this to getDetailsByEmail() but we often call emailToId BEFORE
+     * adding a corresponding entry to individuals or organisations, so this should be left untouched.
+     * 
      * @param  String $email
      * @return int
      */
     public static function emailToId($email) {
-        // it may be tempting to move this to getDetailsByEmail() but we often call emailToId BEFORE
-        // adding a corresponding entry to individuals or organisations, so this should be left untouched.
         $login_id = Database::instance()->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
             ':email' => $email
         ));
