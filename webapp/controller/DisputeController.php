@@ -154,7 +154,11 @@ class DisputeController {
 
     function openDisputeGet ($f3, $params) {
         mustBeLoggedInAsAnIndividual();
-        $this->setDisputeFromParams($f3, $params);
+        $dispute = $this->setDisputeFromParams($f3, $params);
+
+        if ($dispute->hasBeenOpened()) {
+            errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
+        }
 
         $lawFirms = array();
         $lawFirmsDetails = Database::instance()->exec('SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = "law_firm" AND organisations.login_id != :law_firm_a ORDER BY name DESC',

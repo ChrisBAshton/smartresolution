@@ -30,3 +30,33 @@ end
 Then(/^I should see the following message: '(.+)'$/) do |message|
   assert page.has_content?(message)
 end
+
+Given(/^I have submitted a Dispute$/) do
+  visit '/logout'
+  visit '/login'
+  login_with_credentials 'agent_email', 'test'
+end
+
+Then(/^I should be able to initiate it against another Law Firm$/) do
+  visit '/disputes/1/open'
+  select('Maritime Collision Specialists Inc', :from => 'Select the opposing company:')
+  click_button 'Open Dispute'
+  assert page.has_content?('You are waiting for Maritime Collision Specialists Inc to assign an agent to the dispute.')
+end
+
+And(/^I shouldn't be able to reinitiate it against a different Law Firm$/) do
+  visit '/disputes/1/open'
+  assert page.has_content?('You have already opened this dispute against Maritime Collision Specialists Inc!')
+end
+
+Given(/^a Dispute has been initiated against my Law Firm$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Given(/^I have created an Agent$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should be able to allocate the Agent to the Dispute$/) do
+  pending # express the regexp above with the code you wish you had
+end
