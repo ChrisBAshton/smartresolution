@@ -43,10 +43,12 @@ class Dispute {
         
         $agent   = isset($partyDetails['individual_id'])   ? AccountDetails::getAccountById($partyDetails['individual_id'])   : false;
         $lawFirm = isset($partyDetails['organisation_id']) ? AccountDetails::getAccountById($partyDetails['organisation_id']) : false;
+        $summary = isset($partyDetails['summary']) ? htmlspecialchars($partyDetails['summary']) : false;
 
         return array(
             'agent'    => $agent,
-            'law_firm' => $lawFirm
+            'law_firm' => $lawFirm,
+            'summary'  => $summary
         );
     }
 
@@ -78,6 +80,15 @@ class Dispute {
         return $this->partyB['agent'];
     }
 
+    public function getSummaryFromPartyA() {
+        return $this->partyA['summary'];
+    }
+
+    public function getSummaryFromPartyB() {
+        return $this->partyB['summary'];
+    }
+
+    // we should never need to set law firm a through a method, so there is no corresponding setLawFirmA.
     public function setLawFirmB($organisationId) {
         $db = Database::instance();
         $db->begin();
@@ -91,6 +102,14 @@ class Dispute {
         }
     }
 
+    public function setSummaryForPartyA($organisationId) {
+        $this->setPartyDatabaseField('party_a', 'summary', $organisationId);
+    }
+
+    public function setSummaryForPartyB($organisationId) {
+        $this->setPartyDatabaseField('party_b', 'summary', $organisationId);
+    }
+
     public function setAgentA($loginID) {
         $this->setAgent('party_a', $loginID);
     }
@@ -100,11 +119,22 @@ class Dispute {
     }
 
     public function setAgent($party, $loginID) {
+        $agent = AccountDetails::getAccountById($loginID);
 
-        if ( ! (AccountDetails::getAccountById($loginID) instanceof Agent) ) {
+        if ( ! ($agent instanceof Agent) ) {
             throw new Exception('Tried setting a non-agent type as an agent!');
         }
+        else if (
+            ($party === 'party_a' && $agent->getOrganisation()->getLoginId() !== $this->getLawFirmA()->getLoginId()) ||
+            ($party === 'party_b' && $agent->getOrganisation()->getLoginId() !== $this->getLawFirmB()->getLoginId())
+        ) {
+            throw new Exception('You can only assign agents that are in your law firm!');
+        }
 
+        $this->setPartyDatabaseField($party, 'individual_id', $loginID);
+    }
+
+    public function setPartyDatabaseField($party, $field, $value) {
         $db = Database::instance();
         $db->begin();
         $partyID = $db->exec(
@@ -112,9 +142,9 @@ class Dispute {
             array(':dispute_id' => $this->getDisputeId())
         )[0][$party];
         $db->exec(
-            'UPDATE dispute_parties SET individual_id = :login_id WHERE party_id = :party_id',
+            'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
             array(
-                ':login_id' => $loginID,
+                ':value'    => $value,
                 ':party_id' => $partyID
             )
         );
@@ -188,14 +218,17 @@ class Dispute {
         $lawFirmA = (int) Utils::getValue($details, 'law_firm_a');
         $type     = Utils::getValue($details, 'type');
         $title    = Utils::getValue($details, 'title');
+        $agentA   = isset($details['agent_a']) ? $details['agent_a'] : NULL;
+        $summary  = isset($details['summary']) ? $details['summary'] : NULL;
 
         Dispute::ensureCorrectAccountTypes(array(
-            'law_firm' => $lawFirmA
+            'law_firm' => $lawFirmA,
+            'agent'    => $agentA
         ));
 
         $db = Database::instance();
         $db->begin();
-        $partyID = Dispute::createParty($lawFirmA);
+        $partyID = Dispute::createParty($lawFirmA, $agentA, $summary);
         $db->exec(
             'INSERT INTO disputes (dispute_id, party_a, type, title)
              VALUES (NULL, :party_a, :type, :title)', array(
@@ -219,12 +252,13 @@ class Dispute {
         }
     }
 
-    public static function createParty($organisationId) {
+    public static function createParty($organisationId, $individualId = NULL, $summary = NULL) {
         Database::instance()->exec(
             'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
-             VALUES (NULL, :organisation_id, :individual_id, NULL)', array(
+             VALUES (NULL, :organisation_id, :individual_id, :summary)', array(
             ':organisation_id' => $organisationId,
-            ':individual_id'   => NULL
+            ':individual_id'   => $individualId,
+            ':summary'         => $summary
         ));
         $partyID = (int) Database::instance()->exec(
             'SELECT * FROM dispute_parties ORDER BY party_id DESC LIMIT 1'
@@ -233,11 +267,17 @@ class Dispute {
     }
 
     public static function ensureCorrectAccountTypes($accountTypes) {
-        $correctAccountTypes = 
-            (
-                isset($accountTypes['law_firm']) &&
-                AccountDetails::getAccountById($accountTypes['law_firm']) instanceof LawFirm
-            );
+        $correctAccountTypes = true;
+        if (isset($accountTypes['law_firm'])) {
+            if (!AccountDetails::getAccountById($accountTypes['law_firm']) instanceof LawFirm) {
+                $correctAccountTypes = false;
+            }
+        }
+        if (isset($accountTypes['agent'])) {
+            if (!AccountDetails::getAccountById($accountTypes['agent']) instanceof Agent) {
+                $correctAccountTypes = false;
+            }
+        }
 
         if (!$correctAccountTypes) {
             throw new Exception('Invalid account types were set.');

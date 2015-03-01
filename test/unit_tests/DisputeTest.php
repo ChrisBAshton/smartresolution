@@ -10,17 +10,15 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
     private function createNewDispute() {
         $lawFirm = AccountDetails::emailToId('law_firm_email');
-
-        $dispute = Dispute::create(array(
-            'law_firm_a' => $lawFirm,
-            'type'       => 'other',
-            'title'      => 'Smith versus Jones'
-        ));
-
         $agent = AccountDetails::emailToId('agent_email');
-        $dispute->setAgentA($agent);
-
-        return $dispute;
+        
+        return Dispute::create(array(
+            'law_firm_a' => $lawFirm,
+            'agent_a'    => $agent,
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones',
+            'summary'    => 'This is my summary'
+        ));
     }
 
     public function testCreateDisputeSuccessfully() {
@@ -28,16 +26,48 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dispute instanceof Dispute);
     }
 
-    public function testDisputeSimpleGetters() {
+    public function testOverridingAgentWithAnotherFromSameLawFirm() {
         $dispute = $this->createNewDispute();
-        $this->assertEquals('Smith versus Jones', $dispute->getTitle());
+        $agent1 = AccountDetails::emailToId('agent_email');
+        $agent2 = AccountDetails::emailToId('another_agent_email');
+
+        $this->assertEquals($agent1, $dispute->getAgentA()->getLoginId());
+        $dispute->setAgentA($agent2);
+        $this->assertEquals($agent2, $dispute->getAgentA()->getLoginId());
     }
 
-    public function testDisputeGettersIdsMatch() {
-        DisputeTest::setUpBeforeClass();
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Tried setting a non-agent type as an agent!
+     */
+    public function testOverridingAgentWithMediator() {
+        $dispute  = $this->createNewDispute();
+        $agent    = AccountDetails::emailToId('agent_email');
+        $mediator = AccountDetails::emailToId('mediator_email');
+
+        $this->assertEquals($agent, $dispute->getAgentA()->getLoginId());
+        $dispute->setAgentA($mediator);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage You can only assign agents that are in your law firm!
+     */
+    public function testOverridingAgentWithAgentFromDifferentLawFirm() {
         $dispute = $this->createNewDispute();
+        $agentInCompanyA = AccountDetails::emailToId('agent_email');
+        $agentInCompanyB = AccountDetails::emailToId('agent_b');
+
+        $this->assertEquals($agentInCompanyA, $dispute->getAgentA()->getLoginId());
+        $dispute->setAgentA($agentInCompanyB);
+    }
+
+    public function testDisputeSimpleGetters() {
+        $dispute = $this->createNewDispute();
+        $this->assertEquals(AccountDetails::emailToId('agent_email'), $dispute->getAgentA()->getLoginId());
         $this->assertEquals(AccountDetails::emailToId('law_firm_email'), $dispute->getLawFirmA()->getLoginId());
-        $this->assertEquals(AccountDetails::emailToId('agent_email'),    $dispute->getAgentA()->getLoginId());
+        $this->assertEquals('Smith versus Jones', $dispute->getTitle());
+        $this->assertEquals('This is my summary', $dispute->getSummaryFromPartyA());
     }
 
     public function testDisputeGettersObjectsMatch() {
@@ -80,10 +110,14 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($lawFirmB, $dispute->getLawFirmB()->getLoginId());
         $this->assertTrue($dispute->hasBeenOpened());
 
-        $agentB = AccountDetails::emailToId('another_agent_email');
+        $agentB = AccountDetails::emailToId('agent_b');
         $dispute->setAgentB($agentB);
         $this->assertEquals($agentB, $dispute->getAgentB()->getLoginId());
         $this->assertFalse($dispute->waitingForLawFirmB());
+
+        $this->assertFalse($dispute->getSummaryFromPartyB());
+        $dispute->setSummaryForPartyB('Test summary');
+        $this->assertEquals('Test summary', $dispute->getSummaryFromPartyB());
     }
 
     /**

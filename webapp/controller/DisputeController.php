@@ -23,11 +23,12 @@ class DisputeController {
     function newDisputePost ($f3) {
         mustBeLoggedInAsAnOrganisation();
 
-        $title = $f3->get('POST.title');
-        $agent = $f3->get('POST.agent');
-        $type  = $f3->get('POST.type');
+        $title   = $f3->get('POST.title');
+        $agent   = $f3->get('POST.agent');
+        $type    = $f3->get('POST.type');
+        $summary = $f3->get('POST.summary');
 
-        if (!$title || !$agent || !$type || $agent === '---' || $type === '---') {
+        if (!$title || !$agent || !$type  || !$summary || $agent === '---' || $type === '---') {
             $f3->set('error_message', 'Please fill in all fields.');
         }
         else {
@@ -35,10 +36,10 @@ class DisputeController {
                 $dispute = Dispute::create(array(
                     'title'      => $title,
                     'law_firm_a' => $f3->get('account')->getLoginId(),
+                    'agent_a'    => $agent,
+                    'summary'    => $summary,
                     'type'       => $type
                 ));
-                
-                $dispute->setAgentA($agent);
 
                 Notification::create(array(
                     'recipient_id' => $agent,
@@ -94,6 +95,10 @@ class DisputeController {
         }
         else {
             $dashboardActions[] = array(
+                'title' => 'Negotiate dispute lifespan',
+                'href'  => $dispute->getUrl() .'/lifespan',
+            );
+            $dashboardActions[] = array(
                 'title' => 'Take the case to court',
                 'href'  => $dispute->getUrl() .'/close',
             );
@@ -122,14 +127,15 @@ class DisputeController {
         $dispute = $this->setDisputeFromParams($f3, $params);
 
         $agent = $f3->get('POST.agent');
+        $summary = $f3->get('POST.summary');
 
-        if (!$agent || $agent === '---') {
-            $f3->set('error_message', 'You must choose an Agent to assign!');
-            $f3->set('content', 'dispute_assign.html');
-            echo View::instance()->render('layout.html');
+        if (!$summary || !$agent || $agent === '---') {
+            $f3->set('error_message', 'You must fill in all fields!');
+            $this->assignDisputeGet($f3, $params);
         }
         else {
             $dispute->setAgentB((int) $agent);
+            $dispute->setSummaryForPartyB($summary);
 
             Notification::create(array(
                 'recipient_id' => $agent,
