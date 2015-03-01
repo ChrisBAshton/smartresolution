@@ -4,10 +4,10 @@
 
 <?php if (!$dispute->waitingForLawFirmB()) : ?>
     <p>
-        Initiatiated by company: <?php echo $dispute->getLawFirmA()->getName(); ?>, represented by <?php echo $dispute->getAgentA()->getName(); ?>
+        Initiatiated by company: <?php echo $dispute->partyA()->getLawFirm()->getName(); ?>, represented by <?php echo $dispute->partyA()->getAgent()->getName(); ?>
     </p>
     <p>
-        Initiated against company: <?php echo $dispute->getLawFirmB()->getName(); ?>, represented by <?php echo $dispute->getAgentB()->getName(); ?>
+        Initiated against company: <?php echo $dispute->partyB()->getLawFirm()->getName(); ?>, represented by <?php echo $dispute->partyB()->getAgent()->getName(); ?>
     </p>
 <?php endif; ?>
 

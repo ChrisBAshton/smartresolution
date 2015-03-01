@@ -13,17 +13,19 @@ function mustBeLoggedIn() {
 }
 
 function mustBeLoggedInAsAnOrganisation() {
-    mustBeLoggedIn();
+    $account = mustBeLoggedIn();
     if ( ! (Session::getAccount() instanceof Organisation) ) {
         errorPage('You do not have permission to see this page. You must be logged into an Organisation account.');
     }
+    return $account;
 }
 
 function mustBeLoggedInAsAnIndividual() {
-    mustBeLoggedIn();
+    $account = mustBeLoggedIn();
     if ( ! (Session::getAccount() instanceof Individual) ) {
         errorPage('You do not have permission to see this page. You must be logged into an Individual account.');
     }
+    return $account;
 }
 
 function errorPage($errorMessage) {
