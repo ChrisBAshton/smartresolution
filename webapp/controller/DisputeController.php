@@ -38,7 +38,7 @@ class DisputeController {
                     'type'       => $type
                 ));
                 
-                $dispute->partyA()->setAgent($agent);
+                $dispute->setAgentA($agent);
 
                 Notification::create(array(
                     'recipient_id' => $agent,
@@ -64,7 +64,7 @@ class DisputeController {
             errorPage('You do not have permission to view this Dispute!');
         }
         elseif ($dispute->hasNotBeenOpened()) {
-            if ($account->getLoginId() === $dispute->partyA()->getAgent()->getLoginId()) {
+            if ($account->getLoginId() === $dispute->getAgentA()->getLoginId()) {
                 $dashboardActions[] = array(
                     'title' => 'Open dispute',
                     'href'  => $dispute->getUrl() . '/open'
@@ -72,14 +72,14 @@ class DisputeController {
             }
             else {
                 $f3->set('status', array(
-                    'message' => 'You are waiting for ' . $dispute->partyA()->getAgent()->getName() . ' to open the dispute against another law firm.',
+                    'message' => 'You are waiting for ' . $dispute->getAgentA()->getName() . ' to open the dispute against another law firm.',
                     'class'   => 'bg-padded bg-info'
                 ));
             }
         }
         else if ($dispute->waitingForLawFirmB()) {
             // if we are law firm b
-            if ($account->getLoginId() === $dispute->partyB()->getOrganisation()->getLoginId()) {
+            if ($account->getLoginId() === $dispute->getLawFirmB()->getLoginId()) {
                 $dashboardActions[] = array(
                     'title' => 'Assign dispute to an agent',
                     'href'  => $dispute->getUrl() . '/assign'
@@ -87,7 +87,7 @@ class DisputeController {
             }
             else {
                 $f3->set('status', array(
-                    'message' => 'You are waiting for ' . $dispute->partyB()->getOrganisation()->getName() . ' to assign an agent to the dispute.',
+                    'message' => 'You are waiting for ' . $dispute->getLawFirmB()->getName() . ' to assign an agent to the dispute.',
                     'class'   => 'bg-padded bg-info'
                 ));
             }
@@ -129,7 +129,7 @@ class DisputeController {
             echo View::instance()->render('layout.html');
         }
         else {
-            $dispute->partyB()->setAgent((int) $agent);
+            $dispute->setAgentB((int) $agent);
 
             Notification::create(array(
                 'recipient_id' => $agent,
@@ -166,12 +166,12 @@ class DisputeController {
         $dispute = $this->setDisputeFromParams($f3, $params);
 
         if ($dispute->hasBeenOpened()) {
-            errorPage('You have already opened this dispute against ' . $dispute->partyB()->getOrganisation()->getName() . '!');
+            errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
         }
 
         $lawFirms = array();
         $lawFirmsDetails = Database::instance()->exec('SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = "law_firm" AND organisations.login_id != :law_firm_a ORDER BY name DESC',
-            array(':law_firm_a' => $f3->get('dispute')->partyA()->getOrganisation()->getLoginId()));
+            array(':law_firm_a' => $f3->get('dispute')->getLawFirmA()->getLoginId()));
 
         foreach($lawFirmsDetails as $details) {
             $lawFirms[] = new LawFirm($details);

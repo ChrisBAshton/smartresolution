@@ -6,25 +6,47 @@ class Dispute {
         $this->setVariables($disputeID);
     }
 
-    public function partyA() {
-        return $this->partyA;
-    }
+    private function setVariables($disputeID) {
+        $dispute = Database::instance()->exec(
+            'SELECT * FROM disputes WHERE dispute_id = :dispute_id LIMIT 1',
+            array(':dispute_id' => $disputeID)
+        )[0];
 
-    public function partyB() {
-        return $this->partyB;
-    }
-
-    public function setPartyB($organisationId) {
-        $db = Database::instance();
-        $db->begin();
-        $partyId = DisputeParty::create($organisationId);
-        if ($partyId) {
-            $this->updateField('party_b', $partyId);
-            $db->commit();
+        if (is_null($dispute['dispute_id'])) {
+            throw new Exception("The dispute you are trying to view does not exist.");
         }
         else {
-            throw new Exception("Couldn't set party b!");
+            $this->disputeId = (int) $dispute['dispute_id'];
+            $this->title     = $dispute['title'];
+            $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);
+            $this->partyB    = $this->getPartyDetails((int) $dispute['party_b']);
+
+            if (!$this->partyA) {
+                throw new Exception('A dispute must have at least one organisation associated with it!');
+            }
         }
+    }
+
+    public function getPartyDetails($partyID) {
+        if ($partyID === 0) {
+            return array(
+                'agent'    => false,
+                'law_firm' => false
+            );
+        }
+
+        $partyDetails = Database::instance()->exec(
+            'SELECT * FROM dispute_parties WHERE party_id = :party_id LIMIT 1',
+            array(':party_id' => $partyID)
+        )[0];
+        
+        $agent   = isset($partyDetails['individual_id'])   ? AccountDetails::getAccountById($partyDetails['individual_id'])   : false;
+        $lawFirm = isset($partyDetails['organisation_id']) ? AccountDetails::getAccountById($partyDetails['organisation_id']) : false;
+
+        return array(
+            'agent'    => $agent,
+            'law_firm' => $lawFirm
+        );
     }
 
     public function getDisputeId() {
@@ -39,8 +61,68 @@ class Dispute {
         return $this->title;
     }
 
+    public function getLawFirmA() {
+        return $this->partyA['law_firm'];
+    }
+
+    public function getLawFirmB() {
+        return $this->partyB['law_firm'];
+    }
+
+    public function getAgentA() {
+        return $this->partyA['agent'];
+    }
+
+    public function getAgentB() {
+        return $this->partyB['agent'];
+    }
+
+    public function setLawFirmB($organisationId) {
+        $db = Database::instance();
+        $db->begin();
+        $partyId = Dispute::createParty($organisationId);
+        if ($partyId) {
+            $this->updateField('party_b', $partyId);
+            $db->commit();
+        }
+        else {
+            throw new Exception("Couldn't set second law firm!");
+        }
+    }
+
+    public function setAgentA($loginID) {
+        $this->setAgent('party_a', $loginID);
+    }
+
+    public function setAgentB($loginID) {
+        $this->setAgent('party_b', $loginID);
+    }
+
+    public function setAgent($party, $loginID) {
+
+        if ( ! (AccountDetails::getAccountById($loginID) instanceof Agent) ) {
+            throw new Exception('Tried setting a non-agent type as an agent!');
+        }
+
+        $db = Database::instance();
+        $db->begin();
+        $partyID = $db->exec(
+            'SELECT ' . $party . ' FROM disputes WHERE dispute_id = :dispute_id',
+            array(':dispute_id' => $this->getDisputeId())
+        )[0][$party];
+        $db->exec(
+            'UPDATE dispute_parties SET individual_id = :login_id WHERE party_id = :party_id',
+            array(
+                ':login_id' => $loginID,
+                ':party_id' => $partyID
+            )
+        );
+        $db->commit();
+        $this->setVariables($this->getDisputeId());
+    }
+
     public function hasBeenOpened() {
-        return $this->partyB() !== false;
+        return $this->getLawFirmB() !== false;
     }
 
     public function hasNotBeenOpened() {
@@ -49,7 +131,7 @@ class Dispute {
 
     public function waitingForLawFirmB() {
         if ($this->hasBeenOpened()) {
-            return $this->partyB()->getIndividual() === false;
+            return $this->getAgentB() === false;
         }
         return true;
     }
@@ -73,26 +155,6 @@ class Dispute {
             )
         );
         $this->setVariables($this->getDisputeId());
-    }
-
-    private function setVariables($disputeID) {
-        $dispute = Database::instance()->exec('SELECT * FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID));
-
-        if (count($dispute) !== 1) {
-            throw new Exception("The dispute you are trying to view does not exist.");
-        }
-        else {
-            $dispute         = $dispute[0];
-            $this->disputeId = (int) $dispute['dispute_id'];
-            $partyAId        = (int) $dispute['party_a'];
-            $partyBId        = (int) $dispute['party_b'];
-            if ($partyAId === 0) {
-                throw new Exception('A dispute must have at least one organisation associated with it!');
-            }
-            $this->partyA    = new DisputeParty($partyAId);
-            $this->partyB    = $partyBId === 0 ? false : new DisputeParty($partyBId);
-            $this->title     = $dispute['title'];
-        }
     }
 
     public static function getAllDisputesConcerning($loginID) {
@@ -132,7 +194,7 @@ class Dispute {
 
         $db = Database::instance();
         $db->begin();
-        $partyID = DisputeParty::create($lawFirmA);
+        $partyID = Dispute::createParty($lawFirmA);
         $db->exec(
             'INSERT INTO disputes (dispute_id, party_a, type, title)
              VALUES (NULL, :party_a, :type, :title)', array(
@@ -154,6 +216,19 @@ class Dispute {
             $db->commit();
             return new Dispute((int) $newDispute['dispute_id']);
         }
+    }
+
+    public static function createParty($organisationId) {
+        Database::instance()->exec(
+            'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
+             VALUES (NULL, :organisation_id, :individual_id, NULL)', array(
+            ':organisation_id' => $organisationId,
+            ':individual_id'   => NULL
+        ));
+        $partyID = (int) Database::instance()->exec(
+            'SELECT * FROM dispute_parties ORDER BY party_id DESC LIMIT 1'
+        )[0]['party_id'];
+        return $partyID;
     }
 
     public static function ensureCorrectAccountTypes($accountTypes) {

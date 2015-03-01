@@ -18,7 +18,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         ));
 
         $agent = AccountDetails::emailToId('agent_email');
-        $dispute->partyA()->setAgent($agent);
+        $dispute->setAgentA($agent);
 
         return $dispute;
     }
@@ -36,8 +36,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testDisputeGettersIdsMatch() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
-        $this->assertEquals(AccountDetails::emailToId('law_firm_email'), $dispute->partyA()->getLawFirm()->getLoginId());
-        $this->assertEquals(AccountDetails::emailToId('agent_email'),    $dispute->partyA()->getAgent()->getLoginId());
+        $this->assertEquals(AccountDetails::emailToId('law_firm_email'), $dispute->getLawFirmA()->getLoginId());
+        $this->assertEquals(AccountDetails::emailToId('agent_email'),    $dispute->getAgentA()->getLoginId());
     }
 
     public function testDisputeGettersObjectsMatch() {
@@ -45,19 +45,19 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $dispute = $this->createNewDispute();
         $this->assertEquals(
             AccountDetails::getAccountByEmail('law_firm_email')->getLoginId(),
-            $dispute->partyA()->getLawFirm()->getLoginId()
+            $dispute->getLawFirmA()->getLoginId()
         );
         $this->assertEquals(
             AccountDetails::getAccountByEmail('agent_email')->getLoginId(),
-            $dispute->partyA()->getAgent()->getLoginId()
+            $dispute->getAgentA()->getLoginId()
         );
     }
 
     public function testDisputeGettersObjectsCorrectType() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
-        $this->assertTrue($dispute->partyA()->getLawFirm() instanceof LawFirm);
-        $this->assertTrue($dispute->partyA()->getAgent() instanceof Agent);
+        $this->assertTrue($dispute->getLawFirmA() instanceof LawFirm);
+        $this->assertTrue($dispute->getAgentA() instanceof Agent);
     }
 
     public function testAuthorisationLogicIsCorrect() {
@@ -76,13 +76,13 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dispute->hasNotBeenOpened());
 
         $lawFirmB = AccountDetails::emailToId('another_law_firm_email');
-        $dispute->setPartyB($lawFirmB);
-        $this->assertEquals($lawFirmB, $dispute->partyB()->getLawFirm()->getLoginId());
+        $dispute->setLawFirmB($lawFirmB);
+        $this->assertEquals($lawFirmB, $dispute->getLawFirmB()->getLoginId());
         $this->assertTrue($dispute->hasBeenOpened());
 
         $agentB = AccountDetails::emailToId('another_agent_email');
-        $dispute->partyB()->setAgent($agentB);
-        $this->assertEquals($agentB, $dispute->partyB()->getAgent()->getLoginId());
+        $dispute->setAgentB($agentB);
+        $this->assertEquals($agentB, $dispute->getAgentB()->getLoginId());
         $this->assertFalse($dispute->waitingForLawFirmB());
     }
 
@@ -112,7 +112,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
             'title'      => 'Smith versus Jones'
         ));
 
-        $dispute->partyA()->setAgent($lawFirmB); // shouldn't be able to set agent as a law firm
+        $dispute->setAgentB($lawFirmB); // shouldn't be able to set agent as a law firm
     }
 
     /**

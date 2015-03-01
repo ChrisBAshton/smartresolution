@@ -37,7 +37,7 @@ foreach($data['disputes'] as $dataItem) {
         'type'       => $dataItem['type']
     ));
 
-    $dispute->partyA()->setAgent(AccountDetails::emailToId($dataItem['agent_a']));
+    $dispute->setAgentA(AccountDetails::emailToId($dataItem['agent_a']));
 
     Notification::create(array(
         'recipient_id' => AccountDetails::emailToId($dataItem['agent_a']),
