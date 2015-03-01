@@ -10,12 +10,13 @@ class Dispute {
         $dispute = Database::instance()->exec(
             'SELECT * FROM disputes WHERE dispute_id = :dispute_id LIMIT 1',
             array(':dispute_id' => $disputeID)
-        )[0];
+        );
 
-        if (is_null($dispute['dispute_id'])) {
+        if (count($dispute) !== 1) {
             throw new Exception("The dispute you are trying to view does not exist.");
         }
         else {
+            $dispute         = $dispute[0];
             $this->disputeId = (int) $dispute['dispute_id'];
             $this->title     = $dispute['title'];
             $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);

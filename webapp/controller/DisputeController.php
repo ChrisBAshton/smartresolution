@@ -192,7 +192,7 @@ class DisputeController {
         }
         else {
             $dispute = $this->setDisputeFromParams($f3, $params);
-            $dispute->setPartyB($lawFirmB);
+            $dispute->setLawFirmB($lawFirmB);
 
             Notification::create(array(
                 'recipient_id' => $lawFirmB,
