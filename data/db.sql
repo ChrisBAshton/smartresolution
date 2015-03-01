@@ -40,17 +40,23 @@ CREATE TABLE IF NOT EXISTS disputes (
     dispute_id    INTEGER PRIMARY KEY NOT NULL,
     type          VARCHAR(100) NOT NULL,
     title         VARCHAR(140) NOT NULL,
-    law_firm_a    INTEGER NOT NULL,
-    agent_a       INTEGER NOT NULL,
-    law_firm_b    INTEGER, -- NULL until Agent A has assigned the Dispute to Law Firm B
-    agent_b       INTEGER, -- NULL until an Agent has been assigned by Law Firm B
+    party_a       INTEGER NOT NULL,
+    party_b       INTEGER, -- NULL until Dispute has been assigned to Law Firm B
+    third_party   INTEGER, -- NULL until in Mediation
     lifespan_id   INTEGER, -- NULL until a Lifespan has been negotiated
     resolution_id INTEGER, -- NULL until resolved
-    mediation_id  INTEGER, -- NULL until in Mediation
-    FOREIGN KEY(law_firm_a) REFERENCES account_details(login_id),
-    FOREIGN KEY(agent_a)    REFERENCES account_details(login_id),
-    FOREIGN KEY(law_firm_a) REFERENCES account_details(login_id),
-    FOREIGN KEY(agent_b)    REFERENCES account_details(login_id)
+    FOREIGN KEY(party_a)     REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(party_b)     REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(third_party) REFERENCES dispute_parties(party_id)
+);
+
+CREATE TABLE IF NOT EXISTS dispute_parties (
+    party_id          INTEGER PRIMARY KEY NOT NULL,
+    organisation_id   INTEGER NOT NULL,
+    individual_id     INTEGER, -- can be NULL until set by Organisation
+    summary           VARCHAR(1000),
+    FOREIGN KEY(organisation_id) REFERENCES account_details(login_id)
+    FOREIGN KEY(individual_id)   REFERENCES account_details(login_id)
 );
 
 -- #######################################################################

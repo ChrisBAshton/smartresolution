@@ -7,7 +7,6 @@ Feature: Dispute creation
     Given I am logged into a Law Firm account
     And I have created at least one Agent account
     Then I should be able to create a new Dispute
-    And the Agent should be allocated to that Dispute
     # As far as we're concerned in these Cucumber tests, we're not bothered about the TYPE of dispute. All of these Disputes will default to 'Other', which adds nothing to the core functionality of the system. For specialised dispute types, it is up to the module developer to test their modules however they see fit... be it unit tests, integration tests or some combination.
 
   Scenario: Attempting to create a Dispute with no Agent
@@ -31,13 +30,14 @@ Feature: Dispute creation
   #   And I choose to submit the Dispute to the system
   #   Then the Dispute should be submitted
 
-  # Scenario: Initiating a Dispute against a Law Firm
-  #   Given I have submitted a Dispute
-  #   Then I should be able to initiate it against another Law Firm
-  #   # We pick from a drop-down list of Law Firms in the system
-  #   # or provide a Law Firm email address inviting them to register.
+  @clear
+  Scenario: Initiating a Dispute against a Law Firm
+    Given I have submitted a Dispute
+    Then I should be able to initiate it against another Law Firm
+    And I shouldn't be able to reinitiate it against a different Law Firm
 
-  # Scenario: Being initiated a Dispute
-  #   Given a Dispute has been initiated against my Law Firm
-  #   And I have created an Agent
-  #   Then I should be able to allocate the Agent to the Dispute
+  @clear
+  Scenario: Being initiated a Dispute
+    Given a Dispute has been initiated against my Law Firm
+    And I have created an Agent
+    Then I should be able to allocate the Agent to the Dispute

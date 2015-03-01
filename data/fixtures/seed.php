@@ -34,9 +34,10 @@ foreach($data['disputes'] as $dataItem) {
     $dispute = Dispute::create(array(
         'title'      => $dataItem['title'],
         'law_firm_a' => AccountDetails::emailToId($dataItem['law_firm_a']),
-        'agent_a'    => AccountDetails::emailToId($dataItem['agent_a']),
         'type'       => $dataItem['type']
     ));
+
+    $dispute->setAgentA(AccountDetails::emailToId($dataItem['agent_a']));
 
     Notification::create(array(
         'recipient_id' => AccountDetails::emailToId($dataItem['agent_a']),
