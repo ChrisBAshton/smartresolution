@@ -10,14 +10,18 @@ class Lifespan {
 
     private function setVariables($disputeID) {
         $lifespan = Database::instance()->exec(
-            'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id LIMIT 1',
+            'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
             array(':dispute_id' => $disputeID)
         );
         if (count($lifespan) === 1) {
             $lifespan         = $lifespan[0];
             $this->lifespanID = (int) $lifespan['lifespan_id'];
             $this->disputeID  = (int) $lifespan['dispute_id'];
+            $this->proposer   = (int) $lifespan['proposer'];
             $this->status     = $lifespan['status'];
+            $this->validUntil = $lifespan['valid_until'];
+            $this->startTime  = $lifespan['start_time'];
+            $this->endTime    = $lifespan['end_time'];
         }
     }
 
@@ -41,12 +45,28 @@ class Lifespan {
         return $this->status === 'declined';
     }
 
+    public function startTime() {
+        return $this->startTime;
+    }
+
+    public function endTime() {
+        return $this->endTime;
+    }
+
+    public function validUntil() {
+        return $this->validUntil;
+    }
+
     public function getAssociatedDisputeId() {
         return $this->disputeID;
     }
 
     public function getLifespanId() {
         return $this->lifespanID;
+    }
+
+    public function getProposer() {
+        return $this->proposer;
     }
 
     private function updateStatus($status) {

@@ -12,18 +12,10 @@ function mustBeLoggedIn() {
     return $account;
 }
 
-function mustBeLoggedInAsAnOrganisation() {
+function mustBeLoggedInAsAn($accountType) {
     $account = mustBeLoggedIn();
-    if ( ! (Session::getAccount() instanceof Organisation) ) {
-        errorPage('You do not have permission to see this page. You must be logged into an Organisation account.');
-    }
-    return $account;
-}
-
-function mustBeLoggedInAsAnIndividual() {
-    $account = mustBeLoggedIn();
-    if ( ! (Session::getAccount() instanceof Individual) ) {
-        errorPage('You do not have permission to see this page. You must be logged into an Individual account.');
+    if ( !is_a($account, $accountType) ) {
+        errorPage('You do not have permission to see this page. You must be logged into an ' . $accountType . ' account.');
     }
     return $account;
 }
@@ -54,5 +46,5 @@ function setDisputeFromParams($f3, $params) {
 }
 
 function prettyTime($unixTimestamp) {
-    return new Date('d/m/Y H:i:s', $unixTimestamp);
+    return date('d/m/Y H:i:s', $unixTimestamp);
 }

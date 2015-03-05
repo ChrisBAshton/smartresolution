@@ -1,0 +1,19 @@
+<form>
+    <p>You have been sent a lifespan offer.</p>
+
+    <p>
+        You have until <strong><?php echo prettyTime($dispute->getLifespan()->validUntil()); ?></strong> to accept or decline the lifespan offer. The dispute cannot continue until a dispute lifespan has been negotiated.
+    </p>
+
+    <p>
+        <strong>Proposed start date:</strong> <?php echo prettyTime($dispute->getLifespan()->startTime()); ?>
+    </p>
+
+    <p>
+        <strong>Proposed end date:</strong> <?php echo prettyTime($dispute->getLifespan()->endTime()); ?>
+    </p>
+
+    <div class="">
+        <button>Accept</button> / <button>Decline</button>
+    </div>
+</form>

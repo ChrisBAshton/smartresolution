@@ -3,16 +3,22 @@
 class LifespanController {
 
     function view ($f3, $params) {
-        mustBeLoggedIn();
+        $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
-        if ($dispute->getLifespan()->offered()) {
-            $f3->set('content', 'lifespan_offered.html');
-        }
-        else if ($dispute->getLifespan()->accepted()) {
+        if ($dispute->getLifespan()->accepted()) {
             $f3->set('content', 'lifespan_agreed.html');
         }
-        else {   
+        else if ($dispute->getLifespan()->offered()) {
+            if ($dispute->getLifespan()->getProposer() === $account->getLoginId()) {
+                $f3->set('content', 'lifespan_offered--sent.html');
+            }
+            else {
+                $f3->set('content', 'lifespan_offered--received.html');
+            }
+        }
+        else { 
+            mustBeLoggedInAsAn('Agent');
             $f3->set('content', 'lifespan_new.html');
         }
 
@@ -20,11 +26,11 @@ class LifespanController {
     }
 
     function newLifespan ($f3, $params) {
-        $account    = mustBeLoggedIn();
+        $account    = mustBeLoggedInAsAn('Agent');
         $dispute    = setDisputeFromParams($f3, $params);
-        $validUntil = $f3->get('POST.validUntil');
-        $startTime  = $f3->get('POST.startTime');
-        $endTime    = $f3->get('POST.endTime');
+        $validUntil = strtotime($f3->get('POST.valid_until'));
+        $startTime  = strtotime($f3->get('POST.start_time'));
+        $endTime    = strtotime($f3->get('POST.end_time'));
 
         if (!$validUntil || !$startTime || !$endTime) {
             $f3->set('error_message', 'Please fill in all fields!');
@@ -52,7 +58,7 @@ class LifespanController {
             }
         }
 
-        $this->view($f3);
+        $this->view($f3, $params);
     }
 
     function acceptOrDeclime ($f3) {

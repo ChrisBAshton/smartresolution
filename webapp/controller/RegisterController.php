@@ -36,13 +36,13 @@ class RegisterController {
     }
 
     function individualGet ($f3) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
         $f3->set('content','register_individual.html');
         echo View::instance()->render('layout.html');
     }
 
     function individualPost ($f3) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
 
         $email    = $f3->get('POST.email');
         $password = $f3->get('POST.password');

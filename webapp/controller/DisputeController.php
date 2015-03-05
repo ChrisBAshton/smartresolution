@@ -3,7 +3,7 @@
 class DisputeController {
 
     function newDisputeGet ($f3) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
         $modules = ModuleController::getModules();
         if (count($agents) === 0) {
@@ -21,7 +21,7 @@ class DisputeController {
     }
 
     function newDisputePost ($f3) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
 
         $title   = $f3->get('POST.title');
         $agent   = $f3->get('POST.agent');
@@ -109,7 +109,7 @@ class DisputeController {
     }
 
     function assignDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
         if (count($agents) === 0) {
             errorPage('You must create an Agent account before you can assign a dispute to an Agent!');
@@ -123,7 +123,7 @@ class DisputeController {
     }
 
     function assignDisputePost ($f3, $params) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
         $dispute = setDisputeFromParams($f3, $params);
 
         $agent = $f3->get('POST.agent');
@@ -156,7 +156,7 @@ class DisputeController {
     }
 
     function openDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAnIndividual();
+        mustBeLoggedInAsAn('Individual');
         $dispute = setDisputeFromParams($f3, $params);
 
         if ($dispute->hasBeenOpened()) {
@@ -177,7 +177,7 @@ class DisputeController {
     }
 
     function openDisputePost ($f3, $params) {
-        mustBeLoggedInAsAnIndividual();
+        mustBeLoggedInAsAn('Agent');
         $lawFirmB = $f3->get('POST.law_firm_b');
         
         if (!$lawFirmB || $lawFirmB === '---') {
@@ -199,7 +199,7 @@ class DisputeController {
     }
 
     function closeDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAnIndividual();
+        mustBeLoggedInAsAn('Agent');
         setDisputeFromParams($f3, $params);
         $f3->set('content', 'dispute_close.html');
         echo View::instance()->render('layout.html');
