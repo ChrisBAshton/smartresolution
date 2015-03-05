@@ -7,7 +7,13 @@
         Initiatiated by company: <?php echo $dispute->getLawFirmA()->getName(); ?>, represented by <?php echo $dispute->getAgentA()->getName(); ?>
     </p>
     <p>
+        <em><?php echo $dispute->getSummaryFromPartyA(); ?></em>
+    </p>
+    <p>
         Initiated against company: <?php echo $dispute->getLawFirmB()->getName(); ?>, represented by <?php echo $dispute->getAgentB()->getName(); ?>
+    </p>
+    <p>
+        <em><?php echo $dispute->getSummaryFromPartyB(); ?></em>
     </p>
 <?php endif; ?>
 

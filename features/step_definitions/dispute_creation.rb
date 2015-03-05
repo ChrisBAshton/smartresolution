@@ -12,6 +12,7 @@ Then(/^I should be able to create a new Dispute$/) do
   fill_in('title',       :with => 'Davies versus Jones')
   select('Chris Ashton', :from => 'Agent overseeing Dispute:')
   select('Other',        :from => 'Dispute type:')
+  fill_in('summary',     :with => 'Test summary')
   click_button 'Create Dispute'
 
   assert_equal '/disputes/2', get_current_uri_path # 2 because we've already defined 1 in the YAML fixture data
@@ -64,6 +65,7 @@ end
 Then(/^I should be able to allocate the Agent to the Dispute$/) do
   visit '/disputes/1/assign'
   select('James Smith', :from => 'Agent overseeing Dispute:')
+  fill_in('summary',    :with => 'Another test summary')
   click_button 'Assign Dispute'
   assert page.has_content?('Initiatiated by company: Webdapper Ltd, represented by Chris Ashton')
   assert page.has_content?('Initiated against company: Maritime Collision Specialists Inc, represented by James Smith')

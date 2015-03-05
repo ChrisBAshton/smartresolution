@@ -46,4 +46,21 @@ Run the Cucumber tests:
 
 `cucumber features`
 
-...or just leave it to Travis!
+...or just leave it to [Travis](https://travis-ci.org/ChrisBAshton/major-project.svg?branch=master)]!
+
+## Architecture
+
+* /data/ - contains fixture data for tests. This is also where the test and production SQLite3 databases reside (once they've been made).
+* /features/ - contains my Cucumber features and Ruby step definitions.
+* /modules/ - contains modules describing dispute types. Not much to see here yet, but this will one day encompass the 'Maritime Collision' dispute type.
+* /test/ - contains my PHP unit tests.
+* /vendor/ - automatically generated directory of dependencies, created by Composer.
+* /webapp/ - contains the core ODR platform. Uses the MVCR compound design pattern.
+    - /controller/ - contains the business logic for the system.
+    - /model/ - contains my classes and utility functions.
+    - /view/ - contains the user interface.
+    - index.php - defines the environment and pulls in all dependencies.
+    - routes.php - describes the routing between HTTP requests and controllers.
+
+## License
+This project is free and released as open source software covered by the terms of the [GNU Public License](http://www.gnu.org/licenses/gpl-3.0.html) (GPL v3). You may not use the software, documentation, and samples except in compliance with the license.
