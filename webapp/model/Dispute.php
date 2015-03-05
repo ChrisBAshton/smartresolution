@@ -21,6 +21,7 @@ class Dispute {
             $this->title     = $dispute['title'];
             $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);
             $this->partyB    = $this->getPartyDetails((int) $dispute['party_b']);
+            $this->lifespan  = new Lifespan((int) $dispute['dispute_id']);
 
             if (!$this->partyA) {
                 throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -28,7 +29,24 @@ class Dispute {
         }
     }
 
-    public function getPartyDetails($partyID) {
+    public function refresh() {
+        $this->setVariables($this->getDisputeId());
+    }
+
+    public function getOpposingPartyId($partyID) {
+        if ($partyID === $this->partyA['law_firm'] || $partyID === $this->partyA['agent']) {
+            return $this->partyB['agent'] || $this->partyB['law_firm'];
+        }
+        else {
+            return $this->partyA['agent'] || $this->partyA['law_firm'];
+        }
+    }
+
+    public function getLifespan() {
+        return $this->lifespan;
+    }
+
+    private function getPartyDetails($partyID) {
         if ($partyID === 0) {
             return array(
                 'agent'    => false,

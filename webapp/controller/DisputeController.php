@@ -58,7 +58,7 @@ class DisputeController {
 
     function viewDispute ($f3, $params) {
         $account = mustBeLoggedIn();
-        $dispute = $this->setDisputeFromParams($f3, $params);
+        $dispute = setDisputeFromParams($f3, $params);
         $dashboardActions = array();
 
         if (!$dispute->canBeViewedBy($account->getLoginId())) {
@@ -117,14 +117,14 @@ class DisputeController {
         else {
             $f3->set('agents', $agents);
         }
-        $this->setDisputeFromParams($f3, $params);
+        setDisputeFromParams($f3, $params);
         $f3->set('content', 'dispute_assign.html');
         echo View::instance()->render('layout.html');
     }
 
     function assignDisputePost ($f3, $params) {
         mustBeLoggedInAsAnOrganisation();
-        $dispute = $this->setDisputeFromParams($f3, $params);
+        $dispute = setDisputeFromParams($f3, $params);
 
         $agent = $f3->get('POST.agent');
         $summary = $f3->get('POST.summary');
@@ -155,21 +155,9 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
-    function setDisputeFromParams($f3, $params) {
-        try {
-            $disputeID = (int)$params['disputeID'];
-            $dispute = new Dispute($disputeID); // if dispute does not exist, throws exception
-            $f3->set('dispute', $dispute);
-            return $dispute;
-        }
-        catch(Exception $e) {
-            errorPage($e->getMessage());
-        }
-    }
-
     function openDisputeGet ($f3, $params) {
         mustBeLoggedInAsAnIndividual();
-        $dispute = $this->setDisputeFromParams($f3, $params);
+        $dispute = setDisputeFromParams($f3, $params);
 
         if ($dispute->hasBeenOpened()) {
             errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
@@ -197,7 +185,7 @@ class DisputeController {
             $this->openDisputeGet($f3, $params);
         }
         else {
-            $dispute = $this->setDisputeFromParams($f3, $params);
+            $dispute = setDisputeFromParams($f3, $params);
             $dispute->setLawFirmB($lawFirmB);
 
             Notification::create(array(
@@ -212,7 +200,7 @@ class DisputeController {
 
     function closeDisputeGet ($f3, $params) {
         mustBeLoggedInAsAnIndividual();
-        $this->setDisputeFromParams($f3, $params);
+        setDisputeFromParams($f3, $params);
         $f3->set('content', 'dispute_close.html');
         echo View::instance()->render('layout.html');
     }

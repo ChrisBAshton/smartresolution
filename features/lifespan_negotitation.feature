@@ -6,7 +6,8 @@ Feature: Negotiating a Dispute lifespan
 
   Scenario: Creating a Dispute lifespan offer
     Given both Agents have submitted the Dispute
-    Then I should be able to make a lifespan offer # regardless of who submitted the Dispute first
+    Then I should be able to make a lifespan offer
+    # regardless of who submitted the Dispute first
 
   Scenario: Accepting a Dispute lifespan offer
     Given the other Agent has sent me a Dispute lifespan offer

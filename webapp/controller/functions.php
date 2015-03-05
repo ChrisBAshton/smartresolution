@@ -40,3 +40,19 @@ function notificationsList ($f3) {
     $f3->set('content','notifications.html');
     echo View::instance()->render('layout.html');
 }
+
+function setDisputeFromParams($f3, $params) {
+    try {
+        $disputeID = (int)$params['disputeID'];
+        $dispute = new Dispute($disputeID); // if dispute does not exist, throws exception
+        $f3->set('dispute', $dispute);
+        return $dispute;
+    }
+    catch(Exception $e) {
+        errorPage($e->getMessage());
+    }
+}
+
+function prettyTime($unixTimestamp) {
+    return new Date('d/m/Y H:i:s', $unixTimestamp);
+}

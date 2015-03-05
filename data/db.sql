@@ -59,6 +59,19 @@ CREATE TABLE IF NOT EXISTS dispute_parties (
     FOREIGN KEY(individual_id)   REFERENCES account_details(login_id)
 );
 
+CREATE TABLE IF NOT EXISTS lifespans (
+    lifespan_id INTEGER PRIMARY KEY NOT NULL,
+    dispute_id  INTEGER NOT NULL,
+    proposer    INTEGER NOT NULL,
+    valid_until INTEGER NOT NULL,
+    start_time  INTEGER NOT NULL,
+    end_time    INTEGER NOT NULL,
+    status      VARCHAR(15) DEFAULT "offered",
+    CHECK (status in ("offered", "accepted", "declined")),
+    FOREIGN KEY(dispute_id) REFERENCES disputes(dispute_id),
+    FOREIGN KEY(proposer)   REFERENCES account_details(login_id)
+);
+
 -- #######################################################################
 -- #################################################### Miscellaneous ####
 -- #######################################################################
