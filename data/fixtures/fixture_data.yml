@@ -59,3 +59,11 @@ disputes:
     type:       other
     law_firm_a: law_firm_email
     agent_a:    agent_email
+  - title:      A dispute with no set lifespan
+    type:       other
+    law_firm_a: law_firm_email
+    law_firm_b: another_law_firm_email
+    agent_a:    agent_email
+    agent_b:    agent_b
+    summary_a:  This is the summary by Party A
+    summary_b:  This is the summary by Party B

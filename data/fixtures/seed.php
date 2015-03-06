@@ -44,4 +44,20 @@ foreach($data['disputes'] as $dataItem) {
         'message'      => 'A notification should be made when a dispute is created and assigned to an Agent',
         'url'          => $dispute->getUrl()
     ));
+
+    if (isset($dataItem['law_firm_b'])) {
+        $dispute->setLawFirmB(AccountDetails::emailToId($dataItem['law_firm_b']));
+    }
+
+    if (isset($dataItem['agent_b'])) {
+        $dispute->setAgentB(AccountDetails::emailToId($dataItem['agent_b']));
+    }
+
+    if (isset($dataItem['summary_a'])) {
+        $dispute->setSummaryForPartyA($dataItem['summary_a']);
+    }
+
+    if (isset($dataItem['summary_b'])) {
+        $dispute->setSummaryForPartyB($dataItem['summary_b']);
+    }
 }
