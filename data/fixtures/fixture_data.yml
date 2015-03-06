@@ -35,6 +35,20 @@ organisations:
             forename: James
             surname:  Smith
   - account_details:
+        email:    law_firm_with_only_one_dispute
+        password: test
+    details:
+        type:     law_firm
+        name:     This law firm should only have one dispute associated with it for checking the notifications feature works correctly.
+    individuals:
+      - account_details:
+            email:    one_dispute_agent
+            password: test
+        details:
+            type:     agent
+            forename: Bob
+            surname:  Hope
+  - account_details:
         email:    law_firm_email_with_no_agents
         password: test
     details:
@@ -67,3 +81,7 @@ disputes:
     agent_b:    agent_b
     summary_a:  This is the summary by Party A
     summary_b:  This is the summary by Party B
+  - title:      The one dispute
+    type:       other
+    law_firm_a: law_firm_with_only_one_dispute
+    agent_a:    one_dispute_agent

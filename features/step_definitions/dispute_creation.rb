@@ -15,7 +15,7 @@ Then(/^I should be able to create a new Dispute$/) do
   fill_in('summary',     :with => 'Test summary')
   click_button 'Create Dispute'
 
-  assert_equal '/disputes/2', get_current_uri_path # 2 because we've already defined 1 in the YAML fixture data
+  assert_equal '/disputes/4', get_current_uri_path # 4 because we've already defined several in the YAML fixture data
   assert page.has_content?('Davies versus Jones')
 end
 
