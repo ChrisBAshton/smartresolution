@@ -3,7 +3,7 @@
 class DisputeController {
 
     function newDisputeGet ($f3) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
         $modules = ModuleController::getModules();
         if (count($agents) === 0) {
@@ -21,7 +21,7 @@ class DisputeController {
     }
 
     function newDisputePost ($f3) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
 
         $title   = $f3->get('POST.title');
         $agent   = $f3->get('POST.agent');
@@ -58,7 +58,7 @@ class DisputeController {
 
     function viewDispute ($f3, $params) {
         $account = mustBeLoggedIn();
-        $dispute = $this->setDisputeFromParams($f3, $params);
+        $dispute = setDisputeFromParams($f3, $params);
         $dashboardActions = array();
 
         if (!$dispute->canBeViewedBy($account->getLoginId())) {
@@ -94,12 +94,18 @@ class DisputeController {
             }
         }
         else {
+            if ($dispute->getLifespan()->isCurrent()) {
+                $dashboardActions[] = array(
+                    'title' => 'Communicate',
+                    'href'  => $dispute->getUrl() .'/chat',
+                );
+            }
             $dashboardActions[] = array(
                 'title' => 'Negotiate dispute lifespan',
                 'href'  => $dispute->getUrl() .'/lifespan',
             );
             $dashboardActions[] = array(
-                'title' => 'Take the case to court',
+                'title' => 'Resolve dispute',
                 'href'  => $dispute->getUrl() .'/close',
             );
         }
@@ -109,7 +115,7 @@ class DisputeController {
     }
 
     function assignDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAnOrganisation();
+        mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
         if (count($agents) === 0) {
             errorPage('You must create an Agent account before you can assign a dispute to an Agent!');
@@ -117,14 +123,14 @@ class DisputeController {
         else {
             $f3->set('agents', $agents);
         }
-        $this->setDisputeFromParams($f3, $params);
+        setDisputeFromParams($f3, $params);
         $f3->set('content', 'dispute_assign.html');
         echo View::instance()->render('layout.html');
     }
 
     function assignDisputePost ($f3, $params) {
-        mustBeLoggedInAsAnOrganisation();
-        $dispute = $this->setDisputeFromParams($f3, $params);
+        mustBeLoggedInAsAn('Organisation');
+        $dispute = setDisputeFromParams($f3, $params);
 
         $agent = $f3->get('POST.agent');
         $summary = $f3->get('POST.summary');
@@ -143,6 +149,12 @@ class DisputeController {
                 'url'          => $dispute->getUrl()
             ));
 
+            Notification::create(array(
+                'recipient_id' => $dispute->getOpposingPartyId($agent),
+                'message'      => 'The other party has assigned an agent to the case.',
+                'url'          => $dispute->getUrl()
+            ));
+
             header('Location: ' . $dispute->getUrl());
         }
     }
@@ -155,21 +167,9 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
-    function setDisputeFromParams($f3, $params) {
-        try {
-            $disputeID = (int)$params['disputeID'];
-            $dispute = new Dispute($disputeID); // if dispute does not exist, throws exception
-            $f3->set('dispute', $dispute);
-            return $dispute;
-        }
-        catch(Exception $e) {
-            errorPage($e->getMessage());
-        }
-    }
-
     function openDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAnIndividual();
-        $dispute = $this->setDisputeFromParams($f3, $params);
+        mustBeLoggedInAsAn('Individual');
+        $dispute = setDisputeFromParams($f3, $params);
 
         if ($dispute->hasBeenOpened()) {
             errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
@@ -189,7 +189,7 @@ class DisputeController {
     }
 
     function openDisputePost ($f3, $params) {
-        mustBeLoggedInAsAnIndividual();
+        mustBeLoggedInAsAn('Agent');
         $lawFirmB = $f3->get('POST.law_firm_b');
         
         if (!$lawFirmB || $lawFirmB === '---') {
@@ -197,7 +197,7 @@ class DisputeController {
             $this->openDisputeGet($f3, $params);
         }
         else {
-            $dispute = $this->setDisputeFromParams($f3, $params);
+            $dispute = setDisputeFromParams($f3, $params);
             $dispute->setLawFirmB($lawFirmB);
 
             Notification::create(array(
@@ -211,12 +211,13 @@ class DisputeController {
     }
 
     function closeDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAnIndividual();
-        $this->setDisputeFromParams($f3, $params);
+        mustBeLoggedInAsAn('Agent');
+        setDisputeFromParams($f3, $params);
         $f3->set('content', 'dispute_close.html');
         echo View::instance()->render('layout.html');
     }
 
-    function closeDisputePost ($f3) {
+    function closeDisputePost ($f3, $params) {
+        $this->closeDisputeGet($f3, $params); // @TODO
     }
 }

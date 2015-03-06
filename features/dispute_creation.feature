@@ -24,12 +24,6 @@ Feature: Dispute creation
     When I try to view a Dispute that does not exist
     Then I should see the following message: 'The dispute you are trying to view does not exist.'
 
-  # Scenario: Submitting a Dispute
-  #   Given a Dispute has been assigned to me # by my Law Firm, regardless of who instigated the Dispute
-  #   When I write a Dispute summary
-  #   And I choose to submit the Dispute to the system
-  #   Then the Dispute should be submitted
-
   @clear
   Scenario: Initiating a Dispute against a Law Firm
     Given I have submitted a Dispute
@@ -37,7 +31,7 @@ Feature: Dispute creation
     And I shouldn't be able to reinitiate it against a different Law Firm
 
   @clear
-  Scenario: Being initiated a Dispute
+  Scenario: A Dispute is opened against my Law Firm
     Given a Dispute has been initiated against my Law Firm
     And I have created an Agent
     Then I should be able to allocate the Agent to the Dispute

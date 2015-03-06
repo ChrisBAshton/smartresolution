@@ -5,7 +5,39 @@ if (count($disputes) === 0) {
     echo '<p class="bg-padded bg-info">No disputes yet.</p>';
 }
 else {
+?>
+
+<div class="dispute_list">
+
+    <div class="row">
+        <div class="dispute_list__item">
+            <div class="dispute_list__item__title col-sm-6">
+                <h3>Dispute Title</h3>
+            </div>
+            <div class="dispute_list__item__lifespan col-sm-6">
+                <h3>Status</h3>
+            </div>
+        </div>
+    </div>
+    <?php
     foreach($disputes as $dispute) {
-        echo '<p><a href="' . $dispute->getUrl() . '">' . $dispute->getTitle() . '</a></p>';
+    ?>
+        <div class="row">
+            <div class="dispute_list__item">
+                <div class="dispute_list__item__title col-sm-6">
+                    <a href="<?php echo $dispute->getUrl(); ?>"><?php echo $dispute->getTitle(); ?></a>
+                </div>
+                <div class="dispute_list__item__lifespan col-sm-6">
+                    <?php echo $dispute->getLifespan()->status(); ?>
+                </div>
+            </div>
+        </div>
+    <?php
     }
+    ?>
+
+</div>
+
+<?php
 }
+?>

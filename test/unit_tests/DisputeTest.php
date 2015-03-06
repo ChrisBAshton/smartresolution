@@ -120,6 +120,20 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Test summary', $dispute->getSummaryFromPartyB());
     }
 
+    public function testGetOpposingPartyId() {
+        DisputeTest::setUpBeforeClass();
+        $dispute = $this->createNewDispute();
+        $lawFirmA = AccountDetails::emailToId('law_firm_email');
+        $agentA   = AccountDetails::emailToId('agent_email');
+        $lawFirmB = AccountDetails::emailToId('another_law_firm_email');
+        $agentB   = AccountDetails::emailToId('agent_b');
+        $dispute->setLawFirmB($lawFirmB);
+        $dispute->setAgentB($agentB);
+
+        $this->assertEquals($agentB, $dispute->getOpposingPartyId($agentA));
+        $this->assertEquals($agentA, $dispute->getOpposingPartyId($agentB));
+    }
+
     /**
      * @expectedException Exception
      */

@@ -1,0 +1,13 @@
+<p>You have both agreed a dispute lifespan.</p>
+
+<p>
+    <strong>Starting:</strong> <?php echo prettyTime($dispute->getLifespan()->startTime()); ?>
+</p>
+
+<p>
+    <strong>Ending:</strong> <?php echo prettyTime($dispute->getLifespan()->endTime()); ?>
+</p>
+
+<p>
+    You can always <a href="<?php echo $dispute->getUrl(); ?>/lifespan/new">renegotiate a new lifespan</a>, but if the other party does not accept, the above lifespan takes precedence.
+</p>

@@ -28,6 +28,11 @@ $routes = array(
     'GET  /disputes/@disputeID/close'  => 'DisputeController->closeDisputeGet',
     'POST /disputes/@disputeID/close'  => 'DisputeController->closeDisputePost',
 
+    // lifespans
+    'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',
+    'GET|POST /disputes/@disputeID/lifespan/new'  => 'LifespanController->newLifespan',
+    'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
+
     // notifications
     'GET /notifications' => 'notificationsList'
 );

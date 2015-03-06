@@ -1,5 +1,5 @@
 <?php
-
+// @TODO - needs a major refurbishment
 class Dispute {
 
     function __construct($disputeID) {
@@ -21,6 +21,7 @@ class Dispute {
             $this->title     = $dispute['title'];
             $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);
             $this->partyB    = $this->getPartyDetails((int) $dispute['party_b']);
+            $this->lifespan  = LifespanFactory::getLifespan((int) $dispute['dispute_id']);
 
             if (!$this->partyA) {
                 throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -28,7 +29,50 @@ class Dispute {
         }
     }
 
-    public function getPartyDetails($partyID) {
+    public function refresh() {
+        $this->setVariables($this->getDisputeId());
+    }
+
+    public function getOpposingPartyId($partyID) {
+
+        $mockIfNecessary = array(
+            'lawFirmA' => $this->partyA['law_firm'],
+            'lawFirmB' => $this->partyB['law_firm'],
+            'agentA'   => $this->partyA['agent'],
+            'agentB'   => $this->partyB['agent'],
+        );
+
+        foreach($mockIfNecessary as $key => $object) {
+            if (!$mockIfNecessary[$key]) {
+                $mockIfNecessary[$key] = new MockAccount();
+            }
+        }
+
+        if ($partyID === $this->partyA['law_firm']->getLoginId() ||
+            $partyID === $this->partyA['agent']->getLoginId())
+        {
+            if ($this->partyB['agent']->getLoginId()) {
+                return $this->partyB['agent']->getLoginId();
+            }
+            else {
+                $this->partyB['law_firm']->getLoginId();
+            }
+        }
+        else {
+            if ($this->partyA['agent']->getLoginId()) {
+                return $this->partyA['agent']->getLoginId();
+            }
+            else {
+                $this->partyA['law_firm']->getLoginId();
+            }
+        }
+    }
+
+    public function getLifespan() {
+        return $this->lifespan;
+    }
+
+    private function getPartyDetails($partyID) {
         if ($partyID === 0) {
             return array(
                 'agent'    => false,
