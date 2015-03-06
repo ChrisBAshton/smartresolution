@@ -12,7 +12,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $lawFirm = AccountDetails::emailToId('law_firm_email');
         $agent = AccountDetails::emailToId('agent_email');
         
-        return Dispute::create(array(
+        return DisputeDB::create(array(
             'law_firm_a' => $lawFirm,
             'agent_a'    => $agent,
             'type'       => 'other',
@@ -140,7 +140,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testSettingDisputeAgentToLawFirm() {
         $agentA   = AccountDetails::emailToId('agent_email');
 
-        return Dispute::create(array(
+        return DisputeDB::create(array(
             'law_firm_a' => $agentA, // shouldn't be able to set law firm as an agent
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -154,7 +154,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $lawFirmA = AccountDetails::emailToId('law_firm_email');
         $lawFirmB = AccountDetails::emailToId('another_law_firm_email');
 
-        $dispute = Dispute::create(array(
+        $dispute = DisputeDB::create(array(
             'law_firm_a' => $lawFirmA,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -167,7 +167,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNullLawFirm() {
-        Dispute::create(array(
+        DisputeDB::create(array(
             'law_firm_a' => NULL,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -181,7 +181,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         
         $lawFirm = AccountDetails::emailToId('law_firm_email');
 
-        Dispute::create(array(
+        DisputeDB::create(array(
             'law_firm_a' => $lawFirm,
             'type'       => NULL,
             'title'      => 'Smith versus Jones'
@@ -195,7 +195,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         
         $lawFirm = AccountDetails::emailToId('law_firm_email');
 
-        Dispute::create(array(
+        DisputeDB::create(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other',
             'title'      => NULL
@@ -206,7 +206,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNoLawFirm() {
-        Dispute::create(array(
+        DisputeDB::create(array(
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
         ));
@@ -217,7 +217,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNoType() {
         $lawFirm = AccountDetails::emailToId('law_firm_email');
-        Dispute::create(array(
+        DisputeDB::create(array(
             'law_firm_a' => $lawFirm,
             'title'      => 'Smith versus Jones'
         ));
@@ -228,7 +228,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNoTitle() {
         $lawFirm = AccountDetails::emailToId('law_firm_email');
-        Dispute::create(array(
+        DisputeDB::create(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other'
         ));

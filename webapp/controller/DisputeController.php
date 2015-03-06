@@ -33,7 +33,7 @@ class DisputeController {
         }
         else {
             try {
-                $dispute = Dispute::create(array(
+                $dispute = DisputeDB::create(array(
                     'title'      => $title,
                     'law_firm_a' => $f3->get('account')->getLoginId(),
                     'agent_a'    => $agent,
@@ -64,50 +64,8 @@ class DisputeController {
         if (!$dispute->canBeViewedBy($account->getLoginId())) {
             errorPage('You do not have permission to view this Dispute!');
         }
-        elseif ($dispute->hasNotBeenOpened()) {
-            if ($account->getLoginId() === $dispute->getAgentA()->getLoginId()) {
-                $dashboardActions[] = array(
-                    'title' => 'Open dispute',
-                    'href'  => $dispute->getUrl() . '/open'
-                );
-            }
-            else {
-                $f3->set('status', array(
-                    'message' => 'You are waiting for ' . $dispute->getAgentA()->getName() . ' to open the dispute against another law firm.',
-                    'class'   => 'bg-padded bg-info'
-                ));
-            }
-        }
-        else if ($dispute->waitingForLawFirmB()) {
-            // if we are law firm b
-            if ($account->getLoginId() === $dispute->getLawFirmB()->getLoginId()) {
-                $dashboardActions[] = array(
-                    'title' => 'Assign dispute to an agent',
-                    'href'  => $dispute->getUrl() . '/assign'
-                );
-            }
-            else {
-                $f3->set('status', array(
-                    'message' => 'You are waiting for ' . $dispute->getLawFirmB()->getName() . ' to assign an agent to the dispute.',
-                    'class'   => 'bg-padded bg-info'
-                ));
-            }
-        }
         else {
-            if ($dispute->getLifespan()->isCurrent()) {
-                $dashboardActions[] = array(
-                    'title' => 'Communicate',
-                    'href'  => $dispute->getUrl() .'/chat',
-                );
-            }
-            $dashboardActions[] = array(
-                'title' => 'Negotiate dispute lifespan',
-                'href'  => $dispute->getUrl() .'/lifespan',
-            );
-            $dashboardActions[] = array(
-                'title' => 'Resolve dispute',
-                'href'  => $dispute->getUrl() .'/close',
-            );
+            $dashboardActions = DisputeActions::getActions($dispute, $account, $f3);
         }
         $f3->set('dashboardActions', $dashboardActions);
         $f3->set('content', 'dispute_view--single.html');
@@ -160,9 +118,10 @@ class DisputeController {
     }
 
     function viewDisputes ($f3) {
-        $account = mustBeLoggedIn();
-        $disputes = Dispute::getAllDisputesConcerning($account->getLoginId());
-        $f3->set('disputes', $disputes);
+        $account  = mustBeLoggedIn();
+        $disputes = DisputeDB::getAllDisputesConcerning($account->getLoginId());
+        var_dump($disputes);
+        //$f3->set('disputes', $disputes);
         $f3->set('content', 'dispute_view--list.html');
         echo View::instance()->render('layout.html');
     }

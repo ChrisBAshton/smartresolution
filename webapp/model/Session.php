@@ -4,7 +4,8 @@ session_start();
 class Session {
 
     public static function getAccount() {
-        return AccountDetails::getAccountByEmail($_SESSION['ODR_Email']);
+        $email = Utils::getValue($_SESSION, 'ODR_Email', false);
+        return $email ? AccountDetails::getAccountByEmail($email) : false;
     }
 
     public static function create($email, $password) {

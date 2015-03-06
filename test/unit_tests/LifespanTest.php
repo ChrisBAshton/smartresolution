@@ -14,7 +14,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         $this->lawFirmB = AccountDetails::emailToId('another_law_firm_email');
         $this->agentB   = AccountDetails::emailToId('agent_b');
         
-        $this->dispute = Dispute::create(array(
+        $this->dispute = DisputeDB::create(array(
             'law_firm_a' => $this->lawFirmA,
             'agent_a'    => $this->agentA,
             'type'       => 'other',
