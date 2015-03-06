@@ -99,7 +99,7 @@ class DisputeController {
                 'href'  => $dispute->getUrl() .'/lifespan',
             );
             $dashboardActions[] = array(
-                'title' => 'Take the case to court',
+                'title' => 'Resolve dispute',
                 'href'  => $dispute->getUrl() .'/close',
             );
         }
@@ -140,6 +140,12 @@ class DisputeController {
             Notification::create(array(
                 'recipient_id' => $agent,
                 'message'      => 'A new dispute has been assigned to you.',
+                'url'          => $dispute->getUrl()
+            ));
+
+            Notification::create(array(
+                'recipient_id' => $dispute->getOpposingPartyId($agent),
+                'message'      => 'The other party has assigned an agent to the case.',
                 'url'          => $dispute->getUrl()
             ));
 
@@ -205,6 +211,7 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
-    function closeDisputePost ($f3) {
+    function closeDisputePost ($f3, $params) {
+        $this->closeDisputeGet($f3, $params); // @TODO
     }
 }

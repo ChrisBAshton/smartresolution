@@ -3,11 +3,12 @@
 class LifespanController {
 
     function view ($f3, $params) {
-        $account = mustBeLoggedIn();
+        $account = mustBeLoggedInAsAn('Agent');
         $dispute = setDisputeFromParams($f3, $params);
 
         if ($dispute->getLifespan()->accepted()) {
             $f3->set('content', 'lifespan_agreed.html');
+            echo View::instance()->render('layout.html');
         }
         else if ($dispute->getLifespan()->offered()) {
             if ($dispute->getLifespan()->getProposer() === $account->getLoginId()) {
@@ -16,13 +17,11 @@ class LifespanController {
             else {
                 $f3->set('content', 'lifespan_offered--received.html');
             }
+            echo View::instance()->render('layout.html');
         }
-        else { 
-            mustBeLoggedInAsAn('Agent');
-            $f3->set('content', 'lifespan_new.html');
+        else {
+            header('Location: ' . $dispute->getUrl() . '/lifespan/new');
         }
-
-        echo View::instance()->render('layout.html');
     }
 
     function newLifespan ($f3, $params) {
@@ -58,11 +57,30 @@ class LifespanController {
             }
         }
 
-        $this->view($f3, $params);
+        $f3->set('content', 'lifespan_new.html');
+        echo View::instance()->render('layout.html');
     }
 
-    function acceptOrDeclime ($f3) {
-        $f3->set('status', '@TODO!');
-        echo View::instance()->render('layout.html');
+    function acceptOrDecline ($f3, $params) {
+        $account = mustBeLoggedInAsAn('Agent');
+        $dispute = setDisputeFromParams($f3, $params);
+        $resolution = $f3->get('POST.resolution');
+
+        if ($resolution === 'accept') {
+            $dispute->getLifespan()->accept();
+            $notification = 'The other party has agreed your lifespan offer.';
+        }
+        else if ($resolution === 'decline') {
+            $dispute->getLifespan()->decline();
+            $notification = 'The other party has declined your lifespan offer.';
+        }
+
+        Notification::create(array(
+            'recipient_id' => $dispute->getOpposingPartyId($account->getLoginId()),
+            'message'      => $notification,
+            'url'          => $dispute->getUrl() . '/lifespan'
+        ));
+
+        header('Location: ' . $dispute->getUrl() . '/lifespan');
     }
 }

@@ -1,4 +1,4 @@
-<form>
+<form method="post" action="/disputes/<?php echo $dispute->getDisputeId(); ?>/lifespan/respond">
     <p>You have been sent a lifespan offer.</p>
 
     <p>
@@ -14,6 +14,7 @@
     </p>
 
     <div class="">
-        <button>Accept</button> / <button>Decline</button>
+        <button type="submit" name="resolution" value="accept">Accept</button> / 
+        <button type="submit" name="resolution" value="decline">Decline</button>
     </div>
 </form>

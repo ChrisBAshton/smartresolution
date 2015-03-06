@@ -1,5 +1,5 @@
 <?php
-
+// @TODO - needs a major refurbishment
 class Dispute {
 
     function __construct($disputeID) {
@@ -34,11 +34,37 @@ class Dispute {
     }
 
     public function getOpposingPartyId($partyID) {
-        if ($partyID === $this->partyA['law_firm'] || $partyID === $this->partyA['agent']) {
-            return $this->partyB['agent'] || $this->partyB['law_firm'];
+
+        $mockIfNecessary = array(
+            'lawFirmA' => $this->partyA['law_firm'],
+            'lawFirmB' => $this->partyB['law_firm'],
+            'agentA'   => $this->partyA['agent'],
+            'agentB'   => $this->partyB['agent'],
+        );
+
+        foreach($mockIfNecessary as $key => $object) {
+            if (!$mockIfNecessary[$key]) {
+                $mockIfNecessary[$key] = new MockAccount();
+            }
+        }
+
+        if ($partyID === $this->partyA['law_firm']->getLoginId() ||
+            $partyID === $this->partyA['agent']->getLoginId())
+        {
+            if ($this->partyB['agent']->getLoginId()) {
+                return $this->partyB['agent']->getLoginId();
+            }
+            else {
+                $this->partyB['law_firm']->getLoginId();
+            }
         }
         else {
-            return $this->partyA['agent'] || $this->partyA['law_firm'];
+            if ($this->partyA['agent']->getLoginId()) {
+                return $this->partyA['agent']->getLoginId();
+            }
+            else {
+                $this->partyA['law_firm']->getLoginId();
+            }
         }
     }
 

@@ -29,6 +29,7 @@ function errorPage($errorMessage) {
 }
 
 function notificationsList ($f3) {
+    mustBeLoggedIn();
     $f3->set('content','notifications.html');
     echo View::instance()->render('layout.html');
 }

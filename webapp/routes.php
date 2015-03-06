@@ -29,10 +29,9 @@ $routes = array(
     'POST /disputes/@disputeID/close'  => 'DisputeController->closeDisputePost',
 
     // lifespans
-    'GET  /disputes/@disputeID/lifespan'         => 'LifespanController->view',
-    'POST /disputes/@disputeID/lifespan'         => 'LifespanController->newLifespan',
-    'POST /disputes/@disputeID/lifespan/accept'  => 'LifespanController->acceptOrDecline',
-    'POST /disputes/@disputeID/lifespan/decline' => 'LifespanController->acceptOrDecline',
+    'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',
+    'GET|POST /disputes/@disputeID/lifespan/new'  => 'LifespanController->newLifespan',
+    'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
 
     // notifications
     'GET /notifications' => 'notificationsList'
