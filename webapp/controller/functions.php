@@ -49,3 +49,20 @@ function setDisputeFromParams($f3, $params) {
 function prettyTime($unixTimestamp) {
     return date('d/m/Y H:i:s', $unixTimestamp);
 }
+
+/**
+ * If we do time() minus a UNIX timestamp on file, we can work out the number of seconds the thing is
+ * in the past or in the future. This function converts those seconds into a human-readable time.
+ * 
+ * Based on http://stackoverflow.com/a/19680778
+ * 
+ * @param  int $seconds Number of seconds calculated.
+ * @return String       Formatted time.
+ */
+function secondsToTime($seconds) {
+    $dtF = new DateTime("@0");
+    $dtT = new DateTime("@$seconds");
+    $dtF = $dtF->diff($dtT)->format('%a days, %h hours, %i minutes');
+    $dtF = str_replace("0 days, ", "", $dtF);
+    return $dtF;
+}

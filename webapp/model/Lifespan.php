@@ -8,11 +8,35 @@ class Lifespan {
         $this->setVariables($disputeID);
     }
 
+    public function status() {
+        if ($this->accepted()) {
+            $currentTime = time();
+            if ($this->startTime() > $currentTime) {
+                $status = 'Dispute starts in ' . secondsToTime($this->startTime() - $currentTime);
+            }
+            else if ($this->endTime > $currentTime) {
+                $status = 'Dispute has started and ends in ' . secondsToTime($this->endTime() - $currentTime);
+            }
+            else {
+                $status = prettyTime($this->startTime()) . ' - ' . prettyTime($this->endTime());
+            }
+        }
+        else if ($this->offered()) {
+            $status = 'New lifespan proposal offered.';
+        }
+        else {
+            $status = 'No lifespan set yet.';
+        }
+
+        return '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>';
+    }
+
     private function setVariables($disputeID) {
         $lifespan = Database::instance()->exec(
             'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
             array(':dispute_id' => $disputeID)
         );
+
         if (count($lifespan) === 1) {
             $lifespan         = $lifespan[0];
             $this->lifespanID = (int) $lifespan['lifespan_id'];
