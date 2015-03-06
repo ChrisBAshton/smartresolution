@@ -1,34 +1,50 @@
 <?php
 
-class Lifespan {
+interface LifespanInterface {
+
+    public function __construct($disputeID);
+    public function status();
+    public function isCurrent();
+    public function offered();
+    public function accepted();
+    public function declined();
+
+}
+
+class LifespanMock implements LifespanInterface {
+
+    function __construct($disputeID) {
+        $this->disputeID = $disputeID;
+    }
+
+    public function status() {
+        return '<a href="/disputes/' . $this->disputeID . '/lifespan">No lifespan set yet.</a>';
+    }
+
+    public function isCurrent() {
+        return false;
+    }
+
+    public function offered() {
+        return false;
+    }
+
+    public function accepted() {
+        return false;
+    }
+
+    public function declined() {
+        return false;
+    }
+
+}
+
+class Lifespan implements LifespanInterface {
 
     private $status;
 
     function __construct($disputeID) {
         $this->setVariables($disputeID);
-    }
-
-    public function status() {
-        if ($this->accepted()) {
-            $currentTime = time();
-            if ($this->startTime() > $currentTime) {
-                $status = 'Dispute starts in ' . secondsToTime($this->startTime() - $currentTime);
-            }
-            else if ($this->endTime > $currentTime) {
-                $status = 'Dispute has started and ends in ' . secondsToTime($this->endTime() - $currentTime);
-            }
-            else {
-                $status = prettyTime($this->startTime()) . ' - ' . prettyTime($this->endTime());
-            }
-        }
-        else if ($this->offered()) {
-            $status = 'New lifespan proposal offered.';
-        }
-        else {
-            $status = 'No lifespan set yet.';
-        }
-
-        return '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>';
     }
 
     private function setVariables($disputeID) {
@@ -46,6 +62,39 @@ class Lifespan {
             $this->validUntil = $lifespan['valid_until'];
             $this->startTime  = $lifespan['start_time'];
             $this->endTime    = $lifespan['end_time'];
+        }
+    }
+
+    public function status() {
+        if ($this->accepted()) {
+            $currentTime = time();
+            if ($this->startTime() > $currentTime) {
+                $status = 'Dispute starts in ' . secondsToTime($this->startTime() - $currentTime);
+            }
+            else if ($this->endTime > $currentTime) {
+                $status = 'Dispute has started and ends in ' . secondsToTime($this->endTime() - $currentTime);
+            }
+            else {
+                $status = 'Dispute lifespan ended ' . secondsToTime($currentTime - $this->endTime()) . ' ago';
+            }
+        }
+        else if ($this->offered()) {
+            $status = 'New lifespan proposal offered.';
+        }
+        else {
+            $status = 'No lifespan set yet.';
+        }
+
+        return '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>';
+    }
+
+    public function isCurrent() {
+        if (!$this->accepted()) {
+            return false;
+        }
+        else {
+            $currentTime = time();
+            return ($this->startTime() < $currentTime) && ($this->endTime > $currentTime);
         }
     }
 
@@ -102,33 +151,5 @@ class Lifespan {
             )
         );
         $this->setVariables($this->getAssociatedDisputeId());
-    }
-
-    public static function create($params) {
-        $disputeID  = Utils::getValue($params, 'dispute_id');
-        $proposer   = Utils::getValue($params, 'proposer');
-        $validUntil = Utils::getValue($params, 'valid_until');
-        $startTime  = Utils::getValue($params, 'start_time');
-        $endTime    = Utils::getValue($params, 'end_time');
-
-        $db = Database::instance();
-        $db->begin();
-        $db->exec(
-            'INSERT INTO lifespans (dispute_id, proposer, valid_until, start_time, end_time)
-             VALUES (:dispute_id, :proposer, :valid_until, :start_time, :end_time)', array(
-            ':dispute_id'  => $disputeID,
-            ':proposer'    => $proposer,
-            ':valid_until' => $validUntil,
-            ':start_time'  => $startTime,
-            ':end_time'    => $endTime
-        ));
-        $lifespanID = (int) $db->exec(
-            'SELECT lifespan_id FROM lifespans ORDER BY lifespan_id DESC LIMIT 1'
-        )[0]['lifespan_id'];
-        
-        $lifespan = new Lifespan($lifespanID);
-        // if no exception is raised, safe to commit transaction to database
-        $db->commit();
-        return $lifespan;
     }
 }

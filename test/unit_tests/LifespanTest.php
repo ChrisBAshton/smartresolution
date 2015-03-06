@@ -29,7 +29,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
 
     private function createLifespan() {
         $currentTime = time();
-        Lifespan::create(array(
+        LifespanFactory::create(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 3600,
@@ -40,6 +40,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
     }
 
     public function testLifespanStatusStartsOffCorrect() {
+        $this->assertTrue($this->dispute->getLifespan() instanceof LifespanMock);
         $this->assertFalse($this->dispute->getLifespan()->offered());
         $this->assertFalse($this->dispute->getLifespan()->accepted());
         $this->assertFalse($this->dispute->getLifespan()->declined());

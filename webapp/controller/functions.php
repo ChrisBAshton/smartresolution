@@ -64,5 +64,7 @@ function secondsToTime($seconds) {
     $dtT = new DateTime("@$seconds");
     $dtF = $dtF->diff($dtT)->format('%a days, %h hours, %i minutes');
     $dtF = str_replace("0 days, ", "", $dtF);
+    $dtF = str_replace("0 hours, ", "", $dtF);
+    $dtF = str_replace("0 minutes, ", "", $dtF);
     return $dtF;
 }

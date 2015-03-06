@@ -94,6 +94,12 @@ class DisputeController {
             }
         }
         else {
+            if ($dispute->getLifespan()->isCurrent()) {
+                $dashboardActions[] = array(
+                    'title' => 'Communicate',
+                    'href'  => $dispute->getUrl() .'/chat',
+                );
+            }
             $dashboardActions[] = array(
                 'title' => 'Negotiate dispute lifespan',
                 'href'  => $dispute->getUrl() .'/lifespan',

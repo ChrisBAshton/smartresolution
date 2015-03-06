@@ -3,7 +3,11 @@
 <h2><?php echo $dispute->getTitle(); ?></h2>
 
 <div class="lifespan_status">
-    <?php echo $dispute->getLifespan()->status(); ?>
+    <?php
+        if ($dispute->getLifespan()) {
+            echo $dispute->getLifespan()->status();
+        }
+    ?>
 </div>
 
 <?php if (!$dispute->waitingForLawFirmB()) : ?>
