@@ -1,87 +1,93 @@
 organisations:
   - account_details:
-        email:    law_firm_email
+        email:    law_firm_a@t.co
         password: test
     details:
         type:     law_firm
         name:     Webdapper Ltd
     individuals:
       - account_details:
-            email:    agent_email
+            email:    agent_a@t.co
             password: test
         details:
             type:     agent
             forename: Chris
             surname:  Ashton
       - account_details:
-            email:    another_agent_email
+            email:    agent_c@t.co
             password: secret
         details:
             type:     agent
             forename: John
             surname:  Smith
   - account_details:
-        email:    another_law_firm_email
+        email:    law_firm_b@t.co
         password: test
     details:
         type:     law_firm
         name:     Maritime Collision Specialists Inc
     individuals:
       - account_details:
-            email:    agent_b
+            email:    agent_b@t.co
             password: test
         details:
             type:     agent
             forename: James
             surname:  Smith
   - account_details:
-        email:    law_firm_with_only_one_dispute
+        email:    law_firm_with_only_one_dispute@company.com
         password: test
     details:
         type:     law_firm
         name:     This law firm should only have one dispute associated with it for checking the notifications feature works correctly.
     individuals:
       - account_details:
-            email:    one_dispute_agent
+            email:    one_dispute_agent@company.com
             password: test
         details:
             type:     agent
             forename: Bob
             surname:  Hope
   - account_details:
-        email:    law_firm_email_with_no_agents
+        email:    law_firm_with_no_agents@t.co
         password: test
     details:
         type:     law_firm
         name:     Lonely Inc
   - account_details:
-        email:    mediation_centre_email
+        email:    mediation_centre_email@we-mediate.co.uk
         password: test
     details:
         type:     mediation_centre
-        name:     CompanyCo
+        name:     WeMediate
     individuals:
       - account_details:
-            email:    mediator_email
+            email:    john.smith@we-mediate.co.uk
             password: test
         details:
             type:     mediator
             forename: John
             surname:  Smith
 disputes:
+  - title:      A simple test dispute
+    type:       other
+    law_firm_a: law_firm_a@t.co
+    agent_a:    agent_a@t.co
   - title:      Smith versus Jones
     type:       other
-    law_firm_a: law_firm_email
-    agent_a:    agent_email
-  - title:      A dispute with no set lifespan
-    type:       other
-    law_firm_a: law_firm_email
-    law_firm_b: another_law_firm_email
-    agent_a:    agent_email
-    agent_b:    agent_b
-    summary_a:  This is the summary by Party A
-    summary_b:  This is the summary by Party B
+    law_firm_a: law_firm_a@t.co
+    law_firm_b: law_firm_b@t.co
+    agent_a:    agent_a@t.co
+    agent_b:    agent_b@t.co
+    summary_a:  >
+                    Our client alleges that Jones deliberately damaged our client's vessel,
+                    causing $3,000 USD of damages. We are seeking compensation on behalf of
+                    our client.
+    summary_b:  >
+                    It is our belief that Jones was operating their vessel in accordance with
+                    all regulations and that the damage done to Smith's vessel was an act of
+                    God. Our client should not have to pay the claimant any damages.
   - title:      The one dispute
     type:       other
-    law_firm_a: law_firm_with_only_one_dispute
-    agent_a:    one_dispute_agent
+    law_firm_a: law_firm_with_only_one_dispute@company.com
+    agent_a:    one_dispute_agent@company.com

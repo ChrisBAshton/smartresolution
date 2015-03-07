@@ -1,19 +1,25 @@
 language: php
 php:
   - 5.4
+env:
+  - SYSTEM=TRAVIS
 install:
   - composer install
   - gem install bundler
   - bundle install
 before_script:
-  # start a web server. See http://robbiemackay.com/2013/05/03/automating-behat-and-mink-tests-with-travis-ci/
-  - php -S 127.0.0.1:8000 -t webapp &
+  # run PHP server (required for tests. We only start the server if we're on Travis)
+  - sh server.sh
   - sleep 3
-script:
-  # create our databases
+  # remove any existing database and create our databases
+  - rm -f data/test.db
+  - rm -f data/production.db
+  - sqlite3 data/test.db < data/db.sql
   - sqlite3 data/production.db < data/db.sql
-  # populate the test database
-  - php data/fixtures/seed.php
+  # populate the test and production databases
+  - php data/fixtures/seed.php test
+  - php data/fixtures/seed.php production
+script:
   # run our unit tests
   - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
   # run our integration tests

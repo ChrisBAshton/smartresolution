@@ -57,7 +57,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
      */
     public function testRegisterWithExistingEmail() {
         $agent = array(
-            'email'    => 'law_firm_email',
+            'email'    => 'law_firm_a@t.co',
             'password' => 'secret'
         );
         Register::accountDetails($agent);

@@ -3,7 +3,7 @@ end
 
 Given(/^I have created NO Agent accounts$/) do
   clear_session_before_login
-  login_with_credentials 'law_firm_email_with_no_agents', 'test'
+  login_with_credentials 'law_firm_with_no_agents@t.co', 'test'
   visit '/disputes/new'
 end
 
@@ -55,7 +55,7 @@ Given(/^a Dispute has been initiated against my Law Firm$/) do
   login_as_agent
   open_dispute # against company B. Then login as company B
   clear_session_before_login
-  login_with_credentials 'another_law_firm_email', 'test'
+  login_with_credentials 'law_firm_b@t.co', 'test'
 end
 
 Given(/^I have created an Agent$/) do

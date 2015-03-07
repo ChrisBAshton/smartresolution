@@ -12,7 +12,7 @@ end
 And(/^regardless of who submitted the Dispute first$/) do
   # login as the other agent, decline offer and create another offer, to prove either agent can propose lifespan
   clear_session_before_login
-  login_with_credentials 'agent_b', 'test'
+  login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/2/lifespan'
   click_button 'Decline'
   make_lifespan_offer
@@ -28,7 +28,7 @@ end
 Then(/^I should be able to (Accept|Decline) the offer$/) do |accept_or_decline|
   # login as the other agent, accept offer
   clear_session_before_login
-  login_with_credentials 'agent_b', 'test'
+  login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/2/lifespan'
   click_button accept_or_decline
 end

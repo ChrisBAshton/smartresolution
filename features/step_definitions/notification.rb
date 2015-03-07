@@ -3,7 +3,7 @@ end
 
 And(/^I am logged into an Agent account$/) do
   visit '/login'
-  login_with_credentials 'one_dispute_agent', 'test'
+  login_with_credentials 'one_dispute_agent@company.com', 'test'
 end
 
 Then(/^I should get a notification about the Dispute$/) do
