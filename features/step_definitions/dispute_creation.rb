@@ -35,7 +35,7 @@ def open_dispute
   visit '/disputes/1/open'
   select('Maritime Collision Specialists Inc', :from => 'Select the opposing company:')
   click_button 'Open Dispute'
-  assert page.has_content?('You are waiting for Maritime Collision Specialists Inc to assign an agent to the dispute.')
+  assert page.has_content?('Waiting for Maritime Collision Specialists Inc to assign an agent to the dispute.')
 end
 
 Given(/^I have submitted a Dispute$/) do
@@ -67,6 +67,8 @@ Then(/^I should be able to allocate the Agent to the Dispute$/) do
   select('James Smith', :from => 'Agent overseeing Dispute:')
   fill_in('summary',    :with => 'Another test summary')
   click_button 'Assign Dispute'
-  assert page.has_content?('Initiatiated by company: Webdapper Ltd, represented by Chris Ashton')
-  assert page.has_content?('Initiated against company: Maritime Collision Specialists Inc, represented by James Smith')
+  assert page.has_content?('Initiatiated by company: Webdapper Ltd')
+  assert page.has_content?('Represented by: Chris Ashton')
+  assert page.has_content?('Opened against company: Maritime Collision Specialists Inc')
+  assert page.has_content?('Represented by: James Smith')
 end

@@ -47,6 +47,23 @@ class Lifespan implements LifespanInterface {
         $this->setVariables($disputeID);
     }
 
+    public function invalid($validUntil, $startTime, $endTime) {
+        $currentTime = time();
+        $invalidBecause = false;
+
+        if ($validUntil < $currentTime || $startTime < $currentTime || $endTime < $currentTime) {
+            $invalidBecause = 'All selected dates must be in the future.';
+        }
+        else if ($startTime >= $endTime) {
+            $invalidBecause = 'Start date must be before end date.';
+        }
+        else if ($validUntil > $startTime) {
+            $invalidBecause = 'The "Valid Until" date must be before the start and end dates.';
+        }
+
+        return $invalidBecause;
+    }
+
     private function setVariables($disputeID) {
         $lifespan = Database::instance()->exec(
             'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
@@ -65,7 +82,7 @@ class Lifespan implements LifespanInterface {
         }
     }
 
-    public function status() {
+    public function status($href = true) {
         if ($this->accepted()) {
             $currentTime = time();
             if ($this->startTime() > $currentTime) {
@@ -85,7 +102,7 @@ class Lifespan implements LifespanInterface {
             $status = 'No lifespan set yet.';
         }
 
-        return '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>';
+        return $href ? '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>' : $status;
     }
 
     public function isCurrent() {

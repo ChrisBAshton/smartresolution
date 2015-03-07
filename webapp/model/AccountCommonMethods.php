@@ -27,4 +27,8 @@ abstract class AccountCommonMethods {
 
         return $notifications;
     }
+
+    public function __toString() {
+        return '<a href="">' . $this->getName() . '</a>';
+    }
 }

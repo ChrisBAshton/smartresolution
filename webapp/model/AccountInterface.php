@@ -7,7 +7,7 @@ interface AccountInterface {
     public function getEmail();
     public function getName();
     public function getNotifications();
-    
+    public function __toString();
 }
 
 class MockAccount implements AccountInterface {
@@ -25,5 +25,8 @@ class MockAccount implements AccountInterface {
     }
     public function getNotifications() {
         return false;
+    }
+    public function __toString() {
+        return 'Mock Account';
     }
 }

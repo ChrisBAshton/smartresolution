@@ -24,6 +24,10 @@ footer {
 	padding: 15px;
 }
 
+.bg-primary a {
+  color: white;
+}
+
 .dispute__option {
     text-align: center;
     margin-top: 3em;
@@ -39,4 +43,14 @@ footer {
 .logo {
     max-width: 230px;
     padding: 12px 0;
+}
+
+.container {
+    position: relative;
+}
+
+.lifespan_status {
+    position: absolute;
+    top: 0;
+    right: 0;
 }

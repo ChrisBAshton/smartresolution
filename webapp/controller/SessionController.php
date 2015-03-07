@@ -37,15 +37,6 @@ class SessionController {
                     'href'  => '/register/individual',
                     'image' => '/view/images/mail.png',
                     'title' => 'Register Agent account'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
                 )
             );
         }
@@ -55,21 +46,6 @@ class SessionController {
                     'href'  => '/register/individual',
                     'image' => '/view/images/mail.png',
                     'title' => 'Register Mediator account'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
                 )
             );
         }
@@ -79,43 +55,13 @@ class SessionController {
                     'href'  => '/disputes',
                     'image' => '/view/images/mail.png',
                     'title' => 'View Disputes'
-                ),
-                array(
-                    'title' => 'Communication'
-                ),
-                array(
-                    'title' => 'Propose Resolution'
-                ),
-                array(
-                    'title' => 'Propose Mediation'
-                ),
-                array(
-                    'title' => 'Renegotiate Dispute Lifespan'
-                ),
-                array(
-                    'title' => 'Something else'
                 )
             );
         }
         elseif ($account instanceof Mediator) {
             $dashboardActions = array(
                 array(
-                    'title' => 'Something'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
-                ),
-                array(
-                    'title' => 'Something else'
+                    'title' => 'Mediators can do nothing yet.'
                 )
             );
         }

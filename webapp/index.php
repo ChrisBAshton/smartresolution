@@ -2,7 +2,7 @@
 require_once __DIR__ . '/autoload.php';
 
 $f3 = \Base::instance();
-$f3->config('config.ini');
+$f3->config('f3_config.ini');
 
 // support for Cucumber features
 if ($f3->get('AGENT') === 'Poltergeist--clear') {
