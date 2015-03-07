@@ -17,16 +17,17 @@ $routes = array(
     'POST /register/individual' => 'RegisterController->individualPost',
 
     // disputes
-    'GET  /disputes/new'               => 'DisputeController->newDisputeGet',
-    'POST /disputes/new'               => 'DisputeController->newDisputePost',
-    'GET  /disputes'                   => 'DisputeController->viewDisputes',
-    'GET  /disputes/@disputeID'        => 'DisputeController->viewDispute',
-    'GET  /disputes/@disputeID/open'   => 'DisputeController->openDisputeGet',
-    'POST /disputes/@disputeID/open'   => 'DisputeController->openDisputePost',
-    'GET  /disputes/@disputeID/assign' => 'DisputeController->assignDisputeGet',
-    'POST /disputes/@disputeID/assign' => 'DisputeController->assignDisputePost',
-    'GET  /disputes/@disputeID/close'  => 'DisputeController->closeDisputeGet',
-    'POST /disputes/@disputeID/close'  => 'DisputeController->closeDisputePost',
+    'GET  /disputes/new'                => 'DisputeController->newDisputeGet',
+    'POST /disputes/new'                => 'DisputeController->newDisputePost',
+    'GET  /disputes'                    => 'DisputeController->viewDisputes',
+    'GET  /disputes/@disputeID'         => 'DisputeController->viewDispute',
+    'GET  /disputes/@disputeID/open'    => 'DisputeController->openDisputeGet',
+    'POST /disputes/@disputeID/open'    => 'DisputeController->openDisputePost',
+    'GET  /disputes/@disputeID/assign'  => 'DisputeController->assignDisputeGet',
+    'POST /disputes/@disputeID/assign'  => 'DisputeController->assignDisputePost',
+    'GET  /disputes/@disputeID/close'   => 'DisputeController->closeDisputeGet',
+    'POST /disputes/@disputeID/close'   => 'DisputeController->closeDisputePost',
+    'GET  /disputes/@disputeID/summary' => 'SummaryController->view',
 
     // lifespans
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',

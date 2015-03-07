@@ -12,7 +12,6 @@
 		<header class="container">
 			<div class="col-sm-4">
 			    <a href="/"><img class="logo" src="view/images/logo.png"></a>
-			    Alpha version <?php //echo $VERSION; ?>
 			</div>
 
 		    <div class="col-sm-4">
@@ -79,7 +78,7 @@
 
 		<footer>
 		    <p>
-		    	Proudly powered by <?php echo $PACKAGE; ?>. Licensed under the terms of the GPLv3. Copyright &copy; 2015
+		    	SmartResolution is proudly powered by the <a href="http://fatfreeframework.com/"><?php echo $PACKAGE; ?></a> (v<?php echo $VERSION; ?>) and is licensed under the terms of the GPLv3. <a href="https://github.com/ChrisBAshton/major-project">View the project on GitHub</a>.
 			</p>
 		    <p class="stats">
 		    	<code><?php echo Base::instance()->format('Page rendered in {0} msecs / Memory usage {1} Kibytes',round(1e3*(microtime(TRUE)-$TIME),2),round(memory_get_usage(TRUE)/1e3,1)); ?></code>
