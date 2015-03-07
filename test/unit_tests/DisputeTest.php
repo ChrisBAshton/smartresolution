@@ -102,18 +102,17 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testDisputeWorkflowCorrect() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
-        $this->assertTrue($dispute->waitingForLawFirmB());
-        $this->assertTrue($dispute->hasNotBeenOpened());
+        $state   = $dispute->getState(AccountDetails::getAccountByEmail('agent_email'));
+        $this->assertTrue($state->canOpenDispute());
 
         $lawFirmB = AccountDetails::emailToId('another_law_firm_email');
         $dispute->setLawFirmB($lawFirmB);
         $this->assertEquals($lawFirmB, $dispute->getLawFirmB()->getLoginId());
-        $this->assertTrue($dispute->hasBeenOpened());
 
         $agentB = AccountDetails::emailToId('agent_b');
         $dispute->setAgentB($agentB);
         $this->assertEquals($agentB, $dispute->getAgentB()->getLoginId());
-        $this->assertFalse($dispute->waitingForLawFirmB());
+        $this->assertFalse($state->canOpenDispute());
 
         $this->assertFalse($dispute->getSummaryFromPartyB());
         $dispute->setSummaryForPartyB('Test summary');
