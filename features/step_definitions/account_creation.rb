@@ -11,7 +11,7 @@ When(/^I try to register$/) do
 end
 
 And(/^I provide an email that is already registered to the system$/) do
-  fill_in 'Email', :with => 'law_firm_email'
+  fill_in 'Email', :with => 'law_firm_a@t.co'
 end
 
 When(/^I leave the '(.+)' field blank$/) do |field_label|
@@ -62,7 +62,7 @@ end
 
 Then(/^I should be able to create a(?:n)? (Agent|Mediator) account$/) do |account_type|
   visit '/register/individual'
-  fill_in 'Email', :with => 'agent_email@email.com'
+  fill_in 'Email', :with => 'agent_a@t.co@email.com'
   fill_in 'Password', :with => 'test'
   fill_in 'Surname', :with => 'Ashton'
   fill_in 'First name', :with => 'Chris'
@@ -71,7 +71,7 @@ end
 
 And(/^I should be able to log into that account$/) do
   clear_session_before_login
-  fill_in 'Email', :with => 'agent_email@email.com'
+  fill_in 'Email', :with => 'agent_a@t.co@email.com'
   fill_in 'Password', :with => 'test'
   click_button 'Login'
   assert_equal '/dashboard', get_current_uri_path

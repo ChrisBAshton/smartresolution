@@ -5,17 +5,17 @@ end
 
 def login_as_law_firm
   clear_session_before_login
-  login_with_credentials 'law_firm_email', 'test'
+  login_with_credentials 'law_firm_a@t.co', 'test'
 end
 
 def login_as_mediation_centre
   clear_session_before_login
-  login_with_credentials 'mediation_centre_email', 'test'
+  login_with_credentials 'mediation_centre_email@we-mediate.co.uk', 'test'
 end
 
 def login_as_agent
   clear_session_before_login
-  login_with_credentials 'agent_email', 'test'
+  login_with_credentials 'agent_a@t.co', 'test'
 end
 
 def login_as_individual

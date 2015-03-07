@@ -30,6 +30,8 @@ I've made a handy one-line installer script which installs all dependencies and 
 
 `php install.php`
 
+You can also run `php install.php --refresh` at any time to clean and re-populate the database.
+
 ### Manual installation
 
 * install dependencies with Composer (`composer install`)

@@ -9,10 +9,10 @@ class LifespanTest extends PHPUnit_Framework_TestCase
     }
 
     protected function setUp() {
-        $this->lawFirmA = AccountDetails::emailToId('law_firm_email');
-        $this->agentA   = AccountDetails::emailToId('agent_email');
-        $this->lawFirmB = AccountDetails::emailToId('another_law_firm_email');
-        $this->agentB   = AccountDetails::emailToId('agent_b');
+        $this->lawFirmA = AccountDetails::emailToId('law_firm_a@t.co');
+        $this->agentA   = AccountDetails::emailToId('agent_a@t.co');
+        $this->lawFirmB = AccountDetails::emailToId('law_firm_b@t.co');
+        $this->agentB   = AccountDetails::emailToId('agent_b@t.co');
         
         $this->dispute = DisputeDB::create(array(
             'law_firm_a' => $this->lawFirmA,
