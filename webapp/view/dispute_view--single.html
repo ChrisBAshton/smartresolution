@@ -1,8 +1,6 @@
-<h1>Dispute</h1>
+<h1>Dispute: <?php echo $dispute->getTitle(); ?></h1>
 
-<h2><?php echo $dispute->getTitle(); ?></h2>
-
-<div class="lifespan_status">
+<div class="lifespan_status bg-padded bg-primary">
     <?php
         if ($dispute->getLifespan()) {
             echo $dispute->getLifespan()->status();
@@ -10,19 +8,70 @@
     ?>
 </div>
 
-<?php if (!$dispute->waitingForLawFirmB()) : ?>
-    <p>
-        Initiatiated by company: <?php echo $dispute->getLawFirmA()->getName(); ?>, represented by <?php echo $dispute->getAgentA()->getName(); ?>
-    </p>
-    <p>
-        <em><?php echo $dispute->getSummaryFromPartyA(); ?></em>
-    </p>
-    <p>
-        Initiated against company: <?php echo $dispute->getLawFirmB()->getName(); ?>, represented by <?php echo $dispute->getAgentB()->getName(); ?>
-    </p>
-    <p>
-        <em><?php echo $dispute->getSummaryFromPartyB(); ?></em>
-    </p>
-<?php endif; ?>
+<div class="row">
+
+    <div class="col-sm-6">
+        <?php if ($dispute->getLawFirmA()) : ?>
+            <p>
+                Initiatiated by company: <?php echo $dispute->getLawFirmA(); ?>
+                
+                <br />
+
+                <?php if ($dispute->getAgentA()) : ?>
+                    Represented by: <?php echo $dispute->getAgentA(); ?>
+                <?php else: ?>
+                    Waiting for <?php echo $dispute->getLawFirmA()->getName(); ?> to assign an agent to the dispute.
+                <?php endif; ?>
+            </p>
+        <?php endif; ?>
+    </div>
+
+    <div class="col-sm-6">
+        <?php if ($dispute->getLawFirmB()) : ?>
+            <p>
+                Opened against company: <?php echo $dispute->getLawFirmB(); ?>
+                
+                <br />
+
+                <?php if ($dispute->getAgentB()) : ?>
+                    Represented by: <?php echo $dispute->getAgentB(); ?>
+                <?php else: ?>
+                    Waiting for <?php echo $dispute->getLawFirmB()->getName(); ?> to assign an agent to the dispute.
+                <?php endif; ?>
+            </p>
+        <?php else: ?>
+            <p>Still need to open the dispute against another law firm.</p>
+        <?php endif; ?>
+    </div>
+
+</div>
+
+<h2>Dispute summaries</h2>
+
+<div class="row">
+    <div class="col-sm-6">
+        <?php if ($dispute->getSummaryFromPartyA()) : ?>
+            <p>
+                <em><?php echo $dispute->getSummaryFromPartyA(); ?></em>
+            </p>
+        <?php else: ?>
+            <p>
+                <em>Awaiting summary.</em>
+            </p>
+        <?php endif; ?>
+    </div>
+
+    <div class="col-sm-6">
+        <?php if ($dispute->getSummaryFromPartyB()) : ?>
+            <p>
+                <em><?php echo $dispute->getSummaryFromPartyB(); ?></em>
+            </p>
+        <?php else: ?>
+            <p>
+                <em>Awaiting summary.</em>
+            </p>
+        <?php endif; ?>
+    </div>
+</div>
 
 <?php echo $this->render('dashboard.html'); ?>

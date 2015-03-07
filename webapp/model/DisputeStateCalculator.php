@@ -1,10 +1,27 @@
 <?php
 
-class DisputeActions {
+class DisputeStateCalculator {
 
-    public static function getActions($dispute, $account, $f3) {
+    public static function getState($dispute, $account = false) {
+        if (!$account) {
+            $account = Session::getAccount();
+        }
+        
+        if ($dispute->getLawFirmB() === false) {
+            return new DisputeCreated($dispute, $account);
+        }
+        else if ($dispute->getAgentB() === false) {
+            return new DisputeAssignedToLawFirmB($dispute, $account);
+        }
 
-        $state   = DisputeStateCalculator::getState($dispute, $account);
+        if ($dispute->getLifespan()) {
+            return new LifespanNegotiated($dispute, $account);
+        }
+    }
+
+    public static function getActions($dispute, $account) {
+
+        $state   = $dispute->getState($account);
         $actions = array();
 
         if ($state->canOpenDispute()) {
@@ -35,26 +52,19 @@ class DisputeActions {
             );
         }
 
+        if ($state->canEditSummary()) {
+            $actions[] = array(
+                'title' => 'Edit summary',
+                'href'  => $dispute->getUrl() . '/summary'
+            );
+        }
+
         if ($state->canCloseDispute()) {
             $actions[] = array(
                 'title' => 'Close dispute',
                 'href'  => $dispute->getUrl() . '/close'
             );
         }
-
-        // if ($state instanceof DisputeCreated && $account instanceof LawFirm) {
-        //     $f3->set('status', array(
-        //         'message' => 'You are waiting for ' . $dispute->getAgentA()->getName() . ' to open the dispute against another law firm.',
-        //         'class'   => 'bg-padded bg-info'
-        //     ));
-        // }
-
-        // elseif ($state instanceof DisputeAssignedToLawFirmB) {
-        //     $f3->set('status', array(
-        //         'message' => 'You are waiting for ' . $dispute->getLawFirmB()->getName() . ' to assign an agent to the dispute.',
-        //         'class'   => 'bg-padded bg-info'
-        //     ));        
-        // }
         
         return $actions;
     }

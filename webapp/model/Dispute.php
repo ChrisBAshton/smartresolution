@@ -22,12 +22,15 @@ class Dispute {
             $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);
             $this->partyB    = $this->getPartyDetails((int) $dispute['party_b']);
             $this->lifespan  = LifespanFactory::getLifespan((int) $dispute['dispute_id']);
-            $this->state     = DisputeStateCalculator::getState($this);
 
             if (!$this->partyA) {
                 throw new Exception('A dispute must have at least one organisation associated with it!');
             }
         }
+    }
+
+    public function getState($account) {
+        return DisputeStateCalculator::getState($this, $account);
     }
 
     public function refresh() {
@@ -78,7 +81,8 @@ class Dispute {
         if ($partyID === 0) {
             return array(
                 'agent'    => false,
-                'law_firm' => false
+                'law_firm' => false,
+                'summary'  => false
             );
         }
 

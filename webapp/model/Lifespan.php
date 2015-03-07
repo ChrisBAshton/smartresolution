@@ -65,7 +65,7 @@ class Lifespan implements LifespanInterface {
         }
     }
 
-    public function status() {
+    public function status($href = true) {
         if ($this->accepted()) {
             $currentTime = time();
             if ($this->startTime() > $currentTime) {
@@ -85,7 +85,7 @@ class Lifespan implements LifespanInterface {
             $status = 'No lifespan set yet.';
         }
 
-        return '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>';
+        return $href ? '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>' : $status;
     }
 
     public function isCurrent() {

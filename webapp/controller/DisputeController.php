@@ -2,6 +2,29 @@
 
 class DisputeController {
 
+    function viewDispute ($f3, $params) {
+        $account = mustBeLoggedIn();
+        $dispute = setDisputeFromParams($f3, $params);
+
+        if (!$dispute->canBeViewedBy($account->getLoginId())) {
+            errorPage('You do not have permission to view this Dispute!');
+        }
+        else {
+            $dashboardActions = DisputeStateCalculator::getActions($dispute, $account);
+            $f3->set('dashboardActions', $dashboardActions);
+            $f3->set('content', 'dispute_view--single.html');
+            echo View::instance()->render('layout.html');
+        }
+    }
+
+    function viewDisputes ($f3) {
+        $account  = mustBeLoggedIn();
+        $disputes = DisputeDB::getAllDisputesConcerning($account->getLoginId());
+        $f3->set('disputes', $disputes);
+        $f3->set('content', 'dispute_view--list.html');
+        echo View::instance()->render('layout.html');
+    }
+
     function newDisputeGet ($f3) {
         mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
@@ -56,22 +79,6 @@ class DisputeController {
         $this->newDisputeGet($f3);
     }
 
-    function viewDispute ($f3, $params) {
-        $account = mustBeLoggedIn();
-        $dispute = setDisputeFromParams($f3, $params);
-        $dashboardActions = array();
-
-        if (!$dispute->canBeViewedBy($account->getLoginId())) {
-            errorPage('You do not have permission to view this Dispute!');
-        }
-        else {
-            $dashboardActions = DisputeActions::getActions($dispute, $account, $f3);
-        }
-        $f3->set('dashboardActions', $dashboardActions);
-        $f3->set('content', 'dispute_view--single.html');
-        echo View::instance()->render('layout.html');
-    }
-
     function assignDisputeGet ($f3, $params) {
         mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
@@ -117,20 +124,11 @@ class DisputeController {
         }
     }
 
-    function viewDisputes ($f3) {
-        $account  = mustBeLoggedIn();
-        $disputes = DisputeDB::getAllDisputesConcerning($account->getLoginId());
-        var_dump($disputes);
-        //$f3->set('disputes', $disputes);
-        $f3->set('content', 'dispute_view--list.html');
-        echo View::instance()->render('layout.html');
-    }
-
     function openDisputeGet ($f3, $params) {
-        mustBeLoggedInAsAn('Individual');
+        $account = mustBeLoggedInAsAn('Agent');
         $dispute = setDisputeFromParams($f3, $params);
 
-        if ($dispute->hasBeenOpened()) {
+        if (!$dispute->getState($account)->canOpenDispute()) {
             errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
         }
 

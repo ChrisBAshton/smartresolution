@@ -11,11 +11,14 @@ else {
 
     <div class="row">
         <div class="dispute_list__item">
-            <div class="dispute_list__item__title col-sm-6">
+            <div class="dispute_list__item__status col-sm-4">
+                <h3>Status</h3>
+            </div>
+            <div class="dispute_list__item__title col-sm-4">
                 <h3>Dispute Title</h3>
             </div>
-            <div class="dispute_list__item__lifespan col-sm-6">
-                <h3>Status</h3>
+            <div class="dispute_list__item__lifespan col-sm-4">
+                <h3>Lifespan Status</h3>
             </div>
         </div>
     </div>
@@ -24,11 +27,17 @@ else {
     ?>
         <div class="row">
             <div class="dispute_list__item">
-                <div class="dispute_list__item__title col-sm-6">
+                <div class="dispute_list__item__title col-sm-4">
+                    <?php
+                        $state = DisputeStateCalculator::getState($dispute, $account);
+                        echo $state->getStateDescription();
+                    ?>
+                </div>
+                <div class="dispute_list__item__title col-sm-4">
                     <a href="<?php echo $dispute->getUrl(); ?>"><?php echo $dispute->getTitle(); ?></a>
                 </div>
-                <div class="dispute_list__item__lifespan col-sm-6">
-                    <?php echo $dispute->getLifespan()->status(); ?>
+                <div class="dispute_list__item__lifespan col-sm-4">
+                    <?php echo $dispute->getLifespan()->status(false); ?>
                 </div>
             </div>
         </div>

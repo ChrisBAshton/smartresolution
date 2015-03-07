@@ -1,52 +1,25 @@
 <?php
 
-class DisputeStateCalculator {
-
-    public static function getState($dispute, $account) {
-        if ($dispute->getLawFirmB() === false) {
-            return new DisputeCreated($dispute, $account);
-        }
-        else if ($dispute->getAgentB() === false) {
-            return new DisputeAssignedToLawFirmB($dispute, $account);
-        }
-
-        if ($dispute->getLifespan()) {
-            return new LifespanNegotiated($dispute, $account);
-        }
-    }
-
-    // public function hasBeenOpened() {
-    //     return $this->getLawFirmB() !== false;
-    // }
-
-    // public function hasNotBeenOpened() {
-    //     return !$this->hasBeenOpened();
-    // }
-
-    // public function waitingForLawFirmB() {
-    //     if ($this->hasBeenOpened()) {
-    //         return $this->getAgentB() === false;
-    //     }
-    //     return true;
-    // }
-
-}
-
-interface DisputeState {
+interface DisputeStateInterface {
     public function __construct($dispute, $account);
+    public function getStateDescription();
     public function canOpenDispute();
     public function canAssignDisputeToAgent();
     public function canWriteSummary();
     public function canNegotiateLifespan();
     public function canSendMessage();
+    public function canEditSummary();
     public function canCloseDispute();
 }
 
-class DisputeDefaults implements DisputeState {
+abstract class DisputeDefaults {
 
     public function __construct($dispute, $account) {
         $this->dispute = $dispute;
         $this->account = $account;
+        if (!$this->accountIsLinkedToDispute()) {
+            throw new Exception($account->getName() . ' is not permitted to view this dispute!');
+        }
     }
 
     public function canOpenDispute() {
@@ -54,13 +27,7 @@ class DisputeDefaults implements DisputeState {
     }
 
     public function canAssignDisputeToAgent() {
-        return (
-            $this->account instanceof LawFirm &&
-            (
-                $this->account->getLoginId() === $dispute->getLawFirmB()->getLoginId() ||
-                $this->account->getLoginId() === $dispute->getLawFirmA()->getLoginId()
-            )
-        );
+        return $this->dispute->getLawFirmB() && $this->account instanceof LawFirm;
     }
 
     public function canWriteSummary() {
@@ -68,24 +35,44 @@ class DisputeDefaults implements DisputeState {
     }
 
     public function canNegotiateLifespan() {
+        return $this->account instanceof Agent;
+    }
+
+    public function canSendMessage() {
+        return false;
+    }
+
+    public function canEditSummary() {
         return true;
     }
 
-    public function canSendMessage() {
-        return false;
-    }
-
     public function canCloseDispute() {
+        // both law firms and agents must be set before a dispute can be closed
         return (
-            $this->account->getLoginId() === $this->dispute->getAgentA()->getLoginId()   ||
-            $this->account->getLoginId() === $this->dispute->getAgentB()->getLoginId()   ||
-            $this->account->getLoginId() === $this->dispute->getLawFirmA()->getLoginId() ||
-            $this->account->getLoginId() === $this->dispute->getLawFirmB()->getLoginId()
+            $this->dispute->getLawFirmA() && $this->dispute->getAgentA() &&
+            $this->dispute->getLawFirmB() && $this->dispute->getAgentB()
         );
-    }    
+    }
+
+    private function accountIsLinkedToDispute() {
+        return (
+            $this->accountIs($this->dispute->getLawFirmA()) ||
+            $this->accountIs($this->dispute->getLawFirmB()) ||
+            $this->accountIs($this->dispute->getAgentA())   ||
+            $this->accountIs($this->dispute->getAgentB())
+        );
+    }
+
+    private function accountIs($accountToCompare) {
+        return $accountToCompare && $this->account->getLoginId() === $accountToCompare->getLoginId();
+    }
 }
 
-class DisputeCreated extends DisputeDefaults implements DisputeState {
+class DisputeCreated extends DisputeDefaults implements DisputeStateInterface {
+
+    public function getStateDescription() {
+        return 'Dispute newly created.';
+    }
 
     public function canNegotiateLifespan() {
         return false;
@@ -93,7 +80,11 @@ class DisputeCreated extends DisputeDefaults implements DisputeState {
 
 }
 
-class DisputeAssignedToLawFirmB extends DisputeDefaults implements DisputeState {
+class DisputeAssignedToLawFirmB extends DisputeDefaults implements DisputeStateInterface {
+
+    public function getStateDescription() {
+        return 'Dispute awaiting action from one of the two parties.';
+    }
 
     public function canNegotiateLifespan() {
         return false;
@@ -101,8 +92,11 @@ class DisputeAssignedToLawFirmB extends DisputeDefaults implements DisputeState 
 
 }
 
-class DisputeOpened extends DisputeDefaults implements DisputeState {
+class DisputeOpened extends DisputeDefaults implements DisputeStateInterface {
 
+    public function getStateDescription() {
+        return 'Negotiating lifespan.';
+    }
 
     public function canOpenDispute() {
         return false;
@@ -114,8 +108,12 @@ class DisputeOpened extends DisputeDefaults implements DisputeState {
 
 }
 
-class LifespanNegotiated extends DisputeDefaults implements DisputeState {
+class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterface {
 
+    public function getStateDescription() {
+        return 'Dispute in progress.';
+    }
+    
     public function canOpenDispute() {
         return false;
     }
@@ -125,14 +123,22 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeState {
     }
 
     public function canSendMessage() {
-        return $this->dispute instanceof Agent;
+        return $this->account instanceof Agent;
     }
 }
 
-class InMediation extends DisputeDefaults implements DisputeState {
+class InMediation extends DisputeDefaults implements DisputeStateInterface {
 
+    public function getStateDescription() {
+        return 'Dispute in mediation.';
+    }
+    
 }
 
-class InRoundTableMediation extends DisputeDefaults implements DisputeState {
+class InRoundTableMediation extends DisputeDefaults implements DisputeStateInterface {
 
+    public function getStateDescription() {
+        return 'Dispute in mediation.';
+    }
+    
 }
