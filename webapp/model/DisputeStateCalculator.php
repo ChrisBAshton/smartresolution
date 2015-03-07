@@ -15,7 +15,13 @@ class DisputeStateCalculator {
         }
 
         if ($dispute->getLifespan()) {
-            return new LifespanNegotiated($dispute, $account);
+
+            if ($dispute->getLifespan()->accepted()) {
+                return new LifespanNegotiated($dispute, $account);
+            }
+            else {
+                return new DisputeOpened($dispute, $account);
+            }
         }
     }
 

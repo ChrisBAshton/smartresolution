@@ -1,6 +1,11 @@
 <?php
 require __DIR__ . '/../../webapp/autoload.php';
-Database::setEnvironment('test');
+
+$env = 'test';
+if (isset($argv[1])) {
+    $env = $argv[1];
+}
+Database::setEnvironment($env);
 
 use Symfony\Component\Yaml\Parser;
 $yaml = new Parser();

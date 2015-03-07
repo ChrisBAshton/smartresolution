@@ -22,13 +22,21 @@ Please see my [Outline Project Specification](http://ashton.codes/blog/outline-p
 
 ## Installation
 
-Note: all of the commands in the rest of this README are relative to the root of the repository. Therefore, when you've downloaded the repo, make sure you `cd major-project` to go into the top level of the repository.
+Note: all of the commands in the rest of this README are relative to the root of the repository. Therefore, when you've downloaded the repo, make sure you `cd major-project` to go into the top level of the repository before running any of the following commands.
 
-* download repository
+I've made a handy one-line installer script which installs all dependencies and creates and populates the database. You should run that script OR the manual installation - not both.
+
+### One-step installation
+
+`php install.php`
+
+### Manual installation
+
 * install dependencies with Composer (`composer install`)
 * create production database: `sqlite3 data/production.db < data/db.sql`
-* gem install bundler
-* bundle install
+* at this stage you can tweak `data/fixtures/seed.php` to populate the production database, or you can leave the database blank and fill in manually later.
+* `gem install bundler`
+* `bundle install`
 
 ## Seeing is believing
 
