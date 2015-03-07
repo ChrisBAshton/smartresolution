@@ -69,18 +69,24 @@ organisations:
             forename: John
             surname:  Smith
 disputes:
-  - title:      Smith versus Jones
+  - title:      A simple test dispute
     type:       other
     law_firm_a: law_firm_a@t.co
     agent_a:    agent_a@t.co
-  - title:      A dispute with no set lifespan
+  - title:      Smith versus Jones
     type:       other
     law_firm_a: law_firm_a@t.co
     law_firm_b: law_firm_b@t.co
     agent_a:    agent_a@t.co
     agent_b:    agent_b@t.co
-    summary_a:  This is the summary by Party A
-    summary_b:  This is the summary by Party B
+    summary_a:  >
+                    Our client alleges that Jones deliberately damaged our client's vessel,
+                    causing $3,000 USD of damages. We are seeking compensation on behalf of
+                    our client.
+    summary_b:  >
+                    It is our belief that Jones was operating their vessel in accordance with
+                    all regulations and that the damage done to Smith's vessel was an act of
+                    God. Our client should not have to pay the claimant any damages.
   - title:      The one dispute
     type:       other
     law_firm_a: law_firm_with_only_one_dispute@company.com
