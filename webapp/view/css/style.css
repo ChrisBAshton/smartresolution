@@ -58,6 +58,11 @@ footer {
 .message {
     border: 1px solid grey;
     margin: 1em 0;
+    width: 80%;
+}
+
+.message--current_author {
+  float: right;
 }
 
 .message__body {

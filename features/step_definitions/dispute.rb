@@ -6,6 +6,6 @@ Then(/^I (should|should NOT) be able to send a message via the Dispute$/) do |sh
   if should_or_should_not == 'should NOT'
     assert_cannot_send_message
   else
-      assert_can_send_message
+    assert_can_send_message
   end
 end

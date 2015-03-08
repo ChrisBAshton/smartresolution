@@ -24,6 +24,10 @@ class Message {
         return $this->disputeID;
     }
 
+    public function getDispute() {
+        return new Dispute($this->getDisputeId());
+    }
+
     public function timestamp() {
         return $this->timestamp;
     }
