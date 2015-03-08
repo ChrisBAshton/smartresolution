@@ -106,7 +106,7 @@ class Dispute {
     public function setLawFirmB($organisationId) {
         $db = Database::instance();
         $db->begin();
-        $partyId = DisputeDB::createParty($organisationId);
+        $partyId = DBL::createDisputeParty($organisationId);
         if ($partyId) {
             $this->updateField('party_b', $partyId);
             $db->commit();
@@ -167,7 +167,8 @@ class Dispute {
     }
 
     public function canBeViewedBy($loginID) {
-        $viewableDisputes = DisputeDB::getAllDisputesConcerning($loginID);
+        $account = AccountDetails::getAccountById($loginID);
+        $viewableDisputes = $account->getAllDisputes();
         foreach($viewableDisputes as $dispute) {
             if ($dispute->getDisputeId() === $this->getDisputeId()) {
                 return true;

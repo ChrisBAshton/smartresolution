@@ -1,7 +1,7 @@
 Given(/^a Dispute has been assigned to me$/) do
 end
 
-And(/^I am logged into an Agent account$/) do
+And(/^I am logged into a one-dispute Agent account$/) do
   visit '/login'
   login_with_credentials 'one_dispute_agent@company.com', 'test'
 end
@@ -25,6 +25,6 @@ Then(/^the notification should be marked as read$/) do
 end
 
 Then(/^the URL should be clean, with no notification parameters$/) do
-  assert_equal '/disputes/3', get_current_uri_path
+  assert_equal '/disputes/2', get_current_uri_path
   assert_nil get_current_uri_params
 end

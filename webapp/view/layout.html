@@ -10,66 +10,77 @@
 	</head>
 	<body>
 		<header class="container">
-			<div class="col-sm-4">
-			    <a href="/"><img class="logo" src="view/images/logo.png"></a>
-			</div>
+			<div class="row">
+				<div class="col-sm-4">
+				    <a href="/"><img class="logo" src="view/images/logo.png"></a>
+				</div>
 
-		    <div class="col-sm-4">
-				<p>
-					<?php
-						if (isset($notifications)) {
-							if (count($notifications) > 0) {
-								echo 'You have <a href="/notifications">' . count($notifications) . ' new notifications</a>.';
+			    <div class="col-sm-4">
+					<p>
+						<?php
+							if (isset($notifications)) {
+								if (count($notifications) > 0) {
+									echo 'You have <a href="/notifications">' . count($notifications) . ' new notifications</a>.';
+								}
+								else {
+									echo 'No new notifications.';
+								}
+							}
+						?>
+					</p>
+				</div>
+
+			    <div class="col-sm-4 alignright">
+					<p>
+						<?php
+							if (isset($account)) {
+								echo 'Welcome back, ' . $account->getName() . '. <a href="/logout">Logout</a>';
 							}
 							else {
-								echo 'No new notifications.';
+								echo '<a href="/login">Login</a> | <a href="/register">Register</a>';
 							}
-						}
-					?>
-				</p>
-			</div>
-
-		    <div class="col-sm-4 alignright">
-				<p>
-					<?php
-						if (isset($account)) {
-							echo 'Welcome back, ' . $account->getName() . '. <a href="/logout">Logout</a>';
-						}
-						else {
-							echo '<a href="/login">Login</a> | <a href="/register">Register</a>';
-						}
-					?>
-				</p>
+						?>
+					</p>
+				</div>
 			</div>
 		</header>
 
 		<div class="container">
-			<?php
-				$breadcrumbs = array();
+			<div class="row">
+				<?php
+					// based on code found at http://stackoverflow.com/questions/2594211/php-simple-dynamic-breadcrumb
+					$breadcrumbs = array();
 
-				$urlParts = explode('/', $_SERVER['REQUEST_URI']);
-				$i = 1;
-				$url = '';
-				foreach($urlParts as $part){
-					if (strlen($part) > 0) {
-						$url = $url . '/' . $part;
-						if ($i < count($urlParts)) {
-							$breadcrumbs[] = array(
-								'url'   => $url,
-								'title' => ucfirst($part)
-							);
+					$urlParts = explode('/', $_SERVER['REQUEST_URI']);
+					$i = 1;
+					$url = '';
+					foreach($urlParts as $part){
+						if (strlen($part) > 0) {
+							$url = $url . '/' . $part;
+							// remove everything after the ?
+							$part = preg_replace('/\?.*/', '', $part);
+							// make first letter uppercase
+							$part = ucfirst($part);
+							// make safe to render to browser
+							$part = htmlspecialchars($part);
+							if ($i < count($urlParts)) {
+								$breadcrumbs[] = array(
+									'url'   => $url,
+									'title' => $part
+								);
+							}
+							$i++;
 						}
-						$i++;
 					}
-				}
 
-				if (count($breadcrumbs) > 0) {
-					echo '<a href="/">Home</a>';
-				}
-				foreach($breadcrumbs as $crumb) {
-					echo ' / <a href="' . $crumb['url'] .'">' . $crumb['title'] . '</a>';
-				}
-			?>
+					if (count($breadcrumbs) > 0) {
+						echo '<a href="/">Home</a>';
+					}
+					foreach($breadcrumbs as $crumb) {
+						echo ' / <a href="' . $crumb['url'] .'">' . $crumb['title'] . '</a>';
+					}
+				?>
+			</div>
 		</div>
 
 		<div class="container">

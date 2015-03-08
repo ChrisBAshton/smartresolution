@@ -17,8 +17,9 @@ class LifespanMock implements LifespanInterface {
         $this->disputeID = $disputeID;
     }
 
-    public function status() {
-        return '<a href="/disputes/' . $this->disputeID . '/lifespan">No lifespan set yet.</a>';
+    public function status($href = true) {
+        $status = 'No lifespan set yet.';
+        return $href ? '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>' : $status;
     }
 
     public function isCurrent() {
@@ -43,8 +44,14 @@ class Lifespan implements LifespanInterface {
 
     private $status;
 
-    function __construct($disputeID) {
+    function __construct($disputeID, $justCreated = false) {
         $this->setVariables($disputeID);
+        if ($justCreated) {
+            $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
+            if ($invalid) {
+                throw new Exception($invalid);
+            }
+        }
     }
 
     public function invalid($validUntil, $startTime, $endTime) {

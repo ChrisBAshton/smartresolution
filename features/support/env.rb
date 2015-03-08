@@ -3,6 +3,7 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'test/unit/assertions'
+require 'yaml'
 
 World(Test::Unit::Assertions)
 
@@ -33,3 +34,6 @@ def use_test_database
   # send insutrctions to use the test database for any subsequent HTTP requests
   page.driver.headers = { "User-Agent" => "Poltergeist" }
 end
+
+
+$data = YAML.load_file(File.expand_path('../../../data/fixtures/fixture_data.yml', __FILE__))

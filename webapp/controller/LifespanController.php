@@ -43,7 +43,7 @@ class LifespanController {
             }
             else {
                 try {
-                    $lifespan = LifespanFactory::create(array(
+                    $lifespan = DBL::createLifespan(array(
                         'dispute_id'  => $dispute->getDisputeId(),
                         'proposer'    => $account->getLoginId(),
                         'valid_until' => $validUntil,
@@ -51,7 +51,7 @@ class LifespanController {
                         'end_time'    => $endTime
                     ));
 
-                    Notification::create(array(
+                    DBL::createNotification(array(
                         'recipient_id' => $dispute->getOpposingPartyId($account->getLoginId()),
                         'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($validUntil) . ' to accept or deny the offer.',
                         'url'          => $dispute->getUrl() . '/lifespan'
@@ -82,7 +82,7 @@ class LifespanController {
             $notification = 'The other party has declined your lifespan offer.';
         }
 
-        Notification::create(array(
+        DBL::createNotification(array(
             'recipient_id' => $dispute->getOpposingPartyId($account->getLoginId()),
             'message'      => $notification,
             'url'          => $dispute->getUrl() . '/lifespan'

@@ -18,6 +18,11 @@ def login_as_agent
   login_with_credentials 'agent_a@t.co', 'test'
 end
 
+def login_as_mediator
+  clear_session_before_login
+  login_with_credentials 'john.smith@we-mediate.co.uk', 'test'
+end
+
 def login_as_individual
   login_as_agent
 end

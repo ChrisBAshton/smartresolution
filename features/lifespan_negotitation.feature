@@ -1,9 +1,9 @@
 Feature: Negotiating a Dispute lifespan
     When a Dispute is opened and each Law Firm has allocated an Agent
     The Agents need to negotiate a Dispute lifespan
-    i.e. the maximum length of time the Dispute can continue without resolution 
+    i.e. the maximum length of time the Dispute can continue without resolution
     before being automatically taken to Court.
-  
+
   @clear
   Scenario: Creating a Dispute lifespan offer
     Given both Agents have submitted the Dispute
@@ -21,6 +21,7 @@ Feature: Negotiating a Dispute lifespan
     Then I should be able to Decline the offer
     And I should be able to make a lifespan offer
 
+  @clear
   Scenario: Renegotiating the Dispute lifespan mid-Dispute
     Given the Dispute is fully underway
     Then I should be able to make a lifespan offer

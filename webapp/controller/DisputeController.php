@@ -19,8 +19,7 @@ class DisputeController {
 
     function viewDisputes ($f3) {
         $account  = mustBeLoggedIn();
-        $disputes = DisputeDB::getAllDisputesConcerning($account->getLoginId());
-        $f3->set('disputes', $disputes);
+        $f3->set('disputes', $account->getAllDisputes());
         $f3->set('content', 'dispute_view--list.html');
         echo View::instance()->render('layout.html');
     }
@@ -56,7 +55,7 @@ class DisputeController {
         }
         else {
             try {
-                $dispute = DisputeDB::create(array(
+                $dispute = DBL::createDispute(array(
                     'title'      => $title,
                     'law_firm_a' => $f3->get('account')->getLoginId(),
                     'agent_a'    => $agent,
@@ -64,7 +63,7 @@ class DisputeController {
                     'type'       => $type
                 ));
 
-                Notification::create(array(
+                DBL::createNotification(array(
                     'recipient_id' => $agent,
                     'message'      => 'A new dispute has been assigned to you.',
                     'url'          => $dispute->getUrl()
@@ -108,13 +107,13 @@ class DisputeController {
             $dispute->setAgentB((int) $agent);
             $dispute->setSummaryForPartyB($summary);
 
-            Notification::create(array(
+            DBL::createNotification(array(
                 'recipient_id' => $agent,
                 'message'      => 'A new dispute has been assigned to you.',
                 'url'          => $dispute->getUrl()
             ));
 
-            Notification::create(array(
+            DBL::createNotification(array(
                 'recipient_id' => $dispute->getOpposingPartyId($agent),
                 'message'      => 'The other party has assigned an agent to the case.',
                 'url'          => $dispute->getUrl()
@@ -157,7 +156,7 @@ class DisputeController {
             $dispute = setDisputeFromParams($f3, $params);
             $dispute->setLawFirmB($lawFirmB);
 
-            Notification::create(array(
+            DBL::createNotification(array(
                 'recipient_id' => $lawFirmB,
                 'message'      => 'A dispute has been opened against your company.',
                 'url'          => $dispute->getUrl()

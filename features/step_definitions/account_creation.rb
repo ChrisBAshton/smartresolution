@@ -60,6 +60,15 @@ Given(/^I am logged into a(?:n)? (Law Firm|Mediation Centre) account$/) do |acco
   end
 end
 
+Then(/^I am logged into a(?:n)? (Agent|Mediator) account$/) do |account_type|
+  visit '/login'
+  if account_type == 'Agent'
+    login_as_agent
+  else
+    login_as_mediator
+  end
+end
+
 Then(/^I should be able to create a(?:n)? (Agent|Mediator) account$/) do |account_type|
   visit '/register/individual'
   fill_in 'Email', :with => 'agent_a@t.co@email.com'
