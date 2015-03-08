@@ -8,7 +8,7 @@ class DBL {
 
     /**
      * Creates a new Dispute, saving it to the database.
-     * 
+     *
      * @param  Array $details Array of details to populate the database with.
      * @return Dispute        The Dispute object associated with the new entry.
      */
@@ -37,7 +37,7 @@ class DBL {
         $newDispute = $db->exec(
             'SELECT * FROM disputes ORDER BY dispute_id DESC LIMIT 1'
         )[0];
-        
+
         // sanity check
         if ((int)$newDispute['party_a'] !== $partyID ||
             $newDispute['type']         !== $type    ||
@@ -105,11 +105,17 @@ class DBL {
             ':start_time'  => $startTime,
             ':end_time'    => $endTime
         ));
-        
-        $lifespan = new Lifespan($disputeID);
-        // if no exception is raised, safe to commit transaction to database
-        $db->commit();
-        return $lifespan;
+
+        try {
+            $lifespan = new Lifespan($disputeID, true);
+            // if no exception is raised, safe to commit transaction to database
+            $db->commit();
+            return $lifespan;
+        }
+        catch(Exception $e) {
+            $db->rollback();
+            throw new Exception($e->getMessage());
+        }
     }
 
     public static function createNotification($options) {
@@ -187,7 +193,7 @@ class DBL {
 
     /**
      * Stores account details in the database.
-     * 
+     *
      * @param  Array $object An array of registration values, including email and password.
      * @return int           The login ID associated with the newly registered account.
      */
@@ -199,13 +205,13 @@ class DBL {
         if (AccountDetails::getAccountByEmail($object['email'])) {
             throw new Exception("An account is already registered to that email address.");
         }
-        
+
         $crypt = \Bcrypt::instance();
         Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
             ':email'    => $object['email'],
             ':password' => $crypt->hash($object['password'])
         ));
-        
+
         $login_id = AccountDetails::emailToId($object['email']);
         if (!$login_id) {
             throw new Exception("Could not retrieve login_id. Abort.");

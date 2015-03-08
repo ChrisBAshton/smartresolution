@@ -29,10 +29,18 @@ class Message {
     }
 
     public function contents() {
-        return $this->contents;
+        return htmlspecialchars($this->contents);
     }
 
     public function author() {
         return AccountDetails::getAccountById($this->authorID);
+    }
+
+    // based on http://starikovs.com/2011/11/10/php-new-line-to-paragraph/
+    public function __toString() {
+        $message = $this->contents();
+        $message = preg_replace('/(\r?\n){2,}/', '</p><p>', $message);
+        $message = preg_replace('/(\r?\n)+/', '<br />', $message);
+        return '<p>' . $message . '</p>';
     }
 }

@@ -113,7 +113,7 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterfac
     public function getStateDescription() {
         return 'Dispute in progress.';
     }
-    
+
     public function canOpenDispute() {
         return false;
     }
@@ -123,7 +123,7 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterfac
     }
 
     public function canSendMessage() {
-        return $this->account instanceof Agent;
+        return $this->dispute->getLifespan()->isCurrent();
     }
 }
 
@@ -132,7 +132,7 @@ class InMediation extends DisputeDefaults implements DisputeStateInterface {
     public function getStateDescription() {
         return 'Dispute in mediation.';
     }
-    
+
 }
 
 class InRoundTableMediation extends DisputeDefaults implements DisputeStateInterface {
@@ -140,5 +140,5 @@ class InRoundTableMediation extends DisputeDefaults implements DisputeStateInter
     public function getStateDescription() {
         return 'Dispute in mediation.';
     }
-    
+
 }

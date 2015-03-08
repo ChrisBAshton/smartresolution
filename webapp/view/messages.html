@@ -1,0 +1,22 @@
+<form method="post" action="<?php echo $dispute->getUrl(); ?>/chat">
+    <div class="row">
+        <div class='col-sm-12'>
+            <label for="message">New Message</label>
+            <textarea id="message" name="message" class="form-control"></textarea>
+        </div>
+        <div class='col-sm-12'>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Send message</button>
+        </div>
+    </div>
+</form>
+
+<?php foreach($messages as $message) : ?>
+    <div class="row message">
+        <div class="message__body">
+            <?php echo $message; ?>
+        </div>
+        <div class="message__author">
+            <?php echo $message->author() . ' wrote this on ' . prettyTime($message->timestamp()); ?>
+        </div>
+    </div>
+<?php endforeach; ?>

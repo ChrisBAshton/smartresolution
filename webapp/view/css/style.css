@@ -1,5 +1,5 @@
 p {
-    padding: 12px 0;
+    padding: 12px;
 }
 
 footer {
@@ -53,4 +53,19 @@ footer {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+.message {
+    border: 1px solid grey;
+    margin: 1em 0;
+}
+
+.message__body {
+
+}
+
+.message__author {
+    text-align: right;
+    background-color: #EDEDED;
+    padding: 0.5em;
 }

@@ -29,6 +29,10 @@ $routes = array(
     'POST /disputes/@disputeID/close'   => 'DisputeController->closeDisputePost',
     'GET  /disputes/@disputeID/summary' => 'SummaryController->view',
 
+    // messaging
+    'GET  /disputes/@disputeID/chat'    => 'MessageController->view',
+    'POST /disputes/@disputeID/chat'    => 'MessageController->newMessage',
+
     // lifespans
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',
     'GET|POST /disputes/@disputeID/lifespan/new'  => 'LifespanController->newLifespan',

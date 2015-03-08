@@ -43,8 +43,14 @@ class Lifespan implements LifespanInterface {
 
     private $status;
 
-    function __construct($disputeID) {
+    function __construct($disputeID, $justCreated = false) {
         $this->setVariables($disputeID);
+        if ($justCreated) {
+            $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
+            if ($invalid) {
+                throw new Exception($invalid);
+            }
+        }
     }
 
     public function invalid($validUntil, $startTime, $endTime) {

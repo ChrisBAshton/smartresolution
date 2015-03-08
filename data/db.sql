@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS account_details (
     login_id INTEGER PRIMARY KEY NOT NULL,
-    email    VARCHAR(140) NOT NULL,
+    email    VARCHAR(140) UNIQUE NOT NULL,
     password VARCHAR(140) NOT NULL,
     verified BOOLEAN DEFAULT true
 );
