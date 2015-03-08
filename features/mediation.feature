@@ -14,11 +14,9 @@ Feature: Dispute (under Mediation)
     Then I should not be able to communicate with the other Agent
 
   Scenario: Mediator requires further information
-    Given a Dispute type was selected at the beginning of the Dispute # e.g. "maritime collision"
+    Given a Dispute type was selected at the beginning of the Dispute
+    # e.g. "maritime collision"
     Then the type-specific module should offer custom forms to the Agents to fill in
-
-  # business logic specific stuff relating to Maritime Collisions etc MUST be put into a separate feature file
-  # (in the plugin directory). This set of features must be as abstract and generic as possible.
 
   Scenario: Filling in the type-specific forms
     Given I am an Agent
@@ -37,10 +35,6 @@ Feature: Dispute (under Mediation)
     Given I am a Mediator
     And both Agents have completed the type-specific module forms
     Then I should see the results of the AI in the type-specific module
-    #And I should be able to advise each Agent individually
-    # Commented out the above line because it isn't testable. Essentially, the Mediator can send a
-    # private message to either Agent, negotiating a resolution. It is up to the Agents to formally
-    # send an offer through the "Propose Resolution" facility.
 
   Scenario: Accepting the Mediator's offer
     Given the Mediator has given me an offer
@@ -55,8 +49,6 @@ Feature: Dispute (under Mediation)
   Scenario: Sending an offer for round-table communication
     Given I am a Mediator
     Then I should be able to offer round-table communication
-    # The Mediator should (through a dedicated facility) be able to propose round-table negotation,
-    # whereby the free communication of all parties is enabled.
 
   Scenario: Accepting the offer for round-table communication
     Given the Mediator has suggested round-table communication

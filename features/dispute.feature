@@ -16,8 +16,3 @@ Feature: Dispute
     Given the Dispute is fully underway
     Then I should be able to take the Dispute to court
     And the Dispute should close unsuccessfully
-
-  # Low priority
-  Scenario: Communication with the Law Firm
-    Given I am an Agent
-    Then I should be able to communicate freely with my Law Firm

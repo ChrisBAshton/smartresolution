@@ -76,6 +76,16 @@ CREATE TABLE IF NOT EXISTS lifespans (
 -- #################################################### Miscellaneous ####
 -- #######################################################################
 
+CREATE TABLE IF NOT EXISTS messages (
+    message_id INTEGER PRIMARY KEY NOT NULL,
+    dispute_id INTEGER NOT NULL,
+    author_id  INTEGER NOT NULL,
+    message    TEXT    NOT NULL,
+    timestamp  INTEGER NOT NULL,
+    FOREIGN KEY(dispute_id) REFERENCES disputes(dispute_id),
+    FOREIGN KEY(author_id)  REFERENCES account_details(login_id)
+);
+
 CREATE TABLE IF NOT EXISTS notifications (
     notification_id INTEGER PRIMARY KEY NOT NULL,
     recipient_id    INTEGER NOT NULL,
