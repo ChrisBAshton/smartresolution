@@ -87,7 +87,7 @@ class DBL {
      * @param  Array $params Parameters outlining start and end dates, etc.
      * @return Lifespan      The newly created lifespan.
      */
-    public static function createLifespan($params) {
+    public static function createLifespan($params, $allowDatesInThePast = false) {
         $disputeID  = Utils::getValue($params, 'dispute_id');
         $proposer   = Utils::getValue($params, 'proposer');
         $validUntil = Utils::getValue($params, 'valid_until');
@@ -107,7 +107,7 @@ class DBL {
         ));
 
         try {
-            $lifespan = new Lifespan($disputeID, true);
+            $lifespan = new Lifespan($disputeID, !$allowDatesInThePast);
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
             return $lifespan;

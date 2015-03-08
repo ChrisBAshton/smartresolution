@@ -7,11 +7,11 @@ Feature: Notifications
   @clear
   Scenario: Being notified of a Dispute
     Given a Dispute has been assigned to me
-    And I am logged into an Agent account
+    And I am logged into a one-dispute Agent account
     Then I should get a notification about the Dispute
 
   Scenario: Marking the Dispute as read
-    Given I am logged into an Agent account
+    Given I am logged into a one-dispute Agent account
     And I have a new notification
     When I click on the associated link
     Then the notification should be marked as read

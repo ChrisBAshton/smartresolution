@@ -45,6 +45,7 @@
 
 		<div class="container">
 			<?php
+				// based on code found at http://stackoverflow.com/questions/2594211/php-simple-dynamic-breadcrumb
 				$breadcrumbs = array();
 
 				$urlParts = explode('/', $_SERVER['REQUEST_URI']);
@@ -53,10 +54,16 @@
 				foreach($urlParts as $part){
 					if (strlen($part) > 0) {
 						$url = $url . '/' . $part;
+						// remove everything after the ?
+						$part = preg_replace('/\?.*/', '', $part);
+						// make first letter uppercase
+						$part = ucfirst($part);
+						// make safe to render to browser
+						$part = htmlspecialchars($part);
 						if ($i < count($urlParts)) {
 							$breadcrumbs[] = array(
 								'url'   => $url,
-								'title' => ucfirst($part)
+								'title' => $part
 							);
 						}
 						$i++;

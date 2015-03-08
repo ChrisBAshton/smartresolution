@@ -4,3 +4,7 @@ def make_lifespan_offer
   fill_in 'Offer must be accepted by other party by:', :with => '2016/01/01 11:00'
   click_button 'Make lifespan offer'
 end
+
+def get_dispute_which_has_no_lifespan
+  3.to_s
+end

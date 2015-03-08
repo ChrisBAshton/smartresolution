@@ -6,7 +6,7 @@ class LifespanFactory {
      * Lifespan constructor should get the most recent Lifespan that has been attributed to the given dispute.
      * If the lifespan has been accepted, that should give it higher precedence over a lifespan proposal that is
      * more recent but has not yet been accepted by the other party.
-     * 
+     *
      * @param integer $disputeID ID of the dispute.
      */
     public static function getLifespan($disputeID) {
@@ -21,10 +21,6 @@ class LifespanFactory {
         else {
             return new LifespanMock($disputeID);
         }
-    }
-
-    public static function getLifespanProposals($disputeID) {
-        // @TODO
     }
 
 }

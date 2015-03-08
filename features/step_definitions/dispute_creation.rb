@@ -15,7 +15,7 @@ Then(/^I should be able to create a new Dispute$/) do
   fill_in('summary',     :with => 'Test summary')
   click_button 'Create Dispute'
 
-  assert_equal '/disputes/4', get_current_uri_path # 4 because we've already defined several in the YAML fixture data
+  assert_equal '/disputes/' + (dispute_count + 1).to_s, get_current_uri_path
   assert page.has_content?('Davies versus Jones')
 end
 
@@ -29,13 +29,6 @@ end
 
 Then(/^I should see the following message: '(.+)'$/) do |message|
   assert page.has_content?(message)
-end
-
-def open_dispute
-  visit '/disputes/1/open'
-  select('Maritime Collision Specialists Inc', :from => 'Select the opposing company:')
-  click_button 'Open Dispute'
-  assert page.has_content?('Waiting for Maritime Collision Specialists Inc to assign an agent to the dispute.')
 end
 
 Given(/^I have submitted a Dispute$/) do

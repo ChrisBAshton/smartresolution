@@ -41,8 +41,8 @@ foreach($data['disputes'] as $dataItem) {
         'law_firm_a' => AccountDetails::emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
-
-    $dispute->setAgentA(AccountDetails::emailToId($dataItem['agent_a']));
+    $agentAId = AccountDetails::emailToId($dataItem['agent_a']);
+    $dispute->setAgentA($agentAId);
 
     DBL::createNotification(array(
         'recipient_id' => AccountDetails::emailToId($dataItem['agent_a']),
@@ -64,5 +64,42 @@ foreach($data['disputes'] as $dataItem) {
 
     if (isset($dataItem['summary_b'])) {
         $dispute->setSummaryForPartyB($dataItem['summary_b']);
+    }
+
+    if (isset($dataItem['lifespan'])) {
+
+        $currentTime = time();
+
+        switch($dataItem['lifespan']) {
+            case 'offered':
+                $validUntil = $currentTime + 3600;
+                $startTime  = $currentTime + 7200;
+                $endTime    = $currentTime + 12000;
+                break;
+            case 'accepted':
+                $validUntil = $currentTime - 3600;
+                $startTime  = $currentTime - 1000;
+                $endTime    = $currentTime + 12000;
+                break;
+            case 'ended':
+                $validUntil = $currentTime - 12000;
+                $startTime  = $currentTime - 7200;
+                $endTime    = $currentTime - 3600;
+                break;
+        }
+
+        DBL::createLifespan(array(
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer'    => $agentAId,
+            'valid_until' => $validUntil,
+            'start_time'  => $startTime,
+            'end_time'    => $endTime
+        ), true);
+
+        $dispute->refresh();
+
+        if ($dataItem['lifespan'] !== 'offered') {
+            $dispute->getLifespan()->accept();
+        }
     }
 }
