@@ -6,5 +6,9 @@ def make_lifespan_offer
 end
 
 def get_dispute_which_has_no_lifespan
-  3.to_s
+  count = 0
+  $data['disputes'].each do |dispute|
+    count = count + 1
+    return count.to_s if dispute['title'] == 'A fully assigned dispute with no lifespan'
+  end
 end
