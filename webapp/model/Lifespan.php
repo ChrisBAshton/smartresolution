@@ -2,7 +2,7 @@
 
 interface LifespanInterface {
 
-    public function __construct($disputeID);
+    public function __construct($lifespanID);
     public function status();
     public function isCurrent();
     public function offered();
@@ -11,41 +11,12 @@ interface LifespanInterface {
 
 }
 
-class LifespanMock implements LifespanInterface {
-
-    function __construct($disputeID) {
-        $this->disputeID = $disputeID;
-    }
-
-    public function status($href = true) {
-        $status = 'No lifespan set yet.';
-        return $href ? '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>' : $status;
-    }
-
-    public function isCurrent() {
-        return false;
-    }
-
-    public function offered() {
-        return false;
-    }
-
-    public function accepted() {
-        return false;
-    }
-
-    public function declined() {
-        return false;
-    }
-
-}
-
 class Lifespan implements LifespanInterface {
 
     private $status;
 
-    function __construct($disputeID, $justCreated = false) {
-        $this->setVariables($disputeID);
+    function __construct($lifespanID, $justCreated = false) {
+        $this->setVariables($lifespanID);
         if ($justCreated) {
             $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
             if ($invalid) {
@@ -71,10 +42,10 @@ class Lifespan implements LifespanInterface {
         return $invalidBecause;
     }
 
-    private function setVariables($disputeID) {
+    private function setVariables($lifespanID) {
         $lifespan = Database::instance()->exec(
-            'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
-            array(':dispute_id' => $disputeID)
+            'SELECT * FROM lifespans WHERE lifespan_id = :lifespan_id',
+            array(':lifespan_id' => $lifespanID)
         );
 
         if (count($lifespan) === 1) {
@@ -89,7 +60,7 @@ class Lifespan implements LifespanInterface {
         }
     }
 
-    public function status($href = true) {
+    public function status() {
         if ($this->accepted()) {
             $currentTime = time();
             if ($this->startTime() > $currentTime) {
@@ -109,7 +80,7 @@ class Lifespan implements LifespanInterface {
             $status = 'No lifespan set yet.';
         }
 
-        return $href ? '<a href="/disputes/' . $this->disputeID . '/lifespan">' . $status . '</a>' : $status;
+        return $status;
     }
 
     public function isCurrent() {
@@ -174,6 +145,6 @@ class Lifespan implements LifespanInterface {
                 ':lifespan_id' => $this->getLifespanId()
             )
         );
-        $this->setVariables($this->getAssociatedDisputeId());
+        $this->setVariables($this->getLifespanId());
     }
 }

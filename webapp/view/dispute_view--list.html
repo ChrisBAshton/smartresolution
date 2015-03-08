@@ -37,7 +37,7 @@ else {
                     <a href="<?php echo $dispute->getUrl(); ?>"><?php echo $dispute->getTitle(); ?></a>
                 </div>
                 <div class="dispute_list__item__lifespan col-sm-4">
-                    <?php echo $dispute->getLifespan()->status(false); ?>
+                    <?php echo '<a href="' . $dispute->getUrl() . '/lifespan">' . $dispute->getLifespan()->status() . '</a>'; ?>
                 </div>
             </div>
         </div>

@@ -21,7 +21,8 @@ class Dispute {
             $this->title     = $dispute['title'];
             $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);
             $this->partyB    = $this->getPartyDetails((int) $dispute['party_b']);
-            $this->lifespan  = LifespanFactory::getLifespan((int) $dispute['dispute_id']);
+            $this->lifespan  = LifespanFactory::getCurrentLifespan((int) $dispute['dispute_id']);
+            $this->offeredLifespan = LifespanFactory::getOfferedLifespan((int) $dispute['dispute_id']);
 
             if (!$this->partyA) {
                 throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -39,6 +40,10 @@ class Dispute {
 
     public function getLifespan() {
         return $this->lifespan;
+    }
+
+    public function getOfferedLifespan() {
+        return $this->offeredLifespan;
     }
 
     public function getDisputeId() {
@@ -90,7 +95,7 @@ class Dispute {
             'SELECT * FROM dispute_parties WHERE party_id = :party_id LIMIT 1',
             array(':party_id' => $partyID)
         )[0];
-        
+
         $agent   = isset($partyDetails['individual_id'])   ? AccountDetails::getAccountById($partyDetails['individual_id'])   : false;
         $lawFirm = isset($partyDetails['organisation_id']) ? AccountDetails::getAccountById($partyDetails['organisation_id']) : false;
         $summary = isset($partyDetails['summary']) ? htmlspecialchars($partyDetails['summary']) : false;

@@ -9,34 +9,33 @@ class LifespanFactory {
      *
      * @param integer $disputeID ID of the dispute.
      */
-    public static function getLifespan($disputeID) {
-        $lifespans = Database::instance()->exec(
-            'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
-            array(':dispute_id' => $disputeID)
-        );
-
-        // if (count($lifespans) > 0) {
-        //     $lifespanThatTakesPrecedence = $lifespan[0];
-        // }
-        // else {
-        //     $lifespanThatTakesPrecedence = -1;
-        // }
-
-        // foreach($lifespans as $lifespan) {
-        //     if ($lifespan['status'] === 'accepted') {
-        //         $lifespanThatTakesPrecedence = $lifespan;
-        //         break;
-        //     }
-        // }
-
-        // return new Lifespan($lifespanThatTakesPrecedence);
-
-        if (count($lifespans) === 1) {
-            return new Lifespan($disputeID);
+    public static function getCurrentLifespan($disputeID) {
+        $lifespan = LifespanFactory::getLifespanWhoseStatusIs('accepted', $disputeID);
+        if (!$lifespan) {
+            return new LifespanMock();
         }
-        else {
-            return new LifespanMock($disputeID);
-        }
+        return $lifespan;
     }
 
+    public static function getOfferedLifespan($disputeID) {
+        return LifespanFactory::getLifespanWhoseStatusIs('offered', $disputeID);
+    }
+
+
+    public static function getLifespanWhoseStatusIs($status, $disputeID) {
+        $lifespans = Database::instance()->exec(
+            'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status = :status ORDER BY lifespan_id DESC LIMIT 1',
+            array(
+                ':status'     => $status,
+                ':dispute_id' => $disputeID
+            )
+        );
+
+        if (count($lifespans) === 1) {
+            return new Lifespan((int) $lifespans[0]['lifespan_id']);
+        }
+        else {
+            return false;
+        }
+    }
 }

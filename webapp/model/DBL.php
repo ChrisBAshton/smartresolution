@@ -106,8 +106,10 @@ class DBL {
             ':end_time'    => $endTime
         ));
 
+        $lifespanID = (int) Database::instance()->exec('SELECT lifespan_id FROM lifespans ORDER BY lifespan_id DESC LIMIT 1')[0]['lifespan_id'];
+
         try {
-            $lifespan = new Lifespan($disputeID, !$allowDatesInThePast);
+            $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
             return $lifespan;

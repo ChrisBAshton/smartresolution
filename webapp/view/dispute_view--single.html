@@ -2,9 +2,11 @@
 
 <div class="lifespan_status bg-padded bg-primary">
     <?php
-        if ($dispute->getLifespan()) {
-            echo $dispute->getLifespan()->status();
-        }
+    $status = $dispute->getLifespan()->status();
+    if ($dispute->getOfferedLifespan()) {
+        $status = $dispute->getOfferedLifespan()->status();
+    }
+    echo '<a href="' . $dispute->getUrl() . '/lifespan">' . $status . '</a>';
     ?>
 </div>
 
