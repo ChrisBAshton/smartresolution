@@ -10,12 +10,28 @@ class LifespanFactory {
      * @param integer $disputeID ID of the dispute.
      */
     public static function getLifespan($disputeID) {
-        $lifespan = Database::instance()->exec(
+        $lifespans = Database::instance()->exec(
             'SELECT * FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
             array(':dispute_id' => $disputeID)
         );
 
-        if (count($lifespan) === 1) {
+        // if (count($lifespans) > 0) {
+        //     $lifespanThatTakesPrecedence = $lifespan[0];
+        // }
+        // else {
+        //     $lifespanThatTakesPrecedence = -1;
+        // }
+
+        // foreach($lifespans as $lifespan) {
+        //     if ($lifespan['status'] === 'accepted') {
+        //         $lifespanThatTakesPrecedence = $lifespan;
+        //         break;
+        //     }
+        // }
+
+        // return new Lifespan($lifespanThatTakesPrecedence);
+
+        if (count($lifespans) === 1) {
             return new Lifespan($disputeID);
         }
         else {

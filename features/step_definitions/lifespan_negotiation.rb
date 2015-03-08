@@ -1,10 +1,9 @@
 Given(/^both Agents have submitted the Dispute$/) do
   login_as_agent
-  visit '/disputes/' + get_dispute_which_has_no_lifespan
+  visit '/disputes/' + get_dispute_which_has_no_lifespan + '/lifespan/new'
 end
 
 Then(/^I should be able to make a lifespan offer$/) do
-  visit '/disputes/' + get_dispute_which_has_no_lifespan + '/lifespan'
   make_lifespan_offer
   assert page.has_content? 'You have sent a lifespan offer and are waiting for the other Agent to accept.'
 end
@@ -33,10 +32,17 @@ Then(/^I should be able to (Accept|Decline) the offer$/) do |accept_or_decline|
   click_button accept_or_decline
 end
 
-Then(/^the Dispute should continue normally despite the renegotiation offer$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
 Given(/^the Dispute is fully underway$/) do
   login_as_agent
+  visit '/disputes/' + get_dispute_which_has_existing_lifespan
+  # either 3 hours 20 or 3 hours 19, depending on how slow the tests run.
+  assert page.has_content? /Dispute has started and ends in 3 hours, ([0-9]+) minutes/
+  assert page.has_content? 'Communicate'
+  visit '/disputes/' + get_dispute_which_has_existing_lifespan + '/lifespan/new'
+end
+
+Then(/^the Dispute should continue normally despite the renegotiation offer$/) do
+  visit '/disputes/' + get_dispute_which_has_existing_lifespan
+  #puts page.body
+  assert page.has_content? 'Communicate'
 end
