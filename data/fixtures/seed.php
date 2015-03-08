@@ -12,7 +12,7 @@ $yaml = new Parser();
 $data = $yaml->parse(file_get_contents(__DIR__ . '/fixture_data.yml'));
 
 foreach($data['organisations'] as $org) {
-    Register::organisation(array(
+    DBL::createOrganisation(array(
         'email'    => $org['account_details']['email'],
         'password' => $org['account_details']['password'],
         'type'     => $org['details']['type'],
@@ -23,7 +23,7 @@ foreach($data['organisations'] as $org) {
 
     if (isset($org['individuals'])) {
         foreach($org['individuals'] as $individual) {
-            Register::individual(array(
+            DBL::createIndividual(array(
                 'email'           => $individual['account_details']['email'],
                 'password'        => $individual['account_details']['password'],
                 'organisation_id' => $organisationId,
@@ -36,7 +36,7 @@ foreach($data['organisations'] as $org) {
 }
 
 foreach($data['disputes'] as $dataItem) {
-    $dispute = DisputeDB::create(array(
+    $dispute = DBL::createDispute(array(
         'title'      => $dataItem['title'],
         'law_firm_a' => AccountDetails::emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
@@ -44,7 +44,7 @@ foreach($data['disputes'] as $dataItem) {
 
     $dispute->setAgentA(AccountDetails::emailToId($dataItem['agent_a']));
 
-    Notification::create(array(
+    DBL::createNotification(array(
         'recipient_id' => AccountDetails::emailToId($dataItem['agent_a']),
         'message'      => 'A notification should be made when a dispute is created and assigned to an Agent',
         'url'          => $dispute->getUrl()

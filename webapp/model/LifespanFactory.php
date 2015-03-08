@@ -27,34 +27,4 @@ class LifespanFactory {
         // @TODO
     }
 
-    /**
-     * Creates a new lifespan proposal.
-     * @param  Array $params Parameters outlining start and end dates, etc.
-     * @return Lifespan      The newly created lifespan.
-     */
-    public static function create($params) {
-        $disputeID  = Utils::getValue($params, 'dispute_id');
-        $proposer   = Utils::getValue($params, 'proposer');
-        $validUntil = Utils::getValue($params, 'valid_until');
-        $startTime  = Utils::getValue($params, 'start_time');
-        $endTime    = Utils::getValue($params, 'end_time');
-
-        $db = Database::instance();
-        $db->begin();
-        $db->exec(
-            'INSERT INTO lifespans (dispute_id, proposer, valid_until, start_time, end_time)
-             VALUES (:dispute_id, :proposer, :valid_until, :start_time, :end_time)', array(
-            ':dispute_id'  => $disputeID,
-            ':proposer'    => $proposer,
-            ':valid_until' => $validUntil,
-            ':start_time'  => $startTime,
-            ':end_time'    => $endTime
-        ));
-        
-        $lifespan = new Lifespan($disputeID);
-        // if no exception is raised, safe to commit transaction to database
-        $db->commit();
-        return $lifespan;
-    }
-
 }

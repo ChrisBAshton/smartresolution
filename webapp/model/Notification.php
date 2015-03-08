@@ -42,24 +42,4 @@ class Notification {
         Database::instance()->exec('UPDATE notifications SET read = "true" WHERE notification_id = :notification_id', array(':notification_id' => $this->getNotificationId()));
         $this->setVariables($this->getNotificationId());
     }
-
-    public static function create($options) {
-
-        $recipientId = Utils::getValue($options, 'recipient_id');
-        $message     = Utils::getValue($options, 'message');
-        $url         = Utils::getValue($options, 'url');
-
-        Database::instance()->exec('INSERT INTO notifications (recipient_id, message, url) VALUES (:recipient_id, :message, :url)',
-            array(
-                ':recipient_id' => $recipientId,
-                ':message'      => $message,
-                ':url'          => $url,
-            )
-        );
-
-        $notificationID = (int) Database::instance()->exec('SELECT notification_id FROM notifications ORDER BY notification_id DESC LIMIT 1')[0]['notification_id'];
-
-        return new Notification($notificationID);
-    }
-
 }

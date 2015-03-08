@@ -14,7 +14,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         $this->lawFirmB = AccountDetails::emailToId('law_firm_b@t.co');
         $this->agentB   = AccountDetails::emailToId('agent_b@t.co');
         
-        $this->dispute = DisputeDB::create(array(
+        $this->dispute = DBL::createDispute(array(
             'law_firm_a' => $this->lawFirmA,
             'agent_a'    => $this->agentA,
             'type'       => 'other',
@@ -29,7 +29,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
 
     private function createLifespan() {
         $currentTime = time();
-        LifespanFactory::create(array(
+        DBL::createLifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 3600,

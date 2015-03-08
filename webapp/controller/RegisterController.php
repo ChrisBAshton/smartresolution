@@ -18,7 +18,7 @@ class RegisterController {
         }
         else {
             try {
-                Register::organisation(array(
+                DBL::createOrganisation(array(
                     'email'       => $email,
                     'password'    => $password,
                     'name'        => $orgName,
@@ -56,7 +56,7 @@ class RegisterController {
             try {
                 $organisation = Session::getAccount();
 
-                Register::individual(array(
+                DBL::createIndividual(array(
                     'email'           => $email,
                     'password'        => $password,
                     'organisation_id' => $organisation->getLoginId(),

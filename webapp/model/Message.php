@@ -35,24 +35,4 @@ class Message {
     public function author() {
         return AccountDetails::getAccountById($this->authorID);
     }
-
-    public static function create($params) {
-        $disputeID = Utils::getValue($params, 'dispute_id');
-        $authorID  = Utils::getValue($params, 'author_id');
-        $message   = Utils::getValue($params, 'message');
-
-        Database::instance()->exec('INSERT INTO messages (dispute_id, author_id, message, timestamp) VALUES (:dispute_id, :author_id, :message, :timestamp)',
-            array(
-                ':dispute_id' => $disputeID,
-                ':author_id'  => $authorID,
-                ':message'    => $message,
-                ':timestamp'  => time()
-            )
-        );
-
-        $messageID = (int) Database::instance()->exec('SELECT message_id FROM messages ORDER BY message_id DESC LIMIT 1')[0]['message_id'];
-
-        return new Message($messageID);
-    }
-
 }
