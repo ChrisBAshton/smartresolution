@@ -1,4 +1,5 @@
 <?php
+require 'LifespanInterface.php';
 
 class LifespanMock implements LifespanInterface {
 
