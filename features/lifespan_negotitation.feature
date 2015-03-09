@@ -34,3 +34,4 @@ Feature: Negotiating a Dispute lifespan
     When I make a new lifespan offer
     And the other Agent accepts the offer
     Then the new lifespan should take immediate effect
+    And I should see the message 'The dispute is currently on hold until the new lifespan comes into effect.'

@@ -233,7 +233,17 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         ));
     }
 
+    private function getDisputeStatus($dispute) {
+        return Database::instance()->exec(
+            'SELECT status FROM disputes WHERE dispute_id = :dispute_id',
+            array(':dispute_id' => $dispute->getDisputeId())
+        )[0]['status'];
+    }
+
     public function testCloseUnsuccessfully() {
-        // @TODO - test closeUnsuccessfully method
+        $dispute = $this->createNewDispute();
+        $this->assertEquals("ongoing", $this->getDisputeStatus($dispute));
+        $dispute->closeUnsuccessfully();
+        $this->assertEquals("failed", $this->getDisputeStatus($dispute));
     }
 }

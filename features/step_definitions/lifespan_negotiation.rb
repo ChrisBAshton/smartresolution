@@ -61,4 +61,5 @@ end
 Then(/^the new lifespan should take immediate effect$/) do
   assert page.has_content? 'Starting: 01/01/2017 11:00:00'
   assert page.has_content? 'Ending: 01/01/2018 11:00:00'
+  visit '/disputes/' + get_dispute_which_has_existing_lifespan
 end
