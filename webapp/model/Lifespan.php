@@ -1,5 +1,48 @@
 <?php
-require 'LifespanInterface.php';
+
+interface LifespanInterface {
+
+    public function __construct($lifespanID);
+    public function status();
+    public function isCurrent();
+    public function offered();
+    public function accepted();
+    public function declined();
+    public function isEnded();
+}
+
+
+class LifespanMock implements LifespanInterface {
+
+    function __construct($lifespanID = 0) {
+        $this->lifespanID = $lifespanID;
+    }
+
+    public function status() {
+        return 'No lifespan set yet.';
+    }
+
+    public function isCurrent() {
+        return false;
+    }
+
+    public function isEnded() {
+        return false;
+    }
+
+    public function offered() {
+        return false;
+    }
+
+    public function accepted() {
+        return false;
+    }
+
+    public function declined() {
+        return false;
+    }
+
+}
 
 class Lifespan implements LifespanInterface {
 
