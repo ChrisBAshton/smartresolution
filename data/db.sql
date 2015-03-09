@@ -44,10 +44,11 @@ CREATE TABLE IF NOT EXISTS disputes (
     party_b       INTEGER, -- NULL until Dispute has been assigned to Law Firm B
     third_party   INTEGER, -- NULL until in Mediation
     lifespan_id   INTEGER, -- NULL until a Lifespan has been negotiated
-    resolution_id INTEGER, -- NULL until resolved
-    FOREIGN KEY(party_a)     REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(party_b)     REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(third_party) REFERENCES dispute_parties(party_id)
+    status        VARCHAR(40) DEFAULT "ongoing",
+    CHECK (status in ("ongoing", "resolved", "failed")),
+    FOREIGN KEY(party_a)       REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(party_b)       REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(third_party)   REFERENCES dispute_parties(party_id)
 );
 
 CREATE TABLE IF NOT EXISTS dispute_parties (

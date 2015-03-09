@@ -151,4 +151,9 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         $latestLifespanID  = $this->dispute->getLatestLifespan()->getLifespanId();
         $this->assertNotEquals($currentLifespanID, $latestLifespanID);
     }
+
+    public function testNewLifespanReplacesOld() {
+        // @TODO - test for the presence of this:
+        // 'The dispute is currently on hold until the new lifespan comes into effect. If this is taking too long, you can always re-negotiate a new lifespan.'
+    }
 }

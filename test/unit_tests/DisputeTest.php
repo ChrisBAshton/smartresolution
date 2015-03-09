@@ -11,7 +11,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     private function createNewDispute() {
         $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
         $agent = AccountDetails::emailToId('agent_a@t.co');
-        
+
         return DBL::createDispute(array(
             'law_firm_a' => $lawFirm,
             'agent_a'    => $agent,
@@ -177,7 +177,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNullType() {
-        
+
         $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
 
         DBL::createDispute(array(
@@ -191,7 +191,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNullTitle() {
-        
+
         $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
 
         DBL::createDispute(array(
@@ -231,5 +231,9 @@ class DisputeTest extends PHPUnit_Framework_TestCase
             'law_firm_a' => $lawFirm,
             'type'       => 'other'
         ));
+    }
+
+    public function testCloseUnsuccessfully() {
+        // @TODO - test closeUnsuccessfully method
     }
 }

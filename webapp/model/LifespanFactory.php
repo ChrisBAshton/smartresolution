@@ -26,7 +26,7 @@ class LifespanFactory {
     }
 
     public static function getLatestLifespan($disputeID) {
-        $lifespan = LifespanFactory::getLatestLifespanWithStatus($disputeID, 'any');
+        $lifespan = LifespanFactory::getLatestLifespanWithStatus($disputeID, 'notDeclined');
         if ($lifespan) {
             return $lifespan;
         }
@@ -43,20 +43,20 @@ class LifespanFactory {
      * @return Lifespan|false     Returns the Lifespan if one exists, or false if it doesn't.
      */
     public static function getLatestLifespanWithStatus($disputeID, $status) {
-        if ($status !== 'any') {
+        if ($status === 'notDeclined') {
             $lifespans = Database::instance()->exec(
-                'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status = :status ORDER BY lifespan_id DESC LIMIT 1',
+                'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status != "declined" ORDER BY lifespan_id DESC LIMIT 1',
                 array(
-                    ':dispute_id' => $disputeID,
-                    ':status'     => $status
+                    ':dispute_id' => $disputeID
                 )
             );
         }
         else {
             $lifespans = Database::instance()->exec(
-                'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
+                'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status = :status ORDER BY lifespan_id DESC LIMIT 1',
                 array(
-                    ':dispute_id' => $disputeID
+                    ':dispute_id' => $disputeID,
+                    ':status'     => $status
                 )
             );
         }

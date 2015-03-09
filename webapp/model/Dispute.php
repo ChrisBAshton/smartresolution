@@ -1,5 +1,5 @@
 <?php
-
+// @TODO - move all DB queries into a DBDispute object.
 class Dispute {
 
     function __construct($disputeID) {
@@ -28,6 +28,10 @@ class Dispute {
                 throw new Exception('A dispute must have at least one organisation associated with it!');
             }
         }
+    }
+
+    public function closeUnsuccessfully() {
+        $this->updateField('status', 'failed');
     }
 
     public function getState($account) {
