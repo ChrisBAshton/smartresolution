@@ -6,12 +6,12 @@ class LifespanController {
         $account = mustBeLoggedInAsAn('Agent');
         $dispute = setDisputeFromParams($f3, $params);
 
-        if ($dispute->getLifespan()->accepted()) {
+        if ($dispute->getLatestLifespan()->accepted()) {
             $f3->set('content', 'lifespan_agreed.html');
             echo View::instance()->render('layout.html');
         }
-        else if ($dispute->getLifespan()->offered()) {
-            if ($dispute->getLifespan()->getProposer() === $account->getLoginId()) {
+        else if ($dispute->getLatestLifespan()->offered()) {
+            if ($dispute->getLatestLifespan()->getProposer() === $account->getLoginId()) {
                 $f3->set('content', 'lifespan_offered--sent.html');
             }
             else {
@@ -74,11 +74,11 @@ class LifespanController {
         $resolution = $f3->get('POST.resolution');
 
         if ($resolution === 'accept') {
-            $dispute->getLifespan()->accept();
+            $dispute->getLatestLifespan()->accept();
             $notification = 'The other party has agreed your lifespan offer.';
         }
         else if ($resolution === 'decline') {
-            $dispute->getLifespan()->decline();
+            $dispute->getLatestLifespan()->decline();
             $notification = 'The other party has declined your lifespan offer.';
         }
 

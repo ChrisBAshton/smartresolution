@@ -115,25 +115,40 @@ class LifespanTest extends PHPUnit_Framework_TestCase
     }
 
     public function testLifespanStatusStartsOffCorrect() {
-        $this->assertTrue($this->dispute->getLifespan() instanceof LifespanMock);
-        $this->assertFalse($this->dispute->getLifespan()->offered());
-        $this->assertFalse($this->dispute->getLifespan()->accepted());
-        $this->assertFalse($this->dispute->getLifespan()->declined());
+        $this->assertTrue($this->dispute->getCurrentLifespan() instanceof LifespanMock);
+        $this->assertFalse($this->dispute->getCurrentLifespan()->offered());
+        $this->assertFalse($this->dispute->getCurrentLifespan()->accepted());
+        $this->assertFalse($this->dispute->getCurrentLifespan()->declined());
     }
 
     public function testLifespanOffered() {
         $this->createLifespan();
-        $this->assertTrue($this->dispute->getLifespan() instanceof Lifespan);
-        $this->assertTrue($this->dispute->getLifespan()->offered());
-        $this->assertFalse($this->dispute->getLifespan()->accepted());
-        $this->assertFalse($this->dispute->getLifespan()->declined());
+        $this->assertTrue($this->dispute->getCurrentLifespan() instanceof Lifespan);
+        $this->assertTrue($this->dispute->getCurrentLifespan()->offered());
+        $this->assertFalse($this->dispute->getCurrentLifespan()->accepted());
+        $this->assertFalse($this->dispute->getCurrentLifespan()->declined());
     }
 
-    public function testLifespanAcceptAndDecline() {
+    public function testLifespanAccept() {
         $this->createLifespan();
-        $this->dispute->getLifespan()->accept();
-        $this->assertTrue($this->dispute->getLifespan()->accepted());
-        $this->dispute->getLifespan()->decline();
-        $this->assertTrue($this->dispute->getLifespan()->declined());
+        $this->dispute->getCurrentLifespan()->accept();
+        $this->assertTrue($this->dispute->getCurrentLifespan()->accepted());
+    }
+
+    public function testLifespanDecline() {
+        $this->createLifespan();
+        $this->dispute->getCurrentLifespan()->decline();
+        $this->assertTrue($this->dispute->getCurrentLifespan()->declined());
+    }
+
+    public function testCurrentAndLatestLifespans() {
+        // create and accept a lifespan
+        $this->testLifespanAccept();
+        // now offer a new lifespan
+        $this->createLifespan();
+        // latest and current lifespans should be different
+        $currentLifespanID = $this->dispute->getCurrentLifespan()->getLifespanId();
+        $latestLifespanID  = $this->dispute->getLatestLifespan()->getLifespanId();
+        $this->assertNotEquals($currentLifespanID, $latestLifespanID);
     }
 }

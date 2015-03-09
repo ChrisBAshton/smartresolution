@@ -3,39 +3,68 @@
 class LifespanFactory {
 
     /**
-     * Lifespan constructor should get the most recent Lifespan that has been attributed to the given dispute.
-     * If the lifespan has been accepted, that should give it higher precedence over a lifespan proposal that is
-     * more recent but has not yet been accepted by the other party.
+     * Retrieves the most recent accepted Lifespan that has been attributed to the given dispute.
+     * If no Lifespan has been accepted, retrieves the most recent offered Lifespan.
+     * If no Lifespan has even been offered, returns a mock Lifespan object so that method calls still work.
      *
      * @param integer $disputeID ID of the dispute.
+     * @return Lifespan
      */
     public static function getCurrentLifespan($disputeID) {
-        $lifespan = LifespanFactory::getLifespanWhoseStatusIs('accepted', $disputeID);
-        if (!$lifespan) {
+        $acceptedLifespan = LifespanFactory::getLatestLifespanWithStatus($disputeID, 'accepted');
+        $proposedLifespan = LifespanFactory::getLatestLifespanWithStatus($disputeID, 'offered');
+
+        if ($acceptedLifespan) {
+            return $acceptedLifespan;
+        }
+        else if ($proposedLifespan) {
+            return $proposedLifespan;
+        }
+        else {
             return new LifespanMock();
         }
-        return $lifespan;
     }
 
-    public static function getOfferedLifespan($disputeID) {
-        return LifespanFactory::getLifespanWhoseStatusIs('offered', $disputeID);
+    public static function getLatestLifespan($disputeID) {
+        $lifespan = LifespanFactory::getLatestLifespanWithStatus($disputeID, 'any');
+        if ($lifespan) {
+            return $lifespan;
+        }
+        else {
+            return new LifespanMock();
+        }
     }
 
-
-    public static function getLifespanWhoseStatusIs($status, $disputeID) {
-        $lifespans = Database::instance()->exec(
-            'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status = :status ORDER BY lifespan_id DESC LIMIT 1',
-            array(
-                ':status'     => $status,
-                ':dispute_id' => $disputeID
-            )
-        );
+    /**
+     * Returns the latest Lifespan attributed to the dispute that matches the given status. If no Lifespan is found, returns false.
+     *
+     * @param  integer $disputeID ID of the dispute.
+     * @param  String  $status    Get latest dispute that matches the given status. Special case: 'any'
+     * @return Lifespan|false     Returns the Lifespan if one exists, or false if it doesn't.
+     */
+    public static function getLatestLifespanWithStatus($disputeID, $status) {
+        if ($status !== 'any') {
+            $lifespans = Database::instance()->exec(
+                'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status = :status ORDER BY lifespan_id DESC LIMIT 1',
+                array(
+                    ':dispute_id' => $disputeID,
+                    ':status'     => $status
+                )
+            );
+        }
+        else {
+            $lifespans = Database::instance()->exec(
+                'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id ORDER BY lifespan_id DESC LIMIT 1',
+                array(
+                    ':dispute_id' => $disputeID
+                )
+            );
+        }
 
         if (count($lifespans) === 1) {
             return new Lifespan((int) $lifespans[0]['lifespan_id']);
         }
-        else {
-            return false;
-        }
+
+        return false;
     }
 }

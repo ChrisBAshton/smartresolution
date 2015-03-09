@@ -8,7 +8,7 @@ interface LifespanInterface {
     public function offered();
     public function accepted();
     public function declined();
-
+    public function isEnded();
 }
 
 class Lifespan implements LifespanInterface {
@@ -91,6 +91,10 @@ class Lifespan implements LifespanInterface {
             $currentTime = time();
             return ($this->startTime() < $currentTime) && ($this->endTime > $currentTime);
         }
+    }
+
+    public function isEnded() {
+        return ($this->endTime < time());
     }
 
     public function accept() {

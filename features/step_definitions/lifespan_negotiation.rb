@@ -43,6 +43,22 @@ end
 
 Then(/^the Dispute should continue normally despite the renegotiation offer$/) do
   visit '/disputes/' + get_dispute_which_has_existing_lifespan
-  #puts page.body
   assert page.has_content? 'Communicate'
+end
+
+When(/^I make a new lifespan offer$/) do
+  step "I should be able to make a lifespan offer"
+end
+
+And(/^the other Agent accepts the offer$/) do
+  visit '/logout'
+  visit '/login'
+  login_with_credentials 'agent_b@t.co', 'test'
+  visit '/disputes/' + get_dispute_which_has_existing_lifespan + '/lifespan'
+  click_button 'Accept'
+end
+
+Then(/^the new lifespan should take immediate effect$/) do
+  assert page.has_content? 'Starting: 01/01/2017 11:00:00'
+  assert page.has_content? 'Ending: 01/01/2018 11:00:00'
 end

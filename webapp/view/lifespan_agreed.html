@@ -1,17 +1,17 @@
 <?php
-if ($dispute->getOfferedLifespan()) {
-    echo $dispute->getOfferedLifespan()->status();
+if ($dispute->getLatestLifespan()) {
+    echo $dispute->getLatestLifespan()->status();
 }
 ?>
 
 <p>You have both agreed a dispute lifespan.</p>
 
 <p>
-    <strong>Starting:</strong> <?php echo prettyTime($dispute->getLifespan()->startTime()); ?>
+    <strong>Starting:</strong> <?php echo prettyTime($dispute->getLatestLifespan()->startTime()); ?>
 </p>
 
 <p>
-    <strong>Ending:</strong> <?php echo prettyTime($dispute->getLifespan()->endTime()); ?>
+    <strong>Ending:</strong> <?php echo prettyTime($dispute->getLatestLifespan()->endTime()); ?>
 </p>
 
 <p>

@@ -14,6 +14,10 @@ class LifespanMock implements LifespanInterface {
         return false;
     }
 
+    public function isEnded() {
+        return false;
+    }
+
     public function offered() {
         return false;
     }

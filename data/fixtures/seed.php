@@ -99,7 +99,7 @@ foreach($data['disputes'] as $dataItem) {
         $dispute->refresh();
 
         if ($dataItem['lifespan'] !== 'offered') {
-            $dispute->getLifespan()->accept();
+            $dispute->getCurrentLifespan()->accept();
         }
     }
 }

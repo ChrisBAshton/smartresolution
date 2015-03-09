@@ -16,13 +16,13 @@ class Dispute {
             throw new Exception("The dispute you are trying to view does not exist.");
         }
         else {
-            $dispute         = $dispute[0];
-            $this->disputeId = (int) $dispute['dispute_id'];
-            $this->title     = $dispute['title'];
-            $this->partyA    = $this->getPartyDetails((int) $dispute['party_a']);
-            $this->partyB    = $this->getPartyDetails((int) $dispute['party_b']);
-            $this->lifespan  = LifespanFactory::getCurrentLifespan((int) $dispute['dispute_id']);
-            $this->offeredLifespan = LifespanFactory::getOfferedLifespan((int) $dispute['dispute_id']);
+            $dispute               = $dispute[0];
+            $this->disputeId       = (int) $dispute['dispute_id'];
+            $this->title           = $dispute['title'];
+            $this->partyA          = $this->getPartyDetails((int) $dispute['party_a']);
+            $this->partyB          = $this->getPartyDetails((int) $dispute['party_b']);
+            $this->currentLifespan = LifespanFactory::getCurrentLifespan((int) $dispute['dispute_id']);
+            $this->latestLifespan  = LifespanFactory::getLatestLifespan((int) $dispute['dispute_id']);
 
             if (!$this->partyA) {
                 throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -38,12 +38,12 @@ class Dispute {
         $this->setVariables($this->getDisputeId());
     }
 
-    public function getLifespan() {
-        return $this->lifespan;
+    public function getCurrentLifespan() {
+        return $this->currentLifespan;
     }
 
-    public function getOfferedLifespan() {
-        return $this->offeredLifespan;
+    public function getLatestLifespan() {
+        return $this->latestLifespan;
     }
 
     public function getDisputeId() {
