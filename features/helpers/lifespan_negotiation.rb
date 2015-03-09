@@ -12,3 +12,11 @@ def get_dispute_which_has_no_lifespan
     return count.to_s if dispute['title'] == 'A fully assigned dispute with no lifespan'
   end
 end
+
+def get_dispute_which_has_existing_lifespan
+  count = 0
+  $data['disputes'].each do |dispute|
+    count = count + 1
+    return count.to_s if dispute['lifespan'] == 'accepted'
+  end
+end

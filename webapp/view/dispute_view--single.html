@@ -2,11 +2,38 @@
 
 <div class="lifespan_status bg-padded bg-primary">
     <?php
-        if ($dispute->getLifespan()) {
-            echo $dispute->getLifespan()->status();
-        }
+    $status = $dispute->getLatestLifespan()->status();
+    if ($dispute->getLatestLifespan()) {
+        $status = $dispute->getLatestLifespan()->status();
+    }
+    echo '<a href="' . $dispute->getUrl() . '/lifespan">' . $status . '</a>';
     ?>
 </div>
+
+<?php
+$currentLifespan = $dispute->getCurrentLifespan();
+if ($currentLifespan->accepted()) :
+
+    $prettyStartTime = prettyTime($currentLifespan->startTime());
+    $prettyEndTime   = prettyTime($currentLifespan->endTime());
+    $className       = 'text-danger';
+    $preText         = 'Dispute has ended. Lifespan was: ';
+
+    if ($currentLifespan->isCurrent()) {
+        $className = 'text-success';
+        $preText   = 'Current dispute lifespan: ';
+    }
+?>
+    <div class="row">
+        <p class="text-center <?php echo $className; ?>">
+            <?php
+                echo $preText . $prettyStartTime . ' until ' . $prettyEndTime;
+            ?>
+        </p>
+    </div>
+<?php
+endif;
+?>
 
 <div class="row">
 

@@ -6,7 +6,7 @@ class DisputeStateCalculator {
         if (!$account) {
             $account = Session::getAccount();
         }
-        
+
         if ($dispute->getLawFirmB() === false) {
             return new DisputeCreated($dispute, $account);
         }
@@ -14,13 +14,16 @@ class DisputeStateCalculator {
             return new DisputeAssignedToLawFirmB($dispute, $account);
         }
 
-        if ($dispute->getLifespan()) {
+        if ($dispute->getCurrentLifespan()) {
 
-            if ($dispute->getLifespan()->accepted()) {
-                return new LifespanNegotiated($dispute, $account);
+            if ($dispute->getCurrentLifespan()->isEnded()) {
+                return new DisputeClosed($dispute, $account);
+            }
+            if (!$dispute->getCurrentLifespan()->accepted()) {
+                return new DisputeOpened($dispute, $account);
             }
             else {
-                return new DisputeOpened($dispute, $account);
+                return new LifespanNegotiated($dispute, $account);
             }
         }
     }
@@ -71,7 +74,7 @@ class DisputeStateCalculator {
                 'href'  => $dispute->getUrl() . '/close'
             );
         }
-        
+
         return $actions;
     }
 }
