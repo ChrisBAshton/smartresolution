@@ -9,8 +9,7 @@ install:
   - bundle install
 before_script:
   # run PHP server (required for tests. We only start the server if we're on Travis)
-  - sh server.sh
-  - sleep 3
+  - sh server.sh --background
   # remove any existing database and create our databases
   - rm -f data/test.db
   - rm -f data/production.db

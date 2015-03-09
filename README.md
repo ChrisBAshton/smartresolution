@@ -42,7 +42,7 @@ You can also run `php install.php --refresh` at any time to clean and re-populat
 
 ## Seeing is believing
 
-* run `php -S 127.0.0.1:8000 -t webapp`
+* run `./server.sh` to start the server
 * go to http://127.0.0.1:8000/ in your browser
 * you should now be able to register an account and log in using the forms provided
 
