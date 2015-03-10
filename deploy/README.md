@@ -1,9 +1,6 @@
 # Amazon Web Services
 This readme provides instructions on how to deploy SmartResolution to AWS.
 
-## @TODO
-The reason I have this README is that I hope to automate AWS deployment so that I can easily push the latest version of my project to AWS. I'm certainly hoping to automate the 'Install all dependencies' section to make AWS deployment more painless.
-
 ## Create your AWS instance
 
 * create an AWS account
@@ -21,59 +18,37 @@ You should now SSH into your instance if you haven't already:
 
 `ssh -i path/to/key.pem ec2-user@your_ec2_private_dns.amazonaws.com`
 
-### Edit your httpd config
+### Install the project
 
-Edit the httpd config:
-`sudo vi /etc/httpd/conf/httpd.conf`
-
-* Change DocumentRoot for `/var/www/html/webapp` rather than just `/var/www/html`.
-* Change AllowOverride to All instead of None (below the DocumentRoot bit above, below "further relax...".
-
-### Install all dependencies
-
-NB: your application will live in this folder: `/var/www/html`
+These instructions should work for both new instances and updating existing instances to the latest version of the project. WARNING: these instructions will *replace* the production database, so you should always back up your database first if you're doing this on a live site.
 
 ```bash
-# remove AWS' default php 5.3, install php 5.5
-sudo yum remove php*
-sudo yum install php55 php55-pdo php55-mysqlnd
-
-# sanity check - should see PDO in the list of installed modules
-php -m
-
-## install composer
-curl -sS https://getcomposer.org/installer | php
-
-# get latest version of major project
 cd /var/www
+
+# remove old version of SmartResolution if we've done this before
+sudo rm -rf html
+
+# get latest version of SmartResolution
 wget https://github.com/ChrisBAshton/major-project/archive/master.zip
 unzip master.zip
-rm master.zip
 
-# replace html on site
+# remove HTML
+rm master.zip
 sudo rm -r html
+
+# move project contents to HTML folder
 mv major-project-master/ html
 
-# install project dependencies
-php composer.phar install
-
-# run our install script
-sudo php install.php
-
-# fix permissions
-sudo chown -R root:www /var/www
-sudo chmod 2775 /var/www
-find /var/www -type d -exec sudo chmod 2775 {} +
-find /var/www -type f -exec sudo chmod 0664 {} +
-
-# also need to give our database permissions (@TODO - 777 is probably a bad idea)
-sudo chown -R ec2-user /var/www/html/data/
-chmod 777 data
-chmod 777 data/production.db
-
-# start the httpd server
-sudo service httpd start
+# move into the repo, ready to run some scripts
+cd html
 ```
+
+You should now be able to run the one-script install:
+
+`./deploy/aws.sh`
+
+## Start the httpd server
+`sudo service httpd start`
 
 You should be able to go to the provided IP address and see SmartResolution working.
 
