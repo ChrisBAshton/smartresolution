@@ -28,9 +28,9 @@ I've made a handy one-line installer script which installs all dependencies and 
 
 ### One-step installation
 
-`php install.php`
+`php deploy/install.php`
 
-You can also run `php install.php --refresh` at any time to clean and re-populate the database.
+You can also run `php deploy/install.php --refresh` at any time to clean and re-populate the database.
 
 ### Manual installation
 
@@ -42,7 +42,7 @@ You can also run `php install.php --refresh` at any time to clean and re-populat
 
 ## Seeing is believing
 
-* run `./server.sh` to start the server
+* run `./deploy/server.sh` to start the server
 * go to http://127.0.0.1:8000/ in your browser
 * you should now be able to register an account and log in using the forms provided
 
