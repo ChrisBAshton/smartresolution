@@ -1,45 +1,28 @@
 <?php
-// @TODO - move all DB queries into a DBDispute object.
+
 class Dispute {
 
     function __construct($disputeID) {
-        $this->setVariables($disputeID);
+        $this->db = new DBDispute($disputeID);
+        $this->refresh();
     }
 
-    private function setVariables($disputeID) {
-        $dispute = Database::instance()->exec(
-            'SELECT * FROM disputes WHERE dispute_id = :dispute_id LIMIT 1',
-            array(':dispute_id' => $disputeID)
-        );
+    public function refresh() {
+        $data = $this->db->getData();
+        $this->disputeId       = $data['dispute_id'];
+        $this->title           = $data['title'];
+        $this->partyA          = $this->db->getPartyDetails($data['party_a']);
+        $this->partyB          = $this->db->getPartyDetails($data['party_b']);
+        $this->currentLifespan = LifespanFactory::getCurrentLifespan($data['dispute_id']);
+        $this->latestLifespan  = LifespanFactory::getLatestLifespan($data['dispute_id']);
 
-        if (count($dispute) !== 1) {
-            throw new Exception("The dispute you are trying to view does not exist.");
+        if (!$this->partyA) {
+            throw new Exception('A dispute must have at least one organisation associated with it!');
         }
-        else {
-            $dispute               = $dispute[0];
-            $this->disputeId       = (int) $dispute['dispute_id'];
-            $this->title           = $dispute['title'];
-            $this->partyA          = $this->getPartyDetails((int) $dispute['party_a']);
-            $this->partyB          = $this->getPartyDetails((int) $dispute['party_b']);
-            $this->currentLifespan = LifespanFactory::getCurrentLifespan((int) $dispute['dispute_id']);
-            $this->latestLifespan  = LifespanFactory::getLatestLifespan((int) $dispute['dispute_id']);
-
-            if (!$this->partyA) {
-                throw new Exception('A dispute must have at least one organisation associated with it!');
-            }
-        }
-    }
-
-    public function closeUnsuccessfully() {
-        $this->updateField('status', 'failed');
     }
 
     public function getState($account) {
         return DisputeStateCalculator::getState($this, $account);
-    }
-
-    public function refresh() {
-        $this->setVariables($this->getDisputeId());
     }
 
     public function getCurrentLifespan() {
@@ -86,51 +69,26 @@ class Dispute {
         return $this->partyB['summary'];
     }
 
-    private function getPartyDetails($partyID) {
-        if ($partyID === 0) {
-            return array(
-                'agent'    => false,
-                'law_firm' => false,
-                'summary'  => false
-            );
-        }
-
-        $partyDetails = Database::instance()->exec(
-            'SELECT * FROM dispute_parties WHERE party_id = :party_id LIMIT 1',
-            array(':party_id' => $partyID)
-        )[0];
-
-        $agent   = isset($partyDetails['individual_id'])   ? AccountDetails::getAccountById($partyDetails['individual_id'])   : false;
-        $lawFirm = isset($partyDetails['organisation_id']) ? AccountDetails::getAccountById($partyDetails['organisation_id']) : false;
-        $summary = isset($partyDetails['summary']) ? htmlspecialchars($partyDetails['summary']) : false;
-
-        return array(
-            'agent'    => $agent,
-            'law_firm' => $lawFirm,
-            'summary'  => $summary
-        );
+    public function closeUnsuccessfully() {
+        $this->db->updateField('status', 'failed');
+        $this->refresh();
     }
 
     // we should never need to set Law Firm A through a method, so there is no corresponding setLawFirmA.
     public function setLawFirmB($organisationId) {
-        $db = Database::instance();
-        $db->begin();
         $partyId = DBL::createDisputeParty($organisationId);
-        if ($partyId) {
-            $this->updateField('party_b', $partyId);
-            $db->commit();
-        }
-        else {
-            throw new Exception("Couldn't set second law firm!");
-        }
+        $this->db->updateField('party_b', $partyId);
+        $this->refresh();
     }
 
     public function setSummaryForPartyA($organisationId) {
-        $this->setPartyDatabaseField('party_a', 'summary', $organisationId);
+        $this->db->setPartyDatabaseField('party_a', 'summary', $organisationId);
+        $this->refresh();
     }
 
     public function setSummaryForPartyB($organisationId) {
-        $this->setPartyDatabaseField('party_b', 'summary', $organisationId);
+        $this->db->setPartyDatabaseField('party_b', 'summary', $organisationId);
+        $this->refresh();
     }
 
     public function setAgentA($loginID) {
@@ -143,36 +101,27 @@ class Dispute {
 
     public function setAgent($party, $loginID) {
         $agent = AccountDetails::getAccountById($loginID);
+        $this->validateBeforeSettingAgent($agent, $party);
+        $this->db->setPartyDatabaseField($party, 'individual_id', $loginID);
+        $this->refresh();
+    }
 
+    private function validateBeforeSettingAgent($agent, $party) {
         if ( ! ($agent instanceof Agent) ) {
             throw new Exception('Tried setting a non-agent type as an agent!');
         }
-        else if (
-            ($party === 'party_a' && $agent->getOrganisation()->getLoginId() !== $this->getLawFirmA()->getLoginId()) ||
-            ($party === 'party_b' && $agent->getOrganisation()->getLoginId() !== $this->getLawFirmB()->getLoginId())
-        ) {
+        if ($this->agentIsNotInParty($agent, $party)) {
             throw new Exception('You can only assign agents that are in your law firm!');
         }
-
-        $this->setPartyDatabaseField($party, 'individual_id', $loginID);
     }
 
-    public function setPartyDatabaseField($party, $field, $value) {
-        $db = Database::instance();
-        $db->begin();
-        $partyID = $db->exec(
-            'SELECT ' . $party . ' FROM disputes WHERE dispute_id = :dispute_id',
-            array(':dispute_id' => $this->getDisputeId())
-        )[0][$party];
-        $db->exec(
-            'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
-            array(
-                ':value'    => $value,
-                ':party_id' => $partyID
-            )
-        );
-        $db->commit();
-        $this->setVariables($this->getDisputeId());
+    private function agentIsNotInParty($agent, $party) {
+        if ($party === 'party_a') {
+            return $agent->getOrganisation()->getLoginId() !== $this->getLawFirmA()->getLoginId();
+        }
+        else if ($party === 'party_b') {
+            return $agent->getOrganisation()->getLoginId() !== $this->getLawFirmB()->getLoginId();
+        }
     }
 
     public function canBeViewedBy($loginID) {
@@ -189,6 +138,34 @@ class Dispute {
 
     public function getOpposingPartyId($partyID) {
 
+        $this->mockAgentAndOrganisationAccountsIfNecessary();
+
+        if ($this->isInPartyA($partyID)) {
+            $opposingParty = $this->agentBIsSet() ? $this->partyB['agent'] : $this->partyB['law_firm'];
+        }
+        else {
+            $opposingParty = $this->agentAIsSet() ? $this->partyA['agent'] : $this->partyA['law_firm'];
+        }
+
+        return $opposingParty->getLoginId();
+    }
+
+    private function isInPartyA($partyID) {
+        return (
+            $partyID === $this->partyA['law_firm']->getLoginId() ||
+            $partyID === $this->partyA['agent']->getLoginId()
+        );
+    }
+
+    private function agentAIsSet() {
+        return $this->partyA['agent']->getLoginId();
+    }
+
+    private function agentBIsSet() {
+        return $this->partyB['agent']->getLoginId();
+    }
+
+    private function mockAgentAndOrganisationAccountsIfNecessary() {
         $mockIfNecessary = array(
             'lawFirmA' => $this->partyA['law_firm'],
             'lawFirmB' => $this->partyB['law_firm'],
@@ -201,35 +178,6 @@ class Dispute {
                 $mockIfNecessary[$key] = new MockAccount();
             }
         }
-
-        if ($partyID === $this->partyA['law_firm']->getLoginId() ||
-            $partyID === $this->partyA['agent']->getLoginId())
-        {
-            if ($this->partyB['agent']->getLoginId()) {
-                return $this->partyB['agent']->getLoginId();
-            }
-            else {
-                $this->partyB['law_firm']->getLoginId();
-            }
-        }
-        else {
-            if ($this->partyA['agent']->getLoginId()) {
-                return $this->partyA['agent']->getLoginId();
-            }
-            else {
-                $this->partyA['law_firm']->getLoginId();
-            }
-        }
-    }
-
-    private function updateField($key, $value) {
-        Database::instance()->exec('UPDATE disputes SET ' . $key . ' = :new_value WHERE dispute_id = :dispute_id',
-            array(
-                ':new_value' => $value,
-                'dispute_id' => $this->getDisputeId()
-            )
-        );
-        $this->setVariables($this->getDisputeId());
     }
 
 }
