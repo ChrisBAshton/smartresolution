@@ -33,13 +33,8 @@ sudo rm -rf html
 # get latest version of SmartResolution
 wget https://github.com/ChrisBAshton/major-project/archive/master.zip
 unzip master.zip
-
-# remove HTML
 rm master.zip
-sudo rm -r html
-
-# move project contents to HTML folder
-mv major-project-aws/ html
+mv major-project-master/ html
 
 # move into the repo, ready to run some scripts
 cd html
