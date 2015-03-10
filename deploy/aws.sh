@@ -13,7 +13,7 @@ curl -sS https://getcomposer.org/installer | php
 php composer.phar install
 
 # run our install script
-sudo php install.php
+sudo php deploy/install.php
 
 # fix permissions
 sudo chown -R root:www /var/www
