@@ -7,11 +7,11 @@
  *
  * php install.php --refresh
  */
-require __DIR__ . '/webapp/autoload.php';
+require __DIR__ . '/../webapp/autoload.php';
 
 use Symfony\Component\Yaml\Parser;
 $yaml = new Parser();
-$data = $yaml->parse(file_get_contents(__DIR__ . '/.travis.yml'));
+$data = $yaml->parse(file_get_contents(__DIR__ . '/../.travis.yml'));
 
 $fullInstall = true;
 

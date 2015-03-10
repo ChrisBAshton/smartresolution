@@ -2,3 +2,5 @@
 vendor
 *.db
 features/screenshots
+SmartResolutionkeypair.pem
+README--private.md
