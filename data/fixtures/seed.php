@@ -72,6 +72,7 @@ foreach($data['disputes'] as $dataItem) {
 
         switch($dataItem['lifespan']) {
             case 'offered':
+            case 'declined':
                 $validUntil = $currentTime + 3600;
                 $startTime  = $currentTime + 7200;
                 $endTime    = $currentTime + 12000;
@@ -98,7 +99,10 @@ foreach($data['disputes'] as $dataItem) {
 
         $dispute->refresh();
 
-        if ($dataItem['lifespan'] !== 'offered') {
+        if ($dataItem['lifespan'] === 'declined') {
+            $dispute->getCurrentLifespan()->decline();
+        }
+        elseif ($dataItem['lifespan'] !== 'offered') {
             $dispute->getCurrentLifespan()->accept();
         }
     }

@@ -13,7 +13,7 @@ Feature: Negotiating a Dispute lifespan
   Scenario: Accepting a Dispute lifespan offer
     Given the other Agent has sent me a Dispute lifespan offer
     Then I should be able to Accept the offer
-    And I should see the message 'You have both agreed a dispute lifespan.'
+    And I should see the message 'Dispute starts in'
 
   @clear
   Scenario: Create a counter Dispute lifespan offer
@@ -34,3 +34,4 @@ Feature: Negotiating a Dispute lifespan
     When I make a new lifespan offer
     And the other Agent accepts the offer
     Then the new lifespan should take immediate effect
+    And I should see the message 'The dispute is currently on hold until the new lifespan comes into effect.'

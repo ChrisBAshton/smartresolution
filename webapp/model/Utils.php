@@ -4,13 +4,13 @@ class Utils {
 
     /**
      * Gets the value of the given key from the given array, defaulting to the given default value if no value exists. If no default is provided and no value exists, an exception is raised.
-     * 
+     *
      * Example:
      *     $arr = array('foo' => 'bar');
      *     $val = getValue($arr, 'foo');        // $val === 'bar'
      *     $val = getValue($arr, 'abc', 'def'); // $val === 'def'
      *     $val = getValue($arr, 'abc');        // Exception raised
-     * 
+     *
      * @param  Array  $array   The array to search in.
      * @param  String $key     The key whose value we want to find.
      * @param  String $default (Optional) - the default value if no value is found.
@@ -24,5 +24,24 @@ class Utils {
         }
         return isset($array[$key]) ? $array[$key] : $default;
     }
-    
+
+    /**
+     * Semi-temporary function - used for DisputeStateTest.php. Maybe rethink the use of this function later down the line.
+     * This function should NOT be called from within the application itself!
+     *
+     * @param  String $title The title of the dispute.
+     * @return Dispute
+     */
+    public static function getDisputeByTitle($title) {
+        $dispute = Database::instance()->exec(
+            'SELECT * FROM disputes WHERE title = :title ORDER BY dispute_id DESC LIMIT 1',
+            array('title' => $title)
+        );
+        if (count($dispute) !== 1) {
+            throw new Exception("Dispute not found!!!");
+        }
+        else {
+            return new Dispute((int) $dispute[0]['dispute_id']);
+        }
+    }
 }

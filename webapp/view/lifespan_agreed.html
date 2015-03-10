@@ -1,10 +1,10 @@
-<?php
-if ($dispute->getLatestLifespan()) {
-    echo $dispute->getLatestLifespan()->status();
-}
-?>
-
-<p>You have both agreed a dispute lifespan.</p>
+<p>
+    <?php
+    if ($dispute->getLatestLifespan()) {
+        echo $dispute->getLatestLifespan()->status();
+    }
+    ?>
+</p>
 
 <p>
     <strong>Starting:</strong> <?php echo prettyTime($dispute->getLatestLifespan()->startTime()); ?>

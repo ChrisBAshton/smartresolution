@@ -16,18 +16,24 @@ if ($currentLifespan->accepted()) :
 
     $prettyStartTime = prettyTime($currentLifespan->startTime());
     $prettyEndTime   = prettyTime($currentLifespan->endTime());
-    $className       = 'text-danger';
-    $preText         = 'Dispute has ended. Lifespan was: ';
 
-    if ($currentLifespan->isCurrent()) {
+    if ($currentLifespan->isEnded()) {
+        $className = 'text-danger';
+        $status    = 'Dispute has ended. Lifespan was: ' . $prettyStartTime . ' until ' . $prettyEndTime;
+    }
+    elseif ($currentLifespan->isCurrent()) {
         $className = 'text-success';
-        $preText   = 'Current dispute lifespan: ';
+        $status    = 'Current dispute lifespan: ' . $prettyStartTime . ' until ' . $prettyEndTime;
+    }
+    else {
+        $className = 'text-warning';
+        $status    = 'The dispute is currently on hold until the new lifespan comes into effect. If this is taking too long, you can always re-negotiate a new lifespan.';
     }
 ?>
     <div class="row">
         <p class="text-center <?php echo $className; ?>">
             <?php
-                echo $preText . $prettyStartTime . ' until ' . $prettyEndTime;
+                echo $status;
             ?>
         </p>
     </div>
