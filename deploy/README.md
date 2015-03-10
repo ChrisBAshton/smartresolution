@@ -22,6 +22,8 @@ You should now SSH into your instance if you haven't already:
 
 These instructions should work for both new instances and updating existing instances to the latest version of the project. WARNING: these instructions will *replace* the production database, so you should always back up your database first if you're doing this on a live site.
 
+Copy and paste the following commands into your shell:
+
 ```bash
 cd /var/www
 
@@ -29,11 +31,11 @@ cd /var/www
 sudo rm -rf html
 
 # get latest version of SmartResolution
-wget https://github.com/ChrisBAshton/major-project/archive/aws.zip
-unzip aws.zip
+wget https://github.com/ChrisBAshton/major-project/archive/master.zip
+unzip master.zip
 
 # remove HTML
-rm aws.zip
+rm master.zip
 sudo rm -r html
 
 # move project contents to HTML folder
@@ -45,7 +47,9 @@ cd html
 
 You should now be able to run the one-script install:
 
-`./deploy/aws.sh`
+`sudo ./deploy/aws.sh`
+
+Hit `y` and `Return` wherever prompted for permission.
 
 ## Start the httpd server
 `sudo service httpd start`
