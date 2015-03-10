@@ -21,7 +21,7 @@ class Dispute {
         }
     }
 
-    public function getState($account) {
+    public function getState($account = false) {
         return DisputeStateCalculator::getState($this, $account);
     }
 

@@ -77,6 +77,11 @@ disputes:
     type:       other
     law_firm_a: law_firm_with_only_one_dispute@company.com
     agent_a:    one_dispute_agent@company.com
+  - title:      A dispute assigned to law firm B
+    type:       other
+    law_firm_a: law_firm_a@t.co
+    law_firm_b: law_firm_b@t.co
+    agent_a:    agent_a@t.co
   - title:      A fully assigned dispute with no lifespan
     type:       other
     law_firm_a: law_firm_a@t.co
@@ -94,6 +99,15 @@ disputes:
     summary_a:  Here is a summary for party A.
     summary_b:  Here is a summary for party B.
     lifespan:   offered
+  - title:      A dispute with a declined lifespan
+    type:       other
+    law_firm_a: law_firm_a@t.co
+    law_firm_b: law_firm_b@t.co
+    agent_a:    agent_a@t.co
+    agent_b:    agent_b@t.co
+    summary_a:  Here is a summary for party A.
+    summary_b:  Here is a summary for party B.
+    lifespan:   declined
   - title:      A dispute that has ended
     type:       other
     law_firm_a: law_firm_a@t.co
