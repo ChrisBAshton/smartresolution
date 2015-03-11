@@ -81,13 +81,13 @@ class Dispute {
         $this->refresh();
     }
 
-    public function setSummaryForPartyA($organisationId) {
-        $this->db->setPartyDatabaseField('party_a', 'summary', $organisationId);
+    public function setSummaryForPartyA($summary) {
+        $this->db->setPartyDatabaseField('party_a', 'summary', $summary);
         $this->refresh();
     }
 
-    public function setSummaryForPartyB($organisationId) {
-        $this->db->setPartyDatabaseField('party_b', 'summary', $organisationId);
+    public function setSummaryForPartyB($summary) {
+        $this->db->setPartyDatabaseField('party_b', 'summary', $summary);
         $this->refresh();
     }
 
@@ -150,10 +150,17 @@ class Dispute {
         return $opposingParty->getLoginId();
     }
 
-    private function isInPartyA($partyID) {
+    public function isInPartyA($partyID) {
         return (
             $partyID === $this->partyA['law_firm']->getLoginId() ||
             $partyID === $this->partyA['agent']->getLoginId()
+        );
+    }
+
+    public function isInPartyB($partyID) {
+        return (
+            $partyID === $this->partyB['law_firm']->getLoginId() ||
+            $partyID === $this->partyB['agent']->getLoginId()
         );
     }
 

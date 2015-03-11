@@ -28,6 +28,7 @@ $routes = array(
     'GET  /disputes/@disputeID/close'   => 'DisputeController->closeDisputeGet',
     'POST /disputes/@disputeID/close'   => 'DisputeController->closeDisputePost',
     'GET  /disputes/@disputeID/summary' => 'SummaryController->view',
+    'POST /disputes/@disputeID/summary' => 'SummaryController->edit',
 
     // messaging
     'GET  /disputes/@disputeID/chat'    => 'MessageController->view',

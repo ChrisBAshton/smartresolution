@@ -65,3 +65,13 @@ Then(/^I should be able to allocate the Agent to the Dispute$/) do
   assert page.has_content?('Opened against company: Maritime Collision Specialists Inc')
   assert page.has_content?('Represented by: James Smith')
 end
+
+Then(/^I should be able to edit the summary$/) do
+  dispute_url = '/disputes/4'
+  visit dispute_url + '/summary'
+  assert find_field('dispute_summary').has_content? 'Here is a summary for party A.'
+  fill_in 'dispute_summary', :with => 'New summary for party A'
+  click_button 'Update Summary'
+  visit dispute_url
+  assert page.has_content? 'New summary for party A'
+end
