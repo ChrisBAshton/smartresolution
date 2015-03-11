@@ -7,12 +7,10 @@ Feature: Routing
     Given I am not logged into an account
     When I try to visit '<forbidden_page>'
     Then I should see the message 'You do not have permission to see this page. Please log in first.'
-    
+
     Examples:
       | forbidden_page       |
       | /register/individual |
-    
-  # @TODO - add more pages
 
   Scenario Outline: Accessing Organisation-only pages
     Given I am logged into an Individual account
@@ -23,3 +21,12 @@ Feature: Routing
       | organisation_only_page |
       | /register/individual   |
       | /disputes/new          |
+
+  Scenario Outline: Accessing Individual-only pages
+    Given I am logged into an Organisation account
+    When I try to visit '<individual_only_page>'
+    Then I should see the message 'You do not have permission to see this page. You must be logged into an Agent account.'
+
+    Examples:
+      | individual_only_page   |
+      | disputes/8/chat        |

@@ -12,7 +12,7 @@ Feature: Dispute
   Scenario: Sending a message via an active dispute, as an unauthorised person
     Given the Dispute is fully underway
     And the Dispute is not in Mediation
-    And I am logged into a Mediator account
+    And I am logged into an Agent account that is not associated with the Dispute
     Then I should NOT be able to send a message via the Dispute
 
   Scenario: Start the Mediation process

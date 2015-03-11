@@ -25,3 +25,8 @@ end
 Then(/^the Dispute should close (successfully|unsuccessfully)$/) do |successful|
   assert page.has_content? 'You have successfully closed the dispute.'
 end
+
+Given(/^I am logged into an Agent account that is not associated with the Dispute$/) do
+  clear_session_before_login
+  login_with_credentials 'one_dispute_agent@company.com', 'test'
+end

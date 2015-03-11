@@ -27,7 +27,7 @@ abstract class DisputeDefaults {
     }
 
     public function canAssignDisputeToAgent() {
-        return $this->dispute->getLawFirmB() && $this->account instanceof LawFirm;
+        return false;
     }
 
     public function canWriteSummary() {
@@ -59,7 +59,7 @@ abstract class DisputeDefaults {
         );
     }
 
-    private function accountIs($accountToCompare) {
+    protected function accountIs($accountToCompare) {
         return $accountToCompare && $this->account->getLoginId() === $accountToCompare->getLoginId();
     }
 }
@@ -80,6 +80,10 @@ class DisputeAssignedToLawFirmB extends DisputeDefaults implements DisputeStateI
 
     public function getStateDescription() {
         return 'Dispute awaiting action from one of the two parties.';
+    }
+
+    public function canAssignDisputeToAgent() {
+        return $this->accountIs($this->dispute->getLawFirmB());
     }
 
     public function canNegotiateLifespan() {
