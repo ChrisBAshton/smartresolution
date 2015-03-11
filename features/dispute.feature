@@ -20,6 +20,13 @@ Feature: Dispute
     And the Dispute is not in Mediation
     Then I should be able to start the Mediation process
 
+  @clear
+  Scenario: Resolve a Dispute
+    Given the Dispute is fully underway
+    Then I should be able to mark the Dispute as resolved
+    And the Dispute should close successfully
+
+  @clear
   Scenario: Take the Dispute to Court
     Given the Dispute is fully underway
     Then I should be able to take the Dispute to court

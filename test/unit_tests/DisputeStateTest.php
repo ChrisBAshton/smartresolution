@@ -44,4 +44,10 @@ class DisputeStateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->extractState($dispute) instanceof DisputeClosed);
     }
 
+    public function testStateUpdates() {
+        $dispute = Utils::getDisputeByTitle('Smith versus Jones');
+        $dispute->closeSuccessfully();
+        $this->assertTrue($this->extractState($dispute) instanceof DisputeClosed);
+    }
+
 }

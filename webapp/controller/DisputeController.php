@@ -147,7 +147,7 @@ class DisputeController {
     function openDisputePost ($f3, $params) {
         mustBeLoggedInAsAn('Agent');
         $lawFirmB = $f3->get('POST.law_firm_b');
-        
+
         if (!$lawFirmB || $lawFirmB === '---') {
             $f3->set('error_message', 'You must choose a company from the dropdown list.');
             $this->openDisputeGet($f3, $params);
@@ -174,6 +174,24 @@ class DisputeController {
     }
 
     function closeDisputePost ($f3, $params) {
-        $this->closeDisputeGet($f3, $params); // @TODO
+        $account = mustBeLoggedInAsAn('Agent');
+        $dispute = setDisputeFromParams($f3, $params);
+
+        $verdict = $f3->get('POST.verdict');
+        if (!$verdict || ($verdict !== 'resolved' && $verdict !== 'failed')) {
+            $f3->set('error_message', 'You need to select a valid option.');
+        }
+        else {
+            if ($verdict === 'failed') {
+                $dispute->closeUnsuccessfully();
+            }
+            else {
+                $dispute->closeSuccessfully();
+            }
+            $f3->set('success_message', 'You have successfully closed the dispute.');
+        }
+
+        $f3->set('content', 'dispute_close.html');
+        echo View::instance()->render('layout.html');
     }
 }

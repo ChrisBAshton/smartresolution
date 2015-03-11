@@ -11,6 +11,7 @@ class Dispute {
         $data = $this->db->getData();
         $this->disputeId       = $data['dispute_id'];
         $this->title           = $data['title'];
+        $this->status          = $data['status'];
         $this->partyA          = $this->db->getPartyDetails($data['party_a']);
         $this->partyB          = $this->db->getPartyDetails($data['party_b']);
         $this->currentLifespan = LifespanFactory::getCurrentLifespan($data['dispute_id']);
@@ -19,6 +20,10 @@ class Dispute {
         if (!$this->partyA) {
             throw new Exception('A dispute must have at least one organisation associated with it!');
         }
+    }
+
+    public function getStatus() {
+        return $this->status;
     }
 
     public function getState($account = false) {
@@ -67,6 +72,11 @@ class Dispute {
 
     public function getSummaryFromPartyB() {
         return $this->partyB['summary'];
+    }
+
+    public function closeSuccessfully() {
+        $this->db->updateField('status', 'resolved');
+        $this->refresh();
     }
 
     public function closeUnsuccessfully() {

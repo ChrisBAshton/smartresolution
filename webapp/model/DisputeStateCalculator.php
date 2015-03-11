@@ -7,6 +7,10 @@ class DisputeStateCalculator {
             $account = Session::getAccount();
         }
 
+        if ($dispute->getStatus() !== 'ongoing') {
+            return new DisputeClosed($dispute, $account);
+        }
+
         if ($dispute->getLawFirmB() === false) {
             return new DisputeCreated($dispute, $account);
         }

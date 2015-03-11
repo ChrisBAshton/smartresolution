@@ -47,11 +47,7 @@ abstract class DisputeDefaults {
     }
 
     public function canCloseDispute() {
-        // both law firms and agents must be set before a dispute can be closed
-        return (
-            $this->dispute->getLawFirmA() && $this->dispute->getAgentA() &&
-            $this->dispute->getLawFirmB() && $this->dispute->getAgentB()
-        );
+        return true;
     }
 
     private function accountIsLinkedToDispute() {

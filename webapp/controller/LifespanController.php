@@ -29,7 +29,7 @@ class LifespanController {
         $dispute    = setDisputeFromParams($f3, $params);
 
         if (!$dispute->getState($account)->canNegotiateLifespan()) {
-            errorPage('You cannot currently negotiate a lifespan. This is because not all parties in the dispute have been assigned yet.');
+            errorPage('You cannot negotiate a lifespan.');
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

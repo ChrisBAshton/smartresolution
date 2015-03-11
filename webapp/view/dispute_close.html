@@ -1,12 +1,49 @@
-<form method="post">
-    <p>Are you sure you want to do that?</p>
+<h1>Create Dispute</h1>
 
-    <div class="">
-        <input type="radio" /> Dispute was resolved successfully <br />
-        <input type="radio" /> Unable to resolve dispute with Online Dispute Resolution.
+<?php
+    if (Base::instance()->get('error_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-danger',
+            'details' => Base::instance()->get('error_message')
+        );
+    }
+    elseif (Base::instance()->get('success_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-success',
+            'details' => Base::instance()->get('success_message')
+        );
+    }
+    else {
+        if ($dispute->getState()->canCloseDispute()) {
+            $message = array(
+                'class'   => 'bg-padded bg-warning',
+                'details' => "By closing the dispute, you're indicating one of two things. Either the dispute was resolved successfully, or you're taking the dispute to court. Once you close a dispute, you cannot reopen it."
+            );
+        } else {
+            $message = array(
+                'class'   => 'bg-padded bg-warning',
+                'details' => "You have already closed this dispute."
+            );
+        }
+    }
+?>
+<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+
+<?php if ($dispute->getState()->canCloseDispute()) : ?>
+<form name="close_dispute" method="post">
+
+    <div class="col-lg-12">
+        <p>
+            <input name="verdict" value="resolved" id="resolved" type="radio" /> <label for="resolved">Dispute was resolved successfully</label>
+        </p>
+        <p>
+            <input name="verdict" value="failed" id="failed" type="radio" /> <label for="failed">Unable to resolve dispute with Online Dispute Resolution</label>
+        </p>
     </div>
 
-    <div class="">
-        <button type="submit">Close the dispute</button>
+    <div class="col-lg-12">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Close Dispute</button>
     </div>
+
 </form>
+<?php endif; ?>
