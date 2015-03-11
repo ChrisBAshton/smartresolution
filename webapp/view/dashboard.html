@@ -7,13 +7,13 @@
 <div class="row">
     <?php
         foreach(Base::instance()->get('dashboardActions') as $action) :
-            $action['href']  = isset($action['href'])  ? $action['href']  : '.'; 
+            $action['href']  = isset($action['href'])  ? $action['href']  : '.';
             $action['image'] = isset($action['image']) ? $action['image'] : '/view/images/mail.png';
     ?>
-        <div class="col-sm-4 dispute__option">
+        <div class="col-sm-3 dispute__option">
             <a href="<?php echo $action['href']; ?>">
-                <img src="<?php echo $action['image']; ?>"/>
-                <?php echo $action['title']; ?>
+                <img class="dispute__option__image" src="<?php echo $action['image']; ?>"/>
+                <strong class="dispute__option__title"><?php echo $action['title']; ?></strong>
             </a>
         </div>
     <?php

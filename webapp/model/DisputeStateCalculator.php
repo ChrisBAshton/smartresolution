@@ -32,6 +32,8 @@ class DisputeStateCalculator {
         }
     }
 
+    // @TODO - NB, I got the icons from http://www.flaticon.com/packs/web-pictograms
+    // Should probably document that somewhere better than here.
     public static function getActions($dispute, $account) {
 
         $state   = $dispute->getState($account);
@@ -40,6 +42,7 @@ class DisputeStateCalculator {
         if ($state->canOpenDispute()) {
             $actions[] = array(
                 'title' => 'Open dispute',
+                'image' => '/view/images/dispute.png',
                 'href'  => $dispute->getUrl() . '/open'
             );
         }
@@ -47,6 +50,7 @@ class DisputeStateCalculator {
         if ($state->canAssignDisputeToAgent()) {
             $actions[] = array(
                 'title' => 'Assign dispute to an agent',
+                'image' => '/view/images/hand.png',
                 'href'  => $dispute->getUrl() . '/assign'
             );
         }
@@ -54,6 +58,7 @@ class DisputeStateCalculator {
         if ($state->canSendMessage()) {
             $actions[] = array(
                 'title' => 'Communicate',
+                'image' => '/view/images/message.png',
                 'href'  => $dispute->getUrl() .'/chat',
             );
         }
@@ -61,6 +66,7 @@ class DisputeStateCalculator {
         if ($state->canNegotiateLifespan()) {
             $actions[] = array(
                 'title' => 'Negotiate dispute lifespan',
+                'image' => '/view/images/time.png',
                 'href'  => $dispute->getUrl() .'/lifespan',
             );
         }
@@ -68,6 +74,7 @@ class DisputeStateCalculator {
         if ($state->canEditSummary()) {
             $actions[] = array(
                 'title' => 'Edit summary',
+                'image' => '/view/images/summary.png',
                 'href'  => $dispute->getUrl() . '/summary'
             );
         }
@@ -75,6 +82,7 @@ class DisputeStateCalculator {
         if ($state->canCloseDispute()) {
             $actions[] = array(
                 'title' => 'Close dispute',
+                'image' => '/view/images/delete.png',
                 'href'  => $dispute->getUrl() . '/close'
             );
         }

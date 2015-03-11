@@ -1,15 +1,5 @@
 <h1>Dispute: <?php echo $dispute->getTitle(); ?></h1>
 
-<div class="lifespan_status bg-padded bg-primary">
-    <?php
-    $status = $dispute->getLatestLifespan()->status();
-    if ($dispute->getLatestLifespan()) {
-        $status = $dispute->getLatestLifespan()->status();
-    }
-    echo '<a href="' . $dispute->getUrl() . '/lifespan">' . $status . '</a>';
-    ?>
-</div>
-
 <?php
 $currentLifespan = $dispute->getCurrentLifespan();
 if ($currentLifespan->accepted()) :
@@ -18,15 +8,15 @@ if ($currentLifespan->accepted()) :
     $prettyEndTime   = prettyTime($currentLifespan->endTime());
 
     if ($currentLifespan->isEnded()) {
-        $className = 'text-danger';
+        $className = 'bg-danger';
         $status    = 'Dispute has ended. Lifespan was: ' . $prettyStartTime . ' until ' . $prettyEndTime;
     }
     elseif ($currentLifespan->isCurrent()) {
-        $className = 'text-success';
+        $className = 'bg-success';
         $status    = 'Current dispute lifespan: ' . $prettyStartTime . ' until ' . $prettyEndTime;
     }
     else {
-        $className = 'text-warning';
+        $className = 'bg-warning';
         $status    = 'The dispute is currently on hold until the new lifespan comes into effect. If this is taking too long, you can always re-negotiate a new lifespan.';
     }
 ?>

@@ -25,17 +25,17 @@ class SessionController {
             $dashboardActions = array(
                 array(
                     'href'  => '/disputes',
-                    'image' => '/view/images/mail.png',
+                    'image' => '/view/images/disputes.png',
                     'title' => 'View Disputes'
                 ),
                 array(
                     'href'  => '/disputes/new',
-                    'image' => '/view/images/mail.png',
+                    'image' => '/view/images/dispute.png',
                     'title' => 'Create Dispute'
                 ),
                 array(
                     'href'  => '/register/individual',
-                    'image' => '/view/images/mail.png',
+                    'image' => '/view/images/security.png',
                     'title' => 'Register Agent account'
                 )
             );
@@ -44,7 +44,7 @@ class SessionController {
             $dashboardActions = array(
                 array(
                     'href'  => '/register/individual',
-                    'image' => '/view/images/mail.png',
+                    'image' => '/view/images/security.png',
                     'title' => 'Register Mediator account'
                 )
             );
@@ -53,7 +53,7 @@ class SessionController {
             $dashboardActions = array(
                 array(
                     'href'  => '/disputes',
-                    'image' => '/view/images/mail.png',
+                    'image' => '/view/images/disputes.png',
                     'title' => 'View Disputes'
                 )
             );
@@ -82,7 +82,7 @@ class SessionController {
         $email = $f3->get('POST.email');
         $password = $f3->get('POST.password');
         $validCredentials = AccountDetails::validCredentials($email, $password);
-        
+
         if ($validCredentials) {
             Session::create($email, $password);
             header('Location: /dashboard');

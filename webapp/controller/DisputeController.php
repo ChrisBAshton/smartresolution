@@ -12,6 +12,7 @@ class DisputeController {
         else {
             $dashboardActions = DisputeStateCalculator::getActions($dispute, $account);
             $f3->set('dashboardActions', $dashboardActions);
+            $f3->set('disputeDashboard', true);
             $f3->set('content', 'dispute_view--single.html');
             echo View::instance()->render('layout.html');
         }
