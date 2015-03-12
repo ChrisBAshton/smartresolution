@@ -84,7 +84,7 @@ And(/^I should be able to log into that account$/) do
   fill_in 'Password', :with => 'test'
   click_button 'Login'
   assert_equal '/dashboard', get_current_uri_path
-  assert page.has_content?('Welcome back, Chris Ashton.')
+  assert page.has_content?('Welcome back, Chris Ashton')
 end
 
 Then(/^the Individual should be sent an email notifying them they've been registered$/) do

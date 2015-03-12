@@ -7,7 +7,7 @@ And(/^I am logged into a one-dispute Agent account$/) do
 end
 
 Then(/^I should get a notification about the Dispute$/) do
-  assert page.has_content?('You have 1 new notification')
+  assert page.has_content?('1 notifications')
 end
 
 Given(/^I have a new notification$/) do
@@ -21,7 +21,10 @@ When(/^I click on the associated link$/) do
 end
 
 Then(/^the notification should be marked as read$/) do
-  assert page.has_content?('No new notifications.')
+  # Notifications should appear between the welcome and the logout.
+  # If not, we have no notifications and the notification has therefore
+  # been marked as read.
+  assert page.has_content?('Welcome back, Bob Hope | Logout')
 end
 
 Then(/^the URL should be clean, with no notification parameters$/) do
