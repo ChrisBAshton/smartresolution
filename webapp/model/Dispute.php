@@ -91,6 +91,12 @@ class Dispute {
         $partyId = DBL::createDisputeParty($organisationId);
         $this->db->updateField('party_b', $partyId);
         $this->refresh();
+
+        DBL::createNotification(array(
+            'recipient_id' => $organisationId,
+            'message'      => 'A dispute has been opened against your company.',
+            'url'          => $this->getUrl()
+        ));
     }
 
     public function setSummaryForPartyA($summary) {
@@ -116,6 +122,20 @@ class Dispute {
         $this->validateBeforeSettingAgent($agent, $party);
         $this->db->setPartyDatabaseField($party, 'individual_id', $loginID);
         $this->refresh();
+
+        DBL::createNotification(array(
+            'recipient_id' => $loginID,
+            'message'      => 'A new dispute has been assigned to you.',
+            'url'          => $this->getUrl()
+        ));
+
+        if ($this->getOpposingPartyId($loginID)) {
+            DBL::createNotification(array(
+                'recipient_id' => $this->getOpposingPartyId($loginID),
+                'message'      => 'The other party has assigned an agent to the case.',
+                'url'          => $this->getUrl()
+            ));
+        }
     }
 
     private function validateBeforeSettingAgent($agent, $party) {
@@ -159,7 +179,7 @@ class Dispute {
             $opposingParty = $this->agentAIsSet() ? $this->partyA['agent'] : $this->partyA['law_firm'];
         }
 
-        return $opposingParty->getLoginId();
+        return $opposingParty ? $opposingParty->getLoginId() : false;
     }
 
     public function isInPartyA($partyID) {
@@ -181,7 +201,7 @@ class Dispute {
     }
 
     private function agentBIsSet() {
-        return $this->partyB['agent']->getLoginId();
+        return $this->partyB['agent'] ? $this->partyB['agent']->getLoginId() : false;
     }
 
     private function mockAgentAndOrganisationAccountsIfNecessary() {
