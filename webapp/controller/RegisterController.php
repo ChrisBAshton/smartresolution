@@ -3,6 +3,9 @@
 class RegisterController {
 
     function organisationGet ($f3) {
+        if (Session::loggedIn()) {
+            header('Location: /dashboard');
+        }
         $f3->set('content','register_organisation.html');
         echo View::instance()->render('layout.html');
     }
