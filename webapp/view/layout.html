@@ -14,34 +14,29 @@
 			<div id="content">
 				<header class="container">
 					<div class="row">
-						<div class="col-sm-4">
+						<div class="col-sm-6">
 						    <a href="/"><img class="logo" src="view/images/logo.png"></a>
 						</div>
 
-					    <div class="col-sm-4">
+					    <div class="col-sm-6 text-right">
 							<p>
 								<?php
-									if (isset($notifications)) {
+									if (isset($account)) :
+								?>
+									Welcome back, <?php echo $account->getName() ; ?>
+									<?php
 										if (count($notifications) > 0) {
-											echo 'You have <a href="/notifications">' . count($notifications) . ' new notifications</a>.';
+											echo ' | <a href="/notifications" class="notification_link"><img src="/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
 										}
 										else {
-											echo 'No new notifications.';
+											echo ' | ';
 										}
-									}
-								?>
-							</p>
-						</div>
-
-					    <div class="col-sm-4 alignright">
-							<p>
+									?>
+									<a href="/logout">Logout</a>
 								<?php
-									if (isset($account)) {
-										echo 'Welcome back, ' . $account->getName() . '. <a href="/logout">Logout</a>';
-									}
-									else {
+									else:
 										echo '<a href="/login">Login</a> | <a href="/register">Register</a>';
-									}
+									endif;
 								?>
 							</p>
 						</div>

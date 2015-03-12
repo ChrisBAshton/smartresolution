@@ -76,11 +76,13 @@ class Dispute {
 
     public function closeSuccessfully() {
         $this->db->updateField('status', 'resolved');
+        $this->getCurrentLifespan()->disputeClosed();
         $this->refresh();
     }
 
     public function closeUnsuccessfully() {
         $this->db->updateField('status', 'failed');
+        $this->getCurrentLifespan()->disputeClosed();
         $this->refresh();
     }
 

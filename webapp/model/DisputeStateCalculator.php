@@ -63,11 +63,27 @@ class DisputeStateCalculator {
             );
         }
 
+        if ($state->canSendMessage()) {
+            $actions[] = array(
+                'title' => 'Review Evidence',
+                'image' => '/view/images/file.png',
+                'href'  => $dispute->getUrl() .'/evidence',
+            );
+        }
+
         if ($state->canNegotiateLifespan()) {
             $actions[] = array(
                 'title' => 'Negotiate dispute lifespan',
                 'image' => '/view/images/time.png',
                 'href'  => $dispute->getUrl() .'/lifespan',
+            );
+        }
+
+        if ($state->canProposeMediation()) {
+            $actions[] = array(
+                'title' => 'Propose mediation',
+                'image' => '/view/images/cloud.png',
+                'href'  => $dispute->getUrl() .'/mediation',
             );
         }
 

@@ -47,15 +47,15 @@ footer {
 }
 
 #content {
-   padding-bottom: 60px;   /* >= height of the footer */
+   padding-bottom: 60px; /* >= height of the footer */
 }
 
 .container {
     position: relative;
 }
 
-.alignright {
-    text-align: right;
+.notification_link img {
+    width: 20px;
 }
 
 .logo {
@@ -95,11 +95,11 @@ footer {
     padding: 0.5em;
 }
 
-.dispute_list__item {
+.list__item {
   padding: 0.5em 0;
 }
 
-.dispute_list__item:nth-child(even) {
+.list__item:nth-child(even) {
   background-color: #EDEDED;
 }
 
@@ -112,7 +112,13 @@ footer {
     width: auto;
     display: block;
     max-height: 150px;
-    margin: 5px auto 10px
+    margin: 5px auto 10px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.dispute__option:hover .dispute__option__image {
+    opacity: 1;
 }
 
 .dispute__option__title {

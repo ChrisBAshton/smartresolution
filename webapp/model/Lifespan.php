@@ -9,6 +9,7 @@ interface LifespanInterface {
     public function accepted();
     public function declined();
     public function isEnded();
+    public function disputeClosed();
 }
 
 
@@ -40,6 +41,10 @@ class LifespanMock implements LifespanInterface {
 
     public function declined() {
         return false;
+    }
+
+    public function disputeClosed() {
+        // do nothing
     }
 
 }
@@ -94,7 +99,10 @@ class Lifespan implements LifespanInterface {
     }
 
     public function status() {
-        if ($this->accepted()) {
+        if ($this->isEnded()) {
+            $status = 'Dispute ended.';
+        }
+        else if ($this->accepted()) {
             $currentTime = time();
             if ($this->startTime() > $currentTime) {
                 $status = 'Dispute starts in ' . secondsToTime($this->startTime() - $currentTime);
@@ -114,6 +122,17 @@ class Lifespan implements LifespanInterface {
         }
 
         return $status;
+    }
+
+    public function disputeClosed() {
+        Database::instance()->exec(
+            'UPDATE lifespans SET end_time = :end_time WHERE lifespan_id = :lifespan_id',
+            array(
+                ':end_time'    => time(),
+                ':lifespan_id' => $this->getLifespanId()
+            )
+        );
+        $this->setVariables($this->getLifespanId());
     }
 
     public function isCurrent() {

@@ -14,6 +14,12 @@
     <strong>Ending:</strong> <?php echo prettyTime($dispute->getLatestLifespan()->endTime()); ?>
 </p>
 
+<?php
+if ($dispute->getState($account)->canNegotiateLifespan()) :
+?>
 <p>
-    You can always <a href="<?php echo $dispute->getUrl(); ?>/lifespan/new">renegotiate a new lifespan</a>, but if the other party does not accept, the above lifespan takes precedence.
+    You can try <a href="<?php echo $dispute->getUrl(); ?>/lifespan/new">renegotiate a new lifespan</a>, but if the other party does not accept, the above lifespan takes precedence.
 </p>
+<?php
+    endif;
+?>

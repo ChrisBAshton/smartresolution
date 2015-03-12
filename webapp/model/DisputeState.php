@@ -8,7 +8,9 @@ interface DisputeStateInterface {
     public function canWriteSummary();
     public function canNegotiateLifespan();
     public function canSendMessage();
+    public function canUploadDocuments();
     public function canEditSummary();
+    public function canProposeMediation();
     public function canCloseDispute();
 }
 
@@ -42,8 +44,16 @@ abstract class DisputeDefaults {
         return false;
     }
 
+    public function canUploadDocuments() {
+        return true;
+    }
+
     public function canEditSummary() {
         return true;
+    }
+
+    public function canProposeMediation() {
+        return false;
     }
 
     public function canCloseDispute() {
@@ -120,6 +130,10 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterfac
 
     public function canAssignDisputeToAgent() {
         return false;
+    }
+
+    public function canProposeMediation() {
+        return true;
     }
 
     public function canSendMessage() {
