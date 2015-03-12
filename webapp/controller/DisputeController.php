@@ -64,12 +64,6 @@ class DisputeController {
                     'type'       => $type
                 ));
 
-                DBL::createNotification(array(
-                    'recipient_id' => $agent,
-                    'message'      => 'A new dispute has been assigned to you.',
-                    'url'          => $dispute->getUrl()
-                ));
-
                 header('Location: ' . $dispute->getUrl());
             } catch(Exception $e) {
                 $f3->set('error_message', $e->getMessage());
@@ -108,18 +102,6 @@ class DisputeController {
             $dispute->setAgentB((int) $agent);
             $dispute->setSummaryForPartyB($summary);
 
-            DBL::createNotification(array(
-                'recipient_id' => $agent,
-                'message'      => 'A new dispute has been assigned to you.',
-                'url'          => $dispute->getUrl()
-            ));
-
-            DBL::createNotification(array(
-                'recipient_id' => $dispute->getOpposingPartyId($agent),
-                'message'      => 'The other party has assigned an agent to the case.',
-                'url'          => $dispute->getUrl()
-            ));
-
             header('Location: ' . $dispute->getUrl());
         }
     }
@@ -156,12 +138,6 @@ class DisputeController {
         else {
             $dispute = setDisputeFromParams($f3, $params);
             $dispute->setLawFirmB($lawFirmB);
-
-            DBL::createNotification(array(
-                'recipient_id' => $lawFirmB,
-                'message'      => 'A dispute has been opened against your company.',
-                'url'          => $dispute->getUrl()
-            ));
 
             header('Location: ' . $dispute->getUrl());
         }

@@ -202,5 +202,20 @@ class Lifespan implements LifespanInterface {
             )
         );
         $this->setVariables($this->getLifespanId());
+
+        if ($status === 'accepted') {
+            $notification = 'The other party has agreed your lifespan offer.';
+        }
+        else if ($status === 'declined') {
+            $notification = 'The other party has declined your lifespan offer.';
+        }
+
+        $dispute = new Dispute($this->getAssociatedDisputeId());
+
+        DBL::createNotification(array(
+            'recipient_id' => $dispute->getOpposingPartyId(Session::getAccount()),
+            'message'      => $notification,
+            'url'          => $dispute->getUrl() . '/lifespan'
+        ));
     }
 }

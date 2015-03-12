@@ -46,7 +46,17 @@ class DBL {
         }
         else {
             $db->commit();
-            return new Dispute((int) $newDispute['dispute_id']);
+            $dispute = new Dispute((int) $newDispute['dispute_id']);
+
+            if ($agentA) {
+                DBL::createNotification(array(
+                    'recipient_id' => $agentA,
+                    'message'      => 'A new dispute has been assigned to you.',
+                    'url'          => $dispute->getUrl()
+                ));
+            }
+
+            return $dispute;
         }
     }
 
@@ -112,6 +122,14 @@ class DBL {
             $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
+
+            $dispute = new Dispute($disputeID);
+            DBL::createNotification(array(
+                'recipient_id' => $dispute->getOpposingPartyId($proposer),
+                'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($validUntil) . ' to accept or deny the offer.',
+                'url'          => $dispute->getUrl() . '/lifespan'
+            ));
+
             return $lifespan;
         }
         catch(Exception $e) {

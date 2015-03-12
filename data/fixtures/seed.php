@@ -44,12 +44,6 @@ foreach($data['disputes'] as $dataItem) {
     $agentAId = AccountDetails::emailToId($dataItem['agent_a']);
     $dispute->setAgentA($agentAId);
 
-    DBL::createNotification(array(
-        'recipient_id' => AccountDetails::emailToId($dataItem['agent_a']),
-        'message'      => 'A notification should be made when a dispute is created and assigned to an Agent',
-        'url'          => $dispute->getUrl()
-    ));
-
     if (isset($dataItem['law_firm_b'])) {
         $dispute->setLawFirmB(AccountDetails::emailToId($dataItem['law_firm_b']));
     }

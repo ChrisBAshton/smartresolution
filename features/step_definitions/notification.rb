@@ -7,6 +7,8 @@ And(/^I am logged into a one-dispute Agent account$/) do
 end
 
 Then(/^I should get a notification about the Dispute$/) do
+  # if this ever breaks in the future, it's because we're now triggering notifications
+  # for an additional thing, so this may now be 2 notifications or even more.
   assert page.has_content?('1 notifications')
 end
 

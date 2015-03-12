@@ -51,12 +51,6 @@ class LifespanController {
                         'end_time'    => $endTime
                     ));
 
-                    DBL::createNotification(array(
-                        'recipient_id' => $dispute->getOpposingPartyId($account->getLoginId()),
-                        'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($validUntil) . ' to accept or deny the offer.',
-                        'url'          => $dispute->getUrl() . '/lifespan'
-                    ));
-
                     header('Location: ' . $dispute->getUrl() . '/lifespan');
                 } catch(Exception $e) {
                     $f3->set('error_message', $e->getMessage());
@@ -75,18 +69,10 @@ class LifespanController {
 
         if ($resolution === 'accept') {
             $dispute->getLatestLifespan()->accept();
-            $notification = 'The other party has agreed your lifespan offer.';
         }
         else if ($resolution === 'decline') {
             $dispute->getLatestLifespan()->decline();
-            $notification = 'The other party has declined your lifespan offer.';
         }
-
-        DBL::createNotification(array(
-            'recipient_id' => $dispute->getOpposingPartyId($account->getLoginId()),
-            'message'      => $notification,
-            'url'          => $dispute->getUrl() . '/lifespan'
-        ));
 
         header('Location: ' . $dispute->getUrl() . '/lifespan');
     }
