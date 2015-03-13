@@ -40,6 +40,18 @@ You can also run `php deploy/install.php --refresh` at any time to clean and re-
 * `gem install bundler`
 * `bundle install`
 
+## Steps to run on each terminal instance
+
+You need to export the Composer packages to your PATH:
+
+`export PATH=./vendor/bin:$PATH`
+
+Unfortunately, this needs to be done every time you start a new terminal session. For a more permanent solution, you'd need to edit your `~/.bash_profile` and add a line specific to where your project lives, e.g:
+
+`export PATH=/Users/ashton/Dropbox/uni_major_project/_codebase/vendor/bin:$PATH`
+
+Running either of these steps allows you to run tests, generate documentation, etc, as if those packages were installed globally.
+
 ## Seeing is believing
 
 * run `./deploy/server.sh` to start the server
@@ -50,13 +62,21 @@ You can also run `php deploy/install.php --refresh` at any time to clean and re-
 
 Run the unit tests:
 
-`./vendor/phpunit/phpunit/phpunit test/unit_tests/`
+`phpunit test`
 
 Run the Cucumber tests:
 
 `cucumber features`
 
 ...or just leave it to [Travis](https://travis-ci.org/ChrisBAshton/major-project.svg?branch=master)!
+
+## Generate documentation
+
+`phpdoc -d ./webapp/ -t ./docs/`
+
+If you want the documentation step to generate class hierarchy diagrams, you'll also want to install GraphViz (Homebrew dependency):
+
+`brew install graphviz`
 
 ## Architecture
 

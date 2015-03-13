@@ -4,3 +4,5 @@ vendor
 features/screenshots
 SmartResolutionkeypair.pem
 README--private.md
+uploads/
+docs/
