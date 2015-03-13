@@ -1,8 +1,29 @@
 <?php
 
 $routes = array(
-    // index pages
-    'GET  /'                    => 'SessionController->index',
+
+    'GET  /'                    => function ($f3, $params) {
+        if (Session::loggedIn()) {
+            header('Location: /dashboard');
+        }
+
+        $f3->set('markdownFile', __DIR__ . '/../README.md');
+        $f3->set('content', 'markdown.html');
+        echo View::instance()->render('layout.html');
+    },
+
+    'GET /about' => function($f3, $params) {
+        $f3->set('markdownFile', __DIR__ . '/view/about.md');
+        $f3->set('content','markdown.html');
+        echo View::instance()->render('layout.html');
+    },
+
+    'GET /installation' => function($f3, $params) {
+        $f3->set('markdownFile', __DIR__ . '/view/installation.md');
+        $f3->set('content','markdown.html');
+        echo View::instance()->render('layout.html');
+    },
+
     'GET  /dashboard'           => 'SessionController->dashboard',
 
     // session handling
