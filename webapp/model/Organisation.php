@@ -30,19 +30,3 @@ class Organisation extends AccountCommonMethods implements AccountInterface {
         return $individuals;
     }
 }
-
-class LawFirm extends Organisation {
-
-    public function getAgents() {
-        return parent::getIndividuals('Agent');
-    }
-
-}
-
-class MediationCentre extends Organisation {
-
-    public function getMediators() {
-        return parent::getIndividuals('Mediator');
-    }
-
-}

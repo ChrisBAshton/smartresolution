@@ -57,7 +57,7 @@ Run the Cucumber tests:
 
 ## Generate documentation
 
-`phpdoc -d ./webapp/ -t ./docs/`
+`phpdoc -d ./webapp/ -t ./webapp/docs/`
 
 If you want the documentation step to generate class hierarchy diagrams, you'll also want to install GraphViz (Homebrew dependency):
 
