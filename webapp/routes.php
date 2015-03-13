@@ -30,6 +30,7 @@ $routes = array(
     'GET  /disputes/@disputeID/summary'   => 'SummaryController->view',
     'POST /disputes/@disputeID/summary'   => 'SummaryController->edit',
     'GET  /disputes/@disputeID/evidence'  => 'EvidenceController->view',
+    'POST /disputes/@disputeID/evidence'  => 'EvidenceController->upload',
     'GET  /disputes/@disputeID/mediation' => 'MediationController->view',
 
     // messaging
