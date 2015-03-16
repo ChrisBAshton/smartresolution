@@ -22,3 +22,11 @@ class Individual extends AccountCommonMethods implements AccountInterface {
         return $this->organisation;
     }
 }
+
+class Agent extends Individual {
+
+}
+
+class Mediator extends Individual {
+
+}

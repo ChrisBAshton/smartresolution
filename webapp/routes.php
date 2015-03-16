@@ -1,27 +1,27 @@
 <?php
 
+function renderMarkdown($markdownFile) {
+    global $f3;
+    $f3->set('markdownFile', $markdownFile);
+    $f3->set('content', 'markdown.html');
+    echo View::instance()->render('layout.html');
+}
+
 $routes = array(
 
-    'GET  /'                    => function ($f3, $params) {
+    'GET  /' => function ($f3, $params) {
         if (Session::loggedIn()) {
             header('Location: /dashboard');
         }
-
-        $f3->set('markdownFile', __DIR__ . '/../README.md');
-        $f3->set('content', 'markdown.html');
-        echo View::instance()->render('layout.html');
+        renderMarkdown(__DIR__ . '/../README.md');
     },
 
     'GET /about' => function($f3, $params) {
-        $f3->set('markdownFile', __DIR__ . '/view/about.md');
-        $f3->set('content','markdown.html');
-        echo View::instance()->render('layout.html');
+        renderMarkdown(__DIR__ . '/view/about.md');
     },
 
     'GET /installation' => function($f3, $params) {
-        $f3->set('markdownFile', __DIR__ . '/view/installation.md');
-        $f3->set('content','markdown.html');
-        echo View::instance()->render('layout.html');
+        renderMarkdown(__DIR__ . '/view/installation.md');
     },
 
     'GET  /dashboard'           => 'SessionController->dashboard',

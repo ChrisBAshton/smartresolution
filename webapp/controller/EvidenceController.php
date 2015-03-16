@@ -16,7 +16,6 @@ class EvidenceController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
-
         $f3->set('UPLOADS', 'uploads/');
 
         $web = \Web::instance();
@@ -28,6 +27,15 @@ class EvidenceController {
             }
         );
 
+        /* $files looks like:
+          array(3) {
+              ["uploads/csshat_quittung.png"] => bool(true)
+              ["uploads/foo.pdf"] => bool(false)
+              ["uploads/my.pdf"] => bool(true)
+            }
+          foo.pdf was not uploaded...
+        */
+
         foreach($files as $filename => $successfulUpload) {
             if ($successfulUpload) {
                 echo $filename;
@@ -36,15 +44,6 @@ class EvidenceController {
                 $f3->set('error_message', 'Could not upload file.');
             }
         }
-
-        /* looks like:
-          array(3) {
-              ["uploads/csshat_quittung.png"] => bool(true)
-              ["uploads/foo.pdf"] => bool(false)
-              ["uploads/my.pdf"] => bool(true)
-            }
-          foo.pdf was not uploaded...
-        */
 
         $f3->set('content', 'evidence_new.html');
         echo View::instance()->render('layout.html');
@@ -58,8 +57,8 @@ class EvidenceController {
      * @return boolean                True if file upload was successful, otherwise false.
      */
     public function uploadFile ($file, $formFieldName) {
-        //var_dump($file);
-        /* looks like:
+
+        /* $file looks like:
           array(5) {
               ["name"] =>     string(19) "csshat_quittung.png"
               ["type"] =>     string(9) "image/png"
@@ -75,6 +74,8 @@ class EvidenceController {
         if ($file['size'] > (2 * 1024 * 1024)) {
             return false;
         }
+
+        // type check
 
         return true;
     }
