@@ -5,6 +5,16 @@ class EvidenceController {
     public function view ($f3, $params) {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
+
+        $evidences = Database::instance()->exec(
+            'SELECT * FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
+            array(':dispute_id' => $dispute->getDisputeId())
+        );
+
+        foreach($evidences as $evidence) {
+            echo "EVIDENCE: " . $evidence['filepath'] . "\n <br />";
+        }
+
         $f3->set('content', 'evidence.html');
         echo View::instance()->render('layout.html');
     }
@@ -36,9 +46,14 @@ class EvidenceController {
           foo.pdf was not uploaded...
         */
 
-        foreach($files as $filename => $successfulUpload) {
+        foreach($files as $filepath => $successfulUpload) {
             if ($successfulUpload) {
-                echo $filename;
+                echo $filepath;
+                DBL::createEvidence(array(
+                    'uploader' => $account,
+                    'dispute'  => $dispute,
+                    'filepath' => $filepath
+                ));
             }
             else {
                 $f3->set('error_message', 'Could not upload file.');

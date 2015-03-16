@@ -13,8 +13,12 @@
         <strong>Proposed end date:</strong> <?php echo prettyTime($dispute->getLatestLifespan()->endTime()); ?>
     </p>
 
-    <div class="">
-        <button type="submit" name="resolution" value="accept">Accept</button> /
-        <button type="submit" name="resolution" value="decline">Decline</button>
+    <div class="row">
+        <div class="col-sm-6">
+            <button class="btn btn-lg btn-success btn-block" type="submit" name="resolution" value="accept">Accept</button>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-lg btn-danger btn-block" type="submit" name="resolution" value="decline">Decline</button>
+        </div>
     </div>
 </form>

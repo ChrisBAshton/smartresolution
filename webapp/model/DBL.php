@@ -6,6 +6,27 @@
  */
 class DBL {
 
+    public static function createEvidence($params) {
+        $disputeID  = $params['dispute']->getDisputeId();
+        $uploaderID = $params['uploader']->getLoginId();
+        $filepath   = $params['filepath'];
+
+        if (!$disputeID || !$uploaderID || !$filepath) {
+            throw new Exception('nefiofnweiognewiongoiewngoiewngoiewngoiewgnoeiwng');
+        }
+
+        Database::instance()->exec(
+            'INSERT INTO evidence (evidence_id, dispute_id, uploader_id, filepath) VALUES (NULL, :dispute_id, :uploader_id, :filepath)',
+            array(
+                ':dispute_id'  => $disputeID,
+                ':uploader_id' => $uploaderID,
+                ':filepath'    => $filepath,
+            )
+        );
+
+        echo 'Uploader ID is ' . $uploaderID . ', dispute ID is ' . $disputeID;
+    }
+
     /**
      * Creates a new Dispute, saving it to the database.
      *
