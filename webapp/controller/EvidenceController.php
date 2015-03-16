@@ -13,6 +13,10 @@ class EvidenceController {
      * Based on http://fatfreeframework.com/web#receive
      */
     public function upload ($f3, $params) {
+        $account = mustBeLoggedIn();
+        $dispute = setDisputeFromParams($f3, $params);
+
+
         $f3->set('UPLOADS', 'uploads/');
 
         $web = \Web::instance();
@@ -41,6 +45,9 @@ class EvidenceController {
             }
           foo.pdf was not uploaded...
         */
+
+        $f3->set('content', 'evidence_new.html');
+        echo View::instance()->render('layout.html');
     }
 
     /**
