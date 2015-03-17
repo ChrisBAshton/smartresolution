@@ -14,7 +14,18 @@
     </div>
 
     <?php
-    foreach($evidences as $evidence) {
+    if (count($evidences) === 0) :
+    ?>
+
+        <div class="row">
+            <div class="col-sm-12">
+                 No evidence uploaded yet.
+            </div>
+        </div>
+
+    <?php
+    else:
+        foreach($evidences as $evidence):
     ?>
 
         <div class="row list__item">
@@ -29,7 +40,8 @@
         </div>
 
     <?php
-    }
+        endforeach;
+    endif;
     ?>
 
 </div>
