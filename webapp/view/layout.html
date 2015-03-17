@@ -16,6 +16,12 @@
 					<div class="row">
 						<div class="col-sm-6">
 						    <a href="/"><img class="logo" src="view/images/logo.png"></a>
+							<?php if (!isset($account)) : ?>
+								<a href="/about">About</a> |
+								<a href="/installation">Installation</a> |
+								<a href="/docs/index.html">API Documentation</a> |
+								<a href="https://github.com/ChrisBAshton/major-project">GitHub</a>
+							<?php endif; ?>
 						</div>
 
 					    <div class="col-sm-6 text-right">
@@ -45,37 +51,39 @@
 
 				<div class="container">
 					<?php
-						// based on code found at http://stackoverflow.com/questions/2594211/php-simple-dynamic-breadcrumb
-						$breadcrumbs = array();
+						if (isset($account)) :
+							// based on code found at http://stackoverflow.com/questions/2594211/php-simple-dynamic-breadcrumb
+							$breadcrumbs = array();
 
-						$urlParts = explode('/', $_SERVER['REQUEST_URI']);
-						$i = 1;
-						$url = '';
-						foreach($urlParts as $part){
-							if (strlen($part) > 0) {
-								$url = $url . '/' . $part;
-								// remove everything after the ?
-								$part = preg_replace('/\?.*/', '', $part);
-								// make first letter uppercase
-								$part = ucfirst($part);
-								// make safe to render to browser
-								$part = htmlspecialchars($part);
-								if ($i < count($urlParts)) {
-									$breadcrumbs[] = array(
-										'url'   => $url,
-										'title' => $part
-									);
+							$urlParts = explode('/', $_SERVER['REQUEST_URI']);
+							$i = 1;
+							$url = '';
+							foreach($urlParts as $part){
+								if (strlen($part) > 0) {
+									$url = $url . '/' . $part;
+									// remove everything after the ?
+									$part = preg_replace('/\?.*/', '', $part);
+									// make first letter uppercase
+									$part = ucfirst($part);
+									// make safe to render to browser
+									$part = htmlspecialchars($part);
+									if ($i < count($urlParts)) {
+										$breadcrumbs[] = array(
+											'url'   => $url,
+											'title' => $part
+										);
+									}
+									$i++;
 								}
-								$i++;
 							}
-						}
 
-						if (count($breadcrumbs) > 0) {
-							echo '<a href="/">Home</a>';
-						}
-						foreach($breadcrumbs as $crumb) {
-							echo ' / <a href="' . $crumb['url'] .'">' . $crumb['title'] . '</a>';
-						}
+							if (count($breadcrumbs) > 0) {
+								echo '<a href="/">Home</a>';
+							}
+							foreach($breadcrumbs as $crumb) {
+								echo ' / <a href="' . $crumb['url'] .'">' . $crumb['title'] . '</a>';
+							}
+						endif;
 					?>
 				</div>
 

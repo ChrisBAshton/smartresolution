@@ -95,3 +95,12 @@ CREATE TABLE IF NOT EXISTS notifications (
     read            BOOLEAN DEFAULT false,
     FOREIGN KEY(recipient_id) REFERENCES account_details(login_id)
 );
+
+CREATE TABLE IF NOT EXISTS evidence (
+    evidence_id INTEGER PRIMARY KEY NOT NULL,
+    dispute_id  INTEGER NOT NULL,
+    uploader_id INTEGER NOT NULL,
+    filepath    VARCHAR(300) NOT NULL,
+    FOREIGN KEY(dispute_id) REFERENCES disputes(dispute_id),
+    FOREIGN KEY(uploader_id) REFERENCES account_details(login_id)
+);

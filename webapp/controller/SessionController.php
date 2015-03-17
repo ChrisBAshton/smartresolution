@@ -2,16 +2,6 @@
 
 class SessionController {
 
-    function index ($f3) {
-        if (Session::loggedIn()) {
-            header('Location: /dashboard');
-        }
-        else {
-            $f3->set('content','index.html');
-            echo View::instance()->render('layout.html');
-        }
-    }
-
     function dashboard ($f3) {
         if (Session::loggedIn()) {
             $account = Session::getAccount();

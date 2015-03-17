@@ -1,8 +1,29 @@
 <?php
 
+function renderMarkdown($markdownFile) {
+    global $f3;
+    $f3->set('markdownFile', $markdownFile);
+    $f3->set('content', 'markdown.html');
+    echo View::instance()->render('layout.html');
+}
+
 $routes = array(
-    // index pages
-    'GET  /'                    => 'SessionController->index',
+
+    'GET  /' => function ($f3, $params) {
+        if (Session::loggedIn()) {
+            header('Location: /dashboard');
+        }
+        renderMarkdown(__DIR__ . '/../README.md');
+    },
+
+    'GET /about' => function($f3, $params) {
+        renderMarkdown(__DIR__ . '/view/about.md');
+    },
+
+    'GET /installation' => function($f3, $params) {
+        renderMarkdown(__DIR__ . '/view/installation.md');
+    },
+
     'GET  /dashboard'           => 'SessionController->dashboard',
 
     // session handling
@@ -17,20 +38,23 @@ $routes = array(
     'POST /register/individual' => 'RegisterController->individualPost',
 
     // disputes
-    'GET  /disputes/new'                  => 'DisputeController->newDisputeGet',
-    'POST /disputes/new'                  => 'DisputeController->newDisputePost',
-    'GET  /disputes'                      => 'DisputeController->viewDisputes',
-    'GET  /disputes/@disputeID'           => 'DisputeController->viewDispute',
-    'GET  /disputes/@disputeID/open'      => 'DisputeController->openDisputeGet',
-    'POST /disputes/@disputeID/open'      => 'DisputeController->openDisputePost',
-    'GET  /disputes/@disputeID/assign'    => 'DisputeController->assignDisputeGet',
-    'POST /disputes/@disputeID/assign'    => 'DisputeController->assignDisputePost',
-    'GET  /disputes/@disputeID/close'     => 'DisputeController->closeDisputeGet',
-    'POST /disputes/@disputeID/close'     => 'DisputeController->closeDisputePost',
-    'GET  /disputes/@disputeID/summary'   => 'SummaryController->view',
-    'POST /disputes/@disputeID/summary'   => 'SummaryController->edit',
-    'GET  /disputes/@disputeID/evidence'  => 'EvidenceController->view',
-    'GET  /disputes/@disputeID/mediation' => 'MediationController->view',
+    'GET  /disputes/new'                         => 'DisputeController->newDisputeGet',
+    'POST /disputes/new'                         => 'DisputeController->newDisputePost',
+    'GET  /disputes'                             => 'DisputeController->viewDisputes',
+    'GET  /disputes/@disputeID'                  => 'DisputeController->viewDispute',
+    'GET  /disputes/@disputeID/open'             => 'DisputeController->openDisputeGet',
+    'POST /disputes/@disputeID/open'             => 'DisputeController->openDisputePost',
+    'GET  /disputes/@disputeID/assign'           => 'DisputeController->assignDisputeGet',
+    'POST /disputes/@disputeID/assign'           => 'DisputeController->assignDisputePost',
+    'GET  /disputes/@disputeID/close'            => 'DisputeController->closeDisputeGet',
+    'POST /disputes/@disputeID/close'            => 'DisputeController->closeDisputePost',
+    'GET  /disputes/@disputeID/summary'          => 'SummaryController->view',
+    'POST /disputes/@disputeID/summary'          => 'SummaryController->edit',
+    'GET  /disputes/@disputeID/evidence'         => 'EvidenceController->view',
+    'POST /disputes/@disputeID/evidence'         => 'EvidenceController->upload',
+    'GET  /disputes/@disputeID/evidence'         => 'EvidenceController->view',
+    'GET|POST /disputes/@disputeID/evidence/new' => 'EvidenceController->upload',
+    'GET  /disputes/@disputeID/mediation'        => 'MediationController->view',
 
     // messaging
     'GET  /disputes/@disputeID/chat'    => 'MessageController->view',

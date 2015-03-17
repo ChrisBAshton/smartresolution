@@ -5,10 +5,11 @@ env:
   - SYSTEM=TRAVIS
 install:
   - composer install
+  - export PATH=./vendor/bin:$PATH
   - gem install bundler
   - bundle install
 before_script:
-  # run PHP server (required for tests. We only start the server if we're on Travis)
+  # run PHP server (required for tests)
   - sh deploy/server.sh --background
   # remove any existing database and create our databases
   - rm -f data/test.db
@@ -19,7 +20,5 @@ before_script:
   - php data/fixtures/seed.php test
   - php data/fixtures/seed.php production
 script:
-  # run our unit tests
-  - ./vendor/phpunit/phpunit/phpunit test/unit_tests/
-  # run our integration tests
+  - phpunit test
   - cucumber features/

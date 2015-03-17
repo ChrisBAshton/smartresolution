@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../webapp/autoload.php';
+require_once __DIR__ . '/../webapp/autoload.php';
 
 class ChatTest extends PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
             'This is a test message.',
             $message->contents()
         );
-        
+
         $this->assertEquals(
             $this->dispute->getAgentA()->getLoginId(),
             $message->author()->getLoginId()

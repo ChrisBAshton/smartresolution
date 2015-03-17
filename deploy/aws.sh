@@ -25,3 +25,7 @@ find /var/www -type f -exec sudo chmod 0664 {} +
 sudo chown -R ec2-user /var/www/html/data/
 chmod 777 data
 chmod 777 data/production.db
+
+# generate the documentation for our project
+sudo yum install 'graphviz*'
+phpdoc -d ./webapp/ -t ./webapp/docs/
