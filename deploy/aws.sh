@@ -2,15 +2,18 @@
 
 cd /var/www/html
 
-# remove AWS' default php 5.3, install php 5.5
+# remove AWS' default php 5.3, install php 5.4
 sudo yum remove php*
-sudo yum install php55 php55-pdo php55-mysqlnd
+sudo yum install php54 php54-pdo php54-mysqlnd
 
 ## install composer
 curl -sS https://getcomposer.org/installer | php
 
 # install project dependencies
 php composer.phar install
+
+# make project dependencies available to path
+export PATH=./vendor/bin:$PATH
 
 # run our install script
 sudo php deploy/install.php
