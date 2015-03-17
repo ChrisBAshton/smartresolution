@@ -1,3 +1,35 @@
-<div class="col-lg-12">
-    List of evidence should go here. <a href="<?php echo $dispute->getUrl(); ?>/evidence/new">NEW</a>
+<p class="bg-padded bg-info text-center">
+    Below is a list of all arefacts associated with the dispute. <a class="btn btn-default" href="<?php echo $dispute->getUrl(); ?>/evidence/new">Upload new evidence</a>
+</p>
+
+<div class="list">
+
+    <div class="row list__item">
+        <div class="col-sm-8">
+            <h3>Evidence</h3>
+        </div>
+        <div class="col-sm-4">
+            <h3>Uploaded by</h3>
+        </div>
+    </div>
+
+    <?php
+    foreach($evidences as $evidence) {
+    ?>
+
+        <div class="row list__item">
+            <div class="col-sm-8">
+                <a href="<?php echo $evidence->getUrl(); ?>">
+                    <?php echo $evidence->getUrl(); ?>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <?php echo $evidence->getUploader(); ?>
+            </div>
+        </div>
+
+    <?php
+    }
+    ?>
+
 </div>

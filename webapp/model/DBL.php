@@ -12,7 +12,7 @@ class DBL {
         $filepath   = $params['filepath'];
 
         if (!$disputeID || !$uploaderID || !$filepath) {
-            throw new Exception('nefiofnweiognewiongoiewngoiewngoiewngoiewgnoeiwng');
+            throw new Exception('Missing key evidence information.');
         }
 
         Database::instance()->exec(
@@ -24,7 +24,7 @@ class DBL {
             )
         );
 
-        echo 'Uploader ID is ' . $uploaderID . ', dispute ID is ' . $disputeID;
+        return true;
     }
 
     /**
