@@ -12,42 +12,15 @@
 	<body>
 		<div id="wrapper">
 			<div id="content">
-				<header class="container">
-					<div class="row">
-						<div class="col-sm-7">
-						    <a href="/"><img class="logo" src="view/images/logo.png"></a>
-							<?php if (!isset($account)) : ?>
-								<a href="/about">About</a> |
-								<a href="/installation">Installation</a> |
-								<a href="/docs/index.html">API Documentation</a> |
-								<a href="https://github.com/ChrisBAshton/major-project">GitHub</a>
-							<?php endif; ?>
-						</div>
-
-					    <div class="col-sm-5 text-right">
-							<p>
-								<?php
-									if (isset($account)) :
-								?>
-									Welcome back, <?php echo $account->getName() ; ?>
-									<?php
-										if (count($notifications) > 0) {
-											echo ' | <a href="/notifications" class="notification_link"><img src="/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
-										}
-										else {
-											echo ' | ';
-										}
-									?>
-									<a href="/logout">Logout</a>
-								<?php
-									else:
-										echo '<a href="/login">Login</a> | <a href="/register">Register</a>';
-									endif;
-								?>
-							</p>
-						</div>
-					</div>
-				</header>
+				<?php
+				if (isset($account)) {
+					$header = 'header--logged_in.html';
+				}
+				else {
+					$header = 'header--default.html';
+				}
+				echo $this->render($header);
+				?>
 
 				<div class="container">
 					<?php
