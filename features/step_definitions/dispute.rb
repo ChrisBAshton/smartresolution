@@ -30,3 +30,10 @@ Given(/^I am logged into an Agent account that is not associated with the Disput
   clear_session_before_login
   login_with_credentials 'one_dispute_agent@company.com', 'test'
 end
+
+Then(/^I should be able to upload evidence to the Dispute$/) do
+  visit '/disputes/' + id_of_dispute_that_is_fully_underway.to_s + '/evidence/new'
+  attach_file('fileToUpload', File.expand_path('../../../webapp/view/images/logo.png', __FILE__))
+  click_button 'Upload'
+  assert page.has_content? 'File uploaded.'
+end
