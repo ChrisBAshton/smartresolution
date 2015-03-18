@@ -28,6 +28,10 @@ class EvidenceController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
+        if (!$dispute->getState()->canUploadDocuments()) {
+            errorPage('You cannot upload any documents at this stage of the dispute lifecycle.');
+        }
+
         $f3->set('UPLOADS', 'uploads/');
 
         $web = \Web::instance();
