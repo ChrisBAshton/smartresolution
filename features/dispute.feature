@@ -15,6 +15,12 @@ Feature: Dispute
     And I am logged into an Agent account that is not associated with the Dispute
     Then I should NOT be able to send a message via the Dispute
 
+  @clear
+  Scenario: Uploading evidence to a Dispute
+    Given the Dispute is fully underway
+    And I am logged into an Agent account
+    Then I should be able to upload evidence to the Dispute
+
   Scenario: Start the Mediation process
     Given the Dispute is fully underway
     And the Dispute is not in Mediation

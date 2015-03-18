@@ -4,11 +4,16 @@
     }
 ?>
 
-<div class="row">
     <?php
+        $count = 0;
         foreach(Base::instance()->get('dashboardActions') as $action) :
             $action['href']  = isset($action['href'])  ? $action['href']  : '.';
             $action['image'] = isset($action['image']) ? $action['image'] : '/view/images/mail.png';
+
+            if ($count % 4 == 0 || $count == 0) {
+                echo '<div class="row">';
+            }
+            $count++;
     ?>
         <div class="col-sm-3 dispute__option">
             <a href="<?php echo $action['href']; ?>">
@@ -17,6 +22,9 @@
             </a>
         </div>
     <?php
+            if ($count % 4 == 0) {
+                echo '</div>';
+            }
         endforeach;
     ?>
 </div>

@@ -16,3 +16,11 @@ end
 def assert_cannot_send_message
   assert page.has_content? 'You do not have permission to view this Dispute!'
 end
+
+def id_of_dispute_that_is_fully_underway
+  count = 0
+  $data['disputes'].each do |dispute|
+    count = count + 1
+    return count if dispute['title'] == 'Smith versus Jones'
+  end
+end

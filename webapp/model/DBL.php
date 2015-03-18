@@ -1,4 +1,11 @@
 <?php
+// @TODO - some create methods return the ID, others return the object, others return nothing!
+// Let's standardise the create() API.
+
+
+
+
+
 
 /**
  * This is the Database Layer class - it acts as middleware between the application and the database,
@@ -12,7 +19,7 @@ class DBL {
         $filepath   = $params['filepath'];
 
         if (!$disputeID || !$uploaderID || !$filepath) {
-            throw new Exception('nefiofnweiognewiongoiewngoiewngoiewngoiewgnoeiwng');
+            throw new Exception('Missing key evidence information.');
         }
 
         Database::instance()->exec(
@@ -24,7 +31,7 @@ class DBL {
             )
         );
 
-        echo 'Uploader ID is ' . $uploaderID . ', dispute ID is ' . $disputeID;
+        return DBL::getLatestId('evidence', 'evidence_id');
     }
 
     /**
@@ -55,9 +62,7 @@ class DBL {
             ':type'       => $type,
             ':title'      => $title
         ));
-        $newDispute = $db->exec(
-            'SELECT * FROM disputes ORDER BY dispute_id DESC LIMIT 1'
-        )[0];
+        $newDispute = DBL::getLatestRow('disputes', 'dispute_id');
 
         // sanity check
         if ((int)$newDispute['party_a'] !== $partyID ||
@@ -89,10 +94,8 @@ class DBL {
             ':individual_id'   => $individualId,
             ':summary'         => $summary
         ));
-        $partyID = (int) Database::instance()->exec(
-            'SELECT * FROM dispute_parties ORDER BY party_id DESC LIMIT 1'
-        )[0]['party_id'];
-        return $partyID;
+
+        return DBL::getLatestId('dispute_parties', 'party_id');
     }
 
     public static function ensureCorrectAccountTypes($accountTypes) {
@@ -137,7 +140,7 @@ class DBL {
             ':end_time'    => $endTime
         ));
 
-        $lifespanID = (int) Database::instance()->exec('SELECT lifespan_id FROM lifespans ORDER BY lifespan_id DESC LIMIT 1')[0]['lifespan_id'];
+        $lifespanID = DBL::getLatestId('lifespans', 'lifespan_id');
 
         try {
             $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
@@ -173,8 +176,7 @@ class DBL {
             )
         );
 
-        $notificationID = (int) Database::instance()->exec('SELECT notification_id FROM notifications ORDER BY notification_id DESC LIMIT 1')[0]['notification_id'];
-
+        $notificationID = DBL::getLatestId('notifications', 'notification_id');
         return new Notification($notificationID);
     }
 
@@ -192,8 +194,7 @@ class DBL {
             )
         );
 
-        $messageID = (int) Database::instance()->exec('SELECT message_id FROM messages ORDER BY message_id DESC LIMIT 1')[0]['message_id'];
-
+        $messageID = DBL::getLatestId('messages', 'message_id');
         return new Message($messageID);
     }
 
@@ -260,4 +261,29 @@ class DBL {
         return $login_id;
     }
 
+    /**
+     * Returns the latest ID in the database from table name $tableName, ordered by primary key $idName (DESC).
+     * Calls DBL::getLatestRow internally.
+     *
+     * @param  String $tableName Name of the table.
+     * @param  String $idName    Primary key of the table.
+     * @return Int               The primary key of the latest database entry.
+     */
+    public static function getLatestId($tableName, $idName) {
+        $latestRow = DBL::getLatestRow($tableName, $idName);
+        return (int) $latestRow[$idName];
+    }
+
+    /**
+     * Returns the latest row in the database from table name $tableName, ordered by primary key $idName (DESC).
+     * @param  String $tableName Name of the table.
+     * @param  String $idName    Primary key of the table.
+     * @return Array             Latest table row.
+     */
+    public static function getLatestRow($tableName, $idName) {
+        $rows = Database::instance()->exec(
+            'SELECT * FROM ' . $tableName . ' ORDER BY ' . $idName . ' DESC LIMIT 1'
+        );
+        return $rows[0];
+    }
 }

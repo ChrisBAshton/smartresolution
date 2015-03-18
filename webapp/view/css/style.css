@@ -5,6 +5,7 @@ html, body {
     padding: 0;
     height:  100%;
     -webkit-font-smoothing: antialiased !important;
+    font-size: 16px;
 }
 
 p {
@@ -32,6 +33,10 @@ footer {
 
 .form-control {
     margin: 18px 0;
+}
+
+.datetime_picker .form-control {
+    margin: 0;
 }
 
 /************************************************************ Custom classes */
@@ -111,7 +116,7 @@ footer {
 .dispute__option__image {
     width: auto;
     display: block;
-    max-height: 150px;
+    max-height: 75px;
     margin: 5px auto 10px;
     opacity: 0.7;
     transition: opacity 0.3s;

@@ -27,6 +27,11 @@ class SessionController {
                     'href'  => '/register/individual',
                     'image' => '/view/images/security.png',
                     'title' => 'Register Agent account'
+                ),
+                array(
+                    'href'  => '/settings',
+                    'image' => '/view/images/settings.png',
+                    'title' => 'Edit Profile'
                 )
             );
         }
@@ -36,6 +41,11 @@ class SessionController {
                     'href'  => '/register/individual',
                     'image' => '/view/images/security.png',
                     'title' => 'Register Mediator account'
+                ),
+                array(
+                    'href'  => '/settings',
+                    'image' => '/view/images/settings.png',
+                    'title' => 'Edit Profile'
                 )
             );
         }
@@ -45,13 +55,20 @@ class SessionController {
                     'href'  => '/disputes',
                     'image' => '/view/images/disputes.png',
                     'title' => 'View Disputes'
+                ),
+                array(
+                    'href'  => '/settings',
+                    'image' => '/view/images/settings.png',
+                    'title' => 'Edit Profile'
                 )
             );
         }
         elseif ($account instanceof Mediator) {
             $dashboardActions = array(
                 array(
-                    'title' => 'Mediators can do nothing yet.'
+                    'href'  => '/settings',
+                    'image' => '/view/images/settings.png',
+                    'title' => 'Edit Profile'
                 )
             );
         }

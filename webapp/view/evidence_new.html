@@ -1,28 +1,27 @@
-<div class="col-lg-12">
-    <h1>Upload evidence</h1>
+<?php
+    if (Base::instance()->get('error_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-danger',
+            'details' => Base::instance()->get('error_message')
+        );
+    }
+    else if (Base::instance()->get('success_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-success',
+            'details' => Base::instance()->get('success_message')
+        );
+    }
+    else {
+        $message = array(
+            'class'   => 'bg-padded bg-info',
+            'details' => 'Upload a file below. It should be below 2MB.'
+        );
+    }
+?>
 
-    <?php
-        if (Base::instance()->get('error_message')) {
-            $message = array(
-                'class'   => 'bg-padded bg-danger',
-                'details' => Base::instance()->get('error_message')
-            );
-        }
-        else if (Base::instance()->get('success_message')) {
-            $message = array(
-                'class'   => 'bg-padded bg-success',
-                'details' => Base::instance()->get('success_message')
-            );
-        }
-        else {
-            $message = array(
-                'class'   => 'bg-padded bg-info',
-                'details' => 'Here you can create a new individual account.'
-            );
-        }
-    ?>
-    <p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
-</div>
+<h1>Upload evidence</h1>
+
+<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
 
 <form action="<?php echo $dispute->getUrl(); ?>/evidence" method="post" enctype="multipart/form-data">
     <div class="col-lg-12">

@@ -100,4 +100,17 @@ foreach($data['disputes'] as $dataItem) {
             $dispute->getCurrentLifespan()->accept();
         }
     }
+
+    if (isset($dataItem['evidence'])) {
+
+        shell_exec('echo "This is an example evidence document." > ' . __DIR__ . '/../../webapp/uploads/tmp.txt');
+
+        if ($dataItem['evidence'] === 'one_item') {
+            DBL::createEvidence(array(
+                'uploader' => $dispute->getAgentA(),
+                'dispute'  => $dispute,
+                'filepath' => '/uploads/tmp.txt'
+            ));
+        }
+    }
 }

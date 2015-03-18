@@ -22,6 +22,10 @@ class DisputeClosed extends DisputeDefaults implements DisputeStateInterface {
         return false;
     }
 
+    public function canUploadDocuments() {
+        return false;
+    }
+
     public function canCloseDispute() {
         return false;
     }

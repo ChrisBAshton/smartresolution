@@ -6,15 +6,17 @@ class EvidenceController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
-        $evidences = Database::instance()->exec(
-            'SELECT * FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
+        $evidences = array();
+        $evidenceDetails = Database::instance()->exec(
+            'SELECT evidence_id FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
             array(':dispute_id' => $dispute->getDisputeId())
         );
 
-        foreach($evidences as $evidence) {
-            echo "EVIDENCE: " . $evidence['filepath'] . "\n <br />";
+        foreach($evidenceDetails as $evidence) {
+            $evidences[] = new Evidence((int) $evidence['evidence_id']);
         }
 
+        $f3->set('evidences', $evidences);
         $f3->set('content', 'evidence.html');
         echo View::instance()->render('layout.html');
     }
@@ -25,6 +27,10 @@ class EvidenceController {
     public function upload ($f3, $params) {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
+
+        if (!$dispute->getState()->canUploadDocuments()) {
+            errorPage('You cannot upload any documents at this stage of the dispute lifecycle.');
+        }
 
         $f3->set('UPLOADS', 'uploads/');
 
@@ -47,13 +53,18 @@ class EvidenceController {
         */
 
         foreach($files as $filepath => $successfulUpload) {
+            $dbEntryCreated = false;
+
             if ($successfulUpload) {
-                echo $filepath;
-                DBL::createEvidence(array(
+                $dbEntryCreated = DBL::createEvidence(array(
                     'uploader' => $account,
                     'dispute'  => $dispute,
                     'filepath' => $filepath
                 ));
+            }
+
+            if ($dbEntryCreated) {
+                $f3->set('success_message', 'File uploaded.');
             }
             else {
                 $f3->set('error_message', 'Could not upload file.');
