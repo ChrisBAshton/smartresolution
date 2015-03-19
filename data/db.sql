@@ -37,18 +37,24 @@ CREATE TABLE IF NOT EXISTS individuals (
 -- #######################################################################
 
 CREATE TABLE IF NOT EXISTS disputes (
-    dispute_id    INTEGER PRIMARY KEY NOT NULL,
-    type          VARCHAR(100) NOT NULL,
-    title         VARCHAR(140) NOT NULL,
-    party_a       INTEGER NOT NULL,
-    party_b       INTEGER, -- NULL until Dispute has been assigned to Law Firm B
-    third_party   INTEGER, -- NULL until in Mediation
-    lifespan_id   INTEGER, -- NULL until a Lifespan has been negotiated
-    status        VARCHAR(40) DEFAULT "ongoing",
+    dispute_id                INTEGER PRIMARY KEY NOT NULL,
+    type                      VARCHAR(100) NOT NULL,
+    title                     VARCHAR(140) NOT NULL,
+    party_a                   INTEGER NOT NULL,
+    party_b                   INTEGER, -- NULL until Dispute has been assigned to Law Firm B
+    third_party               INTEGER, -- NULL until in Mediation
+    lifespan_id               INTEGER, -- NULL until a Lifespan has been negotiated
+    status                    VARCHAR(40) DEFAULT "ongoing",
+    mediation_centre_offer    INTEGER,
+    mediator_offer            INTEGER,
+    round_table_communication BOOLEAN DEFAULT false,
+    FOREIGN KEY(dispute_id)             REFERENCES disputes(dispute_id),
     CHECK (status in ("ongoing", "resolved", "failed")),
-    FOREIGN KEY(party_a)       REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(party_b)       REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(third_party)   REFERENCES dispute_parties(party_id)
+    FOREIGN KEY(party_a)                REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(party_b)                REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(third_party)            REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(mediation_centre_offer) REFERENCES mediation_offers(mediation_offer_id),
+    FOREIGN KEY(mediator_offer)         REFERENCES mediation_offers(mediation_offer_id)
 );
 
 CREATE TABLE IF NOT EXISTS dispute_parties (
@@ -76,17 +82,6 @@ CREATE TABLE IF NOT EXISTS lifespans (
 -- #######################################################################
 -- #################################################### Mediation ########
 -- #######################################################################
-
-CREATE TABLE IF NOT EXISTS mediations (
-    mediation_id              INTEGER PRIMARY KEY NOT NULL,
-    dispute_id                INTEGER NOT NULL,
-    mediation_centre_offer    INTEGER NOT NULL,
-    mediator_offer            INTEGER NOT NULL,
-    round_table_communication BOOLEAN DEFAULT false,
-    FOREIGN KEY(dispute_id)             REFERENCES disputes(dispute_id),
-    FOREIGN KEY(mediation_centre_offer) REFERENCES mediation_offers(mediation_offer_id),
-    FOREIGN KEY(mediator_offer)         REFERENCES mediation_offers(mediation_offer_id)
-);
 
 CREATE TABLE IF NOT EXISTS mediation_offers (
     mediation_offer_id INTEGER PRIMARY KEY NOT NULL,

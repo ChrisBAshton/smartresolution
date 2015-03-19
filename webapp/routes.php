@@ -55,6 +55,7 @@ $routes = array(
     'GET  /disputes/@disputeID/evidence'         => 'EvidenceController->view',
     'GET|POST /disputes/@disputeID/evidence/new' => 'EvidenceController->upload',
     'GET  /disputes/@disputeID/mediation'        => 'MediationController->view',
+    'POST /disputes/@disputeID/mediation'        => 'MediationController->createMediationOffer',
 
     // messaging
     'GET  /disputes/@disputeID/chat'    => 'MessageController->view',

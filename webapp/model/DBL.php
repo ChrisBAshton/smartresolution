@@ -13,6 +13,37 @@
  */
 class DBL {
 
+    public static function createMediationOffer($params) {
+        $dispute         = $params['dispute'];
+        $proposedBy      = $params['proposed_by'];
+        $mediationCentre = $params['mediation_centre'];
+
+        if (!$dispute || !$proposedBy || !$mediationCentre) {
+            throw new Exception('Missing key fields.');
+        }
+
+        $db = Database::instance();
+        $db->begin();
+        $db->exec(
+            'INSERT INTO mediation_offers (type, proposer, proposed_id)
+            VALUES (:type, :proposer, :proposed_id)',
+            array(
+                ':type'        => 'mediation_centre',
+                ':proposer'    => $proposedBy->getLoginId(),
+                ':proposed_id' => $mediationCentre->getLoginId()
+            )
+        );
+        $mediationOfferId = DBL::getLatestId('mediation_offers', 'mediation_offer_id');
+        $db->exec(
+            'UPDATE disputes SET mediation_centre_offer = :mediation_centre_offer WHERE dispute_id = :dispute_id',
+            array(
+                ':dispute_id'             => $dispute->getDisputeId(),
+                ':mediation_centre_offer' => $mediationOfferId
+            )
+        );
+        $db->commit();
+    }
+
     public static function createEvidence($params) {
         $disputeID  = $params['dispute']->getDisputeId();
         $uploaderID = $params['uploader']->getLoginId();

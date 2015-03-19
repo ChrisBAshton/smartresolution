@@ -9,13 +9,14 @@ class Dispute {
 
     public function refresh() {
         $data = $this->db->getData();
-        $this->disputeId       = $data['dispute_id'];
+        $this->disputeId       = (int) $data['dispute_id'];
         $this->title           = $data['title'];
         $this->status          = $data['status'];
-        $this->partyA          = $this->db->getPartyDetails($data['party_a']);
-        $this->partyB          = $this->db->getPartyDetails($data['party_b']);
-        $this->currentLifespan = LifespanFactory::getCurrentLifespan($data['dispute_id']);
-        $this->latestLifespan  = LifespanFactory::getLatestLifespan($data['dispute_id']);
+        $this->partyA          = $this->db->getPartyDetails((int) $data['party_a']);
+        $this->partyB          = $this->db->getPartyDetails((int) $data['party_b']);
+        $this->currentLifespan = LifespanFactory::getCurrentLifespan((int) $data['dispute_id']);
+        $this->latestLifespan  = LifespanFactory::getLatestLifespan((int) $data['dispute_id']);
+        $this->mediationState  = new MediationState($data);
 
         if (!$this->partyA) {
             throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -28,6 +29,10 @@ class Dispute {
 
     public function getState($account = false) {
         return DisputeStateCalculator::getState($this, $account);
+    }
+
+    public function getMediationState($account = false) {
+        return $this->mediationState;
     }
 
     public function getCurrentLifespan() {

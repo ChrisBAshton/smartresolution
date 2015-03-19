@@ -15,16 +15,8 @@ class DBDispute {
         if (count($dispute) !== 1) {
             throw new Exception("The dispute you are trying to view does not exist.");
         }
-        else {
-            $dispute = $dispute[0];
-            return array(
-                'dispute_id' => (int) $dispute['dispute_id'],
-                'title'      => $dispute['title'],
-                'party_a'    => (int) $dispute['party_a'],
-                'party_b'    => (int) $dispute['party_b'],
-                'status'     => $dispute['status']
-            );
-        }
+
+        return $dispute[0];
     }
 
     public function getPartyDetails($partyID) {
