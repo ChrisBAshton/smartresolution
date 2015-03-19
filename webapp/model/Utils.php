@@ -45,30 +45,26 @@ class Utils {
         }
     }
 
+    /**
+     * Gets organisations as an array.
+     * @param  Array  $params           Parameters:
+     *         String $params['type']   Organisation type ('law_firm' / 'mediation_centre')
+     *         Int    $params['except'] Integer ID of an account to remove from the results.
+     * @return Array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
+     */
     public static function getOrganisations($params) {
         $type   = Utils::getValue($params, 'type');
         $class  = $type === 'law_firm' ? 'LawFirm' : 'MediationCentre';
         $except = Utils::getValue($params, 'except', false);
 
         $organisations = array();
-
-        if ($except) {
-            $orgDetails = Database::instance()->exec(
-                'SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = :type AND organisations.login_id != :except ORDER BY name DESC',
-                array(
-                    ':type'   => $type,
-                    ':except' => $except
-                )
-            );
-        }
-        else {
-            $orgDetails = Database::instance()->exec(
-                'SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = :type ORDER BY name DESC',
-                array(
-                    ':type' => $type
-                )
-            );
-        }
+        $orgDetails = Database::instance()->exec(
+            'SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = :type AND organisations.login_id != :except ORDER BY name DESC',
+            array(
+                ':type'   => $type,
+                ':except' => $except
+            )
+        );
 
         foreach($orgDetails as $details) {
             $organisations[] = new $class($details);
