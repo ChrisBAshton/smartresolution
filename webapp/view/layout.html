@@ -80,7 +80,19 @@
 				<?php endif; ?>
 
 				<div class="container">
+
+					<?php if (Base::instance()->get('error_message')) : ?>
+						<p class="bg-padded bg-danger">
+							<?= Base::instance()->get('error_message'); ?>
+						</p>
+					<?php elseif (Base::instance()->get('success_message')) : ?>
+						<p class="bg-padded bg-success">
+							<?= Base::instance()->get('success_message'); ?>
+						</p>
+					<?php endif; ?>
+
 					<?php echo $this->render(Base::instance()->get('content')); ?>
+
 				</div>
 			</div>
 			<footer>

@@ -1,20 +1,10 @@
 <h1>Create Dispute</h1>
 
-<?php
-    if (Base::instance()->get('error_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-danger',
-            'details' => Base::instance()->get('error_message')
-        );
-    }
-    else {
-        $message = array(
-            'class'   => 'bg-padded bg-info',
-            'details' => 'Create a dispute by filling in the form.'
-        );
-    }
-?>
-<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+<?php if (noSystemMessages()) : ?>
+    <p class="bg-padded bg-info">
+        Create a dispute by filling in the form.
+    </p>
+<?php endif; ?>
 
 <form name="dispute" method="post">
     <div class="col-lg-12">

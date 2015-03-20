@@ -1,23 +1,13 @@
 <h1>Propose a Lifespan</h1>
 
-<?php
-    if (Base::instance()->get('error_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-danger',
-            'details' => Base::instance()->get('error_message')
-        );
-    }
-    else {
-        $message = array(
-            'class'   => 'bg-padded bg-info',
-            'details' => 'Propose a lifespan for the dispute.'
-        );
-    }
-?>
-<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+<?php if (noSystemMessages()) : ?>
+    <p class="bg-padded bg-info">
+        Propose a lifespan for the dispute.
+    </p>
+<?php endif; ?>
 
 <form name="dispute" method="post">
-    
+
     <div class="row">
        <div class='col-sm-4'>
             <label for="start_time">Dispute lifespan start date:</label>

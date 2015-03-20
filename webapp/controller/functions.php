@@ -1,5 +1,12 @@
 <?php
 
+function noSystemMessages() {
+    return (
+        !Base::instance()->get('success_message') &&
+        !Base::instance()->get('error_message')
+    );
+}
+
 function mustBeLoggedIn() {
     if (Session::loggedIn()) {
         global $f3;
@@ -53,9 +60,9 @@ function prettyTime($unixTimestamp) {
 /**
  * If we do time() minus a UNIX timestamp on file, we can work out the number of seconds the thing is
  * in the past or in the future. This function converts those seconds into a human-readable time.
- * 
+ *
  * Based on http://stackoverflow.com/a/19680778
- * 
+ *
  * @param  int $seconds Number of seconds calculated.
  * @return String       Formatted time.
  */

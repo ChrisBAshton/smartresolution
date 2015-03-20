@@ -1,27 +1,11 @@
 <div class="col-lg-12">
     <h1>Register a new <?php echo $account instanceof LawFirm ? 'Agent' : 'Mediator';  ?> account</h1>
 
-    <?php
-        if (Base::instance()->get('error_message')) {
-            $message = array(
-                'class'   => 'bg-padded bg-danger',
-                'details' => Base::instance()->get('error_message')
-            );
-        }
-        else if (Base::instance()->get('success_message')) {
-            $message = array(
-                'class'   => 'bg-padded bg-success',
-                'details' => Base::instance()->get('success_message')
-            );
-        }
-        else {
-            $message = array(
-                'class'   => 'bg-padded bg-info',
-                'details' => 'Here you can create a new individual account.'
-            );
-        }
-    ?>
-    <p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+    <?php if (noSystemMessages()) : ?>
+        <p class="bg-padded bg-info">
+            Here you can create a new individual account.
+        </p>
+    <?php endif; ?>
 </div>
 
 <form name="register" method="post">
@@ -37,7 +21,7 @@
     <div class="col-lg-6">
         <label for="surname" class="sr-only">Surname:</label>
         <input type="text" name="surname" id="surname" class="form-control" placeholder="Surname" />
-        
+
         <label for="surname" class="sr-only">Forename:</label>
         <input type="text" name="forename" id="forename" class="form-control" placeholder="First name" />
     </div>

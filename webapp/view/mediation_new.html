@@ -1,26 +1,10 @@
 <h1>Propose Mediation</h1>
 
-<?php
-    if (Base::instance()->get('error_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-danger',
-            'details' => Base::instance()->get('error_message')
-        );
-    }
-    else if (Base::instance()->get('success_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-success',
-            'details' => Base::instance()->get('success_message')
-        );
-    }
-    else {
-        $message = array(
-            'class'   => 'bg-padded bg-warning',
-            'details' => 'By putting the dispute into mediation, you will disable communication between you and the other Agent and the Mediator will attempt to help resolve the dispute.'
-        );
-    }
-?>
-<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+<?php if (noSystemMessages()) : ?>
+    <p class="bg-padded bg-warning">
+        By putting the dispute into mediation, you will disable communication between you and the other Agent and the Mediator will attempt to help resolve the dispute.
+    </p>
+<?php endif; ?>
 
 <form method="post">
 
