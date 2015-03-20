@@ -42,6 +42,12 @@ class DBL {
             )
         );
         $db->commit();
+
+        DBL::createNotification(array(
+            'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
+            'message'      => 'Mediation has been proposed.',
+            'url'          => $dispute->getUrl()
+        ));
     }
 
     public static function createEvidence($params) {

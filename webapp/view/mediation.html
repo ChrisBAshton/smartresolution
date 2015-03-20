@@ -14,35 +14,48 @@
         );
     }
     else {
+
+        if ($dispute->getMediationState()->mediationProposed()) {
+            $messageText = 'Mediation is underway.';
+        }
+        else {
+            $messageText = 'By putting the dispute into mediation, you will disable communication between you and the other Agent and the Mediator will attempt to help resolve the dispute.';
+        }
+
         $message = array(
             'class'   => 'bg-padded bg-warning',
-            'details' => 'By putting the dispute into mediation, you will disable communication between you and the other Agent and the Mediator will attempt to help resolve the dispute.'
+            'details' => $messageText
         );
     }
 ?>
 <p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
 
-<form method="post">
 
-    <div class="row">
-        <div class='col-sm-6'>
-            <p>
-                <label for="mediation_centre">Propose a Mediation Centre:</label>
-            </p>
-        </div>
-        <div class='col-sm-6'>
-            <select name="mediation_centre" id="mediation_centre" class="form-control">
-                <option value="---">---</option>
-                <?php
-                    foreach($mediationCentres as $mediationCentre) {
-                        echo '<option value="' . $mediationCentre->getLoginId() . '">' . $mediationCentre->getName() . '</option>';
-                    }
-                ?>
-            </select>
-        </div>
-    </div>
+<?php if (!$dispute->getMediationState()->mediationProposed()) : ?>
 
-    <div class="col-lg-12">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Make Mediation Proposal</button>
-    </div>
-</form>
+    <form method="post">
+
+        <div class="row">
+            <div class='col-sm-6'>
+                <p>
+                    <label for="mediation_centre">Propose a Mediation Centre:</label>
+                </p>
+            </div>
+            <div class='col-sm-6'>
+                <select name="mediation_centre" id="mediation_centre" class="form-control">
+                    <option value="---">---</option>
+                    <?php
+                        foreach($mediationCentres as $mediationCentre) {
+                            echo '<option value="' . $mediationCentre->getLoginId() . '">' . $mediationCentre->getName() . '</option>';
+                        }
+                    ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Make Mediation Proposal</button>
+        </div>
+    </form>
+
+<?php endif; ?>
