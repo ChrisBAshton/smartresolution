@@ -65,7 +65,7 @@ class DisputeStateCalculator {
 
         if ($state->canSendMessage()) {
             $actions[] = array(
-                'title' => 'Review Evidence',
+                'title' => 'Evidence',
                 'image' => '/view/images/file.png',
                 'href'  => $dispute->getUrl() .'/evidence',
             );
@@ -73,7 +73,7 @@ class DisputeStateCalculator {
 
         if ($state->canNegotiateLifespan()) {
             $actions[] = array(
-                'title' => 'Negotiate dispute lifespan',
+                'title' => 'Lifespan',
                 'image' => '/view/images/time.png',
                 'href'  => $dispute->getUrl() .'/lifespan',
             );
@@ -81,7 +81,7 @@ class DisputeStateCalculator {
 
         if ($state->canProposeMediation()) {
             $actions[] = array(
-                'title' => 'Propose mediation',
+                'title' => 'Mediation',
                 'image' => '/view/images/cloud.png',
                 'href'  => $dispute->getUrl() .'/mediation',
             );

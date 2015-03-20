@@ -1,0 +1,27 @@
+<h1>Mediation Proposal Underway</h1>
+
+<?php
+    if (Base::instance()->get('error_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-danger',
+            'details' => Base::instance()->get('error_message')
+        );
+    }
+    else if (Base::instance()->get('success_message')) {
+        $message = array(
+            'class'   => 'bg-padded bg-success',
+            'details' => Base::instance()->get('success_message')
+        );
+    }
+    else {
+        $message = array(
+            'class'   => 'bg-padded bg-warning',
+            'details' => 'Mediation is underway.'
+        );
+    }
+?>
+<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+
+<p>
+    Coming soon.
+</p>

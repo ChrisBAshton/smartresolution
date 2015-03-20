@@ -6,12 +6,21 @@ class MediationController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
-        $mediationCentres = Utils::getOrganisations(array(
-            'type'   => 'mediation_centre'
-        ));
+        if (!$dispute->getMediationState()->mediationProposed()) :
 
-        $f3->set('mediationCentres', $mediationCentres);
-        $f3->set('content', 'mediation.html');
+            $mediationCentres = Utils::getOrganisations(array(
+                'type'   => 'mediation_centre'
+            ));
+
+            $f3->set('mediationCentres', $mediationCentres);
+            $f3->set('content', 'mediation_new.html');
+
+        else:
+
+            $f3->set('content', 'mediation_proposed.html');
+
+        endif;
+
         echo View::instance()->render('layout.html');
     }
 

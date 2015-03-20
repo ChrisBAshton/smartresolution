@@ -88,7 +88,9 @@ CREATE TABLE IF NOT EXISTS mediation_offers (
     type               VARCHAR(40) NOT NULL,
     proposer           INTEGER NOT NULL,
     proposed_id        INTEGER NOT NULL,
+    status             VARCHAR(40) NOT NULL DEFAULT "offered",
     CHECK (type in ("mediation_centre", "mediator")),
+    CHECK (status in ("offered", "accepted", "declined")),
     FOREIGN KEY(proposer)    REFERENCES account_details(login_id),
     FOREIGN KEY(proposed_id) REFERENCES account_details(login_id)
 );
