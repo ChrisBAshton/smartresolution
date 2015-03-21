@@ -57,6 +57,8 @@ $routes = array(
     'GET  /disputes/@disputeID/mediation'        => 'MediationController->view',
     'POST /disputes/@disputeID/mediation'        => 'MediationController->createMediationOffer',
     'POST /disputes/@disputeID/mediation/respond'=> 'MediationController->respondToProposal',
+    'POST /disputes/@disputeID/mediation/choose-list' => 'MediationController->chooseListOfMediators',
+    'POST /disputes/@disputeID/mediation/choose-mediator' => 'MediationController->chooseMediatorFromList',
 
     // messaging
     'GET  /disputes/@disputeID/chat'    => 'MessageController->view',

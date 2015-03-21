@@ -63,7 +63,7 @@ class DisputeStateCalculator {
             );
         }
 
-        if ($state->canSendMessage()) {
+        if ($state->canViewDocuments()) {
             $actions[] = array(
                 'title' => 'Evidence',
                 'image' => '/view/images/file.png',

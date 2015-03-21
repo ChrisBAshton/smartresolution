@@ -8,6 +8,7 @@ interface DisputeStateInterface {
     public function canWriteSummary();
     public function canNegotiateLifespan();
     public function canSendMessage();
+    public function canViewDocuments();
     public function canUploadDocuments();
     public function canEditSummary();
     public function canProposeMediation();
