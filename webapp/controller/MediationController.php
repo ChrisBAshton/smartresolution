@@ -5,8 +5,9 @@ class MediationController {
     public function view ($f3, $params) {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
+        $mediationState = $dispute->getMediationState();
 
-        if (!$dispute->getMediationState()->mediationProposed()) :
+        if (!$mediationState->mediationProposed()) :
 
             $mediationCentres = Utils::getOrganisations(array(
                 'type'   => 'mediation_centre'
@@ -15,9 +16,27 @@ class MediationController {
             $f3->set('mediationCentres', $mediationCentres);
             $f3->set('content', 'mediation_new.html');
 
-        else:
+        elseif (!$mediationState->mediationCentreDecided()) :
 
+            $f3->set('proposed_mediation_party', $mediationState->getMediationCentre());
+            $f3->set('proposed_by',              $mediationState->getMediationCentreProposer());
             $f3->set('content', 'mediation_proposed.html');
+
+        elseif (!$mediationState->mediatorDecided()) :
+
+            // @TODO
+            if (true) {
+                errorPage('Waiting for Mediation Centre to choose Mediators.');
+            }
+            else {
+                $f3->set('proposed_mediation_party', $mediationState->getMediator());
+                $f3->set('proposed_by',              $mediationState->getMediatorProposer());
+                $f3->set('content', 'mediation_proposed.html');
+            }
+
+        else :
+
+            errorPage('@TODO - Mediation is fully underway!');
 
         endif;
 
@@ -50,6 +69,21 @@ class MediationController {
         }
 
         $this->view($f3, $params);
+    }
+
+    public function respondToProposal($f3, $params) {
+        $account    = mustBeLoggedInAsAn('Agent');
+        $dispute    = setDisputeFromParams($f3, $params);
+        $resolution = $f3->get('POST.resolution');
+
+        if ($resolution === 'accept') {
+            $dispute->getMediationState()->acceptLatestProposal();
+        }
+        else if ($resolution === 'decline') {
+            $dispute->getMediationState()->declineLatestProposal();
+        }
+
+        header('Location: ' . $dispute->getUrl() . '/mediation');
     }
 
 }

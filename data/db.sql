@@ -45,16 +45,12 @@ CREATE TABLE IF NOT EXISTS disputes (
     third_party               INTEGER, -- NULL until in Mediation
     lifespan_id               INTEGER, -- NULL until a Lifespan has been negotiated
     status                    VARCHAR(40) DEFAULT "ongoing",
-    mediation_centre_offer    INTEGER,
-    mediator_offer            INTEGER,
     round_table_communication BOOLEAN DEFAULT false,
     FOREIGN KEY(dispute_id)             REFERENCES disputes(dispute_id),
     CHECK (status in ("ongoing", "resolved", "failed")),
     FOREIGN KEY(party_a)                REFERENCES dispute_parties(party_id),
     FOREIGN KEY(party_b)                REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(third_party)            REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(mediation_centre_offer) REFERENCES mediation_offers(mediation_offer_id),
-    FOREIGN KEY(mediator_offer)         REFERENCES mediation_offers(mediation_offer_id)
+    FOREIGN KEY(third_party)            REFERENCES dispute_parties(party_id)
 );
 
 CREATE TABLE IF NOT EXISTS dispute_parties (
@@ -85,12 +81,14 @@ CREATE TABLE IF NOT EXISTS lifespans (
 
 CREATE TABLE IF NOT EXISTS mediation_offers (
     mediation_offer_id INTEGER PRIMARY KEY NOT NULL,
+    dispute_id         INTEGER NOT NULL,
     type               VARCHAR(40) NOT NULL,
     proposer           INTEGER NOT NULL,
     proposed_id        INTEGER NOT NULL,
     status             VARCHAR(40) NOT NULL DEFAULT "offered",
-    CHECK (type in ("mediation_centre", "mediator")),
+    CHECK (type   in ("mediation_centre", "mediator")),
     CHECK (status in ("offered", "accepted", "declined")),
+    FOREIGN KEY(dispute_id)  REFERENCES disputes(dispute_id),
     FOREIGN KEY(proposer)    REFERENCES account_details(login_id),
     FOREIGN KEY(proposed_id) REFERENCES account_details(login_id)
 );

@@ -5,48 +5,97 @@ class MediationState {
     private $mediationCentreOffer;
     private $mediatorOffer;
 
-    function __construct($data) {
-        // these default to 0 if key does not exist
-        $this->mediationCentreOffer = (int) $data['mediation_centre_offer'];
-        $this->mediatorOffer = (int) $data['mediator_offer'];
+    function __construct($disputeID) {
+        $this->setVariables($disputeID);
     }
 
-    public function mediationProposed() {
-        return $this->mediationCentreOffer !== 0;
+    private function setVariables($disputeID) {
+        $this->disputeID            = $disputeID;
+        $this->mediationCentreOffer = $this->getOfferOfType('mediation_centre');
+        $this->mediatorOffer        = $this->getOfferOfType('mediator');
     }
 
-    public function isInMediation() {
-        $mediatorOfferData = $this->getParty($this->mediatorOffer);
-        return ($mediatorOfferData && $mediatorOfferData['status'] === 'accepted');
-    }
-
-    public function getMediationCentre() {
-        if (!$this->mediationProposed()) {
-            return false;
-        }
-
-        $mediatorOfferData = $this->getParty($this->mediationCentreOffer);
-        if (!$mediatorOfferData) {
-            throw new Exception('Mediation was marked as "In Progress" but no Mediation Centre has been offered!');
-        }
-
-        return new MediationCentre((int) $mediatorOfferData['proposed_id']);
-    }
-
-    private function getParty($mediationOfferId) {
-
-        $mediatorOfferData = Database::instance()->exec(
-            'SELECT * FROM mediation_offers WHERE mediation_offer_id = :mediation_offer_id',
+    private function getOfferOfType($type) {
+        $offers = Database::instance()->exec(
+            'SELECT * FROM mediation_offers
+            WHERE type     = :type
+            AND dispute_id = :dispute_id
+            AND status    != "declined"
+            ORDER BY mediation_offer_id DESC',
             array(
-                ':mediation_offer_id' => $mediationOfferId
+                ':type'       => $type,
+                ':dispute_id' => $this->disputeID
             )
         );
 
-        if (count($mediatorOfferData) === 1) {
-            return $mediatorOfferData[0];
+        if (count($offers) !== 0) {
+            return $offers[0];
         }
 
         return false;
+    }
+
+    public function mediationProposed() {
+        return $this->mediationCentreOffer !== false;
+    }
+
+    public function mediationCentreDecided() {
+        return (
+            $this->mediationCentreOffer &&
+            $this->mediationCentreOffer['status'] === 'accepted'
+        );
+    }
+
+    public function mediatorDecided() {
+        return (
+            $this->mediatorOffer &&
+            $this->mediatorOffer['status'] === 'accepted'
+        );
+    }
+
+    public function getMediationCentre() {
+        return new MediationCentre((int) $this->mediationCentreOffer['proposed_id']);
+    }
+
+    public function getMediationCentreProposer() {
+        return new Agent((int) $this->mediationCentreOffer['proposer']);
+    }
+
+    public function getMediator() {
+        return new Mediator((int) $this->mediatorOffer['proposed_id']);
+    }
+
+    public function getMediatorProposer() {
+        return new Agent((int) $this->mediatorOffer['proposer']);
+    }
+
+    public function acceptLatestProposal() {
+        $this->respondToLatestProposal('accepted');
+    }
+
+    public function declineLatestProposal() {
+        $this->respondToLatestProposal('declined');
+    }
+
+    private function respondToLatestProposal($response) {
+        Database::instance()->exec(
+            'UPDATE mediation_offers SET status = :response WHERE mediation_offer_id = :offer_id',
+            array(
+                ':offer_id' => $this->getLatestProposalId(),
+                ':response' => $response
+            )
+        );
+        $this->setVariables($this->disputeID);
+    }
+
+    private function getLatestProposalId() {
+        if ($this->mediationCentreDecided()) {
+            $mediationOfferId = $this->mediatorOffer['mediation_offer_id'];
+        }
+        else {
+            $mediationOfferId = $this->mediationCentreOffer['mediation_offer_id'];
+        }
+        return (int) $mediationOfferId;
     }
 
 }

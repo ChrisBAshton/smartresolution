@@ -14,9 +14,9 @@ class Dispute {
         $this->status          = $data['status'];
         $this->partyA          = $this->db->getPartyDetails((int) $data['party_a']);
         $this->partyB          = $this->db->getPartyDetails((int) $data['party_b']);
-        $this->currentLifespan = LifespanFactory::getCurrentLifespan((int) $data['dispute_id']);
-        $this->latestLifespan  = LifespanFactory::getLatestLifespan((int) $data['dispute_id']);
-        $this->mediationState  = new MediationState($data);
+        $this->currentLifespan = LifespanFactory::getCurrentLifespan($this->disputeId);
+        $this->latestLifespan  = LifespanFactory::getLatestLifespan($this->disputeId);
+        $this->mediationState  = new MediationState($this->disputeId);
 
         if (!$this->partyA) {
             throw new Exception('A dispute must have at least one organisation associated with it!');

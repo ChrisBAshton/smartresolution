@@ -22,26 +22,16 @@ class DBL {
             throw new Exception('Missing key fields.');
         }
 
-        $db = Database::instance();
-        $db->begin();
-        $db->exec(
-            'INSERT INTO mediation_offers (type, proposer, proposed_id)
-            VALUES (:type, :proposer, :proposed_id)',
+        Database::instance()->exec(
+            'INSERT INTO mediation_offers (dispute_id, type, proposer, proposed_id)
+            VALUES (:dispute_id, :type, :proposer, :proposed_id)',
             array(
+                ':dispute_id'  => $dispute->getDisputeId(),
                 ':type'        => 'mediation_centre',
                 ':proposer'    => $proposedBy->getLoginId(),
                 ':proposed_id' => $mediationCentre->getLoginId()
             )
         );
-        $mediationOfferId = DBL::getLatestId('mediation_offers', 'mediation_offer_id');
-        $db->exec(
-            'UPDATE disputes SET mediation_centre_offer = :mediation_centre_offer WHERE dispute_id = :dispute_id',
-            array(
-                ':dispute_id'             => $dispute->getDisputeId(),
-                ':mediation_centre_offer' => $mediationOfferId
-            )
-        );
-        $db->commit();
 
         DBL::createNotification(array(
             'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
