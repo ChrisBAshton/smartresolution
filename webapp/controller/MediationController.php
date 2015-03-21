@@ -7,7 +7,7 @@ class MediationController {
         $dispute = setDisputeFromParams($f3, $params);
         $mediationState = $dispute->getMediationState();
 
-        if (!$mediationState->mediationProposed()) :
+        if (!$mediationState->mediationCentreProposed()) :
 
             $mediationCentres = Utils::getOrganisations(array(
                 'type'   => 'mediation_centre'
@@ -22,17 +22,15 @@ class MediationController {
             $f3->set('proposed_by',              $mediationState->getMediationCentreProposer());
             $f3->set('content', 'mediation_proposed.html');
 
+        elseif (!$mediationState->mediatorProposed()) :
+
+            errorPage('@TODO - offer form for proposing mediator');
+
         elseif (!$mediationState->mediatorDecided()) :
 
-            // @TODO
-            if (true) {
-                errorPage('Waiting for Mediation Centre to choose Mediators.');
-            }
-            else {
-                $f3->set('proposed_mediation_party', $mediationState->getMediator());
-                $f3->set('proposed_by',              $mediationState->getMediatorProposer());
-                $f3->set('content', 'mediation_proposed.html');
-            }
+            $f3->set('proposed_mediation_party', $mediationState->getMediator());
+            $f3->set('proposed_by',              $mediationState->getMediatorProposer());
+            $f3->set('content', 'mediation_proposed.html');
 
         else :
 

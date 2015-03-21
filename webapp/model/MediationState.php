@@ -35,8 +35,12 @@ class MediationState {
         return false;
     }
 
-    public function mediationProposed() {
+    public function mediationCentreProposed() {
         return $this->mediationCentreOffer !== false;
+    }
+
+    public function mediatorProposed() {
+        return $this->mediatorOffer !== false;
     }
 
     public function mediationCentreDecided() {
@@ -71,6 +75,7 @@ class MediationState {
 
     public function acceptLatestProposal() {
         $this->respondToLatestProposal('accepted');
+        $this->notifyAcceptedParty();
     }
 
     public function declineLatestProposal() {
@@ -96,6 +101,25 @@ class MediationState {
             $mediationOfferId = $this->mediationCentreOffer['mediation_offer_id'];
         }
         return (int) $mediationOfferId;
+    }
+
+    private function notifyAcceptedParty() {
+        if ($this->mediatorDecided()) {
+            $partyID = (int) $this->mediatorOffer['proposed_id'];
+            $message = 'You have been assigned as the Mediator of a dispute.';
+        }
+        else {
+            $partyID = (int) $this->mediationCentreOffer['proposed_id'];
+            $message = 'Your Mediation Centre has been selected to mediate a dispute.';
+        }
+
+        $dispute = new Dispute($this->disputeID);
+
+        DBL::createNotification(array(
+            'recipient_id' => $partyID,
+            'message'      => $message,
+            'url'          => $dispute->getUrl()
+        ));
     }
 
 }

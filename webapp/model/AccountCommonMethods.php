@@ -49,7 +49,6 @@ abstract class AccountCommonMethods {
             INNER JOIN dispute_parties
             ON disputes.party_a     = dispute_parties.party_id
             OR disputes.party_b     = dispute_parties.party_id
-            OR disputes.third_party = dispute_parties.party_id
 
             WHERE organisation_id = :login_id OR individual_id = :login_id
             ORDER BY party_id DESC',

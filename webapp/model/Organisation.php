@@ -45,4 +45,21 @@ class MediationCentre extends Organisation {
         return parent::getIndividuals('Mediator');
     }
 
+    public function getAllDisputes() {
+        $disputes = array();
+        $disputesDetails = Database::instance()->exec(
+            'SELECT  dispute_id  FROM mediation_offers
+            WHERE    status      = "accepted"
+            AND      proposed_id = :login_id
+            ORDER BY mediation_offer_id DESC',
+            array(
+                ':login_id' => $this->getLoginId()
+            )
+        );
+        foreach($disputesDetails as $dispute) {
+            $disputes[] = new Dispute($dispute['dispute_id']);
+        }
+        return $disputes;
+    }
+
 }

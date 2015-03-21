@@ -42,15 +42,12 @@ CREATE TABLE IF NOT EXISTS disputes (
     title                     VARCHAR(140) NOT NULL,
     party_a                   INTEGER NOT NULL,
     party_b                   INTEGER, -- NULL until Dispute has been assigned to Law Firm B
-    third_party               INTEGER, -- NULL until in Mediation
-    lifespan_id               INTEGER, -- NULL until a Lifespan has been negotiated
     status                    VARCHAR(40) DEFAULT "ongoing",
     round_table_communication BOOLEAN DEFAULT false,
     FOREIGN KEY(dispute_id)             REFERENCES disputes(dispute_id),
     CHECK (status in ("ongoing", "resolved", "failed")),
     FOREIGN KEY(party_a)                REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(party_b)                REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(third_party)            REFERENCES dispute_parties(party_id)
+    FOREIGN KEY(party_b)                REFERENCES dispute_parties(party_id)
 );
 
 CREATE TABLE IF NOT EXISTS dispute_parties (

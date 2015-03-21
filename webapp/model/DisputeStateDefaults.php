@@ -51,7 +51,9 @@ abstract class DisputeDefaults {
             $this->accountIs($this->dispute->getLawFirmA()) ||
             $this->accountIs($this->dispute->getLawFirmB()) ||
             $this->accountIs($this->dispute->getAgentA())   ||
-            $this->accountIs($this->dispute->getAgentB())
+            $this->accountIs($this->dispute->getAgentB())   ||
+            $this->accountIs($this->dispute->getMediationState()->getMediationCentre()) ||
+            $this->accountIs($this->dispute->getMediationState()->getMediator())
         );
     }
 

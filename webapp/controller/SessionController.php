@@ -38,6 +38,11 @@ class SessionController {
         elseif ($account instanceof MediationCentre) {
             $dashboardActions = array(
                 array(
+                    'href'  => '/disputes',
+                    'image' => '/view/images/disputes.png',
+                    'title' => 'View Disputes'
+                ),
+                array(
                     'href'  => '/register/individual',
                     'image' => '/view/images/security.png',
                     'title' => 'Register Mediator account'
@@ -65,6 +70,11 @@ class SessionController {
         }
         elseif ($account instanceof Mediator) {
             $dashboardActions = array(
+                array(
+                    'href'  => '/disputes',
+                    'image' => '/view/images/disputes.png',
+                    'title' => 'View Disputes'
+                ),
                 array(
                     'href'  => '/settings',
                     'image' => '/view/images/settings.png',
