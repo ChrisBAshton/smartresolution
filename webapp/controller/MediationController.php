@@ -81,37 +81,9 @@ class MediationController {
 
         else :
 
-            errorPage('@TODO - Mediation is fully underway!');
+            $f3->set('content', 'mediation_finalised.html');
 
         endif;
-    }
-
-    public function createMediationOffer ($f3, $params) {
-        $account           = mustBeLoggedIn();
-        $dispute           = setDisputeFromParams($f3, $params);
-        $mediationCentreId = $f3->get('POST.mediation_centre');
-
-        if (!$mediationCentreId || $mediationCentreId === '---') {
-            $f3->set('error_message', 'Please choose a Mediation Centre.');
-        }
-        else {
-            try {
-                $mediationCentre = new MediationCentre((int) $mediationCentreId);
-
-                DBL::createMediationOffer(array(
-                    'dispute'          => $dispute,
-                    'proposed_by'      => $account,
-                    'mediation_centre' => $mediationCentre
-                ));
-
-                $f3->set('success_message', "You have proposed " . $mediationCentre->getName() . " to mediate your dispute.");
-
-            } catch(Exception $e) {
-                $f3->set('error_message', $e->getMessage());
-            }
-        }
-
-        $this->view($f3, $params);
     }
 
     public function respondToProposal($f3, $params) {
@@ -141,6 +113,56 @@ class MediationController {
         DBMediation::saveListOfMediators($this->dispute->getDisputeId(), $availableMediators);
         $this->notifyAgentsOfUpdatedList();
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
+    }
+
+    public function createMediationOffer ($f3, $params) {
+        $account           = mustBeLoggedIn();
+        $dispute           = setDisputeFromParams($f3, $params);
+        $mediationCentreId = $f3->get('POST.mediation_centre');
+
+        if (!$mediationCentreId || $mediationCentreId === '---') {
+            $f3->set('error_message', 'Please choose a Mediation Centre.');
+        }
+        else {
+            try {
+                $mediationCentre = new MediationCentre((int) $mediationCentreId);
+
+                DBL::createMediationCentreOffer(array(
+                    'dispute'          => $dispute,
+                    'proposed_by'      => $account,
+                    'mediation_centre' => $mediationCentre
+                ));
+
+                $f3->set('success_message', "You have proposed " . $mediationCentre->getName() . " to mediate your dispute.");
+
+            } catch(Exception $e) {
+                $f3->set('error_message', $e->getMessage());
+            }
+        }
+
+        $this->view($f3, $params);
+    }
+
+    public function chooseMediatorFromList($f3, $params) {
+        $account    = mustBeLoggedIn();
+        $dispute    = setDisputeFromParams($f3, $params);
+        $mediatorId = $f3->get('POST.mediator');
+
+        if ($mediatorId) {
+            try {
+                $mediator = new Mediator((int) $mediatorId);
+
+                DBL::createMediatorOffer(array(
+                    'dispute'     => $dispute,
+                    'proposed_by' => $account,
+                    'mediator'    => $mediator
+                ));
+
+            } catch(Exception $e) {
+            }
+        }
+
+        header('Location: ' . $dispute->getUrl() . '/mediation');
     }
 
     private function notifyAgentsOfUpdatedList() {

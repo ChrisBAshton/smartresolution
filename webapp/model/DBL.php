@@ -13,7 +13,7 @@
  */
 class DBL {
 
-    public static function createMediationOffer($params) {
+    public static function createMediationCentreOffer($params) {
         $dispute         = $params['dispute'];
         $proposedBy      = $params['proposed_by'];
         $mediationCentre = $params['mediation_centre'];
@@ -36,6 +36,33 @@ class DBL {
         DBL::createNotification(array(
             'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
             'message'      => 'Mediation has been proposed.',
+            'url'          => $dispute->getUrl() . '/mediation'
+        ));
+    }
+
+    public static function createMediatorOffer($params) {
+        $dispute    = $params['dispute'];
+        $proposedBy = $params['proposed_by'];
+        $mediator   = $params['mediator'];
+
+        if (!$dispute || !$proposedBy || !$mediator) {
+            throw new Exception('Missing key fields.');
+        }
+
+        Database::instance()->exec(
+            'INSERT INTO mediation_offers (dispute_id, type, proposer, proposed_id)
+            VALUES (:dispute_id, :type, :proposer, :proposed_id)',
+            array(
+                ':dispute_id'  => $dispute->getDisputeId(),
+                ':type'        => 'mediator',
+                ':proposer'    => $proposedBy->getLoginId(),
+                ':proposed_id' => $mediator->getLoginId()
+            )
+        );
+
+        DBL::createNotification(array(
+            'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
+            'message'      => 'Mediator has been proposed.',
             'url'          => $dispute->getUrl() . '/mediation'
         ));
     }

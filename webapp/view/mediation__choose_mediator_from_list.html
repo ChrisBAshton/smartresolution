@@ -6,28 +6,31 @@
 
 <?php else: ?>
 
-    <div class="list">
-        <?php foreach($available_mediators as $mediator) : ?>
+    <form method="post" action="<?php echo $dispute->getUrl(); ?>/mediation/choose-mediator">
+        <div class="list">
+            <?php foreach($available_mediators as $mediator) : ?>
 
-            <div class="row list__item">
+                <div class="row list__item">
 
-                <div class="col-sm-12">
-                    <input type="radio" name="mediator" value="<?php echo $mediator->getLoginId(); ?>" id="<?php echo $mediator->getLoginId(); ?>" />
-                    <label for="<?php echo $mediator->getLoginId(); ?>">
-                        <?php echo $mediator->getName(); ?>
-                    </label>
+                    <div class="col-sm-12">
+                        <input type="radio" name="mediator" value="<?php echo $mediator->getLoginId(); ?>" id="<?php echo $mediator->getLoginId(); ?>" />
+                        <label for="<?php echo $mediator->getLoginId(); ?>">
+                            <?php echo $mediator->getName(); ?>
+                        </label>
 
-                    -
+                        -
 
-                    <a href="<?php echo $mediator->getUrl(); ?>">See profile and CV</a>
+                        <a href="<?php echo $mediator->getUrl(); ?>">See profile and CV</a>
+                    </div>
+
                 </div>
 
-            </div>
+            <?php endforeach; ?>
+        </div>
 
-        <?php endforeach; ?>
-    </div>
+        <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-lg btn-primary">Propose Mediator</button>
+        </div>
+    </form>
 
-    <div class="col-sm-12 text-center">
-        <button type="submit" class="btn btn-lg btn-primary">Propose Mediator</button>
-    </div>
 <?php endif; ?>

@@ -15,7 +15,7 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterfac
     }
 
     public function canProposeMediation() {
-        return $this->account instanceof Agent;
+        return $this->account instanceof Agent || $this->account instanceof MediationCentre;
     }
 
     public function canEditSummary() {

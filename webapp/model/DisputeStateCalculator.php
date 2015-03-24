@@ -27,7 +27,15 @@ class DisputeStateCalculator {
                 return new DisputeOpened($dispute, $account);
             }
             else {
-                return new LifespanNegotiated($dispute, $account);
+
+                $mediationState = $dispute->getMediationState();
+
+                if (!$mediationState->inMediation()) {
+                    return new LifespanNegotiated($dispute, $account);
+                }
+                else {
+                    return new InMediation($dispute, $account);
+                }
             }
         }
     }

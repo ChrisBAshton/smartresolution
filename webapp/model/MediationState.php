@@ -45,15 +45,21 @@ class MediationState {
 
     public function mediationCentreDecided() {
         return (
-            $this->mediationCentreOffer &&
+            $this->mediationCentreProposed() &&
             $this->mediationCentreOffer['status'] === 'accepted'
         );
     }
 
     public function mediatorDecided() {
         return (
-            $this->mediatorOffer &&
+            $this->mediatorProposed() &&
             $this->mediatorOffer['status'] === 'accepted'
+        );
+    }
+
+    public function inMediation() {
+        return (
+            $this->mediationCentreDecided() && $this->mediatorDecided()
         );
     }
 

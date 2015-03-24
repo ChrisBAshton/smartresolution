@@ -6,4 +6,8 @@ class InMediation extends DisputeDefaults implements DisputeStateInterface {
         return 'Dispute in mediation.';
     }
 
+    public function canProposeMediation() {
+        return $this->account instanceof Agent;
+    }
+
 }
