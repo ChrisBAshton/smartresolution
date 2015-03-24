@@ -64,7 +64,7 @@ class MediationController {
 
         elseif (!$this->mediationState->mediatorProposed()) :
 
-            // @TODO move this and MediationController->chooseListOfMediators stuff to a different class.
+            // @TODO move this and MediationController->chooseListOfMediators and Mediator->isAvailableForDispute stuff to a different class.
             $availableMediatorsDetails = Database::instance()->exec(
                 'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id',
                 array(
@@ -72,18 +72,13 @@ class MediationController {
                 )
             );
 
-            if (count($availableMediatorsDetails) === 0) {
-                errorPage('You are still waiting for ' . $this->mediationState->getMediationCentre()->getName() . ' to provide a list of mediators.');
+            $availableMediators = array();
+            foreach($availableMediatorsDetails as $details) {
+                $availableMediators[] = new Mediator((int) $details['mediator_id']);
             }
-            else {
-                $availableMediators = array();
-                foreach($availableMediatorsDetails as $details) {
-                    $availableMediators[] = new Mediator((int) $details['mediator_id']);
-                }
 
-                $f3->set('available_mediators', $availableMediators);
-                $f3->set('content', 'mediation__choose_mediator_from_list.html');
-            }
+            $f3->set('available_mediators', $availableMediators);
+            $f3->set('content', 'mediation__choose_mediator_from_list.html');
 
         elseif (!$this->mediationState->mediatorDecided()) :
 
@@ -148,13 +143,10 @@ class MediationController {
         $this->setUp($f3, $params);
         $availableMediators = $f3->get('POST.available_mediators');
         if (!$availableMediators) {
-            errorPage('You must mark at least one mediator as available!');
+            $availableMediators = array();
         }
-        else {
-            $this->saveListOfMediators($availableMediators);
-            $this->notifyAgentsOfUpdatedList();
-        }
-
+        $this->saveListOfMediators($availableMediators);
+        $this->notifyAgentsOfUpdatedList();
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }
 

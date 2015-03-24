@@ -61,10 +61,17 @@ abstract class AccountCommonMethods {
     }
 
     /**
+     * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
+     */
+    public function getUrl() {
+        return '/accounts/' . $this->getLoginId();
+    }
+
+    /**
      * @see AccountInterface::toString() Implements the corresponding function in AccountInterface.
      */
     public function __toString() {
-        return '<a href="">' . $this->getName() . '</a>';
+        return '<a href="' . $this->getUrl() . '">' . $this->getName() . '</a>';
     }
 
 }

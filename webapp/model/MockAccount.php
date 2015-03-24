@@ -19,6 +19,11 @@ class MockAccount implements AccountInterface {
     public function __toString() {
         return 'Mock Account';
     }
+
+    public function getUrl() {
+        return '';
+    }
+
     public function getAllDisputes() {
         return array();
     }

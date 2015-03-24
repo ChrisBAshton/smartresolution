@@ -1,17 +1,33 @@
-<div class="list">
-    <?php foreach($available_mediators as $mediator) : ?>
+<?php if (count($available_mediators) === 0) : ?>
 
-        <div class="row list__item">
+    <p>
+        You are waiting for the Mediation Centre to provide a list of available Mediators. You will be notified when this happens.
+    </p>
 
-            <div class="col-sm-4">
-                <?php echo $mediator; ?>
+<?php else: ?>
+
+    <div class="list">
+        <?php foreach($available_mediators as $mediator) : ?>
+
+            <div class="row list__item">
+
+                <div class="col-sm-12">
+                    <input type="radio" name="mediator" value="<?php echo $mediator->getLoginId(); ?>" id="<?php echo $mediator->getLoginId(); ?>" />
+                    <label for="<?php echo $mediator->getLoginId(); ?>">
+                        <?php echo $mediator->getName(); ?>
+                    </label>
+
+                    -
+
+                    <a href="<?php echo $mediator->getUrl(); ?>">See profile and CV</a>
+                </div>
+
             </div>
 
-            <div class="col-sm-8">
-                <button type="submit" class="btn btn-lg btn-success">Choose</button>
-            </div>
+        <?php endforeach; ?>
+    </div>
 
-        </div>
-
-    <?php endforeach; ?>
-</div>
+    <div class="col-sm-12 text-center">
+        <button type="submit" class="btn btn-lg btn-primary">Propose Mediator</button>
+    </div>
+<?php endif; ?>

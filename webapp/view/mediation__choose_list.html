@@ -12,7 +12,26 @@
         <?php foreach($mediators as $mediator) : ?>
 
             <div class="row list__item">
-                 <input name="available_mediators[]" value="<?php echo $mediator->getLoginId(); ?>" id="<?php echo $mediator->getLoginId(); ?>" type="checkbox" checked="checked" /> <label for="<?php echo $mediator->getLoginId(); ?>"><?php echo $mediator->getName(); ?></label>
+                <input
+                    name="available_mediators[]"
+                    value="<?php echo $mediator->getLoginId(); ?>"
+                    id="<?php echo $mediator->getLoginId(); ?>"
+                    type="checkbox"
+                    <?php if ($mediator->isAvailableForDispute($dispute->getDisputeId())) {
+                        echo 'checked="checked"';
+                    } ?>
+                />
+
+                <label for="<?php echo $mediator->getLoginId(); ?>"><?php echo $mediator->getName(); ?></label>
+
+                <?php if ($mediator->isAvailableForDispute($dispute->getDisputeId())) : ?>
+
+                    <em class="text-success">Available</em>
+                <?php else: ?>
+
+                    <em class="text-danger">Unavailable</em>
+
+                <?php endif; ?>
             </div>
 
         <?php endforeach; ?>

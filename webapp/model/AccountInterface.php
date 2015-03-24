@@ -39,6 +39,12 @@ interface AccountInterface {
     public function getAllDisputes();
 
     /**
+     * Gets the URL to the account's public profile.
+     * @return Url
+     */
+    public function getUrl();
+
+    /**
      * Account should be rendered as follows:
      *     <a href="/link/to/account/profile">Account Name</a>
      * @return String
