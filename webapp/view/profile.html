@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-sm-3">
+        Name:
+    </div>
+    <div class="col-sm-9">
+        <?php echo $viewAccount; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        Role:
+    </div>
+    <div class="col-sm-9">
+        <?php
+        switch($viewAccount) {
+            case $viewAccount instanceof Mediator:
+                echo 'Mediator';
+                break;
+            case $viewAccount instanceof MediationCentre:
+                echo 'Mediation Centre';
+                break;
+            case $viewAccount instanceof Agent:
+                echo 'Agent';
+                break;
+            case $viewAccount instanceof LawFirm:
+                echo 'Law Firm';
+                break;
+            default:
+                echo 'unknown';
+        }
+        ?>
+    </div>
+</div>
+
+<?php if ($viewAccount instanceof Individual) : ?>
+<div class="row">
+    <div class="col-sm-3">
+        Organisation:
+    </div>
+    <div class="col-sm-9">
+        <?php echo $viewAccount->getOrganisation(); ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <?php echo $viewAccount->getCV(); ?>
+    </div>
+</div>
+<?php else: ?>
+
+<div class="row">
+    <div class="col-sm-12">
+        <?php echo $viewAccount->getDescription(); ?>
+    </div>
+</div>
+
+<?php endif; ?>

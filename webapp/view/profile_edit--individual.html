@@ -1,0 +1,15 @@
+<h1>Edit Profile</h1>
+
+<p>
+    View your profile: <?php echo $account; ?>
+</p>
+
+<form method="post">
+
+    <label for="cv">CV</label>
+    <em>This can be written in markdown format and automatically converted to HTML.</em>
+    <textarea class="form-control" name="cv" id="cv"><?php echo $account->getRawCV(); ?></textarea>
+
+    <button class="btn btn-lg btn-primary" type="submit">Update Profile</button>
+
+</form>

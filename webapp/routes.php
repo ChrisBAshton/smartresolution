@@ -37,6 +37,10 @@ $routes = array(
     'GET  /register/individual' => 'RegisterController->individualGet',
     'POST /register/individual' => 'RegisterController->individualPost',
 
+    // accounts
+    'GET  /accounts/@accountID' => 'ProfileController->view',
+    'GET|POST  /settings'       => 'ProfileController->edit',
+
     // disputes
     'GET  /disputes/new'                         => 'DisputeController->newDisputeGet',
     'POST /disputes/new'                         => 'DisputeController->newDisputePost',
@@ -68,8 +72,6 @@ $routes = array(
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',
     'GET|POST /disputes/@disputeID/lifespan/new'  => 'LifespanController->newLifespan',
     'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
-
-    'GET  /settings'     => 'SettingsController->view',
 
     // notifications
     'GET /notifications' => 'notificationsList'

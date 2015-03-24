@@ -3,6 +3,10 @@
 class Individual extends AccountCommonMethods implements AccountInterface {
 
     function __construct($account) {
+        $this->setVariables($account);
+    }
+
+    public function setVariables($account) {
         if (is_int($account)) {
             $account = AccountDetails::getDetailsById($account);
         }
@@ -11,7 +15,38 @@ class Individual extends AccountCommonMethods implements AccountInterface {
         $this->email        = $account['email'];
         $this->forename     = $account['forename'];
         $this->surname      = $account['surname'];
+        $this->cv           = $account['cv'];
         $this->organisation = AccountDetails::getAccountById($account['organisation_id']);
+    }
+
+    public function getRawCV() {
+        return $this->cv;
+    }
+
+    public function getCV() {
+        if (strlen($this->cv) === 0) {
+            $cv = '_This individual has not provided a CV._';
+        }
+        else {
+            $cv = $this->cv;
+        }
+
+        return Markdown::instance()->convert($cv);
+    }
+
+    public function setCV($cv) {
+        $this->setProperty('cv', $cv);
+    }
+
+    private function setProperty($key, $value) {
+        Database::instance()->exec(
+            'UPDATE individuals SET ' . $key . ' = :value WHERE login_id = :uid',
+            array(
+                ':value' => $value,
+                ':uid'   => $this->getLoginId()
+            )
+        );
+        $this->setVariables($this->getLoginId());
     }
 
     public function getName() {
@@ -30,16 +65,7 @@ class Agent extends Individual {
 class Mediator extends Individual {
 
     public function isAvailableForDispute($disputeID) {
-
-        $available = Database::instance()->exec(
-            'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id AND mediator_id = :mediator_id LIMIT 1',
-            array(
-                ':dispute_id'  => $disputeID,
-                ':mediator_id' => $this->getLoginId()
-            )
-        );
-
-        return count($available) === 1;
+        return DBMediation::mediatorIsAvailableForDispute($this->getLoginId(), $disputeID);
     }
 
 }

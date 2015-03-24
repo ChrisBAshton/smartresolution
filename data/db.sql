@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS individuals (
     type            VARCHAR(30),
     surname         VARCHAR(140),
     forename        VARCHAR(140),
-    path_to_cv      VARCHAR(300),
+    cv              TEXT,
     -- etc
     CHECK (type in ("agent", "mediator")),
     FOREIGN KEY(login_id) REFERENCES account_details(login_id),

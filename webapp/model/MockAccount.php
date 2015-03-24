@@ -4,6 +4,9 @@ class MockAccount implements AccountInterface {
     public function __construct($account = NULL) {
 
     }
+    public function setVariables($account) {
+
+    }
     public function getLoginId() {
         return false;
     }

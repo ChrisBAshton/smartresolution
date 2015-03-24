@@ -4,9 +4,15 @@ interface AccountInterface {
 
     /**
      * Constructor should create a sub-classed Account object.
-     * @param Array $account Associative array corresponding to the account, taken from the database.
+     * @param Array|Int $account Associative array corresponding to the account, taken from the database. OR an integer corresponding to the login_id of the account.
      */
     public function __construct($account);
+
+    /**
+     * Called by constructor - repopulates the object properties from the database. Usually done after a refresh.
+     * @param Array|Int $account Associative array corresponding to the account, taken from the database. OR an integer corresponding to the login_id of the account.
+     */
+    public function setVariables($account);
 
     /**
      * Gets the login ID representing the account in the database.

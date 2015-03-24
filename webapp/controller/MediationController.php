@@ -5,6 +5,11 @@ class MediationController {
     private function setUp($f3, $params) {
         $this->account = mustBeLoggedIn();
         $this->dispute = setDisputeFromParams($f3, $params);
+
+        if (!$this->dispute->getState($this->account)->canProposeMediation()) {
+            errorPage('You do not have permission to view this page.');
+        }
+
         $this->mediationState = $this->dispute->getMediationState();
     }
 
@@ -64,19 +69,7 @@ class MediationController {
 
         elseif (!$this->mediationState->mediatorProposed()) :
 
-            // @TODO move this and MediationController->chooseListOfMediators and Mediator->isAvailableForDispute stuff to a different class.
-            $availableMediatorsDetails = Database::instance()->exec(
-                'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id',
-                array(
-                    ':dispute_id' => $this->dispute->getDisputeId()
-                )
-            );
-
-            $availableMediators = array();
-            foreach($availableMediatorsDetails as $details) {
-                $availableMediators[] = new Mediator((int) $details['mediator_id']);
-            }
-
+            $availableMediators = DBMediation::getAvailableMediators($this->dispute->getDisputeId());
             $f3->set('available_mediators', $availableMediators);
             $f3->set('content', 'mediation__choose_mediator_from_list.html');
 
@@ -145,30 +138,9 @@ class MediationController {
         if (!$availableMediators) {
             $availableMediators = array();
         }
-        $this->saveListOfMediators($availableMediators);
+        DBMediation::saveListOfMediators($this->dispute->getDisputeId(), $availableMediators);
         $this->notifyAgentsOfUpdatedList();
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
-    }
-
-    private function saveListOfMediators($availableMediators) {
-        $db = Database::instance();
-        $db->begin();
-        $db->exec(
-            'DELETE FROM mediators_available WHERE dispute_id = :dispute_id',
-            array(
-                ':dispute_id' => $this->dispute->getDisputeId()
-            )
-        );
-        foreach($availableMediators as $mediatorId) {
-            $db->exec(
-                'INSERT INTO mediators_available (mediator_id, dispute_id) VALUES (:mediator_id, :dispute_id)',
-                array(
-                    ':mediator_id' => (int) $mediatorId,
-                    ':dispute_id'  => $this->dispute->getDisputeId()
-                )
-            );
-        }
-        $db->commit();
     }
 
     private function notifyAgentsOfUpdatedList() {
