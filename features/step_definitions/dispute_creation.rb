@@ -27,10 +27,6 @@ When(/^I try to view a Dispute that does not exist$/) do
   visit '/disputes/1337'
 end
 
-Then(/^I should see the following message: '(.+)'$/) do |message|
-  assert page.has_content?(message)
-end
-
 Given(/^I have submitted a Dispute$/) do
   login_as_agent
 end

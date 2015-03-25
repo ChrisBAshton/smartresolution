@@ -20,3 +20,7 @@ def get_dispute_which_has_existing_lifespan
     return count.to_s if dispute['lifespan'] == 'accepted'
   end
 end
+
+def assert_dispute_active
+  assert page.has_content? /Dispute has started and ends in 3 hours, ([0-9]+) minutes/
+end

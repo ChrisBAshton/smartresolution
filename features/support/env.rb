@@ -31,7 +31,7 @@ def clear_database
 end
 
 def use_test_database
-  # send insutrctions to use the test database for any subsequent HTTP requests
+  # send instructions to use the test database for any subsequent HTTP requests
   page.driver.headers = { "User-Agent" => "Poltergeist" }
 end
 

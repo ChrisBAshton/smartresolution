@@ -1,4 +1,13 @@
 And(/^the Dispute is not in Mediation$/) do
+  visit '/disputes/' + get_id_of_active_dispute.to_s
+  assert ( ! (page.has_content? 'In Mediation') )
+end
+
+Then(/^I should be able to start the Mediation process$/) do
+  visit '/disputes/' + get_id_of_active_dispute.to_s
+  expect have_css("a[href='/disputess/" + get_id_of_active_dispute.to_s + "/mediation']")
+  # sanity check
+  expect ! have_css("a[href='/neoiwgniowengo']")
 end
 
 Then(/^I (should|should NOT) be able to send a message via the Dispute$/) do |should_or_should_not|
@@ -24,11 +33,6 @@ end
 
 Then(/^the Dispute should close (successfully|unsuccessfully)$/) do |successful|
   assert page.has_content? 'You have successfully closed the dispute.'
-end
-
-Given(/^I am logged into an Agent account that is not associated with the Dispute$/) do
-  clear_session_before_login
-  login_with_credentials 'one_dispute_agent@company.com', 'test'
 end
 
 Then(/^I should be able to upload evidence to the Dispute$/) do
