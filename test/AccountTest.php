@@ -48,6 +48,17 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $account = AccountDetails::getAccountByEmail('law_firm_a@t.co');
         $this->assertTrue(is_array($account->getIndividuals('Agent')));
         $this->assertEquals('Chris Ashton', $account->getIndividuals('Agent')[0]->getName());
+
+        $account = AccountDetails::getAccountByEmail('law_firm_b@t.co');
+        $this->assertEquals('#Description coming soon', $account->getRawDescription());
+        $this->assertEquals('<h1 id="description-coming-soon">Description coming soon</h1>', trim($account->getDescription()));
+    }
+
+    public function testSetDescription() {
+        $account = AccountDetails::getAccountByEmail('law_firm_a@t.co');
+        $this->assertEquals(false, $account->getRawDescription());
+        $account->setDescription('TEST');
+        $this->assertEquals('TEST', $account->getRawDescription());
     }
 
 }

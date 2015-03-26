@@ -24,8 +24,9 @@ organisations:
         email:    law_firm_b@t.co
         password: test
     details:
-        type:     law_firm
-        name:     Maritime Collision Specialists Inc
+        type:        law_firm
+        name:        Maritime Collision Specialists Inc
+        description: "#Description coming soon"
     individuals:
       - account_details:
             email:    agent_b@t.co

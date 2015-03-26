@@ -267,6 +267,8 @@ class DBL {
             ':description' => $description
         ));
         Database::instance()->commit();
+
+        return ($type === 'law_firm') ? new LawFirm($login_id) : new MediationCentre($login_id);
     }
 
     public static function createIndividual($individualObject) {

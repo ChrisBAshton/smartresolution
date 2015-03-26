@@ -12,21 +12,23 @@ $yaml = new Parser();
 $data = $yaml->parse(file_get_contents(__DIR__ . '/fixture_data.yml'));
 
 foreach($data['organisations'] as $org) {
-    DBL::createOrganisation(array(
+    $organisation = DBL::createOrganisation(array(
         'email'    => $org['account_details']['email'],
         'password' => $org['account_details']['password'],
         'type'     => $org['details']['type'],
         'name'     => $org['details']['name']
     ));
 
-    $organisationId = AccountDetails::emailToId($org['account_details']['email']);
+    if (isset($org['details']['description'])) {
+        $organisation->setDescription($org['details']['description']);
+    }
 
     if (isset($org['individuals'])) {
         foreach($org['individuals'] as $individual) {
             $account = DBL::createIndividual(array(
                 'email'           => $individual['account_details']['email'],
                 'password'        => $individual['account_details']['password'],
-                'organisation_id' => $organisationId,
+                'organisation_id' => $organisation->getLoginId(),
                 'type'            => $individual['details']['type'],
                 'forename'        => $individual['details']['forename'],
                 'surname'         => $individual['details']['surname']
