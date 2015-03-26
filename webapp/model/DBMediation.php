@@ -2,6 +2,34 @@
 
 class DBMediation {
 
+    public static function getMediationCentreOfferForDispute($disputeID) {
+        return DBMediation::getOfferOfType('mediation_centre', $disputeID);
+    }
+
+    public static function getMediatorOfferForDispute($disputeID) {
+        return DBMediation::getOfferOfType('mediator', $disputeID);
+    }
+
+    public static function getOfferOfType($type, $disputeID) {
+        $offers = Database::instance()->exec(
+            'SELECT * FROM mediation_offers
+            WHERE type     = :type
+            AND dispute_id = :dispute_id
+            AND status    != "declined"
+            ORDER BY mediation_offer_id DESC',
+            array(
+                ':type'       => $type,
+                ':dispute_id' => $disputeID
+            )
+        );
+
+        if (count($offers) !== 0) {
+            return $offers[0];
+        }
+
+        return false;
+    }
+
     public static function saveListOfMediators($disputeID, $availableMediators) {
         $db = Database::instance();
         $db->begin();

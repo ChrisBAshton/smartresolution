@@ -11,28 +11,8 @@ class MediationState {
 
     private function setVariables($disputeID) {
         $this->disputeID            = $disputeID;
-        $this->mediationCentreOffer = $this->getOfferOfType('mediation_centre');
-        $this->mediatorOffer        = $this->getOfferOfType('mediator');
-    }
-
-    private function getOfferOfType($type) {
-        $offers = Database::instance()->exec(
-            'SELECT * FROM mediation_offers
-            WHERE type     = :type
-            AND dispute_id = :dispute_id
-            AND status    != "declined"
-            ORDER BY mediation_offer_id DESC',
-            array(
-                ':type'       => $type,
-                ':dispute_id' => $this->disputeID
-            )
-        );
-
-        if (count($offers) !== 0) {
-            return $offers[0];
-        }
-
-        return false;
+        $this->mediationCentreOffer = DBMediation::getMediationCentreOfferForDispute($disputeID);
+        $this->mediatorOffer        = DBMediation::getMediatorOfferForDispute($disputeID);
     }
 
     public function mediationCentreProposed() {
