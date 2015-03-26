@@ -170,6 +170,13 @@ class Dispute {
             }
         }
 
+        if ($this->getMediationState()->inMediation()) {
+            return (
+                $this->getMediationState()->getMediator()->getLoginId()        === $loginID ||
+                $this->getMediationState()->getMediationCentre()->getLoginId() === $loginID
+            );
+        }
+
         return false;
     }
 

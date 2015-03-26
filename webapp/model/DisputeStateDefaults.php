@@ -39,7 +39,7 @@ abstract class DisputeDefaults {
     }
 
     public function canEditSummary() {
-        return true;
+        return $this->account instanceof Agent || $this->account instanceof LawFirm;
     }
 
     public function canProposeMediation() {
@@ -47,7 +47,7 @@ abstract class DisputeDefaults {
     }
 
     public function canCloseDispute() {
-        return true;
+        return $this->account instanceof Agent || $this->account instanceof LawFirm;
     }
 
     private function accountIsLinkedToDispute() {
