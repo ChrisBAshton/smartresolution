@@ -1,6 +1,6 @@
 <?php
 
-class MockAccount implements AccountInterface {
+class AccountMock implements AccountInterface {
     public function __construct($account = NULL) {
 
     }

@@ -285,6 +285,8 @@ class DBL {
             ':surname'         => $surname
         ));
         Database::instance()->commit();
+
+        return ($type === 'agent') ? new Agent($login_id) : new Mediator($login_id);
     }
 
     /**

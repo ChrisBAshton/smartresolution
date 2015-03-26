@@ -31,6 +31,17 @@ class AccountTest extends PHPUnit_Framework_TestCase
     public function testIndividualGetters() {
         $account = AccountDetails::getAccountByEmail('agent_a@t.co');
         $this->assertEquals('Webdapper Ltd', $account->getOrganisation()->getName());
+
+        $account = AccountDetails::getAccountByEmail('john.smith@we-mediate.co.uk');
+        $this->assertEquals('#CV coming soon.', $account->getRawCV());
+        $this->assertEquals('<h1 id="cv-coming-soon">CV coming soon.</h1>', trim($account->getCV()));
+    }
+
+    public function testSetCV() {
+        $account = AccountDetails::getAccountByEmail('agent_a@t.co');
+        $this->assertEquals(false, $account->getRawCV());
+        $account->setCV('TEST');
+        $this->assertEquals('TEST', $account->getRawCV());
     }
 
     public function testOrganisationGetters() {

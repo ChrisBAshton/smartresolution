@@ -23,7 +23,7 @@ foreach($data['organisations'] as $org) {
 
     if (isset($org['individuals'])) {
         foreach($org['individuals'] as $individual) {
-            DBL::createIndividual(array(
+            $account = DBL::createIndividual(array(
                 'email'           => $individual['account_details']['email'],
                 'password'        => $individual['account_details']['password'],
                 'organisation_id' => $organisationId,
@@ -31,6 +31,9 @@ foreach($data['organisations'] as $org) {
                 'forename'        => $individual['details']['forename'],
                 'surname'         => $individual['details']['surname']
             ));
+            if (isset($individual['details']['cv'])) {
+                $account->setCV($individual['details']['cv']);
+            }
         }
     }
 }

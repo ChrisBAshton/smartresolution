@@ -219,7 +219,7 @@ class Dispute {
 
         foreach($mockIfNecessary as $key => $object) {
             if (!$mockIfNecessary[$key]) {
-                $mockIfNecessary[$key] = new MockAccount();
+                $mockIfNecessary[$key] = new AccountMock();
             }
         }
     }
