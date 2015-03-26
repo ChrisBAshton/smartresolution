@@ -37,6 +37,15 @@ class DisputeStateTest extends PHPUnit_Framework_TestCase
     public function testLifespanNegotiated() {
         $dispute = Utils::getDisputeByTitle('Smith versus Jones');
         $this->assertTrue($this->extractState($dispute) instanceof LifespanNegotiated);
+
+        // until mediation is finalised, dispute should not be "in mediation"
+        $dispute = Utils::getDisputeByTitle('Dispute that has agreed on a Mediation Centre');
+        $this->assertTrue($this->extractState($dispute) instanceof LifespanNegotiated);
+    }
+
+    public function testDisputeInMediation() {
+        $dispute = Utils::getDisputeByTitle('Dispute that is in mediation');
+        $this->assertTrue($this->extractState($dispute) instanceof InMediation);
     }
 
     public function testDisputeClosed() {

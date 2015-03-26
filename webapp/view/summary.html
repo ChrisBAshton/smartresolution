@@ -1,26 +1,10 @@
-<h1>Create Dispute</h1>
+<h1>Dispute summary</h1>
 
-<?php
-    if (Base::instance()->get('error_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-danger',
-            'details' => Base::instance()->get('error_message')
-        );
-    }
-    elseif (Base::instance()->get('success_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-success',
-            'details' => Base::instance()->get('success_message')
-        );
-    }
-    else {
-        $message = array(
-            'class'   => 'bg-padded bg-info',
-            'details' => 'You can edit your Dispute Summary here.'
-        );
-    }
-?>
-<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+<?php if (noSystemMessages()) : ?>
+    <p class="bg-padded bg-info">
+        You can edit your Dispute Summary here.
+    </p>
+<?php endif; ?>
 
 <form name="summary" method="post">
 

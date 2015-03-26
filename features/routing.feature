@@ -25,8 +25,9 @@ Feature: Routing
   Scenario Outline: Accessing Individual-only pages
     Given I am logged into an Organisation account
     When I try to visit '<individual_only_page>'
-    Then I should see the message 'You do not have permission to see this page. You must be logged into an Agent account.'
+    Then I should see the message 'You do not have permission to see this page. You must be logged into an'
 
     Examples:
       | individual_only_page   |
-      | disputes/8/chat        |
+      | /disputes/8/chat       |
+      | /disputes/8/close      |

@@ -6,6 +6,10 @@ class EvidenceController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
+        if (!$dispute->getState()->canViewDocuments()) {
+            errorPage('You are not allowed to view these documents.');
+        }
+
         $evidences = array();
         $evidenceDetails = Database::instance()->exec(
             'SELECT evidence_id FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',

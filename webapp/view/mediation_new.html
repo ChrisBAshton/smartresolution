@@ -1,0 +1,32 @@
+<h1>Propose Mediation</h1>
+
+<?php if (noSystemMessages()) : ?>
+    <p class="bg-padded bg-warning">
+        By putting the dispute into mediation, you will disable communication between you and the other Agent and the Mediator will attempt to help resolve the dispute.
+    </p>
+<?php endif; ?>
+
+<form method="post">
+
+    <div class="row">
+        <div class='col-sm-6'>
+            <p>
+                <label for="mediation_centre">Propose a Mediation Centre:</label>
+            </p>
+        </div>
+        <div class='col-sm-6'>
+            <select name="mediation_centre" id="mediation_centre" class="form-control">
+                <option value="---">---</option>
+                <?php
+                    foreach($mediationCentres as $mediationCentre) {
+                        echo '<option value="' . $mediationCentre->getLoginId() . '">' . $mediationCentre->getName() . '</option>';
+                    }
+                ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Make Mediation Proposal</button>
+    </div>
+</form>

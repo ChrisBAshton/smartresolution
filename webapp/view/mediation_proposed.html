@@ -1,0 +1,40 @@
+<?php
+$mediationParty = Base::instance()->get('proposed_mediation_party');
+$proposedBy     = Base::instance()->get('proposed_by');
+$otherAgentId   = $dispute->getOpposingPartyId($proposedBy->getLoginId());
+?>
+
+<h1>Mediation Proposal</h1>
+
+<?php if ($account->getLoginId() === $proposedBy->getLoginId()) : ?>
+
+    <p>
+        You have proposed to use <?php echo $mediationParty; ?> as the <?php echo $mediationParty->getRole(); ?> for this dispute.
+    </p>
+
+<?php elseif ($account->getLoginId() === $otherAgentId): ?>
+
+    <form method="post" action="<?php echo $dispute->getUrl(); ?>/mediation/respond">
+
+        <p>
+            The other agent has proposed that <?php echo $mediationParty; ?> should be the <?php echo $mediationParty->getRole(); ?> in this dispute.
+        </p>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <button class="btn btn-lg btn-success btn-block" type="submit" name="resolution" value="accept">Accept</button>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-lg btn-danger btn-block" type="submit" name="resolution" value="decline">Decline</button>
+            </div>
+        </div>
+
+    </form>
+
+<?php else: ?>
+
+    <p>
+        Something went wrong.
+    </p>
+
+<?php endif; ?>

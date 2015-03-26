@@ -13,6 +13,41 @@
  */
 class DBL {
 
+    public static function createMediationCentreOffer($params) {
+        DBL::createMediationEntityOffer($params, 'mediation_centre');
+    }
+
+    public static function createMediatorOffer($params) {
+        DBL::createMediationEntityOffer($params, 'mediator');
+    }
+
+    public static function createMediationEntityOffer($params, $type) {
+        $dispute         = $params['dispute'];
+        $proposedBy      = $params['proposed_by'];
+        $mediationEntity = $params[$type];
+
+        if (!$dispute || !$proposedBy || !$mediationEntity) {
+            throw new Exception('Missing key fields.');
+        }
+
+        Database::instance()->exec(
+            'INSERT INTO mediation_offers (dispute_id, type, proposer, proposed_id)
+            VALUES (:dispute_id, :type, :proposer, :proposed_id)',
+            array(
+                ':dispute_id'  => $dispute->getDisputeId(),
+                ':type'        => $type,
+                ':proposer'    => $proposedBy->getLoginId(),
+                ':proposed_id' => $mediationEntity->getLoginId()
+            )
+        );
+
+        DBL::createNotification(array(
+            'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
+            'message'      => 'Mediation has been proposed.',
+            'url'          => $dispute->getUrl() . '/mediation'
+        ));
+    }
+
     public static function createEvidence($params) {
         $disputeID  = $params['dispute']->getDisputeId();
         $uploaderID = $params['uploader']->getLoginId();
@@ -213,6 +248,8 @@ class DBL {
             ':description' => $description
         ));
         Database::instance()->commit();
+
+        return ($type === 'law_firm') ? new LawFirm($login_id) : new MediationCentre($login_id);
     }
 
     public static function createIndividual($individualObject) {
@@ -231,6 +268,8 @@ class DBL {
             ':surname'         => $surname
         ));
         Database::instance()->commit();
+
+        return ($type === 'agent') ? new Agent($login_id) : new Mediator($login_id);
     }
 
     /**

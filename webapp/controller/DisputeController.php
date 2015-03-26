@@ -114,13 +114,10 @@ class DisputeController {
             errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
         }
 
-        $lawFirms = array();
-        $lawFirmsDetails = Database::instance()->exec('SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = "law_firm" AND organisations.login_id != :law_firm_a ORDER BY name DESC',
-            array(':law_firm_a' => $f3->get('dispute')->getLawFirmA()->getLoginId()));
-
-        foreach($lawFirmsDetails as $details) {
-            $lawFirms[] = new LawFirm($details);
-        }
+        $lawFirms = Utils::getOrganisations(array(
+            'type'   => 'law_firm',
+            'except' => $f3->get('dispute')->getLawFirmA()->getLoginId()
+        ));
 
         $f3->set('lawFirms', $lawFirms);
         $f3->set('content', 'dispute_open.html');

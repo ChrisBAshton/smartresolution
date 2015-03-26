@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-sm-3">
+        Name:
+    </div>
+    <div class="col-sm-9">
+        <?php echo $viewAccount; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        Role:
+    </div>
+    <div class="col-sm-9">
+        <?php echo $viewAccount->getRole(); ?>
+    </div>
+</div>
+
+<?php if ($viewAccount instanceof Individual) : ?>
+<div class="row">
+    <div class="col-sm-3">
+        Organisation:
+    </div>
+    <div class="col-sm-9">
+        <?php echo $viewAccount->getOrganisation(); ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <?php echo $viewAccount->getCV(); ?>
+    </div>
+</div>
+<?php else: ?>
+
+<div class="row">
+    <div class="col-sm-12">
+        <?php echo $viewAccount->getDescription(); ?>
+    </div>
+</div>
+
+<?php endif; ?>

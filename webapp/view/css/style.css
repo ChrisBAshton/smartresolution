@@ -73,13 +73,6 @@ footer {
     margin: 15px auto 20px;
 }
 
-.lifespan_status {
-    position: absolute;
-    top: 15px;
-    right: 0;
-    z-index: 9;
-}
-
 .message {
     border: 1px solid grey;
     margin: 1em 0;
@@ -137,4 +130,13 @@ footer {
 /* @TODO - put environment in body class */
 .env--test .stats {
     display: block;
+}
+
+@media only screen and (min-width: 1000px) {
+    .lifespan_status {
+        position: absolute;
+        top: 15px;
+        right: 0;
+        z-index: 9;
+    }
 }

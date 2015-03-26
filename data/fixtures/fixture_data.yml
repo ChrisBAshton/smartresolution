@@ -24,8 +24,9 @@ organisations:
         email:    law_firm_b@t.co
         password: test
     details:
-        type:     law_firm
-        name:     Maritime Collision Specialists Inc
+        type:        law_firm
+        name:        Maritime Collision Specialists Inc
+        description: "#Description coming soon"
     individuals:
       - account_details:
             email:    agent_b@t.co
@@ -68,6 +69,7 @@ organisations:
             type:     mediator
             forename: John
             surname:  Smith
+            cv:       "#CV coming soon."
 disputes:
   - title:      A simple test dispute
     type:       other
@@ -117,6 +119,25 @@ disputes:
     summary_a:  Here is a summary for party A.
     summary_b:  Here is a summary for party B.
     lifespan:   ended
+  - title:            Dispute that has agreed on a Mediation Centre
+    type:             other
+    law_firm_a:       law_firm_a@t.co
+    law_firm_b:       law_firm_b@t.co
+    agent_a:          agent_a@t.co
+    agent_b:          agent_b@t.co
+    lifespan:         accepted
+    evidence:         one_item
+    mediation_centre: mediation_centre_email@we-mediate.co.uk
+  - title:            Dispute that is in mediation
+    type:             other
+    law_firm_a:       law_firm_a@t.co
+    law_firm_b:       law_firm_b@t.co
+    agent_a:          agent_a@t.co
+    agent_b:          agent_b@t.co
+    lifespan:         accepted
+    evidence:         one_item
+    mediation_centre: mediation_centre_email@we-mediate.co.uk
+    mediator:         john.smith@we-mediate.co.uk
   - title:      Smith versus Jones
     type:       other
     law_firm_a: law_firm_a@t.co

@@ -49,7 +49,6 @@ abstract class AccountCommonMethods {
             INNER JOIN dispute_parties
             ON disputes.party_a     = dispute_parties.party_id
             OR disputes.party_b     = dispute_parties.party_id
-            OR disputes.third_party = dispute_parties.party_id
 
             WHERE organisation_id = :login_id OR individual_id = :login_id
             ORDER BY party_id DESC',
@@ -62,10 +61,24 @@ abstract class AccountCommonMethods {
     }
 
     /**
+     * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
+     */
+    public function getUrl() {
+        return '/accounts/' . $this->getLoginId();
+    }
+
+    /**
+     * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
+     */
+    public function getRole() {
+        throw new Exception('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
+    }
+
+    /**
      * @see AccountInterface::toString() Implements the corresponding function in AccountInterface.
      */
     public function __toString() {
-        return '<a href="">' . $this->getName() . '</a>';
+        return '<a href="' . $this->getUrl() . '">' . $this->getName() . '</a>';
     }
 
 }

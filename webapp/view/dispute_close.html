@@ -1,33 +1,21 @@
 <h1>Create Dispute</h1>
 
 <?php
-    if (Base::instance()->get('error_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-danger',
-            'details' => Base::instance()->get('error_message')
-        );
-    }
-    elseif (Base::instance()->get('success_message')) {
-        $message = array(
-            'class'   => 'bg-padded bg-success',
-            'details' => Base::instance()->get('success_message')
-        );
-    }
-    else {
-        if ($dispute->getState()->canCloseDispute()) {
+    if (noSystemMessages()) :
+        if ($dispute->getState()->canCloseDispute()) :
             $message = array(
                 'class'   => 'bg-padded bg-warning',
                 'details' => "By closing the dispute, you're indicating one of two things. Either the dispute was resolved successfully, or you're taking the dispute to court. Once you close a dispute, you cannot reopen it."
             );
-        } else {
+        else:
             $message = array(
                 'class'   => 'bg-padded bg-warning',
                 'details' => "You have already closed this dispute."
             );
-        }
-    }
+        endif;
 ?>
-<p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+    <p class="<?= $message['class']; ?>"><?= $message['details']; ?></p>
+<?php endif; ?>
 
 <?php if ($dispute->getState()->canCloseDispute()) : ?>
 <form name="close_dispute" method="post">

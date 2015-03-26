@@ -30,12 +30,16 @@ abstract class DisputeDefaults {
         return false;
     }
 
+    public function canViewDocuments() {
+        return false;
+    }
+
     public function canUploadDocuments() {
-        return true;
+        return false;
     }
 
     public function canEditSummary() {
-        return true;
+        return $this->account instanceof Agent || $this->account instanceof LawFirm;
     }
 
     public function canProposeMediation() {
@@ -43,7 +47,7 @@ abstract class DisputeDefaults {
     }
 
     public function canCloseDispute() {
-        return true;
+        return $this->account instanceof Agent || $this->account instanceof LawFirm;
     }
 
     private function accountIsLinkedToDispute() {
@@ -51,7 +55,9 @@ abstract class DisputeDefaults {
             $this->accountIs($this->dispute->getLawFirmA()) ||
             $this->accountIs($this->dispute->getLawFirmB()) ||
             $this->accountIs($this->dispute->getAgentA())   ||
-            $this->accountIs($this->dispute->getAgentB())
+            $this->accountIs($this->dispute->getAgentB())   ||
+            $this->accountIs($this->dispute->getMediationState()->getMediationCentre()) ||
+            $this->accountIs($this->dispute->getMediationState()->getMediator())
         );
     }
 

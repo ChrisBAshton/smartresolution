@@ -14,8 +14,4 @@ class DisputeAssignedToLawFirmB extends DisputeDefaults implements DisputeStateI
         return false;
     }
 
-    public function canUploadDocuments() {
-        return false;
-    }
-
 }

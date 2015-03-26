@@ -1,12 +1,25 @@
 And(/^the Dispute is not in Mediation$/) do
+  $dispute_id = DBL.dispute_title_to_id 'Smith versus Jones'
+  visit '/disputes/' + $dispute_id
+  assert ( ! (page.has_content? 'In Mediation') )
+end
+
+Then(/^I should be able to start the Mediation process$/) do
+  visit '/disputes/' + $dispute_id
+  assert page.has_css?("a[href='/disputes/" + $dispute_id + "/mediation']")
+  # sanity check
+  assert ! page.has_css?("a[href='/neoiwgniowengo']")
 end
 
 Then(/^I (should|should NOT) be able to send a message via the Dispute$/) do |should_or_should_not|
-  visit '/disputes/' + get_id_of_active_dispute.to_s + '/chat'
+  visit '/disputes/' + $dispute_id + '/chat'
   if should_or_should_not == 'should NOT'
-    assert_cannot_send_message
+    assert page.has_content? 'You do not have permission to view this Dispute!'
   else
-    assert_can_send_message
+    fill_in 'New Message', :with => 'This is a test message'
+    click_button 'Send message'
+    assert page.has_content? 'This is a test message'
+    expect(page).to have_selector('.message', count: 1)
   end
 end
 
@@ -26,14 +39,13 @@ Then(/^the Dispute should close (successfully|unsuccessfully)$/) do |successful|
   assert page.has_content? 'You have successfully closed the dispute.'
 end
 
-Given(/^I am logged into an Agent account that is not associated with the Dispute$/) do
-  clear_session_before_login
-  login_with_credentials 'one_dispute_agent@company.com', 'test'
-end
-
 Then(/^I should be able to upload evidence to the Dispute$/) do
-  visit '/disputes/' + id_of_dispute_that_is_fully_underway.to_s + '/evidence/new'
+  visit '/disputes/' + $dispute_id + '/evidence/new'
   attach_file('fileToUpload', File.expand_path('../../../webapp/view/images/logo.png', __FILE__))
   click_button 'Upload'
   assert page.has_content? 'File uploaded.'
+end
+
+When(/^I attempt to view the '(.+)' page$/) do |page|
+  visit '/disputes/' + $dispute_id + '/' + page
 end

@@ -12,25 +12,30 @@ $yaml = new Parser();
 $data = $yaml->parse(file_get_contents(__DIR__ . '/fixture_data.yml'));
 
 foreach($data['organisations'] as $org) {
-    DBL::createOrganisation(array(
+    $organisation = DBL::createOrganisation(array(
         'email'    => $org['account_details']['email'],
         'password' => $org['account_details']['password'],
         'type'     => $org['details']['type'],
         'name'     => $org['details']['name']
     ));
 
-    $organisationId = AccountDetails::emailToId($org['account_details']['email']);
+    if (isset($org['details']['description'])) {
+        $organisation->setDescription($org['details']['description']);
+    }
 
     if (isset($org['individuals'])) {
         foreach($org['individuals'] as $individual) {
-            DBL::createIndividual(array(
+            $account = DBL::createIndividual(array(
                 'email'           => $individual['account_details']['email'],
                 'password'        => $individual['account_details']['password'],
-                'organisation_id' => $organisationId,
+                'organisation_id' => $organisation->getLoginId(),
                 'type'            => $individual['details']['type'],
                 'forename'        => $individual['details']['forename'],
                 'surname'         => $individual['details']['surname']
             ));
+            if (isset($individual['details']['cv'])) {
+                $account->setCV($individual['details']['cv']);
+            }
         }
     }
 }
@@ -112,5 +117,27 @@ foreach($data['disputes'] as $dataItem) {
                 'filepath' => '/uploads/tmp.txt'
             ));
         }
+    }
+
+    if (isset($dataItem['mediation_centre'])) {
+        DBL::createMediationCentreOffer(array(
+            'dispute'          => $dispute,
+            'proposed_by'      => $dispute->getAgentA(),
+            'mediation_centre' => AccountDetails::getAccountByEmail($dataItem['mediation_centre'])
+        ));
+
+        $dispute->refresh();
+        $dispute->getMediationState()->acceptLatestProposal();
+    }
+
+    if (isset($dataItem['mediator'])) {
+        DBL::createMediatorOffer(array(
+            'dispute'     => $dispute,
+            'proposed_by' => $dispute->getAgentA(),
+            'mediator'    => AccountDetails::getAccountByEmail($dataItem['mediator'])
+        ));
+
+        $dispute->refresh();
+        $dispute->getMediationState()->acceptLatestProposal();
     }
 }

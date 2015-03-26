@@ -1,0 +1,44 @@
+<p>
+    Select which mediators you wish to make available to this dispute. Only one mediator will be selected by the agents involved in the dispute.
+</p>
+
+<p class="bg-padded bg-warning">
+    You can change your choice of available mediators at any time, however after you first submit your list it will be made available to the agents and they may decide upon a mediator before you have a chance to update your list, so <strong>please submit the list as though you can only do it once</strong>.
+</p>
+
+<form action="<?php echo $dispute->getUrl(); ?>/mediation/choose-list" method="post">
+
+    <div class="list">
+        <?php foreach($mediators as $mediator) : ?>
+
+            <div class="row list__item">
+                <input
+                    name="available_mediators[]"
+                    value="<?php echo $mediator->getLoginId(); ?>"
+                    id="<?php echo $mediator->getLoginId(); ?>"
+                    type="checkbox"
+                    <?php if ($mediator->isAvailableForDispute($dispute->getDisputeId())) {
+                        echo 'checked="checked"';
+                    } ?>
+                />
+
+                <label for="<?php echo $mediator->getLoginId(); ?>"><?php echo $mediator->getName(); ?></label>
+
+                <?php if ($mediator->isAvailableForDispute($dispute->getDisputeId())) : ?>
+
+                    <em class="text-success">Available</em>
+                <?php else: ?>
+
+                    <em class="text-danger">Unavailable</em>
+
+                <?php endif; ?>
+            </div>
+
+        <?php endforeach; ?>
+    </div>
+
+    <div class="col-lg-12">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit Available Mediators</button>
+    </div>
+
+</form>

@@ -27,7 +27,15 @@ class DisputeStateCalculator {
                 return new DisputeOpened($dispute, $account);
             }
             else {
-                return new LifespanNegotiated($dispute, $account);
+
+                $mediationState = $dispute->getMediationState();
+
+                if (!$mediationState->inMediation()) {
+                    return new LifespanNegotiated($dispute, $account);
+                }
+                else {
+                    return new InMediation($dispute, $account);
+                }
             }
         }
     }
@@ -63,9 +71,9 @@ class DisputeStateCalculator {
             );
         }
 
-        if ($state->canSendMessage()) {
+        if ($state->canViewDocuments()) {
             $actions[] = array(
-                'title' => 'Review Evidence',
+                'title' => 'Evidence',
                 'image' => '/view/images/file.png',
                 'href'  => $dispute->getUrl() .'/evidence',
             );
@@ -73,7 +81,7 @@ class DisputeStateCalculator {
 
         if ($state->canNegotiateLifespan()) {
             $actions[] = array(
-                'title' => 'Negotiate dispute lifespan',
+                'title' => 'Lifespan',
                 'image' => '/view/images/time.png',
                 'href'  => $dispute->getUrl() .'/lifespan',
             );
@@ -81,7 +89,7 @@ class DisputeStateCalculator {
 
         if ($state->canProposeMediation()) {
             $actions[] = array(
-                'title' => 'Propose mediation',
+                'title' => 'Mediation',
                 'image' => '/view/images/cloud.png',
                 'href'  => $dispute->getUrl() .'/mediation',
             );

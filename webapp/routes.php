@@ -37,6 +37,10 @@ $routes = array(
     'GET  /register/individual' => 'RegisterController->individualGet',
     'POST /register/individual' => 'RegisterController->individualPost',
 
+    // accounts
+    'GET  /accounts/@accountID' => 'ProfileController->view',
+    'GET|POST  /settings'       => 'ProfileController->edit',
+
     // disputes
     'GET  /disputes/new'                         => 'DisputeController->newDisputeGet',
     'POST /disputes/new'                         => 'DisputeController->newDisputePost',
@@ -55,6 +59,10 @@ $routes = array(
     'GET  /disputes/@disputeID/evidence'         => 'EvidenceController->view',
     'GET|POST /disputes/@disputeID/evidence/new' => 'EvidenceController->upload',
     'GET  /disputes/@disputeID/mediation'        => 'MediationController->view',
+    'POST /disputes/@disputeID/mediation'        => 'MediationController->createMediationOffer',
+    'POST /disputes/@disputeID/mediation/respond'=> 'MediationController->respondToProposal',
+    'POST /disputes/@disputeID/mediation/choose-list' => 'MediationController->chooseListOfMediators',
+    'POST /disputes/@disputeID/mediation/choose-mediator' => 'MediationController->chooseMediatorFromList',
 
     // messaging
     'GET  /disputes/@disputeID/chat'    => 'MessageController->view',
@@ -64,8 +72,6 @@ $routes = array(
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',
     'GET|POST /disputes/@disputeID/lifespan/new'  => 'LifespanController->newLifespan',
     'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
-
-    'GET  /settings'     => 'SettingsController->view',
 
     // notifications
     'GET /notifications' => 'notificationsList'

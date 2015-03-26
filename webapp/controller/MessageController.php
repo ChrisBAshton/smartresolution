@@ -3,7 +3,7 @@
 class MessageController {
 
     private function setUp($f3, $params) {
-        $this->account = mustBeLoggedInAsAn('Agent');
+        $this->account = mustBeLoggedInAsAn('Individual');
         $this->dispute = setDisputeFromParams($f3, $params);
 
         if (!$this->dispute->canBeViewedBy($this->account->getLoginId())) {

@@ -15,10 +15,26 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterfac
     }
 
     public function canProposeMediation() {
-        return true;
+        return $this->account instanceof Agent || $this->account instanceof MediationCentre;
+    }
+
+    public function canEditSummary() {
+        return ($this->account instanceof Agent || $this->account instanceof LawFirm);
+    }
+
+    public function canCloseDispute() {
+        return ($this->account instanceof Agent || $this->account instanceof LawFirm);
     }
 
     public function canSendMessage() {
-        return $this->dispute->getCurrentLifespan()->isCurrent();
+        return $this->dispute->getCurrentLifespan()->isCurrent() && $this->account instanceof Individual;
+    }
+
+    public function canViewDocuments() {
+        return $this->account instanceof Agent;
+    }
+
+    public function canUploadDocuments() {
+        return $this->account instanceof Agent;
     }
 }

@@ -23,14 +23,16 @@ Feature: Negotiating a Dispute lifespan
 
   @clear
   Scenario: Making a lifespan offer mid-Dispute
-    Given the Dispute is fully underway
+    Given I am logged into an Agent account
+    And the Dispute is fully underway
     Then I should be able to make a lifespan offer
     And the Dispute should continue normally despite the renegotiation offer
-    # This should always be an option, whether or not we're in Mediation
+    # This should always be an option, whether or not we're in Mediation. @TODO - write a test.
 
   @clear
   Scenario: Renegotiating the Dispute lifespan mid-Dispute
-    Given the Dispute is fully underway
+    Given I am logged into an Agent account
+    And the Dispute is fully underway
     When I make a new lifespan offer
     And the other Agent accepts the offer
     Then the new lifespan should take immediate effect

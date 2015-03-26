@@ -16,12 +16,12 @@ Feature: Dispute creation
   Scenario: Trying to view a dispute I shouldn't have access to
     Given I am logged into a Mediation Centre account
     When I try to view a Dispute I've not been allocated to yet
-    Then I should see the following message: 'You do not have permission to view this Dispute!'
+    Then I should see the message 'You do not have permission to view this Dispute!'
 
   Scenario: Trying to view a dispute that does not exist
     Given I am logged into a Law Firm account
     When I try to view a Dispute that does not exist
-    Then I should see the following message: 'The dispute you are trying to view does not exist.'
+    Then I should see the message 'The dispute you are trying to view does not exist.'
 
   @clear
   Scenario: Initiating a Dispute against a Law Firm
