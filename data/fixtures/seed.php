@@ -118,4 +118,26 @@ foreach($data['disputes'] as $dataItem) {
             ));
         }
     }
+
+    if (isset($dataItem['mediation_centre'])) {
+        DBL::createMediationCentreOffer(array(
+            'dispute'          => $dispute,
+            'proposed_by'      => $dispute->getAgentA(),
+            'mediation_centre' => AccountDetails::getAccountByEmail($dataItem['mediation_centre'])
+        ));
+
+        $dispute->refresh();
+        $dispute->getMediationState()->acceptLatestProposal();
+    }
+
+    if (isset($dataItem['mediator'])) {
+        DBL::createMediatorOffer(array(
+            'dispute'     => $dispute,
+            'proposed_by' => $dispute->getAgentA(),
+            'mediator'    => AccountDetails::getAccountByEmail($dataItem['mediator'])
+        ));
+
+        $dispute->refresh();
+        $dispute->getMediationState()->acceptLatestProposal();
+    }
 }

@@ -119,16 +119,25 @@ disputes:
     summary_a:  Here is a summary for party A.
     summary_b:  Here is a summary for party B.
     lifespan:   ended
-  - title:      Dispute that is in mediation
-    type:       other
-    law_firm_a: law_firm_a@t.co
-    law_firm_b: law_firm_b@t.co
-    agent_a:    agent_a@t.co
-    agent_b:    agent_b@t.co
-    summary_a:  Summary goes here.
-    summary_b:  We're too good to have a summary.
-    lifespan:   accepted
-    evidence:   one_item
+  - title:            Dispute that has agreed on a Mediation Centre
+    type:             other
+    law_firm_a:       law_firm_a@t.co
+    law_firm_b:       law_firm_b@t.co
+    agent_a:          agent_a@t.co
+    agent_b:          agent_b@t.co
+    lifespan:         accepted
+    evidence:         one_item
+    mediation_centre: mediation_centre_email@we-mediate.co.uk
+  - title:            Dispute that is in mediation
+    type:             other
+    law_firm_a:       law_firm_a@t.co
+    law_firm_b:       law_firm_b@t.co
+    agent_a:          agent_a@t.co
+    agent_b:          agent_b@t.co
+    lifespan:         accepted
+    evidence:         one_item
+    mediation_centre: mediation_centre_email@we-mediate.co.uk
+    mediator:         john.smith@we-mediate.co.uk
   - title:      Smith versus Jones
     type:       other
     law_firm_a: law_firm_a@t.co

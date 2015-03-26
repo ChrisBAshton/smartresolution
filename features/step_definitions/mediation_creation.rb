@@ -1,7 +1,3 @@
-# @TODO - these step definitions are very slow, partly because there call each other a lot for setup.
-# It would be far more efficient to have better fixture data which represents disputes at every stage of mediation
-# negotiation.
-
 Then(/^I should be able to propose Mediation$/) do
   find_link('Mediation').trigger('click')
   assert page.has_content? 'Make Mediation Proposal'
@@ -31,8 +27,7 @@ Then(/^I should be able to accept the proposal$/) do
 end
 
 Given(/^the Agents have agreed on a Mediation Centre$/) do
-    step "the other Agent has proposed a Mediation Centre"
-    step "I should be able to accept the proposal"
+  $dispute_id = DBL.dispute_title_to_id 'Dispute that has agreed on a Mediation Centre'
 end
 
 Given(/^I am logged in as the Mediation Centre$/) do
