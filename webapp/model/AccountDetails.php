@@ -2,6 +2,38 @@
 
 class AccountDetails {
 
+    public static function getAllDisputes ($account) {
+        $disputes = array();
+
+        if ($account instanceof LawFirm || $account instanceof Agent) {
+            $disputesDetails = Database::instance()->exec(
+                'SELECT dispute_id FROM disputes
+
+                INNER JOIN dispute_parties
+                ON disputes.party_a     = dispute_parties.party_id
+                OR disputes.party_b     = dispute_parties.party_id
+
+                WHERE organisation_id = :login_id OR individual_id = :login_id
+                ORDER BY party_id DESC',
+                array(':login_id' => $account->getLoginId())
+            );
+        }
+        else {
+            $disputesDetails = Database::instance()->exec(
+                'SELECT dispute_id FROM mediation_offers
+                WHERE proposed_id = :login_id
+                AND status = "accepted"
+                ORDER BY mediation_offer_id DESC',
+                array(':login_id' => $account->getLoginId())
+            );
+        }
+
+        foreach($disputesDetails as $dispute) {
+            $disputes[] = new Dispute($dispute['dispute_id']);
+        }
+        return $disputes;
+    }
+
     public static function getAccountById($id) {
         $account = AccountDetails::getDetailsById($id);
         return AccountDetails::arrayToObject($account);
@@ -64,10 +96,10 @@ class AccountDetails {
 
     /**
      * Given an email, returns the login ID of the account.
-     * 
+     *
      * NOTE: It may be tempting to move this to getDetailsByEmail() but we often call emailToId BEFORE
      * adding a corresponding entry to individuals or organisations, so this should be left untouched.
-     * 
+     *
      * @param  String $email
      * @return int
      */
@@ -84,7 +116,7 @@ class AccountDetails {
 
     /**
      * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
-     * 
+     *
      * @param  String $email    The email address.
      * @param  String $password The unencrypted password.
      * @return boolean          True if the credentials are valid, otherwise false.
@@ -101,7 +133,7 @@ class AccountDetails {
 
     /**
      * Returns true or false depending on whether or not the inputted password is a match for the encrypted password we have on file.
-     * 
+     *
      * @param  String $inputtedPassword  The unencrypted password.
      * @param  String $encryptedPassword The encrypted password we're checking our unencrypted password against.
      * @return boolean                   True if the inputted password is a match.

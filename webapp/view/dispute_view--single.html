@@ -31,91 +31,98 @@ if ($currentLifespan->accepted()) :
 endif;
 ?>
 
-
-<?php
-$mediationState = $dispute->getMediationState();
-if ($mediationState->inMediation()) :
-?>
-
 <div class="row">
-    <div class="col-sm-12">
 
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">In Mediation</h3>
-            </div>
-            <div class="panel-body">
-                Being mediated by <?php echo $mediationState->getMediator(); ?> of <?php echo $mediationState->getMediationCentre(); ?>.
+    <div class="col-sm-6">
+
+        <?php
+        $mediationState = $dispute->getMediationState();
+        if ($mediationState->inMediation()) :
+        ?>
+
+        <div class="row">
+            <div class="col-sm-12">
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">In Mediation</h3>
+                    </div>
+                    <div class="panel-body">
+                        Being mediated by <?php echo $mediationState->getMediator(); ?> of <?php echo $mediationState->getMediationCentre(); ?>.
+                    </div>
+                </div>
+
             </div>
         </div>
 
+        <?php endif; ?>
+
+        <div class="row">
+
+            <div class="col-sm-6">
+                <p>
+                    <?php if ($dispute->getLawFirmA()) : ?>
+                        Initiatiated by company: <?php echo $dispute->getLawFirmA(); ?>
+
+                        <br />
+
+                        <?php
+                            if ($dispute->getAgentA()) {
+                                echo 'Represented by: ' . $dispute->getAgentA();
+                            } else {
+                                echo 'Waiting for ' . $dispute->getLawFirmA()->getName() . ' to assign an agent to the dispute.';
+                            }
+                        ?>
+                    <?php endif; ?>
+                </p>
+
+                <p><em>
+                    <?php
+                        if ($dispute->getSummaryFromPartyA()) {
+                            echo $dispute->getSummaryFromPartyA();
+                        }
+                        else {
+                            echo 'Awaiting summary.';
+                        }
+                    ?>
+                </em></p>
+            </div>
+
+            <div class="col-sm-6">
+                <p>
+                    <?php if ($dispute->getLawFirmB()) : ?>
+                        Opened against company: <?php echo $dispute->getLawFirmB(); ?>
+
+                        <br />
+
+                        <?php
+                            if ($dispute->getAgentB()) {
+                                echo 'Represented by: ' . $dispute->getAgentB();
+                            } else {
+                                echo 'Waiting for ' . $dispute->getLawFirmB()->getName() . ' to assign an agent to the dispute.';
+                            }
+                        ?>
+                    <?php else: ?>
+                        Still need to open the dispute against another law firm.
+                    <?php endif; ?>
+                </p>
+
+                <p><em>
+                    <?php
+                        if ($dispute->getSummaryFromPartyB()) {
+                            echo $dispute->getSummaryFromPartyB();
+                        }
+                        else {
+                            echo 'Awaiting summary.';
+                        }
+                    ?>
+                </em></p>
+            </div>
+
+        </div>
     </div>
-</div>
-
-<?php endif; ?>
-
-<div class="row">
 
     <div class="col-sm-6">
-        <p>
-            <?php if ($dispute->getLawFirmA()) : ?>
-                Initiatiated by company: <?php echo $dispute->getLawFirmA(); ?>
-
-                <br />
-
-                <?php
-                    if ($dispute->getAgentA()) {
-                        echo 'Represented by: ' . $dispute->getAgentA();
-                    } else {
-                        echo 'Waiting for ' . $dispute->getLawFirmA()->getName() . ' to assign an agent to the dispute.';
-                    }
-                ?>
-            <?php endif; ?>
-        </p>
-
-        <p><em>
-            <?php
-                if ($dispute->getSummaryFromPartyA()) {
-                    echo $dispute->getSummaryFromPartyA();
-                }
-                else {
-                    echo 'Awaiting summary.';
-                }
-            ?>
-        </em></p>
+        <?php echo $this->render('dashboard.html'); ?>
     </div>
-
-    <div class="col-sm-6">
-        <p>
-            <?php if ($dispute->getLawFirmB()) : ?>
-                Opened against company: <?php echo $dispute->getLawFirmB(); ?>
-
-                <br />
-
-                <?php
-                    if ($dispute->getAgentB()) {
-                        echo 'Represented by: ' . $dispute->getAgentB();
-                    } else {
-                        echo 'Waiting for ' . $dispute->getLawFirmB()->getName() . ' to assign an agent to the dispute.';
-                    }
-                ?>
-            <?php else: ?>
-                Still need to open the dispute against another law firm.
-            <?php endif; ?>
-        </p>
-
-        <p><em>
-            <?php
-                if ($dispute->getSummaryFromPartyB()) {
-                    echo $dispute->getSummaryFromPartyB();
-                }
-                else {
-                    echo 'Awaiting summary.';
-                }
-            ?>
-        </em></p>
-    </div>
-
 </div>
-
-<?php echo $this->render('dashboard.html'); ?>

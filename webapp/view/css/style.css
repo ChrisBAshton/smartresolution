@@ -39,6 +39,10 @@ footer {
     margin: 0;
 }
 
+.row {
+    margin-top: 15px;
+}
+
 /************************************************************ Custom classes */
 
 /*
@@ -103,7 +107,6 @@ footer {
 
 .dispute__option {
     text-align: center;
-    margin-top: 3em;
 }
 
 .dispute__option__image {

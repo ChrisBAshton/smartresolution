@@ -42,22 +42,7 @@ abstract class AccountCommonMethods {
      * @see AccountInterface::getAllDisputes() Implements the corresponding function in AccountInterface.
      */
     public function getAllDisputes() {
-        $disputes = array();
-        $disputesDetails = Database::instance()->exec(
-            'SELECT dispute_id FROM disputes
-
-            INNER JOIN dispute_parties
-            ON disputes.party_a     = dispute_parties.party_id
-            OR disputes.party_b     = dispute_parties.party_id
-
-            WHERE organisation_id = :login_id OR individual_id = :login_id
-            ORDER BY party_id DESC',
-            array(':login_id' => $this->getLoginId())
-        );
-        foreach($disputesDetails as $dispute) {
-            $disputes[] = new Dispute($dispute['dispute_id']);
-        }
-        return $disputes;
+        return AccountDetails::getAllDisputes($this);
     }
 
     /**
