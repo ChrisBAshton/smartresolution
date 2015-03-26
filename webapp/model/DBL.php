@@ -225,7 +225,7 @@ class DBL {
             array(
                 ':dispute_id'   => $disputeID,
                 ':author_id'    => $authorID,
-                ':recipient_id' => $recipientID || NULL,
+                ':recipient_id' => $recipientID ? $recipientID : NULL,
                 ':message'      => $message,
                 ':timestamp'    => time()
             )

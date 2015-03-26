@@ -20,6 +20,10 @@ $routes = array(
         renderMarkdown(__DIR__ . '/view/about.md');
     },
 
+    'GET /workflow' => function($f3, $params) {
+        renderMarkdown(__DIR__ . '/view/workflow.md');
+    },
+
     'GET /installation' => function($f3, $params) {
         renderMarkdown(__DIR__ . '/view/installation.md');
     },
@@ -63,7 +67,13 @@ $routes = array(
     'POST /disputes/@disputeID/mediation/respond'=> 'MediationController->respondToProposal',
     'POST /disputes/@disputeID/mediation/choose-list' => 'MediationController->chooseListOfMediators',
     'POST /disputes/@disputeID/mediation/choose-mediator' => 'MediationController->chooseMediatorFromList',
-    'POST /disputes/@disputeID/mediation/chat'   => 'MediationController->newMessage',
+
+    // communication in mediation
+    'GET  /disputes/@disputeID/mediation-chat' => function ($f3, $params) {
+        header('Location: /disputes/' . $params['disputeID'] . '/mediation');
+    },
+    'GET  /disputes/@disputeID/mediation-chat/@recipientID' => 'MediationController->viewMessages',
+    'POST /disputes/@disputeID/mediation-chat/@recipientID' => 'MediationController->newMessage',
 
     // messaging
     'GET  /disputes/@disputeID/chat' => 'MessageController->view',

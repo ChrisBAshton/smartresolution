@@ -163,18 +163,21 @@ class Dispute {
 
     public function canBeViewedBy($loginID) {
         $account = AccountDetails::getAccountById($loginID);
-        $viewableDisputes = $account->getAllDisputes();
-        foreach($viewableDisputes as $dispute) {
-            if ($dispute->getDisputeId() === $this->getDisputeId()) {
-                return true;
-            }
-        }
+        if ($account) {
 
-        if ($this->getMediationState()->inMediation()) {
-            return (
-                $this->getMediationState()->getMediator()->getLoginId()        === $loginID ||
-                $this->getMediationState()->getMediationCentre()->getLoginId() === $loginID
-            );
+            $viewableDisputes = $account->getAllDisputes();
+            foreach($viewableDisputes as $dispute) {
+                if ($dispute->getDisputeId() === $this->getDisputeId()) {
+                    return true;
+                }
+            }
+
+            if ($this->getMediationState()->inMediation()) {
+                return (
+                    $this->getMediationState()->getMediator()->getLoginId()        === $loginID ||
+                    $this->getMediationState()->getMediationCentre()->getLoginId() === $loginID
+                );
+            }
         }
 
         return false;

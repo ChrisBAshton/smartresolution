@@ -46,12 +46,7 @@ class MediationController {
 
         else :
 
-            // @TODO - this only supports Mediator->AgentA communication. Need to support AgentB communication.
-            // Mediator should have custom dashboard options.
-            $messages = new Messages($this->dispute->getDisputeId(), $this->account, $this->dispute->getAgentA());
-            $f3->set('recipientID', $this->dispute->getAgentA()->getLoginId());
-            $f3->set('messages', $messages->getMessages());
-            $f3->set('content', 'messages.html');
+            errorPage('@TODO Options to close mediation');
 
         endif;
     }
@@ -86,12 +81,7 @@ class MediationController {
 
         else :
 
-            $mediator = $this->mediationState->getMediator();
-            $messages = new Messages($this->dispute->getDisputeId(), $this->account, $mediator);
-
-            $f3->set('recipientID', $mediator->getLoginId());
-            $f3->set('messages', $messages->getMessages());
-            $f3->set('content', 'messages.html');
+            $this->viewMessagesWith($this->mediationState->getMediator()->getLoginId());
 
         endif;
     }
@@ -189,6 +179,24 @@ class MediationController {
         ));
     }
 
+    public function viewMessages($f3, $params) {
+        $this->setUp($f3, $params);
+        $recipientID = (int) $params['recipientID'];
+        if (!$this->dispute->canBeViewedBy($recipientID)) {
+            errorPage("The account you're trying to send a message to is not involved in this dispute!");
+        }
+        $this->viewMessagesWith($recipientID);
+        echo View::instance()->render('layout.html');
+    }
+
+    private function viewMessagesWith($recipientID) {
+        global $f3;
+        $messages = new Messages($this->dispute->getDisputeId(), $this->account->getLoginId(), $recipientID);
+        $f3->set('recipientID', $recipientID);
+        $f3->set('messages', $messages->getMessages());
+        $f3->set('content', 'messages.html');
+    }
+
     public function newMessage ($f3, $params) {
         $this->setUp($f3, $params);
         $message     = $f3->get('POST.message');
@@ -204,7 +212,7 @@ class MediationController {
             ));
 
         }
-        header('Location: ' . $this->dispute->getUrl() . '/mediation');
+        header('Location: ' . $this->dispute->getUrl() . '/mediation-chat/' . $recipientID);
     }
 
 }

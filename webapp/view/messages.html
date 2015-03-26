@@ -5,7 +5,7 @@
         <?php
         $action = $dispute->getUrl() . '/chat';
         if (isset($recipientID)) {
-            $action = $dispute->getUrl() . '/mediation/chat';
+            $action = $dispute->getUrl() . '/mediation-chat/' . $recipientID;
         }
         ?>
 

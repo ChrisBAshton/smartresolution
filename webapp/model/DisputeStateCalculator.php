@@ -47,6 +47,27 @@ class DisputeStateCalculator {
         $state   = $dispute->getState($account);
         $actions = array();
 
+        if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
+
+            $actions[] = array(
+                'title' => 'Round-Table Communication',
+                'image' => '/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/chat/'
+            );
+
+            $actions[] = array(
+                'title' => 'Communicate with ' . $dispute->getAgentA()->getName(),
+                'image' => '/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentA()->getLoginId()
+            );
+
+            $actions[] = array(
+                'title' => 'Communicate with ' . $dispute->getAgentB()->getName(),
+                'image' => '/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentB()->getLoginId()
+            );
+        }
+
         if ($state->canOpenDispute()) {
             $actions[] = array(
                 'title' => 'Open dispute',

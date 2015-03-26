@@ -25,6 +25,7 @@ class Messages {
     }
 
     private function retrieveMediationMessages($disputeID, $individualA, $individualB) {
+
         $messages = Database::instance()->exec(
             'SELECT message_id FROM messages
             WHERE
@@ -34,8 +35,8 @@ class Messages {
             ORDER BY message_id DESC',
             array(
                 ':dispute_id'   => $disputeID,
-                ':individual_a' => $individualA->getLoginId(),
-                ':individual_b' => $individualB->getLoginId(),
+                ':individual_a' => $individualA,
+                ':individual_b' => $individualB,
             )
         );
 

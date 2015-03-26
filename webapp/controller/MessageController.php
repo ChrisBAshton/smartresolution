@@ -10,7 +10,13 @@ class MessageController {
             errorPage('You do not have permission to view this Dispute!');
         }
         else if (!$this->dispute->getState($this->account)->canSendMessage()) {
-            errorPage('You cannot communicate with the other party at this time. This may be because the dispute is in mediation, has finished, or has not started yet.');
+            if ($this->account instanceof Mediator) {
+                $f3->set('content', 'mediator__round_table_communications.html');
+                echo View::instance()->render('layout.html');
+            }
+            else {
+                errorPage('You cannot communicate with the other party at this time. This may be because the dispute is in mediation, has finished, or has not started yet.');
+            }
         }
     }
 
