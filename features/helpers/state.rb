@@ -1,4 +1,5 @@
 class State
+  extend Capybara::DSL
 
   def self.dispute_in_mediation?
     visit '/disputes/' + $dispute_id
