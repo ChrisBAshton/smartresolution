@@ -5,9 +5,9 @@ end
 
 Then(/^I should be able to start the Mediation process$/) do
   visit '/disputes/' + get_id_of_active_dispute.to_s
-  expect have_css("a[href='/disputess/" + get_id_of_active_dispute.to_s + "/mediation']")
+  assert page.has_css?("a[href='/disputes/" + get_id_of_active_dispute.to_s + "/mediation']")
   # sanity check
-  expect ! have_css("a[href='/neoiwgniowengo']")
+  assert ! page.has_css?("a[href='/neoiwgniowengo']")
 end
 
 Then(/^I (should|should NOT) be able to send a message via the Dispute$/) do |should_or_should_not|
@@ -40,4 +40,15 @@ Then(/^I should be able to upload evidence to the Dispute$/) do
   attach_file('fileToUpload', File.expand_path('../../../webapp/view/images/logo.png', __FILE__))
   click_button 'Upload'
   assert page.has_content? 'File uploaded.'
+end
+
+Given(/^the Dispute is NOT fully underway$/) do
+  # @TODO - this is quite a nice model. Set a global variable in one of the "Given" setup steps,
+  # refer to that variable throughout the rest of the scenario. Cleaner, more readable tests.
+  # Let's apply this everywhere where I haven't already applied it!
+  $dispute_id = get_id_of_dispute_whose_title_is 'A fully assigned dispute with no lifespan'
+end
+
+When(/^I attempt to view the Evidence page$/) do
+  visit '/disputes/' + $dispute_id.to_s + '/evidence'
 end

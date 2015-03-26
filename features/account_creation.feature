@@ -8,7 +8,7 @@ Feature: Account Creation
     And I leave the '<field_label>' field blank
     And I try to register
     Then I should see the message 'Please fill in all fields.'
-    
+
     Examples:
       | field_label       |
       | Email             |
@@ -49,18 +49,8 @@ Feature: Account Creation
     Given I am logged into a Law Firm account
     Then I should be able to create an Agent account
     And I should be able to log into that account
-    And the Individual should be sent an email notifying them they've been registered
 
   Scenario: Create Mediator account
     Given I am logged into a Mediation Centre account
     Then I should be able to create a Mediator account
     And I should be able to log into that account
-    And the Individual should be sent an email notifying them they've been registered
-
-  # Scenario: Agent initiates Dispute against a Law Firm not registered to the system
-  #   Given I am a Law Firm
-  #   And I have not yet registered an Organisation account
-  #   And a Dispute has been initiated against my Law Firm
-  #   When I attempt to create a new Organisation account
-  #   Then the account should be created
-  #   And the my Law Firm should be automatically linked to the dispute

@@ -21,6 +21,12 @@ Feature: Dispute
     And I am logged into an Agent account
     Then I should be able to upload evidence to the Dispute
 
+  Scenario: Attempting to view evidence when not allowed
+    Given the Dispute is NOT fully underway
+    And I am logged into an Agent account
+    When I attempt to view the Evidence page
+    Then I should see the message 'You are not allowed to view these documents.'
+
   Scenario: Start the Mediation process
     Given the Dispute is fully underway
     And the Dispute is not in Mediation

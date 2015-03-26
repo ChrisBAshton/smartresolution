@@ -10,4 +10,12 @@ class InMediation extends DisputeDefaults implements DisputeStateInterface {
         return $this->account instanceof Agent;
     }
 
+    public function canViewDocuments() {
+        return $this->account instanceof Agent || $this->account instanceof Mediator;
+    }
+
+    public function canUploadDocuments() {
+        return $this->account instanceof Agent;
+    }
+
 }

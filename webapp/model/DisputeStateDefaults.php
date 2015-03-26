@@ -31,11 +31,11 @@ abstract class DisputeDefaults {
     }
 
     public function canViewDocuments() {
-        return $this->account instanceof Agent;
+        return false;
     }
 
     public function canUploadDocuments() {
-        return $this->account instanceof Agent;
+        return false;
     }
 
     public function canEditSummary() {

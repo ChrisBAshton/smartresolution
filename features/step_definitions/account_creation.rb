@@ -64,7 +64,3 @@ And(/^I should be able to log into that account$/) do
   assert_equal '/dashboard', get_current_uri_path
   assert page.has_content?('Welcome back, Chris Ashton')
 end
-
-Then(/^the Individual should be sent an email notifying them they've been registered$/) do
-  pending # express the regexp above with the code you wish you had
-end

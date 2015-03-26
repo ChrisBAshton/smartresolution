@@ -29,4 +29,12 @@ class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterfac
     public function canSendMessage() {
         return $this->dispute->getCurrentLifespan()->isCurrent() && $this->account instanceof Individual;
     }
+
+    public function canViewDocuments() {
+        return $this->account instanceof Agent;
+    }
+
+    public function canUploadDocuments() {
+        return $this->account instanceof Agent;
+    }
 }

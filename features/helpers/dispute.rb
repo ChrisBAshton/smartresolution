@@ -18,9 +18,13 @@ def assert_cannot_send_message
 end
 
 def id_of_dispute_that_is_fully_underway
+  get_id_of_dispute_whose_title_is 'Smith versus Jones'
+end
+
+def get_id_of_dispute_whose_title_is (title)
   count = 0
   $data['disputes'].each do |dispute|
     count = count + 1
-    return count if dispute['title'] == 'Smith versus Jones'
+    return count if dispute['title'] == title
   end
 end
