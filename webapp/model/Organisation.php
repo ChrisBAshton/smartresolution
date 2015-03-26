@@ -72,9 +72,17 @@ class LawFirm extends Organisation {
         return parent::getIndividuals('Agent');
     }
 
+    public function getRole() {
+        return 'Law Firm';
+    }
+
 }
 
 class MediationCentre extends Organisation {
+
+    public function getRole() {
+        return 'Mediation Centre';
+    }
 
     public function getMediators() {
         return parent::getIndividuals('Mediator');

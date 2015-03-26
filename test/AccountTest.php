@@ -8,6 +8,23 @@ class AccountTest extends PHPUnit_Framework_TestCase
         Database::clear();
     }
 
+    public function testTypes() {
+        $agent           = AccountDetails::getAccountByEmail('agent_a@t.co');
+        $mediator        = AccountDetails::getAccountByEmail('john.smith@we-mediate.co.uk');
+        $lawFirm         = AccountDetails::getAccountByEmail('law_firm_a@t.co');
+        $mediationCentre = AccountDetails::getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
+
+        $this->assertTrue($agent           instanceof Agent);
+        $this->assertTrue($mediator        instanceof Mediator);
+        $this->assertTrue($lawFirm         instanceof LawFirm);
+        $this->assertTrue($mediationCentre instanceof MediationCentre);
+
+        $this->assertEquals('Agent',            $agent->getRole());
+        $this->assertEquals('Mediator',         $mediator->getRole());
+        $this->assertEquals('Law Firm',         $lawFirm->getRole());
+        $this->assertEquals('Mediation Centre', $mediationCentre->getRole());
+    }
+
     public function testCommonGetters() {
         $account = AccountDetails::getAccountByEmail('agent_a@t.co');
 

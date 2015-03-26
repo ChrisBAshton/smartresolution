@@ -12,24 +12,7 @@
         Role:
     </div>
     <div class="col-sm-9">
-        <?php
-        switch($viewAccount) {
-            case $viewAccount instanceof Mediator:
-                echo 'Mediator';
-                break;
-            case $viewAccount instanceof MediationCentre:
-                echo 'Mediation Centre';
-                break;
-            case $viewAccount instanceof Agent:
-                echo 'Agent';
-                break;
-            case $viewAccount instanceof LawFirm:
-                echo 'Law Firm';
-                break;
-            default:
-                echo 'unknown';
-        }
-        ?>
+        <?php echo $viewAccount->getRole(); ?>
     </div>
 </div>
 

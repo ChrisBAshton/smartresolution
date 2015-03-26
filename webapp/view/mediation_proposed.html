@@ -2,7 +2,6 @@
 $mediationParty = Base::instance()->get('proposed_mediation_party');
 $proposedBy     = Base::instance()->get('proposed_by');
 $otherAgentId   = $dispute->getOpposingPartyId($proposedBy->getLoginId());
-$role           = ($mediationParty instanceof MediationCentre) ? 'Mediation Centre' : 'Mediator';
 ?>
 
 <h1>Mediation Proposal</h1>
@@ -10,7 +9,7 @@ $role           = ($mediationParty instanceof MediationCentre) ? 'Mediation Cent
 <?php if ($account->getLoginId() === $proposedBy->getLoginId()) : ?>
 
     <p>
-        You have proposed to use <?php echo $mediationParty; ?> as the <?php echo $role; ?> for this dispute.
+        You have proposed to use <?php echo $mediationParty; ?> as the <?php echo $mediationParty->getRole(); ?> for this dispute.
     </p>
 
 <?php elseif ($account->getLoginId() === $otherAgentId): ?>
@@ -18,7 +17,7 @@ $role           = ($mediationParty instanceof MediationCentre) ? 'Mediation Cent
     <form method="post" action="<?php echo $dispute->getUrl(); ?>/mediation/respond">
 
         <p>
-            The other agent has proposed that <?php echo $mediationParty; ?> should be the <?php echo $role; ?> in this dispute.
+            The other agent has proposed that <?php echo $mediationParty; ?> should be the <?php echo $mediationParty->getRole(); ?> in this dispute.
         </p>
 
         <div class="row">
@@ -35,7 +34,7 @@ $role           = ($mediationParty instanceof MediationCentre) ? 'Mediation Cent
 <?php else: ?>
 
     <p>
-        @TODO - either you do not have permission to view this page (you should be agent A or B in the dispute) OR you've just accepted a Mediation Centre proposal. You now need to wait for the Mediation Centre to offer a list of Mediators. Then you can choose from the list.
+        Something went wrong.
     </p>
 
 <?php endif; ?>

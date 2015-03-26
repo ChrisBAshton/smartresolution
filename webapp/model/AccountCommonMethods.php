@@ -68,6 +68,13 @@ abstract class AccountCommonMethods {
     }
 
     /**
+     * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
+     */
+    public function getRole() {
+        throw new Exception('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
+    }
+
+    /**
      * @see AccountInterface::toString() Implements the corresponding function in AccountInterface.
      */
     public function __toString() {

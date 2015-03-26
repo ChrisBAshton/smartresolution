@@ -60,9 +60,17 @@ class Individual extends AccountCommonMethods implements AccountInterface {
 
 class Agent extends Individual {
 
+    public function getRole() {
+        return 'Agent';
+    }
+
 }
 
 class Mediator extends Individual {
+
+    public function getRole() {
+        return 'Mediator';
+    }
 
     public function isAvailableForDispute($disputeID) {
         return DBMediation::mediatorIsAvailableForDispute($this->getLoginId(), $disputeID);

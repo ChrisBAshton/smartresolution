@@ -51,6 +51,13 @@ interface AccountInterface {
     public function getUrl();
 
     /**
+     * Returns the type of account, displayed to the user.
+     * Example: 'Agent', 'Law Firm'
+     * @return String Account type.
+     */
+    public function getRole();
+
+    /**
      * Account should be rendered as follows:
      *     <a href="/link/to/account/profile">Account Name</a>
      * @return String
