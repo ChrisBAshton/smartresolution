@@ -1,9 +1,12 @@
+# covered in the YAML fixtures
 Given(/^I have created at least one Agent account$/) do
+end
+Given(/^I have created an Agent$/) do
 end
 
 Given(/^I have created NO Agent accounts$/) do
-  clear_session_before_login
-  login_with_credentials 'law_firm_with_no_agents@t.co', 'test'
+  Session.clear_session_before_login
+  Session.login_with_credentials 'law_firm_with_no_agents@t.co', 'test'
   visit '/disputes/new'
 end
 
@@ -15,7 +18,7 @@ Then(/^I should be able to create a new Dispute$/) do
   fill_in('summary',     :with => 'Test summary')
   click_button 'Create Dispute'
 
-  assert_equal '/disputes/' + (dispute_count + 1).to_s, get_current_uri_path
+  assert_equal '/disputes/' + (DBL.dispute_count? + 1).to_s, URL.get_current_uri_path
   assert page.has_content?('Davies versus Jones')
 end
 
@@ -28,11 +31,14 @@ When(/^I try to view a Dispute that does not exist$/) do
 end
 
 Given(/^I have submitted a Dispute$/) do
-  login_as_agent
+  Session.login_as_agent
 end
 
 Then(/^I should be able to initiate it against another Law Firm$/) do
-  open_dispute
+  visit '/disputes/1/open'
+  select('Maritime Collision Specialists Inc', :from => 'Select the opposing company:')
+  click_button 'Open Dispute'
+  assert page.has_content?('Waiting for Maritime Collision Specialists Inc to assign an agent to the dispute.')
 end
 
 And(/^I shouldn't be able to reinitiate it against a different Law Firm$/) do
@@ -41,14 +47,10 @@ And(/^I shouldn't be able to reinitiate it against a different Law Firm$/) do
 end
 
 Given(/^a Dispute has been initiated against my Law Firm$/) do
-  login_as_agent
-  open_dispute # against company B. Then login as company B
-  clear_session_before_login
-  login_with_credentials 'law_firm_b@t.co', 'test'
-end
-
-Given(/^I have created an Agent$/) do
-  # covered in the YAML fixtures
+  Session.login_as_agent
+  step "I should be able to initiate it against another Law Firm"
+  Session.clear_session_before_login
+  Session.login_with_credentials 'law_firm_b@t.co', 'test'
 end
 
 Then(/^I should be able to allocate the Agent to the Dispute$/) do

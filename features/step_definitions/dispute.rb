@@ -1,21 +1,25 @@
 And(/^the Dispute is not in Mediation$/) do
-  visit '/disputes/' + get_id_of_active_dispute.to_s
+  $dispute_id = DBL.dispute_title_to_id 'Smith versus Jones'
+  visit '/disputes/' + $dispute_id
   assert ( ! (page.has_content? 'In Mediation') )
 end
 
 Then(/^I should be able to start the Mediation process$/) do
-  visit '/disputes/' + get_id_of_active_dispute.to_s
-  assert page.has_css?("a[href='/disputes/" + get_id_of_active_dispute.to_s + "/mediation']")
+  visit '/disputes/' + $dispute_id
+  assert page.has_css?("a[href='/disputes/" + $dispute_id + "/mediation']")
   # sanity check
   assert ! page.has_css?("a[href='/neoiwgniowengo']")
 end
 
 Then(/^I (should|should NOT) be able to send a message via the Dispute$/) do |should_or_should_not|
-  visit '/disputes/' + get_id_of_active_dispute.to_s + '/chat'
+  visit '/disputes/' + $dispute_id + '/chat'
   if should_or_should_not == 'should NOT'
-    assert_cannot_send_message
+    assert page.has_content? 'You do not have permission to view this Dispute!'
   else
-    assert_can_send_message
+    fill_in 'New Message', :with => 'This is a test message'
+    click_button 'Send message'
+    assert page.has_content? 'This is a test message'
+    expect(page).to have_selector('.message', count: 1)
   end
 end
 
@@ -36,19 +40,12 @@ Then(/^the Dispute should close (successfully|unsuccessfully)$/) do |successful|
 end
 
 Then(/^I should be able to upload evidence to the Dispute$/) do
-  visit '/disputes/' + id_of_dispute_that_is_fully_underway.to_s + '/evidence/new'
+  visit '/disputes/' + $dispute_id + '/evidence/new'
   attach_file('fileToUpload', File.expand_path('../../../webapp/view/images/logo.png', __FILE__))
   click_button 'Upload'
   assert page.has_content? 'File uploaded.'
 end
 
-Given(/^the Dispute is NOT fully underway$/) do
-  # @TODO - this is quite a nice model. Set a global variable in one of the "Given" setup steps,
-  # refer to that variable throughout the rest of the scenario. Cleaner, more readable tests.
-  # Let's apply this everywhere where I haven't already applied it!
-  $dispute_id = get_id_of_dispute_whose_title_is 'A fully assigned dispute with no lifespan'
-end
-
-When(/^I attempt to view the Evidence page$/) do
-  visit '/disputes/' + $dispute_id.to_s + '/evidence'
+When(/^I attempt to view the '(.+)' page$/) do |page|
+  visit '/disputes/' + $dispute_id + '/' + page
 end

@@ -2,13 +2,6 @@
 # It would be far more efficient to have better fixture data which represents disputes at every stage of mediation
 # negotiation.
 
-Given(/^the Dispute is underway and a lifespan has been agreed$/) do
-  login_as_agent
-  visit '/disputes/' + get_id_of_active_dispute.to_s
-  assert_dispute_active
-  assert ! dispute_in_mediation
-end
-
 Then(/^I should be able to propose Mediation$/) do
   find_link('Mediation').trigger('click')
   assert page.has_content? 'Make Mediation Proposal'
@@ -23,9 +16,9 @@ end
 Given(/^the other Agent has proposed a Mediation Centre$/) do
   step "I should be able to propose Mediation"
   step "my choice of Mediation Centre should be presented to the other Agent"
-  clear_session_before_login
-  login_with_credentials 'agent_b@t.co', 'test'
-  visit '/disputes/' + get_id_of_active_dispute.to_s + '/mediation'
+  Session.clear_session_before_login
+  Session.login_with_credentials 'agent_b@t.co', 'test'
+  visit '/disputes/' + $dispute_id + '/mediation'
   assert page.has_content? 'The other agent has proposed that WeMediate should be the Mediation Centre in this dispute.'
 end
 
@@ -43,13 +36,13 @@ Given(/^the Agents have agreed on a Mediation Centre$/) do
 end
 
 Given(/^I am logged in as the Mediation Centre$/) do
-  clear_session_before_login
-  credentials = get_credentials_for 'WeMediate'
-  login_with_credentials credentials[:email], credentials[:password]
+  Session.clear_session_before_login
+  credentials = DBL.get_credentials_for 'WeMediate'
+  Session.login_with_credentials credentials[:email], credentials[:password]
 end
 
 Then(/^I should be able to provide a list of available Mediators$/) do
-  visit '/disputes/' + get_id_of_active_dispute.to_s + '/mediation'
+  visit '/disputes/' + $dispute_id + '/mediation'
   assert page.has_content? 'John Smith Unavailable'
   check 'John Smith'
   click_button 'Submit Available Mediators'
@@ -63,7 +56,7 @@ Given(/^the Mediation Centre we've agreed upon has provided a list of available 
 end
 
 Then(/^I should be able to propose a Mediator to the other Agent$/) do
-  visit '/disputes/' + get_id_of_active_dispute.to_s + '/mediation'
+  visit '/disputes/' + $dispute_id + '/mediation'
   choose 'John Smith'
   click_button 'Propose Mediator'
 end
@@ -72,9 +65,9 @@ Given(/^the other Agent has proposed a Mediator$/) do
   step "the Mediation Centre we've agreed upon has provided a list of available Mediators"
   step "I am logged into an Agent account"
   step "I should be able to propose a Mediator to the other Agent"
-  clear_session_before_login
-  login_with_credentials 'agent_b@t.co', 'test'
-  visit '/disputes/' + get_id_of_active_dispute.to_s + '/mediation'
+  Session.clear_session_before_login
+  Session.login_with_credentials 'agent_b@t.co', 'test'
+  visit '/disputes/' + $dispute_id + '/mediation'
 end
 
 Then(/^the Dispute should be in Mediation$/) do

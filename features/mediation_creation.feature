@@ -7,7 +7,8 @@ Feature: Mediation
     then either Agent can restart the Mediation process.
 
   Background:
-    Given the Dispute is underway and a lifespan has been agreed
+    Given I am logged into an Agent account
+    And the Dispute is fully underway
 
   @clear
   Scenario: Proposing Mediation

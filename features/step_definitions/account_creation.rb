@@ -27,12 +27,12 @@ Given(/^I have registered an Organisation account$/) do
 end
 
 When(/^I attempt to log in with valid credentials$/) do
-  login_as_law_firm
+  Session.login_as_law_firm
 end
 
 Then(/^I should be logged into the system$/) do
   page.driver.save_screenshot 'features/screenshots/login_success--after.jpg'
-  assert_equal '/dashboard', get_current_uri_path
+  assert_equal '/dashboard', URL.get_current_uri_path
 end
 
 When(/^I attempt to log in with invalid credentials$/) do
@@ -57,10 +57,10 @@ Then(/^I should be able to create a(?:n)? (Agent|Mediator) account$/) do |accoun
 end
 
 And(/^I should be able to log into that account$/) do
-  clear_session_before_login
+  Session.clear_session_before_login
   fill_in 'Email', :with => 'agent_a@t.co@email.com'
   fill_in 'Password', :with => 'test'
   click_button 'Login'
-  assert_equal '/dashboard', get_current_uri_path
+  assert_equal '/dashboard', URL.get_current_uri_path
   assert page.has_content?('Welcome back, Chris Ashton')
 end
