@@ -21,7 +21,7 @@ class DBL {
         DBL::createMediationEntityOffer($params, 'mediator');
     }
 
-    public static function createMediationOffer($params, $type) {
+    public static function createMediationEntityOffer($params, $type) {
         $dispute         = $params['dispute'];
         $proposedBy      = $params['proposed_by'];
         $mediationEntity = $params[$type];
