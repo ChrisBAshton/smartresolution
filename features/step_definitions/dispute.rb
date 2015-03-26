@@ -16,7 +16,7 @@ Then(/^I (should|should NOT) be able to send a message via the Dispute$/) do |sh
   if should_or_should_not == 'should NOT'
     assert page.has_content? 'You do not have permission to view this Dispute!'
   else
-    fill_in 'New Message', :with => 'This is a test message'
+    fill_in 'message', :with => 'This is a test message'
     click_button 'Send message'
     assert page.has_content? 'This is a test message'
     expect(page).to have_selector('.message', count: 1)

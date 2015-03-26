@@ -66,9 +66,6 @@ Given(/^the other Agent has proposed a Mediator$/) do
 end
 
 Then(/^the Dispute should be in Mediation$/) do
-  # this is the immediate feedback after accepting Mediator proposal
-  assert page.has_content? 'Dispute is now in mediation.'
-  # we want to make sure that the mediation state change was persistent
   visit '/disputes/' + $dispute_id
   assert page.has_content? 'Being mediated by John Smith of WeMediate.'
 end
