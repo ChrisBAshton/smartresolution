@@ -216,16 +216,18 @@ class DBL {
     }
 
     public static function createMessage($params) {
-        $disputeID = Utils::getValue($params, 'dispute_id');
-        $authorID  = Utils::getValue($params, 'author_id');
-        $message   = Utils::getValue($params, 'message');
+        $disputeID   = Utils::getValue($params, 'dispute_id');
+        $authorID    = Utils::getValue($params, 'author_id');
+        $message     = Utils::getValue($params, 'message');
+        $recipientID = Utils::getValue($params, 'recipient_id', false);
 
-        Database::instance()->exec('INSERT INTO messages (dispute_id, author_id, message, timestamp) VALUES (:dispute_id, :author_id, :message, :timestamp)',
+        Database::instance()->exec('INSERT INTO messages (dispute_id, author_id, recipient_id, message, timestamp) VALUES (:dispute_id, :author_id, :recipient_id, :message, :timestamp)',
             array(
-                ':dispute_id' => $disputeID,
-                ':author_id'  => $authorID,
-                ':message'    => $message,
-                ':timestamp'  => time()
+                ':dispute_id'   => $disputeID,
+                ':author_id'    => $authorID,
+                ':recipient_id' => $recipientID || NULL,
+                ':message'      => $message,
+                ':timestamp'    => time()
             )
         );
 

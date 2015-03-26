@@ -102,11 +102,12 @@ CREATE TABLE IF NOT EXISTS mediators_available (
 -- #######################################################################
 
 CREATE TABLE IF NOT EXISTS messages (
-    message_id INTEGER PRIMARY KEY NOT NULL,
-    dispute_id INTEGER NOT NULL,
-    author_id  INTEGER NOT NULL,
-    message    TEXT    NOT NULL,
-    timestamp  INTEGER NOT NULL,
+    message_id   INTEGER PRIMARY KEY NOT NULL,
+    dispute_id   INTEGER NOT NULL,
+    author_id    INTEGER NOT NULL,
+    recipient_id INTEGER, -- NULL BY DEFAULT. If NULL, user is announcing message on the street. If not NULL, this is a private message intended only for the recipient.
+    message      TEXT    NOT NULL,
+    timestamp    INTEGER NOT NULL,
     FOREIGN KEY(dispute_id) REFERENCES disputes(dispute_id),
     FOREIGN KEY(author_id)  REFERENCES account_details(login_id)
 );

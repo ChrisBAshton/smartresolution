@@ -46,7 +46,12 @@ class MediationController {
 
         else :
 
-            errorPage('@TODO - Mediation is fully underway!');
+            // @TODO - this only supports Mediator->AgentA communication. Need to support AgentB communication.
+            // Mediator should have custom dashboard options.
+            $messages = new Messages($this->dispute->getDisputeId(), $this->account, $this->dispute->getAgentA());
+            $f3->set('recipientID', $this->dispute->getAgentA()->getLoginId());
+            $f3->set('messages', $messages->getMessages());
+            $f3->set('content', 'messages.html');
 
         endif;
     }
@@ -81,7 +86,12 @@ class MediationController {
 
         else :
 
-            $f3->set('content', 'mediation_finalised.html');
+            $mediator = $this->mediationState->getMediator();
+            $messages = new Messages($this->dispute->getDisputeId(), $this->account, $mediator);
+
+            $f3->set('recipientID', $mediator->getLoginId());
+            $f3->set('messages', $messages->getMessages());
+            $f3->set('content', 'messages.html');
 
         endif;
     }
@@ -177,6 +187,24 @@ class MediationController {
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
+    }
+
+    public function newMessage ($f3, $params) {
+        $this->setUp($f3, $params);
+        $message     = $f3->get('POST.message');
+        $recipientID = $f3->get('POST.recipient_id');
+
+        if ($message && $recipientID) {
+
+            DBL::createMessage(array(
+                'dispute_id'   => $this->dispute->getDisputeId(),
+                'author_id'    => $this->account->getLoginId(),
+                'message'      => $message,
+                'recipient_id' => (int) $recipientID
+            ));
+
+        }
+        header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }
 
 }

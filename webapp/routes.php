@@ -63,10 +63,11 @@ $routes = array(
     'POST /disputes/@disputeID/mediation/respond'=> 'MediationController->respondToProposal',
     'POST /disputes/@disputeID/mediation/choose-list' => 'MediationController->chooseListOfMediators',
     'POST /disputes/@disputeID/mediation/choose-mediator' => 'MediationController->chooseMediatorFromList',
+    'POST /disputes/@disputeID/mediation/chat'   => 'MediationController->newMessage',
 
     // messaging
-    'GET  /disputes/@disputeID/chat'    => 'MessageController->view',
-    'POST /disputes/@disputeID/chat'    => 'MessageController->newMessage',
+    'GET  /disputes/@disputeID/chat' => 'MessageController->view',
+    'POST /disputes/@disputeID/chat' => 'MessageController->newMessage',
 
     // lifespans
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',

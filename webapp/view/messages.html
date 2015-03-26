@@ -1,34 +1,63 @@
 <div class="row">
-    <form method="post" action="<?php echo $dispute->getUrl(); ?>/chat">
-        <div class="row">
-            <div class='col-sm-12'>
-                <label for="message">New Message</label>
-                <textarea id="message" name="message" class="form-control"></textarea>
-            </div>
-            <div class='col-sm-12'>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Send message</button>
-            </div>
-        </div>
-    </form>
-</div>
 
-<?php
-foreach($messages as $message) :
-    if ($message->author()->getLoginId() === $account->getLoginId()) {
-        $modifier = 'current_author';
-    }
-    else {
-        $modifier = 'someone_else';
-    }
-?>
-    <div class="row">
-        <div class="message message--<?php echo $modifier; ?>">
-            <div class="message__body">
-                <?php echo $message; ?>
+    <div class="col-sm-6">
+
+        <?php
+        $action = $dispute->getUrl() . '/chat';
+        if (isset($recipientID)) {
+            $action = $dispute->getUrl() . '/mediation/chat';
+        }
+        ?>
+
+        <h2>New Message</h2>
+
+        <form method="post" action="<?php echo $action; ?>">
+            <div class="row">
+
+                <div class='col-sm-12'>
+                    <textarea name="message" class="form-control"></textarea>
+                </div>
+                <?php if (isset($recipientID)) : ?>
+                    <input type="hidden" name="recipient_id" value="<?php echo $recipientID; ?>" />
+                <?php endif; ?>
+                <div class='col-sm-12'>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Send message</button>
+                </div>
             </div>
-            <div class="message__author">
-                <?php echo $message->author() . ' wrote this on ' . prettyTime($message->timestamp()); ?>
-            </div>
-        </div>
+        </form>
+
     </div>
-<?php endforeach; ?>
+
+    <div class="col-sm-6">
+
+        <h2>Messages</h2>
+
+        <?php
+
+        if (count($messages) === 0) {
+            echo '<p>Your messages will appear here.</p>';
+        }
+
+        foreach($messages as $message) :
+            if ($message->author()->getLoginId() === $account->getLoginId()) {
+                $modifier = 'current_author';
+            }
+            else {
+                $modifier = 'someone_else';
+            }
+        ?>
+            <div class="row">
+                <div class="message message--<?php echo $modifier; ?>">
+                    <div class="message__body">
+                        <?php echo $message; ?>
+                    </div>
+                    <div class="message__author">
+                        <?php echo $message->author() . ' wrote this on ' . prettyTime($message->timestamp()); ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+    </div>
+
+</div>
