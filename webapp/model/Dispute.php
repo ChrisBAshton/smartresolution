@@ -100,11 +100,13 @@ class Dispute {
         $notifyAgents = array($this->getAgentA(), $this->getAgentB());
 
         foreach($notifyAgents as $agent) {
-            DBL::createNotification(array(
-                'recipient_id' => $agent->getLoginId(),
-                'message'      => 'The mediator has ' . $enabledOrDisabled . ' round-table-communication.',
-                'url'          => $this->getUrl() . '/chat'
-            ));
+            if ($agent) {
+                DBL::createNotification(array(
+                    'recipient_id' => $agent->getLoginId(),
+                    'message'      => 'The mediator has ' . $enabledOrDisabled . ' round-table-communication.',
+                    'url'          => $this->getUrl() . '/chat'
+                ));
+            }
         }
     }
 

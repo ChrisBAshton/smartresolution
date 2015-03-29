@@ -70,6 +70,64 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('This is my summary', $dispute->getSummaryFromPartyA());
     }
 
+    public function testRoundTableCommunication() {
+        $dispute = $this->createNewDispute(); // by default, should NOT be in round table communication
+        $this->assertFalse($dispute->inRoundTableCommunication());
+
+        $dispute->enableRoundTableCommunication();
+        $this->assertTrue($dispute->inRoundTableCommunication());
+
+        $dispute->disableRoundTableCommunication();
+        $this->assertFalse($dispute->inRoundTableCommunication());
+    }
+
+    public function testIsAMediationParty() {
+        $dispute = $this->createNewDispute();
+
+        // first, let's set up the second party
+        $dispute->setLawFirmB(AccountDetails::emailToId('law_firm_b@t.co'));
+        $dispute->setAgentB(AccountDetails::emailToId('agent_b@t.co'));
+
+        // next, let's set up Mediation
+        DBL::createMediationCentreOffer(array(
+            'dispute'          => $dispute,
+            'proposed_by'      => $dispute->getAgentA(),
+            'mediation_centre' => AccountDetails::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')
+        ));
+        $dispute->refresh();
+        $dispute->getMediationState()->acceptLatestProposal();
+        DBL::createMediatorOffer(array(
+            'dispute'     => $dispute,
+            'proposed_by' => $dispute->getAgentA(),
+            'mediator'    => AccountDetails::getAccountByEmail('john.smith@we-mediate.co.uk')
+        ));
+        $dispute->refresh();
+        $dispute->getMediationState()->acceptLatestProposal();
+
+        // now we can test the mediation
+        $this->assertTrue($dispute->isAMediationParty(
+            AccountDetails::emailToId('mediation_centre_email@we-mediate.co.uk')
+        ));
+        $this->assertTrue($dispute->isAMediationParty(
+            AccountDetails::emailToId('john.smith@we-mediate.co.uk')
+        ));
+
+        $shouldNotPass = array(
+            // agents and law_firms should not ever pass
+            'agent_a@t.co',
+            'agent_b@t.co',
+            'law_firm_a@t.co',
+            'law_firm_b@t.co',
+            // other mediation centres and mediators should also not pass
+            'we@also-mediate.co',
+            'tim@also-mediate.co'
+        );
+
+        foreach($shouldNotPass as $email) {
+            $this->assertFalse($dispute->isAMediationParty(AccountDetails::emailToId($email)));
+        }
+    }
+
     public function testDisputeGettersObjectsMatch() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
