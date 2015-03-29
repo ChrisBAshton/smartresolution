@@ -10,6 +10,12 @@ Given(/^the Dispute is fully underway$/) do
   assert ! State.dispute_in_mediation?
 end
 
+Given(/^the Dispute is in Mediation$/) do
+  $dispute_id = DBL.dispute_title_to_id 'Dispute that is in mediation'
+  assert State.dispute_active?
+  assert State.dispute_in_mediation?
+end
+
 Then(/^I should see the message '(.+)'$/) do |expected_message|
   assert page.has_content?(expected_message)
 end

@@ -6,19 +6,20 @@ Feature: Dispute (under Mediation)
     advice.
 
   Background:
-    Given the Dispute is in Mediation
+    Given I am logged into a Mediator account
+    And the Dispute is in Mediation
 
   Scenario: Block Agent A and B from communicating with one another
-    Given we have not activated round-table communication
+    Given I am logged into an Agent account
+    And we have not activated round-table communication
     Then I should not be able to communicate with the other Agent
 
   Scenario: Communication between Agent and Mediator
     Given we have not activated round-table communication
-    And I am logged into a Mediator account
     Then I should be able to communicate with the Agents in individual threads
+    And there should be no way for either Agent to see the messages of the other
 
   Scenario: Sending an offer for round-table communication
-    Given I am a Mediator
     Then I should be able to offer round-table communication
 
   Scenario: Accepting the offer for round-table communication

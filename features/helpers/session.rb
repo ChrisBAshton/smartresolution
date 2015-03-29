@@ -6,6 +6,12 @@ class Session
     visit '/login'
   end
 
+  def self.login_as (name)
+    Session.clear_session_before_login
+    login_details = DBL.get_credentials_for name
+    Session.login_with_credentials login_details[:email], login_details[:password]
+  end
+
   def self.login_as_law_firm
     Session.clear_session_before_login
     Session.login_with_credentials 'law_firm_a@t.co', 'test'
