@@ -77,3 +77,7 @@ end
 Then(/^free communication should no longer be allowed between all parties$/) do
   assert page.has_content? 'Round-Table Communication is currently disabled.'
 end
+
+Given(/^I try to send a message to someone not involved in the dispute$/) do
+  visit '/disputes/' + $dispute_id + '/mediation-chat/' + DBL.email_to_id('one_dispute_agent@company.com')
+end

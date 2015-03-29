@@ -20,6 +20,10 @@ Feature: Dispute (under Mediation)
     Then I should be able to communicate with the Agents in individual threads
     And there should be no way for either Agent to see the messages of the other
 
+  Scenario: Trying to send a message to someone not involved in the dispute
+    Given I try to send a message to someone not involved in the dispute
+    Then I should see the message 'The account you're trying to send a message to is not involved in this dispute!'
+
   Scenario: Enabling round-table communication
     Then I should be able to enable round-table communication
 

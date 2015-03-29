@@ -182,7 +182,7 @@ class MediationController {
     public function viewMessages($f3, $params) {
         $this->setUp($f3, $params);
         $recipientID = (int) $params['recipientID'];
-        if (!$this->dispute->canBeViewedBy($recipientID)) {
+        if (!$this->dispute->canBeViewedBy($recipientID) || AccountDetails::getAccountById($recipientID) instanceof Organisation) {
             errorPage("The account you're trying to send a message to is not involved in this dispute!");
         }
         $this->viewMessagesWith($recipientID);
@@ -219,23 +219,12 @@ class MediationController {
         $this->setUp($f3, $params);
         $enableOrDisable = $f3->get('POST.action');
         if ($enableOrDisable && $this->account instanceof Mediator) {
-            Database::instance()->exec(
-                'UPDATE disputes SET round_table_communication = :bool WHERE dispute_id = :dispute_id',
-                array(
-                    ':dispute_id' => $this->dispute->getDisputeId(),
-                    ':bool'       => $enableOrDisable === 'enable' ? 'true' : 'false'
-                )
-            );
-            DBL::createNotification(array(
-                'recipient_id' => $this->dispute->getAgentA()->getLoginId(),
-                'message'      => 'The mediator has ' . $enableOrDisable . 'd round-table-communication.',
-                'url'          => $this->dispute->getUrl() . '/chat'
-            ));
-            DBL::createNotification(array(
-                'recipient_id' => $this->dispute->getAgentB()->getLoginId(),
-                'message'      => 'The mediator has ' . $enableOrDisable . 'd round-table-communication.',
-                'url'          => $this->dispute->getUrl() . '/chat'
-            ));
+            if ($enableOrDisable === 'enable') {
+                $this->dispute->enableRoundTableCommunication();
+            }
+            else {
+                $this->dispute->disableRoundTableCommunication();
+            }
         }
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }
