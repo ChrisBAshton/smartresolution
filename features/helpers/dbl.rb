@@ -43,9 +43,11 @@ class DBL
 
   def self.name_matches_individual (individuals, name)
     forename, surname = name.split(' ')
-    individuals.each do |individual|
-      if individual['details']['forename'] == forename && individual['details']['surname'] == surname
-        return DBL.return_credentials(individual)
+    if individuals
+      individuals.each do |individual|
+        if individual['details']['forename'] == forename && individual['details']['surname'] == surname
+          return DBL.return_credentials(individual)
+        end
       end
     end
     return false

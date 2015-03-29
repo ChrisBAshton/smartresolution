@@ -37,13 +37,12 @@ CREATE TABLE IF NOT EXISTS individuals (
 -- #######################################################################
 
 CREATE TABLE IF NOT EXISTS disputes (
-    dispute_id                INTEGER PRIMARY KEY NOT NULL,
-    type                      VARCHAR(100) NOT NULL,
-    title                     VARCHAR(140) NOT NULL,
-    party_a                   INTEGER NOT NULL,
-    party_b                   INTEGER, -- NULL until Dispute has been assigned to Law Firm B
-    status                    VARCHAR(40) DEFAULT "ongoing",
-    round_table_communication BOOLEAN DEFAULT false,
+    dispute_id INTEGER PRIMARY KEY NOT NULL,
+    type       VARCHAR(100) NOT NULL,
+    title      VARCHAR(140) NOT NULL,
+    party_a    INTEGER NOT NULL,
+    party_b    INTEGER, -- NULL until Dispute has been assigned to Law Firm B
+    status     VARCHAR(40) DEFAULT "ongoing",
     FOREIGN KEY(dispute_id)             REFERENCES disputes(dispute_id),
     CHECK (status in ("ongoing", "resolved", "failed")),
     FOREIGN KEY(party_a)                REFERENCES dispute_parties(party_id),
@@ -95,6 +94,14 @@ CREATE TABLE IF NOT EXISTS mediators_available (
     dispute_id  INTEGER NOT NULL,
     FOREIGN KEY(mediator_id) REFERENCES account_details(login_id),
     FOREIGN KEY(dispute_id)  REFERENCES disputes(dispute_id)
+);
+
+CREATE TABLE IF NOT EXISTS round_table_communication_proposals (
+    mediation_offer_id  INTEGER PRIMARY KEY NOT NULL,
+    proposed            BOOLEAN DEFAULT false, -- true when mediator proposes it
+    accepted_by_party_a BOOLEAN DEFAULT false, -- true when agent a accepts
+    accepted_by_party_b BOOLEAN DEFAULT false, -- true when agent b accepts
+    FOREIGN KEY(mediation_offer_id) REFERENCES mediation_offers(mediation_offer_id)
 );
 
 -- #######################################################################

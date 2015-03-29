@@ -10,7 +10,9 @@ class MessageController {
             errorPage('You do not have permission to view this Dispute!');
         }
         else if (!$this->dispute->getState($this->account)->canSendMessage()) {
-            if ($this->account instanceof Mediator) {
+            if ($this->account instanceof Mediator &&
+                $this->dispute->getMediationState()->inMediation()){
+
                 $f3->set('content', 'mediator__round_table_communications.html');
                 echo View::instance()->render('layout.html');
             }
