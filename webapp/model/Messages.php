@@ -15,7 +15,7 @@ class Messages {
 
     private function retrieveDisputeMessages($disputeID) {
         $messages = Database::instance()->exec(
-            'SELECT message_id FROM messages WHERE dispute_id = :dispute_id ORDER BY message_id DESC',
+            'SELECT message_id FROM messages WHERE dispute_id = :dispute_id AND recipient_id is null ORDER BY message_id DESC',
             array(':dispute_id' => $disputeID)
         );
 
