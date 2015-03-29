@@ -20,6 +20,10 @@ $routes = array(
         renderMarkdown(__DIR__ . '/view/about.md');
     },
 
+    'GET /workflow' => function($f3, $params) {
+        renderMarkdown(__DIR__ . '/view/workflow.md');
+    },
+
     'GET /installation' => function($f3, $params) {
         renderMarkdown(__DIR__ . '/view/installation.md');
     },
@@ -64,9 +68,17 @@ $routes = array(
     'POST /disputes/@disputeID/mediation/choose-list' => 'MediationController->chooseListOfMediators',
     'POST /disputes/@disputeID/mediation/choose-mediator' => 'MediationController->chooseMediatorFromList',
 
+    // communication in mediation
+    'GET  /disputes/@disputeID/mediation-chat' => function ($f3, $params) {
+        header('Location: /disputes/' . $params['disputeID'] . '/mediation');
+    },
+    'GET  /disputes/@disputeID/mediation-chat/@recipientID' => 'MediationController->viewMessages',
+    'POST /disputes/@disputeID/mediation-chat/@recipientID' => 'MediationController->newMessage',
+    'POST /disputes/@disputeID/mediation/round-table-communication' => 'MediationController->roundTableCommunication',
+
     // messaging
-    'GET  /disputes/@disputeID/chat'    => 'MessageController->view',
-    'POST /disputes/@disputeID/chat'    => 'MessageController->newMessage',
+    'GET  /disputes/@disputeID/chat' => 'MessageController->view',
+    'POST /disputes/@disputeID/chat' => 'MessageController->newMessage',
 
     // lifespans
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',

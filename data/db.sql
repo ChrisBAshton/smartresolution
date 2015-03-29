@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS disputes (
     party_a                   INTEGER NOT NULL,
     party_b                   INTEGER, -- NULL until Dispute has been assigned to Law Firm B
     status                    VARCHAR(40) DEFAULT "ongoing",
-    round_table_communication BOOLEAN DEFAULT false,
-    FOREIGN KEY(dispute_id)             REFERENCES disputes(dispute_id),
+    round_table_communication DEFAULT false,
     CHECK (status in ("ongoing", "resolved", "failed")),
-    FOREIGN KEY(party_a)                REFERENCES dispute_parties(party_id),
-    FOREIGN KEY(party_b)                REFERENCES dispute_parties(party_id)
+    FOREIGN KEY(dispute_id)   REFERENCES disputes(dispute_id),
+    FOREIGN KEY(party_a)      REFERENCES dispute_parties(party_id),
+    FOREIGN KEY(party_b)      REFERENCES dispute_parties(party_id)
 );
 
 CREATE TABLE IF NOT EXISTS dispute_parties (
@@ -102,11 +102,12 @@ CREATE TABLE IF NOT EXISTS mediators_available (
 -- #######################################################################
 
 CREATE TABLE IF NOT EXISTS messages (
-    message_id INTEGER PRIMARY KEY NOT NULL,
-    dispute_id INTEGER NOT NULL,
-    author_id  INTEGER NOT NULL,
-    message    TEXT    NOT NULL,
-    timestamp  INTEGER NOT NULL,
+    message_id   INTEGER PRIMARY KEY NOT NULL,
+    dispute_id   INTEGER NOT NULL,
+    author_id    INTEGER NOT NULL,
+    recipient_id INTEGER, -- NULL BY DEFAULT. If NULL, user is announcing message on the street. If not NULL, this is a private message intended only for the recipient.
+    message      TEXT    NOT NULL,
+    timestamp    INTEGER NOT NULL,
     FOREIGN KEY(dispute_id) REFERENCES disputes(dispute_id),
     FOREIGN KEY(author_id)  REFERENCES account_details(login_id)
 );

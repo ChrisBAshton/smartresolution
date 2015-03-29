@@ -5,7 +5,6 @@ Given(/^I have created an Agent$/) do
 end
 
 Given(/^I have created NO Agent accounts$/) do
-  Session.clear_session_before_login
   Session.login_with_credentials 'law_firm_with_no_agents@t.co', 'test'
   visit '/disputes/new'
 end
@@ -49,7 +48,6 @@ end
 Given(/^a Dispute has been initiated against my Law Firm$/) do
   Session.login_as_agent
   step "I should be able to initiate it against another Law Firm"
-  Session.clear_session_before_login
   Session.login_with_credentials 'law_firm_b@t.co', 'test'
 end
 

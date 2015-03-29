@@ -10,6 +10,12 @@ Given(/^the Dispute is fully underway$/) do
   assert ! State.dispute_in_mediation?
 end
 
+Given(/^the Dispute is in Mediation$/) do
+  $dispute_id = DBL.dispute_title_to_id 'Dispute that is in mediation'
+  assert State.dispute_active?
+  assert State.dispute_in_mediation?
+end
+
 Then(/^I should see the message '(.+)'$/) do |expected_message|
   assert page.has_content?(expected_message)
 end
@@ -18,12 +24,10 @@ Given(/^I am not logged into an account$/) do
 end
 
 Given(/^I am logged into an Individual account$/) do
-  Session.clear_session_before_login
   Session.login_as_individual
 end
 
 Given(/^I am logged into an Organisation account$/) do
-  Session.clear_session_before_login
   Session.login_as_law_firm
 end
 
@@ -46,6 +50,5 @@ Then(/^I am logged into a(?:n)? (Agent|Mediator) account$/) do |account_type|
 end
 
 Given(/^I am logged into an Agent account that is not associated with the Dispute$/) do
-  Session.clear_session_before_login
   Session.login_with_credentials 'one_dispute_agent@company.com', 'test'
 end

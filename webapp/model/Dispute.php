@@ -17,6 +17,7 @@ class Dispute {
         $this->currentLifespan = LifespanFactory::getCurrentLifespan($this->disputeId);
         $this->latestLifespan  = LifespanFactory::getLatestLifespan($this->disputeId);
         $this->mediationState  = new MediationState($this->disputeId);
+        $this->inRoundTableCommunication = $data['round_table_communication'] === 'true';
 
         if (!$this->partyA) {
             throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -77,6 +78,36 @@ class Dispute {
 
     public function getSummaryFromPartyB() {
         return $this->partyB['summary'];
+    }
+
+    public function inRoundTableCommunication() {
+        return $this->inRoundTableCommunication;
+    }
+
+    public function enableRoundTableCommunication() {
+        $this->db->enableRoundTableCommunication();
+        $this->notifyAgentsOfRTC('enabled');
+        $this->refresh();
+    }
+
+    public function disableRoundTableCommunication() {
+        $this->db->disableRoundTableCommunication();
+        $this->notifyAgentsOfRTC('disabled');
+        $this->refresh();
+    }
+
+    private function notifyAgentsOfRTC($enabledOrDisabled) {
+        $notifyAgents = array($this->getAgentA(), $this->getAgentB());
+
+        foreach($notifyAgents as $agent) {
+            if ($agent) {
+                DBL::createNotification(array(
+                    'recipient_id' => $agent->getLoginId(),
+                    'message'      => 'The mediator has ' . $enabledOrDisabled . ' round-table-communication.',
+                    'url'          => $this->getUrl() . '/chat'
+                ));
+            }
+        }
     }
 
     public function closeSuccessfully() {
@@ -162,22 +193,11 @@ class Dispute {
     }
 
     public function canBeViewedBy($loginID) {
-        $account = AccountDetails::getAccountById($loginID);
-        $viewableDisputes = $account->getAllDisputes();
-        foreach($viewableDisputes as $dispute) {
-            if ($dispute->getDisputeId() === $this->getDisputeId()) {
-                return true;
-            }
-        }
-
-        if ($this->getMediationState()->inMediation()) {
-            return (
-                $this->getMediationState()->getMediator()->getLoginId()        === $loginID ||
-                $this->getMediationState()->getMediationCentre()->getLoginId() === $loginID
-            );
-        }
-
-        return false;
+        return (
+            $this->isInPartyA($loginID) ||
+            $this->isInPartyB($loginID) ||
+            $this->isAMediationParty($loginID)
+        );
     }
 
     public function getOpposingPartyId($partyID) {
@@ -195,17 +215,33 @@ class Dispute {
     }
 
     public function isInPartyA($partyID) {
-        return (
-            $partyID === $this->partyA['law_firm']->getLoginId() ||
+        return ((
+            $this->partyA['law_firm'] &&
+            $partyID === $this->partyA['law_firm']->getLoginId()
+        ) || (
+            $this->partyA['agent'] &&
             $partyID === $this->partyA['agent']->getLoginId()
-        );
+        ));
     }
 
     public function isInPartyB($partyID) {
-        return (
-            $partyID === $this->partyB['law_firm']->getLoginId() ||
+        return ((
+            $this->partyB['law_firm'] &&
+            $partyID === $this->partyB['law_firm']->getLoginId()
+        ) || (
+            $this->partyB['agent'] &&
             $partyID === $this->partyB['agent']->getLoginId()
-        );
+        ));
+    }
+
+    public function isAMediationParty($partyID) {
+        if ($this->getMediationState()->inMediation()) {
+            return (
+                $partyID === $this->getMediationState()->getMediator()->getLoginId() ||
+                $partyID === $this->getMediationState()->getMediationCentre()->getLoginId()
+            );
+        }
+        return false;
     }
 
     private function agentAIsSet() {

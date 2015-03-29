@@ -19,6 +19,24 @@ class DBDispute {
         return $dispute[0];
     }
 
+    public function enableRoundTableCommunication() {
+        $this->markRoundTableCommunicationAs('enabled');
+    }
+
+    public function disableRoundTableCommunication() {
+        $this->markRoundTableCommunicationAs('disabled');
+    }
+
+    private function markRoundTableCommunicationAs($enabledOrDisabled) {
+        Database::instance()->exec(
+            'UPDATE disputes SET round_table_communication = :bool WHERE dispute_id = :dispute_id',
+            array(
+                ':dispute_id' => $this->disputeID,
+                ':bool'       => $enabledOrDisabled === 'enabled' ? 'true' : 'false'
+            )
+        );
+    }
+
     public function getPartyDetails($partyID) {
         if ($partyID === 0) {
             return array(

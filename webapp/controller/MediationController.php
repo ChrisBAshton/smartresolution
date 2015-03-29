@@ -46,7 +46,7 @@ class MediationController {
 
         else :
 
-            errorPage('@TODO - Mediation is fully underway!');
+            $f3->set('content', 'mediator__round_table_communications.html');
 
         endif;
     }
@@ -81,7 +81,7 @@ class MediationController {
 
         else :
 
-            $f3->set('content', 'mediation_finalised.html');
+            $this->viewMessagesWith($this->mediationState->getMediator()->getLoginId());
 
         endif;
     }
@@ -177,6 +177,56 @@ class MediationController {
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
+    }
+
+    public function viewMessages($f3, $params) {
+        $this->setUp($f3, $params);
+        $recipientID = (int) $params['recipientID'];
+        if (!$this->dispute->canBeViewedBy($recipientID) || AccountDetails::getAccountById($recipientID) instanceof Organisation) {
+            errorPage("The account you're trying to send a message to is not involved in this dispute!");
+        }
+        $this->viewMessagesWith($recipientID);
+        echo View::instance()->render('layout.html');
+    }
+
+    private function viewMessagesWith($recipientID) {
+        global $f3;
+        $messages = new Messages($this->dispute->getDisputeId(), $this->account->getLoginId(), $recipientID);
+        $f3->set('recipientID', $recipientID);
+        $f3->set('messages', $messages->getMessages());
+        $f3->set('content', 'messages.html');
+    }
+
+    public function newMessage ($f3, $params) {
+        $this->setUp($f3, $params);
+        $message     = $f3->get('POST.message');
+        $recipientID = $f3->get('POST.recipient_id');
+
+        if ($message && $recipientID) {
+
+            DBL::createMessage(array(
+                'dispute_id'   => $this->dispute->getDisputeId(),
+                'author_id'    => $this->account->getLoginId(),
+                'message'      => $message,
+                'recipient_id' => (int) $recipientID
+            ));
+
+        }
+        header('Location: ' . $this->dispute->getUrl() . '/mediation-chat/' . $recipientID);
+    }
+
+    public function roundTableCommunication($f3, $params) {
+        $this->setUp($f3, $params);
+        $enableOrDisable = $f3->get('POST.action');
+        if ($enableOrDisable && $this->account instanceof Mediator) {
+            if ($enableOrDisable === 'enable') {
+                $this->dispute->enableRoundTableCommunication();
+            }
+            else {
+                $this->dispute->disableRoundTableCommunication();
+            }
+        }
+        header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }
 
 }

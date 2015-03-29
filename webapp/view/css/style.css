@@ -19,6 +19,16 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
+    background-color: #3D3D3D;
+    color: white;
+}
+
+footer a {
+    color: rgb(134, 196, 234);
+}
+
+footer a:hover {
+    color: rgb(193, 226, 247);
 }
 
 /************************************************************ Bootstrap overrides */

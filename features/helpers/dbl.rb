@@ -32,15 +32,32 @@ class DBL
     @data['disputes'].size
   end
 
-  def self.get_credentials_for(organisation_name)
+  def self.get_credentials_for(name)
     @data['organisations'].each do |organisation|
-      if organisation['details']['name'] == organisation_name
-        return {
-          :email    => organisation['account_details']['email'],
-          :password => organisation['account_details']['password']
-        }
+      return DBL.return_credentials(organisation) if organisation['details']['name'] == name
+      individual_credentials = DBL.name_matches_individual(organisation['individuals'], name)
+      return individual_credentials if individual_credentials
+    end
+    throw 'No individual or organisation of name "' + name + '" was found.'
+  end
+
+  def self.name_matches_individual (individuals, name)
+    forename, surname = name.split(' ')
+    if individuals
+      individuals.each do |individual|
+        if individual['details']['forename'] == forename && individual['details']['surname'] == surname
+          return DBL.return_credentials(individual)
+        end
       end
     end
+    return false
+  end
+
+  def self.return_credentials(account)
+    return {
+      :email    => account['account_details']['email'],
+      :password => account['account_details']['password']
+    }
   end
 
 end

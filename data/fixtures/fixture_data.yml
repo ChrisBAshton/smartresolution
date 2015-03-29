@@ -70,6 +70,20 @@ organisations:
             forename: John
             surname:  Smith
             cv:       "#CV coming soon."
+  - account_details:
+        email:    we@also-mediate.co
+        password: test
+    details:
+        type:     mediation_centre
+        name:     We Also Mediate!
+    individuals:
+      - account_details:
+            email:    tim@also-mediate.co
+            password: test
+        details:
+            type:     mediator
+            forename: McGuinness
+            surname:  Guiness
 disputes:
   - title:      A simple test dispute
     type:       other

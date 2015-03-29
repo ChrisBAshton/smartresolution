@@ -33,8 +33,11 @@ class DisputeStateCalculator {
                 if (!$mediationState->inMediation()) {
                     return new LifespanNegotiated($dispute, $account);
                 }
-                else {
+                elseif (!$dispute->inRoundTableCommunication()) {
                     return new InMediation($dispute, $account);
+                }
+                else {
+                    return new InRoundTableMediation($dispute, $account);
                 }
             }
         }
@@ -46,6 +49,27 @@ class DisputeStateCalculator {
 
         $state   = $dispute->getState($account);
         $actions = array();
+
+        if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
+
+            $actions[] = array(
+                'title' => 'Round-Table Communication',
+                'image' => '/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/chat/'
+            );
+
+            $actions[] = array(
+                'title' => 'Communicate with ' . $dispute->getAgentA()->getName(),
+                'image' => '/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentA()->getLoginId()
+            );
+
+            $actions[] = array(
+                'title' => 'Communicate with ' . $dispute->getAgentB()->getName(),
+                'image' => '/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentB()->getLoginId()
+            );
+        }
 
         if ($state->canOpenDispute()) {
             $actions[] = array(
@@ -63,7 +87,7 @@ class DisputeStateCalculator {
             );
         }
 
-        if ($state->canSendMessage()) {
+        if ($state->canSendMessage() && ! ($account instanceof Mediator) ) {
             $actions[] = array(
                 'title' => 'Communicate',
                 'image' => '/view/images/message.png',

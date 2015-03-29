@@ -19,7 +19,6 @@ Then(/^I should see which Organisation the Individual works for$/) do
 end
 
 Then(/^I should be able to edit my Organisation's description$/) do
-  Session.clear_session_before_login
   Session.login_as_law_firm
   visit '/settings'
   fill_in('Description', :with => 'My company description')
