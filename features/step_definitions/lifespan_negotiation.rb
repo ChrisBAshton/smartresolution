@@ -15,7 +15,6 @@ end
 
 And(/^regardless of who submitted the Dispute first$/) do
   # login as the other agent, decline offer and create another offer, to prove either agent can propose lifespan
-  Session.clear_session_before_login
   Session.login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/' + $dispute_id + '/lifespan'
   click_button 'Decline'
@@ -30,8 +29,6 @@ Given(/^the other Agent has sent me a Dispute lifespan offer$/) do
 end
 
 Then(/^I should be able to (Accept|Decline) the offer$/) do |accept_or_decline|
-  # login as the other agent, accept offer
-  Session.clear_session_before_login
   Session.login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/' + $dispute_id + '/lifespan'
   click_button accept_or_decline
@@ -47,7 +44,6 @@ When(/^I make a new lifespan offer$/) do
 end
 
 And(/^the other Agent accepts the offer$/) do
-  Session.clear_session_before_login
   Session.login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/' + $dispute_id + '/lifespan'
   click_button 'Accept'

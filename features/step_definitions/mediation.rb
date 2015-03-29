@@ -42,7 +42,6 @@ Then(/^there should be no way for either Agent to see the messages of the other$
   assert !(page.has_content? 'Test message for Chris Ashton')
 end
 
-
 Then(/^I should be able to (enable|disable) round\-table communication$/) do |enable_or_disable|
   visit '/disputes/' + $dispute_id + '/mediation'
   enable_or_disable = enable_or_disable.capitalize

@@ -12,7 +12,6 @@ end
 Given(/^the other Agent has proposed a Mediation Centre$/) do
   step "I should be able to propose Mediation"
   step "my choice of Mediation Centre should be presented to the other Agent"
-  Session.clear_session_before_login
   Session.login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/' + $dispute_id + '/mediation'
   assert page.has_content? 'The other agent has proposed that WeMediate should be the Mediation Centre in this dispute.'
@@ -31,9 +30,7 @@ Given(/^the Agents have agreed on a Mediation Centre$/) do
 end
 
 Given(/^I am logged in as the Mediation Centre$/) do
-  Session.clear_session_before_login
-  credentials = DBL.get_credentials_for 'WeMediate'
-  Session.login_with_credentials credentials[:email], credentials[:password]
+  Session.login_as 'WeMediate'
 end
 
 Then(/^I should be able to provide a list of available Mediators$/) do
@@ -60,7 +57,6 @@ Given(/^the other Agent has proposed a Mediator$/) do
   step "the Mediation Centre we've agreed upon has provided a list of available Mediators"
   step "I am logged into an Agent account"
   step "I should be able to propose a Mediator to the other Agent"
-  Session.clear_session_before_login
   Session.login_with_credentials 'agent_b@t.co', 'test'
   visit '/disputes/' + $dispute_id + '/mediation'
 end

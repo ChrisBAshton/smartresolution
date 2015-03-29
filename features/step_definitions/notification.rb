@@ -2,7 +2,6 @@ Given(/^a Dispute has been assigned to me$/) do
 end
 
 And(/^I am logged into a one-dispute Agent account$/) do
-  visit '/login'
   Session.login_with_credentials 'one_dispute_agent@company.com', 'test'
 end
 
