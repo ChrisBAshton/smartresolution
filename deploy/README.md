@@ -44,12 +44,7 @@ You should now be able to run the one-script install:
 
 `sudo ./deploy/aws.sh`
 
-Hit `y` and `Return` wherever prompted for permission.
-
-## Start the httpd server
-`sudo service httpd start`
-
-You should be able to go to the provided IP address and see SmartResolution working.
+When the script has finished, it automatically starts the server. You should be able to go to the provided IP address and see SmartResolution working.
 
 ## Just in case
 
