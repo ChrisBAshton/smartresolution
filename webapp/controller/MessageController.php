@@ -13,8 +13,7 @@ class MessageController {
             if ($this->account instanceof Mediator &&
                 $this->dispute->getMediationState()->inMediation()){
 
-                $f3->set('content', 'mediator__round_table_communications.html');
-                echo View::instance()->render('layout.html');
+                errorPage('Round-Table Communication is currently disabled. You can enable this feature from the Mediation screen.');
             }
             else {
                 errorPage('You cannot communicate with the other party at this time. This may be because the dispute is in mediation, has finished, or has not started yet.');

@@ -33,8 +33,11 @@ class DisputeStateCalculator {
                 if (!$mediationState->inMediation()) {
                     return new LifespanNegotiated($dispute, $account);
                 }
-                else {
+                elseif (!$dispute->inRoundTableCommunication()) {
                     return new InMediation($dispute, $account);
+                }
+                else {
+                    return new InRoundTableMediation($dispute, $account);
                 }
             }
         }
@@ -84,7 +87,7 @@ class DisputeStateCalculator {
             );
         }
 
-        if ($state->canSendMessage()) {
+        if ($state->canSendMessage() && ! ($account instanceof Mediator) ) {
             $actions[] = array(
                 'title' => 'Communicate',
                 'image' => '/view/images/message.png',

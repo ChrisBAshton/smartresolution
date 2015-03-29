@@ -74,6 +74,7 @@ $routes = array(
     },
     'GET  /disputes/@disputeID/mediation-chat/@recipientID' => 'MediationController->viewMessages',
     'POST /disputes/@disputeID/mediation-chat/@recipientID' => 'MediationController->newMessage',
+    'POST /disputes/@disputeID/mediation/round-table-communication' => 'MediationController->roundTableCommunication',
 
     // messaging
     'GET  /disputes/@disputeID/chat' => 'MessageController->view',

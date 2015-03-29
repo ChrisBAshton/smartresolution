@@ -17,6 +17,7 @@ class Dispute {
         $this->currentLifespan = LifespanFactory::getCurrentLifespan($this->disputeId);
         $this->latestLifespan  = LifespanFactory::getLatestLifespan($this->disputeId);
         $this->mediationState  = new MediationState($this->disputeId);
+        $this->inRoundTableCommunication = $data['round_table_communication'] === 'true';
 
         if (!$this->partyA) {
             throw new Exception('A dispute must have at least one organisation associated with it!');
@@ -77,6 +78,10 @@ class Dispute {
 
     public function getSummaryFromPartyB() {
         return $this->partyB['summary'];
+    }
+
+    public function inRoundTableCommunication() {
+        return $this->inRoundTableCommunication;
     }
 
     public function closeSuccessfully() {

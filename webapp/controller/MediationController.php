@@ -46,7 +46,7 @@ class MediationController {
 
         else :
 
-            errorPage('@TODO Options to close mediation');
+            $f3->set('content', 'mediator__round_table_communications.html');
 
         endif;
     }
@@ -213,6 +213,31 @@ class MediationController {
 
         }
         header('Location: ' . $this->dispute->getUrl() . '/mediation-chat/' . $recipientID);
+    }
+
+    public function roundTableCommunication($f3, $params) {
+        $this->setUp($f3, $params);
+        $enableOrDisable = $f3->get('POST.action');
+        if ($enableOrDisable && $this->account instanceof Mediator) {
+            Database::instance()->exec(
+                'UPDATE disputes SET round_table_communication = :bool WHERE dispute_id = :dispute_id',
+                array(
+                    ':dispute_id' => $this->dispute->getDisputeId(),
+                    ':bool'       => $enableOrDisable === 'enable' ? 'true' : 'false'
+                )
+            );
+            DBL::createNotification(array(
+                'recipient_id' => $this->dispute->getAgentA()->getLoginId(),
+                'message'      => 'The mediator has ' . $enableOrDisable . 'd round-table-communication.',
+                'url'          => $this->dispute->getUrl() . '/chat'
+            ));
+            DBL::createNotification(array(
+                'recipient_id' => $this->dispute->getAgentB()->getLoginId(),
+                'message'      => 'The mediator has ' . $enableOrDisable . 'd round-table-communication.',
+                'url'          => $this->dispute->getUrl() . '/chat'
+            ));
+        }
+        header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }
 
 }

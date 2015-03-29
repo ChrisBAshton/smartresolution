@@ -1,1 +1,28 @@
-Hello, Mediator. @TODO - you should be able to propose Round Table Communication from this screen.
+<?php
+    if ($dispute->inRoundTableCommunication()) {
+        $enableOrDisable = 'enable';
+        $opposite        = 'disable';
+    }
+    else {
+        $enableOrDisable = 'disable';
+        $opposite        = 'enable';
+    }
+?>
+<h1>Round-Table Communication</h1>
+
+<p class="bg-padded bg-info">
+    Round-Table Communication is currently <strong><?php echo $enableOrDisable; ?>d</strong>.
+</p>
+
+<?php if ($enableOrDisable === 'disable') : ?>
+<p>
+    If you feel the agents are close to a resolution, you can enable round-table communication to allow the free exchange of conversation between all parties. You can disable round-table communication again at any time.
+</p>
+<?php endif; ?>
+
+<form method="post" action="<?php echo $dispute->getUrl(); ?>/mediation/round-table-communication">
+    <div class="col-lg-12">
+        <input type="hidden" name="action" value="<?php echo $opposite; ?>" />
+        <button class="btn btn-lg btn-primary btn-block" type="submit"><?php echo ucfirst($opposite); ?> Round-Table Communication</button>
+    </div>
+</form>
