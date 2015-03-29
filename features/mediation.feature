@@ -9,6 +9,7 @@ Feature: Dispute (under Mediation)
     Given I am logged into a Mediator account
     And the Dispute is in Mediation
 
+  @clear
   Scenario: Block Agent A and B from communicating with one another
     Given I am logged into an Agent account
     And we have not activated round-table communication
@@ -19,19 +20,16 @@ Feature: Dispute (under Mediation)
     Then I should be able to communicate with the Agents in individual threads
     And there should be no way for either Agent to see the messages of the other
 
-  Scenario: Sending an offer for round-table communication
-    Then I should be able to offer round-table communication
+  Scenario: Enabling round-table communication
+    Then I should be able to enable round-table communication
 
-  Scenario: Accepting the offer for round-table communication
-    Given the Mediator has suggested round-table communication
-    Then I should be able to accept the offer
-    And the Dispute should go into round-table communication mode
-
+  @clear
   Scenario: Mediation is in round-table communication
     Given the Dispute is in round-table communication mode
     Then all parties should be able to communicate freely
 
-  Scenario: Declining the offer for round-table communication
-    Given the Mediator has suggested round-table communication
-    Then I should be able to decline the offer
-    And the Dispute should remain open and under Mediation
+  @clear
+  Scenario: Disabling round-table communication mode
+    Given the Dispute is in round-table communication mode
+    Then I should be able to disable round-table communication
+    And free communication should no longer be allowed between all parties

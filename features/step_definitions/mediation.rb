@@ -42,38 +42,39 @@ Then(/^there should be no way for either Agent to see the messages of the other$
   assert !(page.has_content? 'Test message for Chris Ashton')
 end
 
-Given(/^I am a Mediator$/) do
-  pending # express the regexp above with the code you wish you had
-end
 
-Then(/^I should be able to offer round\-table communication$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-Given(/^the Mediator has suggested round\-table communication$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then(/^I should be able to accept the offer$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then(/^the Dispute should go into round\-table communication mode$/) do
-  pending # express the regexp above with the code you wish you had
+Then(/^I should be able to (enable|disable) round\-table communication$/) do |enable_or_disable|
+  visit '/disputes/' + $dispute_id + '/mediation'
+  enable_or_disable = enable_or_disable.capitalize
+  click_button enable_or_disable + ' Round-Table Communication'
 end
 
 Given(/^the Dispute is in round\-table communication mode$/) do
-  pending # express the regexp above with the code you wish you had
+  step "I should be able to enable round-table communication"
 end
 
 Then(/^all parties should be able to communicate freely$/) do
-  pending # express the regexp above with the code you wish you had
+  visit '/disputes/' + $dispute_id + '/chat'
+  assert page.has_content? 'Send message'
+
+  fill_in 'message', :with => 'Message from mediator'
+  click_button 'Send message'
+
+  Session.login_as 'Chris Ashton'
+  visit '/disputes/' + $dispute_id + '/chat'
+  fill_in 'message', :with => 'Message from Agent A'
+  click_button 'Send message'
+
+  Session.login_as 'James Smith'
+  visit '/disputes/' + $dispute_id + '/chat'
+  fill_in 'message', :with => 'Message from Agent B'
+  click_button 'Send message'
+
+  assert page.has_content? 'Message from mediator'
+  assert page.has_content? 'Message from Agent A'
+  assert page.has_content? 'Message from Agent B'
 end
 
-Then(/^I should be able to decline the offer$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then(/^the Dispute should remain open and under Mediation$/) do
-  pending # express the regexp above with the code you wish you had
+Then(/^free communication should no longer be allowed between all parties$/) do
+  assert page.has_content? 'Round-Table Communication is currently disabled.'
 end
