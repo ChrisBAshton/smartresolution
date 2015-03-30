@@ -1,7 +1,7 @@
 {
-    "name": "ChrisBAshton/major-project",
-    "description": "Online Dispute Resolution for Maritime Collisions",
-    "homepage": "http://ashton.codes",
+    "name": "ChrisBAshton/smartresolution",
+    "description": "SmartResolution",
+    "homepage": "http://smartresolution.org",
     "license": "GPL-3.0",
     "require": {
         "php":             ">=5.3.6",
@@ -9,8 +9,7 @@
         "symfony/yaml":    "2.6.4"
     },
     "require-dev": {
-        "phpunit/phpunit":             "4.5.*",
-        "phpdocumentor/phpdocumentor": "2.*"
+        "phpunit/phpunit":             "4.5.*"
     },
     "config": {
         "vendor-dir": "vendor"

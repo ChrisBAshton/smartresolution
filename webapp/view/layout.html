@@ -12,15 +12,35 @@
 	<body>
 		<div id="wrapper">
 			<div id="content">
-				<?php
-				if (isset($account)) {
-					$header = 'header--logged_in.html';
-				}
-				else {
-					$header = 'header--default.html';
-				}
-				echo $this->render($header);
-				?>
+
+				<header class="container">
+				    <div class="row">
+				        <div class="col-sm-5">
+				            <a href="/"><img class="logo" src="view/images/logo.png"></a>
+				        </div>
+
+				        <div class="col-sm-7 text-right">
+				        	<?php if (isset($account)) : ?>
+				            <p>
+				                Welcome back, <?php echo $account->getName() ; ?>
+				                <?php
+				                    if (count($notifications) > 0) {
+				                        echo ' | <a href="/notifications" class="notification_link"><img src="/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
+				                    }
+				                    else {
+				                        echo ' | ';
+				                    }
+				                ?>
+				                <a href="/logout">Logout</a>
+				            </p>
+				        <?php else: ?>
+				            <p>
+				                <a href="/login">Login</a> | <a href="/register">Register</a>
+				            </p>
+					    <?php endif; ?>
+				        </div>
+				    </div>
+				</header>
 
 				<div class="container">
 					<?php

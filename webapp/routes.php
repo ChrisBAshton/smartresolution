@@ -1,31 +1,10 @@
 <?php
 
-function renderMarkdown($markdownFile) {
-    global $f3;
-    $f3->set('markdownFile', $markdownFile);
-    $f3->set('content', 'markdown.html');
-    echo View::instance()->render('layout.html');
-}
-
 $routes = array(
 
     'GET  /' => function ($f3, $params) {
-        if (Session::loggedIn()) {
-            header('Location: /dashboard');
-        }
-        renderMarkdown(__DIR__ . '/../README.md');
-    },
-
-    'GET /about' => function($f3, $params) {
-        renderMarkdown(__DIR__ . '/view/about.md');
-    },
-
-    'GET /workflow' => function($f3, $params) {
-        renderMarkdown(__DIR__ . '/view/workflow.md');
-    },
-
-    'GET /installation' => function($f3, $params) {
-        renderMarkdown(__DIR__ . '/view/installation.md');
+        $f3->set('content','index.html');
+        echo View::instance()->render('layout.html');
     },
 
     'GET  /dashboard'           => 'SessionController->dashboard',
