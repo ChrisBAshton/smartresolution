@@ -50,6 +50,8 @@ class DisputeStateCalculator {
         $state   = $dispute->getState($account);
         $actions = array();
 
+        ModuleController::emit('dispute_dashboard', $dispute);
+
         if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
 
             $actions[] = array(

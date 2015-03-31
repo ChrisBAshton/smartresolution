@@ -10,6 +10,7 @@ class Dispute {
     public function refresh() {
         $data = $this->db->getData();
         $this->disputeId       = (int) $data['dispute_id'];
+        $this->type            = $data['type'];
         $this->title           = $data['title'];
         $this->status          = $data['status'];
         $this->partyA          = $this->db->getPartyDetails((int) $data['party_a']);
@@ -22,6 +23,10 @@ class Dispute {
         if (!$this->partyA) {
             throw new Exception('A dispute must have at least one organisation associated with it!');
         }
+    }
+
+    public function getType() {
+        return $this->type;
     }
 
     public function getStatus() {

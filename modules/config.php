@@ -8,7 +8,7 @@
 $modules = array(
     'other'              => true,
     'simple_test'        => true,
-    'maritime_collision' => false
+    'maritime_collision' => true
 );
 
 foreach($modules as $moduleKey => $active) {
