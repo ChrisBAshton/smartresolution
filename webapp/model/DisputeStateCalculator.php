@@ -50,8 +50,6 @@ class DisputeStateCalculator {
         $state   = $dispute->getState($account);
         $actions = array();
 
-        ModuleController::emit('dispute_dashboard', $dispute);
-
         if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
 
             $actions[] = array(
@@ -136,6 +134,8 @@ class DisputeStateCalculator {
                 'href'  => $dispute->getUrl() . '/close'
             );
         }
+
+        ModuleController::emit('dispute_dashboard', $dispute, [$dispute, &$actions]);
 
         return $actions;
     }

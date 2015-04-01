@@ -71,3 +71,7 @@ $routes = array(
 foreach($routes as $request => $handler) {
     $f3->route($request, $handler);
 }
+
+foreach(ModuleController::getRoutes() as $route) {
+    $f3->route($route['route'], $route['handler']);
+}
