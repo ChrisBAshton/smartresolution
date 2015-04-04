@@ -30,7 +30,7 @@ function declare_module($config, $moduleDefinitionFunction) {
  *         Possible values: 'low', 'medium', 'high', or an integer between 1 and 100 (where 1 is low priority and 100 is high).
  */
 function on($eventName, $action, $priority = 'medium') {
-    ModuleController::subscribe($event, $action, $priority);
+    ModuleController::subscribe($eventName, $action, $priority);
 }
 
 /**
@@ -56,6 +56,11 @@ function route($route, $handler) {
 
 /**
  * Adds multiple items to the dashboard, in the order passed.
+ *
+ * @param  Array<$item> $items      Items to add to the dashboard.
+ *         String $item['title']    Title of the dashboard item.
+ *         String $item['image']    Icon to use.
+ *         String $item['href']     URL to link to.
  */
 function dashboard_add_items($items) {
     $items = array_reverse($items); // since each added item is pushed to the beginning of the array, and thus the beginning of the menu, if we want the items to appear in the menu in the order they were passed then we need to reverse the array.
@@ -66,6 +71,11 @@ function dashboard_add_items($items) {
 
 /**
  * Adds an item to the dashboard.
+ *
+ * @param  Array  $params           Item to add to the dashboard.
+ *         String $params['title']  Title of the dashboard item.
+ *         String $params['image']  Icon to use.
+ *         String $params['href']   URL to link to.
  */
 function dashboard_add_item($params) {
     // @TODO - call a method on DisputeStateCalculator rather than directly modifying its attribute.
@@ -76,6 +86,16 @@ function dashboard_add_item($params) {
     ));
 }
 
+/**
+ * Gets the URL of the module directory. Useful for linking to module-specific assets.
+ *
+ * Example:
+ * <code>
+ * get_module_url() . '/assets/my_image.png';
+ * </code>
+ *
+ * @return String URL to the module directory.
+ */
 function get_module_url() {
     $moduleLocation = debug_backtrace()[0]['file'];
     preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
@@ -83,11 +103,22 @@ function get_module_url() {
     return '/modules/' . $moduleName;
 }
 
+/**
+ * Gets the URL of the dispute that the module is hooked into.
+ *
+ * @return String  Dispute URL.
+ */
 function get_dispute_url() {
     // @TODO - call a method on DisputeStateCalculator rather than directly retrieving its attribute.
     return DisputeStateCalculator::$dispute->getUrl();
 }
 
+/**
+ * Renders a HTML template.
+ *
+ * @param  String $template  Path to the template, e.g. get_module_url() . '/views/index.html'
+ * @param  Array  $variables (optional) Values to pass to the template, e.g. array('foo' => 'bar'), which would be accessible as $foo in the template.
+ */
 function render($template, $variables = array()) {
     mustBeLoggedIn(); // sets user's top menu, etc.
     global $f3;
@@ -98,6 +129,11 @@ function render($template, $variables = array()) {
     echo View::instance()->render('layout.html');
 }
 
+/**
+ * Renders a markdown file, within the website template.
+ *
+ * @param  String $template Path to the markdown file, e.g. get_module_url() . '/docs/about.md'
+ */
 function render_markdown($template) {
     mustBeLoggedIn(); // sets user's top menu, etc.
     global $f3;
