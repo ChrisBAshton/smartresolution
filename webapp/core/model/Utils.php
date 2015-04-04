@@ -11,9 +11,9 @@ class Utils {
      *     $val = getValue($arr, 'abc', 'def'); // $val === 'def'
      *     $val = getValue($arr, 'abc');        // Exception raised
      *
-     * @param  Array  $array   The array to search in.
-     * @param  String $key     The key whose value we want to find.
-     * @param  String $default (Optional) - the default value if no value is found.
+     * @param  array  $array   The array to search in.
+     * @param  string $key     The key whose value we want to find.
+     * @param  string $default (Optional) - the default value if no value is found.
      * @return Object          Returns the found value, the default value, or raises an exception.
      */
     public static function getValue($array, $key, $default = NULL) {
@@ -29,7 +29,7 @@ class Utils {
      * Semi-temporary function - used for DisputeStateTest.php. Maybe rethink the use of this function later down the line.
      * This function should NOT be called from within the application itself!
      *
-     * @param  String $title The title of the dispute.
+     * @param  string $title The title of the dispute.
      * @return Dispute
      */
     public static function getDisputeByTitle($title) {
@@ -47,9 +47,9 @@ class Utils {
 
     /**
      * Gets organisations as an array.
-     * @param  Array  $params           Parameters:
-     *         String $params['type']   Organisation type ('law_firm' / 'mediation_centre')
-     *         Int    $params['except'] Integer ID of an account to remove from the results.
+     * @param  array  $params           Parameters:
+     *         string $params['type']   Organisation type ('law_firm' / 'mediation_centre')
+     *         int    $params['except'] Integer ID of an account to remove from the results.
      * @return Array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
      */
     public static function getOrganisations($params) {

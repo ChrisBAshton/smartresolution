@@ -64,7 +64,7 @@ function prettyTime($unixTimestamp) {
  * Based on http://stackoverflow.com/a/19680778
  *
  * @param  int $seconds Number of seconds calculated.
- * @return String       Formatted time.
+ * @return string       Formatted time.
  */
 function secondsToTime($seconds) {
     $dtF = new DateTime("@0");

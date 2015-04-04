@@ -15,7 +15,7 @@ class DBL {
 
     /**
      * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
-     * @param  Array    $params                The details of the offer.
+     * @param  array    $params                The details of the offer.
      *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
      *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
@@ -25,7 +25,7 @@ class DBL {
 
     /**
      * Creates an entry in the database representing a proposal of using a Mediator to mediate the dispute.
-     * @param  Array    $params                The details of the offer.
+     * @param  array    $params                The details of the offer.
      *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
      *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
@@ -37,9 +37,9 @@ class DBL {
      * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
      * Also creates a notification for the opposing party.
      *
-     * @param  Array $params The details of the offer.
+     * @param  array $params The details of the offer.
      * @see DBL::createMediationCentreOffer for a detailed description of parameters.
-     * @param  String $type The type of offer: either 'mediation_centre' or 'mediator'
+     * @param  string $type The type of offer: either 'mediation_centre' or 'mediator'
      */
     public static function createMediationEntityOffer($params, $type) {
         $dispute         = $params['dispute'];
@@ -70,11 +70,11 @@ class DBL {
 
     /**
      * Creates an entry in the database representing a piece of uploaded evidence.
-     * @param  Array   $params              The evidence parameters.
+     * @param  array   $params              The evidence parameters.
      *         Dispute $params['dispute']   The Dispute object to make the proposal against.
      *         Agent   $params['uploader']  The account who uploaded the evidence.
-     *         String  $params['filepath']  The filepath of the uploaded evidence.
-     * @return Int  The ID of the piece of uploaded evidence.
+     *         string  $params['filepath']  The filepath of the uploaded evidence.
+     * @return int  The ID of the piece of uploaded evidence.
      */
     public static function createEvidence($params) {
         $disputeID  = $params['dispute']->getDisputeId();
@@ -100,7 +100,7 @@ class DBL {
     /**
      * Creates a new Dispute, saving it to the database.
      *
-     * @param  Array $details Array of details to populate the database with.
+     * @param  array $details array of details to populate the database with.
      * @return Dispute        The Dispute object associated with the new entry.
      */
     public static function createDispute($details) {
@@ -152,10 +152,10 @@ class DBL {
     /**
      * Creates a dispute party entry.
      *
-     * @param  Int $organisationId  The ID of the party's organisation.
-     * @param  Int $individualId    (Optional) The ID of the party's individual.
-     * @param  String $summary      The party's summary of the dispute.
-     * @return Int                  The ID of the created party.
+     * @param  int $organisationId  The ID of the party's organisation.
+     * @param  int $individualId    (Optional) The ID of the party's individual.
+     * @param  string $summary      The party's summary of the dispute.
+     * @return int                  The ID of the created party.
      */
     public static function createDisputeParty($organisationId, $individualId = NULL, $summary = NULL) {
         Database::instance()->exec(
@@ -171,9 +171,9 @@ class DBL {
 
     /**
      * Ensures that the account types set for a dispute's agents/law firms etc do actually correspond to agent/law firm accounts. Essentially, this function raises an exception if the system tries to do something like set Agent A as a Mediation Centre account.
-     * @param  Array $accountTypes              The accounts to check.
-     *         Int   $accountTypes['law_firm']  (Optional) The ID of the account that should be a law firm.
-     *         Int   $accountTypes['agent']     (Optional) The ID of the account that should be an agent.
+     * @param  array $accountTypes              The accounts to check.
+     *         int   $accountTypes['law_firm']  (Optional) The ID of the account that should be a law firm.
+     *         int   $accountTypes['agent']     (Optional) The ID of the account that should be an agent.
      */
     public static function ensureCorrectAccountTypes($accountTypes) {
         $correctAccountTypes = true;
@@ -195,7 +195,7 @@ class DBL {
 
     /**
      * Creates a new lifespan proposal.
-     * @param  Array $params Parameters outlining start and end dates, etc.
+     * @param  array $params Parameters outlining start and end dates, etc.
      * @return Lifespan      The newly created lifespan.
      */
     public static function createLifespan($params, $allowDatesInThePast = false) {
@@ -241,10 +241,10 @@ class DBL {
 
     /**
      * Creates a notification.
-     * @param  Array  $options                  The notification options.
-     *         Int    $options['recipient_id']  The ID of the recipient of the notification.
-     *         String $option['message']        The notification message.
-     *         String $option['url']            The notification's associated URL.
+     * @param  array  $options                  The notification options.
+     *         int    $options['recipient_id']  The ID of the recipient of the notification.
+     *         string $option['message']        The notification message.
+     *         string $option['url']            The notification's associated URL.
      * @return Notification                     The newly-created notification.
      */
     public static function createNotification($options) {
@@ -267,11 +267,11 @@ class DBL {
 
     /**
      * Creates a message.
-     * @param  Array  $params                  The message options.
-     *         Int    $params['dispute_id']    The ID of the dispute that the message is connected to.
-     *         Int    $params['author_id']     The ID of the author of the message.
-     *         Int    $params['recipient_id']  (Optional) The ID of the recipient of the message. This is only set when the message is strictly private between two parties, e.g. Agent A and Mediator M. It is not set for normal dispute communication between agents A and B.
-     *         String $params['message']       The message content.
+     * @param  array  $params                  The message options.
+     *         int    $params['dispute_id']    The ID of the dispute that the message is connected to.
+     *         int    $params['author_id']     The ID of the author of the message.
+     *         int    $params['recipient_id']  (Optional) The ID of the recipient of the message. This is only set when the message is strictly private between two parties, e.g. Agent A and Mediator M. It is not set for normal dispute communication between agents A and B.
+     *         string $params['message']       The message content.
      * @return Message                         The newly-created message.
      */
     public static function createMessage($params) {
@@ -336,7 +336,7 @@ class DBL {
     /**
      * Stores account details in the database.
      *
-     * @param  Array $object An array of registration values, including email and password.
+     * @param  array $object An array of registration values, including email and password.
      * @return int           The login ID associated with the newly registered account.
      */
     public static function createDBAccount($object) {
@@ -365,9 +365,9 @@ class DBL {
      * Returns the latest ID in the database from table name $tableName, ordered by primary key $idName (DESC).
      * Calls DBL::getLatestRow internally.
      *
-     * @param  String $tableName Name of the table.
-     * @param  String $idName    Primary key of the table.
-     * @return Int               The primary key of the latest database entry.
+     * @param  string $tableName Name of the table.
+     * @param  string $idName    Primary key of the table.
+     * @return int               The primary key of the latest database entry.
      */
     public static function getLatestId($tableName, $idName) {
         $latestRow = DBL::getLatestRow($tableName, $idName);
@@ -376,9 +376,9 @@ class DBL {
 
     /**
      * Returns the latest row in the database from table name $tableName, ordered by primary key $idName (DESC).
-     * @param  String $tableName Name of the table.
-     * @param  String $idName    Primary key of the table.
-     * @return Array             Latest table row.
+     * @param  string $tableName Name of the table.
+     * @param  string $idName    Primary key of the table.
+     * @return array             Latest table row.
      */
     public static function getLatestRow($tableName, $idName) {
         $rows = Database::instance()->exec(

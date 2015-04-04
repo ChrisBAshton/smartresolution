@@ -53,7 +53,7 @@ interface AccountInterface {
     /**
      * Returns the type of account, displayed to the user.
      * Example: 'Agent', 'Law Firm'
-     * @return String Account type.
+     * @return string Account type.
      */
     public function getRole();
 

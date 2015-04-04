@@ -44,7 +44,7 @@ class DBAccount {
 
     /**
      * Gets an account by its login ID.
-     * @param  Int $id                  The login ID.
+     * @param  int $id                  The login ID.
      * @return Individual|Organisation  The account object.
      */
     public static function getAccountById($id) {
@@ -54,7 +54,7 @@ class DBAccount {
 
     /**
      * Gets an account by its email address.
-     * @param  String $email            The account email address.
+     * @param  string $email            The account email address.
      * @return Individual|Organisation  The account object.
      */
     public static function getAccountByEmail($email) {
@@ -65,7 +65,7 @@ class DBAccount {
     /**
      * @TODO  - this should be privately referenced by getAccountById/Email, not publicly available.
      * Return the database record corresponding to the provided account ID.
-     * @param  Int $value    ID of the account.
+     * @param  int $value    ID of the account.
      * @return Array<Mixed>  Associated database row.
      */
     public static function getDetailsById($value) {
@@ -75,7 +75,7 @@ class DBAccount {
     /**
      * @TODO  - this should be privately referenced by getAccountById/Email, not publicly available.
      * Return the database record corresponding to the provided account email.
-     * @param  String $value Email of the account.
+     * @param  string $value Email of the account.
      * @return Array<Mixed>  Associated database row.
      */
     public static function getDetailsByEmail($value) {
@@ -85,7 +85,7 @@ class DBAccount {
     /**
      * @TODO  - this should be privately referenced by getAccountById/Email, not publicly available.
      * Return the database record corresponding to the provided primary key and value.
-     * @param  String  $key   Record to use as the primary key when retrieving the corresponding account information.
+     * @param  string  $key   Record to use as the primary key when retrieving the corresponding account information.
      * @param  Unknown $value The value of that primary key.
      * @return Array<Mixed>  Associated database row.
      */
@@ -108,8 +108,8 @@ class DBAccount {
      * @TODO  - this should be privately referenced by getAccountById/Email, not publicly available.
      * Return the database record corresponding to the provided table name, key and value.
      *
-     * @param  String  $table The name of the table to search.
-     * @param  String  $key   Record to use as the primary key when retrieving the corresponding account information.
+     * @param  string  $table The name of the table to search.
+     * @param  string  $key   Record to use as the primary key when retrieving the corresponding account information.
      * @param  Unknown $value The value of that primary key.
      * @return Array<Mixed>  Associated database row.
      */
@@ -152,7 +152,7 @@ class DBAccount {
      * NOTE: It may be tempting to move this to getDetailsByEmail() but we often call emailToId BEFORE
      * adding a corresponding entry to individuals or organisations, so this should be left untouched.
      *
-     * @param  String $email
+     * @param  string $email
      * @return int
      */
     public static function emailToId($email) {
@@ -169,8 +169,8 @@ class DBAccount {
     /**
      * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
      *
-     * @param  String $email    The email address.
-     * @param  String $password The unencrypted password.
+     * @param  string $email    The email address.
+     * @param  string $password The unencrypted password.
      * @return boolean          True if the credentials are valid, otherwise false.
      */
     public static function validCredentials($email, $password) {
@@ -186,8 +186,8 @@ class DBAccount {
     /**
      * Returns true or false depending on whether or not the inputted password is a match for the encrypted password we have on file.
      *
-     * @param  String $inputtedPassword  The unencrypted password.
-     * @param  String $encryptedPassword The encrypted password we're checking our unencrypted password against.
+     * @param  string $inputtedPassword  The unencrypted password.
+     * @param  string $encryptedPassword The encrypted password we're checking our unencrypted password against.
      * @return boolean                   True if the inputted password is a match.
      */
     public static function correctPassword($inputtedPassword, $encryptedPassword) {

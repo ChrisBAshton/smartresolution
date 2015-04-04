@@ -83,7 +83,7 @@ class EvidenceController {
      * Callback function to the file upload.
      *
      * @param  File    $file          The file to be uploaded.
-     * @param  String  $formFieldName The corresponding form name.
+     * @param  string  $formFieldName The corresponding form name.
      * @return boolean                True if file upload was successful, otherwise false.
      */
     public function uploadFile ($file, $formFieldName) {

@@ -7,10 +7,10 @@
 /**
  * Defines the module in the system.
  * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
- * @param  Array  $config                       Parameters:
- *         String $config['key']                Module unique ID, e.g. 'maritime_collision'
- *         String $config['title']              Module name, e.g. 'Maritime Collision'
- *         String $config['description']        Module description.
+ * @param  array  $config                       Parameters:
+ *         string $config['key']                Module unique ID, e.g. 'maritime_collision'
+ *         string $config['title']              Module name, e.g. 'Maritime Collision'
+ *         string $config['description']        Module description.
  * @param  Function $moduleDefinitionFunction   The module definition. This function should hook into events exposed by the SmartResolution platform and specify which functions to call on those events.
  */
 function declare_module($config, $moduleDefinitionFunction) {
@@ -20,7 +20,7 @@ function declare_module($config, $moduleDefinitionFunction) {
 
 /**
  * Subscribes an anonymous function (defined within a module) to a given event.
- * @param  String           $eventName  Name of the event to hook into.
+ * @param  string           $eventName  Name of the event to hook into.
  * @param  String|function  $action     Action to perform.
  *         This can be a global function, e.g. 'hello' -> hello().
  *         Or it can be a public function inside a named class, e.g. 'MyClass->hello' -> new MyClass(); hello();
@@ -37,7 +37,7 @@ function on($eventName, $action, $priority = 'medium') {
  * Defines a top-level route, e.g. '/example', and what to do when a user accesses that route via GET or POST.
  * If you want to define a route relative to the current dispute, e.g. '/disputes/1371/example', you should use the `route` function.
  *
- * @param  String          $route   GET|POST route relative to the root directory, e.g. '/example'
+ * @param  string          $route   GET|POST route relative to the root directory, e.g. '/example'
  * @param  String|Function $handler If String, should be the name of function to call (e.g. 'helloWorld') or the class name and public function, e.g. 'foo->helloWorld'. Could instead pass an anonymous function, e.g. function () {}
  */
 function top_level_route($route, $handler) {
@@ -47,7 +47,7 @@ function top_level_route($route, $handler) {
 /**
  * Defines a route relative to the current dispute. E.g. if you specify '/example', you'll actually create a route for '/disputes/DISPUTE_ID/example'. If you want to define a top-level route (i.e. simply '/example' without the disputes prefix), you should use `top_level_route`.
  *
- * @param  String          $route   GET|POST route relative to the dispute, e.g. '/example', which would correspond to '/disputes/DISPUTE_ID/example'
+ * @param  string          $route   GET|POST route relative to the dispute, e.g. '/example', which would correspond to '/disputes/DISPUTE_ID/example'
  * @param  String|Function $handler If String, should be the name of function to call (e.g. 'helloWorld') or the class name and public function, e.g. 'foo->helloWorld'. Could instead pass an anonymous function, e.g. function () {}
  */
 function route($route, $handler) {
@@ -58,9 +58,9 @@ function route($route, $handler) {
  * Adds multiple items to the dashboard, in the order passed.
  *
  * @param  Array<$item> $items      Items to add to the dashboard.
- *         String $item['title']    Title of the dashboard item.
- *         String $item['image']    Icon to use.
- *         String $item['href']     URL to link to.
+ *         string $item['title']    Title of the dashboard item.
+ *         string $item['image']    Icon to use.
+ *         string $item['href']     URL to link to.
  */
 function dashboard_add_items($items) {
     $items = array_reverse($items); // since each added item is pushed to the beginning of the array, and thus the beginning of the menu, if we want the items to appear in the menu in the order they were passed then we need to reverse the array.
@@ -72,10 +72,10 @@ function dashboard_add_items($items) {
 /**
  * Adds an item to the dashboard.
  *
- * @param  Array  $params           Item to add to the dashboard.
- *         String $params['title']  Title of the dashboard item.
- *         String $params['image']  Icon to use.
- *         String $params['href']   URL to link to.
+ * @param  array  $params           Item to add to the dashboard.
+ *         string $params['title']  Title of the dashboard item.
+ *         string $params['image']  Icon to use.
+ *         string $params['href']   URL to link to.
  */
 function dashboard_add_item($params) {
     // @TODO - call a method on DisputeStateCalculator rather than directly modifying its attribute.
@@ -94,7 +94,7 @@ function dashboard_add_item($params) {
  * get_module_url() . '/assets/my_image.png';
  * </code>
  *
- * @return String URL to the module directory.
+ * @return string URL to the module directory.
  */
 function get_module_url() {
     $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
@@ -104,7 +104,7 @@ function get_module_url() {
 /**
  * Gets the URL of the dispute that the module is hooked into.
  *
- * @return String  Dispute URL.
+ * @return string  Dispute URL.
  */
 function get_dispute_url() {
     $dispute = new Dispute(get_dispute_id());
@@ -114,7 +114,7 @@ function get_dispute_url() {
 /**
  * Gets the ID of the dispute that the module is hooked into.
  *
- * @return Int  Dispute ID.
+ * @return int  Dispute ID.
  */
 function get_dispute_id() {
     global $f3;
@@ -124,8 +124,8 @@ function get_dispute_id() {
 /**
  * Renders a HTML template.
  *
- * @param  String $template  Path to the template, e.g. get_module_url() . '/views/index.html'
- * @param  Array  $variables (optional) Values to pass to the template, e.g. array('foo' => 'bar'), which would be accessible as $foo in the template.
+ * @param  string $template  Path to the template, e.g. get_module_url() . '/views/index.html'
+ * @param  array  $variables (optional) Values to pass to the template, e.g. array('foo' => 'bar'), which would be accessible as $foo in the template.
  */
 function render($template, $variables = array()) {
     mustBeLoggedIn(); // sets user's top menu, etc.
@@ -140,7 +140,7 @@ function render($template, $variables = array()) {
 /**
  * Renders a markdown file, within the website template.
  *
- * @param  String $template Path to the markdown file, e.g. get_module_url() . '/docs/about.md'
+ * @param  string $template Path to the markdown file, e.g. get_module_url() . '/docs/about.md'
  */
 function render_markdown($template) {
     mustBeLoggedIn(); // sets user's top menu, etc.

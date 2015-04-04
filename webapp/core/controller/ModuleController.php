@@ -72,9 +72,9 @@ class ModuleController {
      * Emit an event - this is for private use within the core ODR platform, and is not intended for use by third-party modules.
      * This triggers all of the functions that have hooked into the event.
      *
-     * @param  String $event      The name of the event to emit.
+     * @param  string $event      The name of the event to emit.
      * @param  Dispute $dispute   The current dispute. This is needed so that we can check the dispute type, and therefore only trigger the functions that have been subscribed to from the corresponding module.
-     * @param  Array  $parameters Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
+     * @param  array  $parameters Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
      */
     public static function emit($event, $dispute, $parameters = array()) {
         $actions = @ModuleController::$subscriptions[$event];

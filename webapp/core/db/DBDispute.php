@@ -7,7 +7,7 @@ class DBDispute {
 
     /**
      * Constructor.
-     * @param Int $disputeID The dispute ID.
+     * @param int $disputeID The dispute ID.
      */
     function __construct($disputeID) {
         $this->disputeID = $disputeID;
@@ -60,8 +60,8 @@ class DBDispute {
 
     /**
      * Retrieves the agent, law firm and summary corresponding to the given party ID.
-     * @param  Int $partyID The ID of the party.
-     * @return Array        The corresponding details.
+     * @param  int $partyID The ID of the party.
+     * @return array        The corresponding details.
      *         Array['agent']     The agent.
      *         Array['law_firm']  The law firm.
      *         Array['summary']   The summary.
@@ -94,8 +94,8 @@ class DBDispute {
     /**
      * Sets a property in the dispute_parties table.
      *
-     * @param String  $party    The role of the party, e.g. 'party_a', 'party_b'
-     * @param String  $field    The field to update.
+     * @param string  $party    The role of the party, e.g. 'party_a', 'party_b'
+     * @param string  $field    The field to update.
      * @param Unknown $value    The value to set.
      */
     public function setPartyDatabaseField($party, $field, $value) {
@@ -118,7 +118,7 @@ class DBDispute {
     /**
      * Updates a given field in the dispute.
      *
-     * @param  String  $key   The field to update.
+     * @param  string  $key   The field to update.
      * @param  Unknown $value The value to set it as.
      */
     public function updateField($key, $value) {

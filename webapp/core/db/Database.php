@@ -10,7 +10,7 @@ class Database {
 
     /**
      * Sets the database environment. This allows the application to have multiple environments, e.g. int, test, stage, live.
-     * @param String $env The environment to use. We've only been working with 'test' and 'production', but this could be expanded quite easily.
+     * @param string $env The environment to use. We've only been working with 'test' and 'production', but this could be expanded quite easily.
      */
     public static function setEnvironment($env) {
         Database::$db = false;

@@ -39,7 +39,7 @@ class LifespanFactory {
      * Returns the latest Lifespan attributed to the dispute that matches the given status. If no Lifespan is found, returns false.
      *
      * @param  integer $disputeID ID of the dispute.
-     * @param  String  $status    Get latest dispute that matches the given status. Special case: 'any'
+     * @param  string  $status    Get latest dispute that matches the given status. Special case: 'any'
      * @return Lifespan|false     Returns the Lifespan if one exists, or false if it doesn't.
      */
     public static function getLatestLifespanWithStatus($disputeID, $status) {
