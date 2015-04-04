@@ -6,6 +6,13 @@ class ModuleController {
     private static $routes  = array();
     private static $subscriptions = array();
 
+    public static function extractModuleNameFromStackTrace($trace) {
+        $moduleLocation = $trace[0]['file'];
+        preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
+        $moduleName = $results[1];
+        return $moduleName;
+    }
+
     public static function registerModule($config) {
         ModuleController::$modules[] = new Module($config);
     }

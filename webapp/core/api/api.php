@@ -97,9 +97,7 @@ function dashboard_add_item($params) {
  * @return String URL to the module directory.
  */
 function get_module_url() {
-    $moduleLocation = debug_backtrace()[0]['file'];
-    preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
-    $moduleName = $results[1];
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
     return '/modules/' . $moduleName;
 }
 
@@ -109,8 +107,18 @@ function get_module_url() {
  * @return String  Dispute URL.
  */
 function get_dispute_url() {
-    // @TODO - call a method on DisputeStateCalculator rather than directly retrieving its attribute.
-    return DisputeStateCalculator::$dispute->getUrl();
+    $dispute = new Dispute(get_dispute_id());
+    return $dispute->getUrl();
+}
+
+/**
+ * Gets the ID of the dispute that the module is hooked into.
+ *
+ * @return Int  Dispute ID.
+ */
+function get_dispute_id() {
+    global $f3;
+    return (int) $f3->get('PARAMS')['disputeID'];
 }
 
 /**
@@ -140,4 +148,14 @@ function render_markdown($template) {
     $f3->set('markdownFile', $template);
     $f3->set('content', 'markdown.html');
     echo View::instance()->render('layout.html');
+}
+
+function get_dispute_property($property) {
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    // @TODO use moduleName in determining which table to draw data from
+}
+
+function set_dispute_property($property, $value) {
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    // @TODO use moduleName in determining which table to save data to
 }
