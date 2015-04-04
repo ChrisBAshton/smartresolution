@@ -70,10 +70,13 @@ class ModuleController {
      * @param  Array  $parameters Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
      */
     public static function emit($event, $dispute, $parameters = array()) {
-        $actions = ModuleController::$subscriptions[$event];
-        foreach ($actions as $action) {
-            if ($action['module'] === $dispute->getType()) {
-                ModuleController::tryToCallFunction($action['functionToCall'], $parameters);
+        $actions = @ModuleController::$subscriptions[$event];
+        // if no modules have hooked into the event, $actions will be null
+        if ($actions) {
+            foreach ($actions as $action) {
+                if ($action['module'] === $dispute->getType()) {
+                    ModuleController::tryToCallFunction($action['functionToCall'], $parameters);
+                }
             }
         }
     }

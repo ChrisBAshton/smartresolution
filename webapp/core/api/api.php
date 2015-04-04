@@ -1,10 +1,17 @@
 <?php
 
 /**
+ * api.php contains all of the global methods exposed to the modules. Internally, these global methods call classes that are contained in the core platform, but modules should refrain from calling those classes. Modules should ONLY interact with the systme through the global methods defined here.
+ */
+
+/**
  * Defines the module in the system.
  * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
- * @param  Array $config
- * @param  Function $moduleDefinitionFunction
+ * @param  Array  $config                       Parameters:
+ *         String $config['key']                Module unique ID, e.g. 'maritime_collision'
+ *         String $config['title']              Module name, e.g. 'Maritime Collision'
+ *         String $config['description']        Module description.
+ * @param  Function $moduleDefinitionFunction   The module definition. This function should hook into events exposed by the SmartResolution platform and specify which functions to call on those events.
  */
 function declare_module($config, $moduleDefinitionFunction) {
     ModuleController::registerModule($config);
@@ -13,19 +20,36 @@ function declare_module($config, $moduleDefinitionFunction) {
 
 /**
  * Subscribes an anonymous function (defined within a module) to a given event.
- * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
- * @param  String     $event
- * @param  String     $action
- * @param  String|Int $priority
+ * @param  String           $eventName  Name of the event to hook into.
+ * @param  String|function  $action     Action to perform.
+ *         This can be a global function, e.g. 'hello' -> hello().
+ *         Or it can be a public function inside a named class, e.g. 'MyClass->hello' -> new MyClass(); hello();
+ *         Or it can be an anonymous function, e.g. function () { // do something }
+ * @param  String|Int       $priority   (optional) The priority of the hooked function.
+ *         If multiple functions hook into the event, the functions marked as the highest priority are executed first, e.g. in the case of `on('event', 'a', 'medium')` and `on('event', 'b', 'high')`, function `b` would be executed before function `a`, even though function `a` was the first to hook into the event.
+ *         Possible values: 'low', 'medium', 'high', or an integer between 1 and 100 (where 1 is low priority and 100 is high).
  */
-function on($event, $action, $priority = 'medium') {
+function on($eventName, $action, $priority = 'medium') {
     ModuleController::subscribe($event, $action, $priority);
 }
 
+/**
+ * Defines a top-level route, e.g. '/example', and what to do when a user accesses that route via GET or POST.
+ * If you want to define a route relative to the current dispute, e.g. '/disputes/1371/example', you should use the `route` function.
+ *
+ * @param  String          $route   GET|POST route relative to the root directory, e.g. '/example'
+ * @param  String|Function $handler If String, should be the name of function to call (e.g. 'helloWorld') or the class name and public function, e.g. 'foo->helloWorld'. Could instead pass an anonymous function, e.g. function () {}
+ */
 function top_level_route($route, $handler) {
     ModuleController::defineRoute('GET|POST ' . $route, $handler);
 }
 
+/**
+ * Defines a route relative to the current dispute. E.g. if you specify '/example', you'll actually create a route for '/disputes/DISPUTE_ID/example'. If you want to define a top-level route (i.e. simply '/example' without the disputes prefix), you should use `top_level_route`.
+ *
+ * @param  String          $route   GET|POST route relative to the dispute, e.g. '/example', which would correspond to '/disputes/DISPUTE_ID/example'
+ * @param  String|Function $handler If String, should be the name of function to call (e.g. 'helloWorld') or the class name and public function, e.g. 'foo->helloWorld'. Could instead pass an anonymous function, e.g. function () {}
+ */
 function route($route, $handler) {
     ModuleController::defineRoute('GET|POST /disputes/@disputeID' . $route, $handler);
 }
