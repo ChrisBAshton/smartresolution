@@ -5,9 +5,9 @@
 		<title>SmartResolution</title>
 		<base href="<?php echo $SCHEME.'://'.$HOST.':'.$PORT.$BASE.'/'; ?>" />
 
-		<link rel="stylesheet" href="/view/css/bootstrap.css">
-		<link rel="stylesheet" href="/view/css/style.css">
-		<link rel="shortcut icon" href="/view/css/favicon.ico">
+		<link rel="stylesheet" href="/core/view/css/bootstrap.css">
+		<link rel="stylesheet" href="/core/view/css/style.css">
+		<link rel="shortcut icon" href="/core/view/css/favicon.ico">
 	</head>
 	<body>
 		<div id="wrapper">
@@ -16,7 +16,7 @@
 				<header class="container">
 				    <div class="row">
 				        <div class="col-sm-5">
-				            <a href="/"><img class="logo" src="view/images/logo.png"></a>
+				            <a href="/"><img class="logo" src="/core/view/images/logo.png"></a>
 				        </div>
 
 				        <div class="col-sm-7 text-right">
@@ -25,7 +25,7 @@
 				                Welcome back, <?php echo $account->getName() ; ?>
 				                <?php
 				                    if (count($notifications) > 0) {
-				                        echo ' | <a href="/notifications" class="notification_link"><img src="/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
+				                        echo ' | <a href="/notifications" class="notification_link"><img src="/core/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
 				                    }
 				                    else {
 				                        echo ' | ';

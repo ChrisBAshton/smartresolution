@@ -9,7 +9,7 @@
         $count = 0;
         foreach(Base::instance()->get('dashboardActions') as $action) :
             $action['href']  = isset($action['href'])  ? $action['href']  : '.';
-            $action['image'] = isset($action['image']) ? $action['image'] : '/view/images/mail.png';
+            $action['image'] = isset($action['image']) ? $action['image'] : '/core/view/images/mail.png';
 
             if ($count % $iconsPerRow == 0 || $count == 0) {
                 echo '<div class="row">';

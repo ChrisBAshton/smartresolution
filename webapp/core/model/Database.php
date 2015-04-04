@@ -12,7 +12,7 @@ class Database {
 
     public static function instance() {
         if(!Database::$db) {
-            Database::$db = new \DB\SQL('sqlite:' . __DIR__ . '/../../data/' . Database::$environment . '.db');
+            Database::$db = new \DB\SQL('sqlite:' . __DIR__ . '/../../../data/' . Database::$environment . '.db');
             // enable foreign key constraints
             // (to raise errors if corresponding entry in foreign table does not exist)
             Database::$db->exec('PRAGMA foreign_keys = ON;');
@@ -27,7 +27,7 @@ class Database {
             throw new Exception('Tried to clear a non-test database! Run Database::setEnvironment("test") before trying to clear.');
         }
         else {
-            $pathToDatabases = __DIR__ . "/../../data";
+            $pathToDatabases = __DIR__ . "/../../../data";
             shell_exec("rm " . $pathToDatabases . "/test.db && sqlite3 " . $pathToDatabases . "/test.db < " . $pathToDatabases . "/db.sql && php " . $pathToDatabases . "/fixtures/seed.php");
         }
     }

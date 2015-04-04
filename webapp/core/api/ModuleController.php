@@ -1,32 +1,5 @@
 <?php
 
-/**
- * Defines the module in the system.
- * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
- * @param  Array $config
- * @param  Function $moduleDefinitionFunction
- */
-function declare_module($config, $moduleDefinitionFunction) {
-    ModuleController::registerModule($config);
-    $moduleDefinitionFunction();
-}
-
-/**
- * Subscribes an anonymous function (defined within a module) to a given event.
- * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
- * @param  String     $event
- * @param  String     $action
- * @param  String|Int $priority
- */
-function on($event, $action, $priority = 'medium') {
-    ModuleController::subscribe($event, $action, $priority);
-}
-
-function route($route, $handler) {
-    ModuleController::defineRoute($route, $handler);
-}
-
-
 class ModuleController {
 
     private static $modules = array();
@@ -94,9 +67,9 @@ class ModuleController {
      *
      * @param  String $event      The name of the event to emit.
      * @param  Dispute $dispute   The current dispute. This is needed so that we can check the dispute type, and therefore only trigger the functions that have been subscribed to from the corresponding module.
-     * @param  Array  $parameters Parameters to pass to the functions that have hooked into the event. The array gets converted to full paramters, i.e. [a, b] => func(a, b)
+     * @param  Array  $parameters Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
      */
-    public static function emit($event, $dispute, $parameters) {
+    public static function emit($event, $dispute, $parameters = array()) {
         $actions = ModuleController::$subscriptions[$event];
         foreach ($actions as $action) {
             if ($action['module'] === $dispute->getType()) {
@@ -126,27 +99,5 @@ class ModuleController {
         else {
             throw new Exception('Invalid event handler: ' . $functionToCall);
         }
-    }
-
-}
-
-class Module {
-
-    function __construct($config) {
-        $this->key         = $config['key'];
-        $this->title       = $config['title'];
-        $this->description = $config['description'];
-    }
-
-    public function key() {
-        return $this->key;
-    }
-
-    public function title() {
-        return $this->title;
-    }
-
-    public function description() {
-        return $this->description;
     }
 }

@@ -2,6 +2,9 @@
 
 class DisputeStateCalculator {
 
+    public static $actions;
+    public static $dispute;
+
     public static function getState($dispute, $account = false) {
         if (!$account) {
             $account = Session::getAccount();
@@ -46,7 +49,14 @@ class DisputeStateCalculator {
     // @TODO - NB, I got the icons from http://www.flaticon.com/packs/web-pictograms
     // Should probably document that somewhere better than here.
     public static function getActions($dispute, $account) {
+        DisputeStateCalculator::$dispute = $dispute;
+        DisputeStateCalculator::setDefaultActions($dispute, $account);
+        // allow modules to modify those actions
+        ModuleController::emit('dispute_dashboard', $dispute);
+        return DisputeStateCalculator::$actions;
+    }
 
+    public static function setDefaultActions($dispute, $account) {
         $state   = $dispute->getState($account);
         $actions = array();
 
@@ -54,19 +64,19 @@ class DisputeStateCalculator {
 
             $actions[] = array(
                 'title' => 'Round-Table Communication',
-                'image' => '/view/images/message.png',
+                'image' => '/core/view/images/message.png',
                 'href'  => $dispute->getUrl() . '/chat/'
             );
 
             $actions[] = array(
                 'title' => 'Communicate with ' . $dispute->getAgentA()->getName(),
-                'image' => '/view/images/message.png',
+                'image' => '/core/view/images/message.png',
                 'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentA()->getLoginId()
             );
 
             $actions[] = array(
                 'title' => 'Communicate with ' . $dispute->getAgentB()->getName(),
-                'image' => '/view/images/message.png',
+                'image' => '/core/view/images/message.png',
                 'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentB()->getLoginId()
             );
         }
@@ -74,7 +84,7 @@ class DisputeStateCalculator {
         if ($state->canOpenDispute()) {
             $actions[] = array(
                 'title' => 'Open dispute',
-                'image' => '/view/images/dispute.png',
+                'image' => '/core/view/images/dispute.png',
                 'href'  => $dispute->getUrl() . '/open'
             );
         }
@@ -82,7 +92,7 @@ class DisputeStateCalculator {
         if ($state->canAssignDisputeToAgent()) {
             $actions[] = array(
                 'title' => 'Assign dispute to an agent',
-                'image' => '/view/images/hand.png',
+                'image' => '/core/view/images/hand.png',
                 'href'  => $dispute->getUrl() . '/assign'
             );
         }
@@ -90,7 +100,7 @@ class DisputeStateCalculator {
         if ($state->canSendMessage() && ! ($account instanceof Mediator) ) {
             $actions[] = array(
                 'title' => 'Communicate',
-                'image' => '/view/images/message.png',
+                'image' => '/core/view/images/message.png',
                 'href'  => $dispute->getUrl() .'/chat',
             );
         }
@@ -98,7 +108,7 @@ class DisputeStateCalculator {
         if ($state->canViewDocuments()) {
             $actions[] = array(
                 'title' => 'Evidence',
-                'image' => '/view/images/file.png',
+                'image' => '/core/view/images/file.png',
                 'href'  => $dispute->getUrl() .'/evidence',
             );
         }
@@ -106,7 +116,7 @@ class DisputeStateCalculator {
         if ($state->canNegotiateLifespan()) {
             $actions[] = array(
                 'title' => 'Lifespan',
-                'image' => '/view/images/time.png',
+                'image' => '/core/view/images/time.png',
                 'href'  => $dispute->getUrl() .'/lifespan',
             );
         }
@@ -114,7 +124,7 @@ class DisputeStateCalculator {
         if ($state->canProposeMediation()) {
             $actions[] = array(
                 'title' => 'Mediation',
-                'image' => '/view/images/cloud.png',
+                'image' => '/core/view/images/cloud.png',
                 'href'  => $dispute->getUrl() .'/mediation',
             );
         }
@@ -122,7 +132,7 @@ class DisputeStateCalculator {
         if ($state->canEditSummary()) {
             $actions[] = array(
                 'title' => 'Edit summary',
-                'image' => '/view/images/summary.png',
+                'image' => '/core/view/images/summary.png',
                 'href'  => $dispute->getUrl() . '/summary'
             );
         }
@@ -130,13 +140,11 @@ class DisputeStateCalculator {
         if ($state->canCloseDispute()) {
             $actions[] = array(
                 'title' => 'Close dispute',
-                'image' => '/view/images/delete.png',
+                'image' => '/core/view/images/delete.png',
                 'href'  => $dispute->getUrl() . '/close'
             );
         }
 
-        ModuleController::emit('dispute_dashboard', $dispute, [$dispute, &$actions]);
-
-        return $actions;
+        DisputeStateCalculator::$actions = $actions;
     }
 }
