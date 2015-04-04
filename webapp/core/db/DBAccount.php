@@ -7,8 +7,8 @@ class DBAccount {
 
     /**
      * Gets all of the disputes associated with an account. For Agents, this would be disputes that they have created or been assigned to. For mediators, this would be disputes that are in mediation and that they are assigned to, and so on.
-     * @param  Individual|Organisation $account The account to get the disputes from.
-     * @return Array<Dispute>                   The array of associated disputes.
+     * @param  Account $account The account to get the disputes from.
+     * @return array<Dispute>                   The array of associated disputes.
      */
     public static function getAllDisputes ($account) {
         $disputes = array();
@@ -45,7 +45,7 @@ class DBAccount {
     /**
      * Gets an account by its login ID.
      * @param  int $id                  The login ID.
-     * @return Individual|Organisation  The account object.
+     * @return Account  The account object.
      */
     public static function getAccountById($id) {
         $account = DBAccount::getDetailsById($id);
@@ -55,7 +55,7 @@ class DBAccount {
     /**
      * Gets an account by its email address.
      * @param  string $email            The account email address.
-     * @return Individual|Organisation  The account object.
+     * @return Account  The account object.
      */
     public static function getAccountByEmail($email) {
         $account = DBAccount::getDetailsByEmail($email);
@@ -66,7 +66,7 @@ class DBAccount {
      * @TODO  - this should be privately referenced by getAccountById/Email, not publicly available.
      * Return the database record corresponding to the provided account ID.
      * @param  int $value    ID of the account.
-     * @return Array<Mixed>  Associated database row.
+     * @return array<Mixed>  Associated database row.
      */
     public static function getDetailsById($value) {
         return DBAccount::getDetailsBy('login_id', $value);
@@ -76,7 +76,7 @@ class DBAccount {
      * @TODO  - this should be privately referenced by getAccountById/Email, not publicly available.
      * Return the database record corresponding to the provided account email.
      * @param  string $value Email of the account.
-     * @return Array<Mixed>  Associated database row.
+     * @return array<Mixed>  Associated database row.
      */
     public static function getDetailsByEmail($value) {
         return DBAccount::getDetailsBy('email', $value);
@@ -87,7 +87,7 @@ class DBAccount {
      * Return the database record corresponding to the provided primary key and value.
      * @param  string  $key   Record to use as the primary key when retrieving the corresponding account information.
      * @param  Unknown $value The value of that primary key.
-     * @return Array<Mixed>  Associated database row.
+     * @return array<Mixed>  Associated database row.
      */
     public static function getDetailsBy($key, $value) {
         $individual   = DBAccount::getRowsFromTable('individuals', $key, $value);
@@ -111,7 +111,7 @@ class DBAccount {
      * @param  string  $table The name of the table to search.
      * @param  string  $key   Record to use as the primary key when retrieving the corresponding account information.
      * @param  Unknown $value The value of that primary key.
-     * @return Array<Mixed>  Associated database row.
+     * @return array<Mixed>  Associated database row.
      */
     public static function getRowsFromTable($table, $key, $value) {
         return Database::instance()->exec(
@@ -124,8 +124,8 @@ class DBAccount {
 
     /**
      * Converts an account details (name, email, etc) into an account object of the correct type, e.g. Agent, Law Firm, etc.
-     * @param  Array<Mixed> $account    The account details
-     * @return Individual|Organisation  The account object.
+     * @param  array<Mixed> $account    The account details
+     * @return Account  The account object.
      */
     public static function arrayToObject($account) {
         if (!$account) {

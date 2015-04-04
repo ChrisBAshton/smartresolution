@@ -57,7 +57,7 @@ function route($route, $handler) {
 /**
  * Adds multiple items to the dashboard, in the order passed.
  *
- * @param  Array<$item> $items      Items to add to the dashboard.
+ * @param  array<$item> $items      Items to add to the dashboard.
  *         string $item['title']    Title of the dashboard item.
  *         string $item['image']    Icon to use.
  *         string $item['href']     URL to link to.

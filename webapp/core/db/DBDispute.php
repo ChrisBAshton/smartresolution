@@ -15,7 +15,7 @@ class DBDispute {
 
     /**
      * Gets the dispute data.
-     * @return Array<mixed> The array of associated dispute data.
+     * @return array<mixed> The array of associated dispute data.
      */
     public function getData() {
         $dispute = Database::instance()->exec(

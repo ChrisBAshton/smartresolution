@@ -50,7 +50,7 @@ class Utils {
      * @param  array  $params           Parameters:
      *         string $params['type']   Organisation type ('law_firm' / 'mediation_centre')
      *         int    $params['except'] Integer ID of an account to remove from the results.
-     * @return Array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
+     * @return array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
      */
     public static function getOrganisations($params) {
         $type   = Utils::getValue($params, 'type');

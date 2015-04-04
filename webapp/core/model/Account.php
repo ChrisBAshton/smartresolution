@@ -6,7 +6,7 @@
  * This does not implement the AccountInterface because some methods in the interface require different definitions depending on the account type.
  *
  */
-abstract class AccountCommonMethods {
+abstract class Account {
 
     /**
      * @see AccountInterface::getLoginId() Implements the corresponding function in AccountInterface.

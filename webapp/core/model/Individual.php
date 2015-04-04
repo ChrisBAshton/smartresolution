@@ -1,6 +1,6 @@
 <?php
 
-class Individual extends AccountCommonMethods implements AccountInterface {
+class Individual extends Account implements AccountInterface {
 
     function __construct($account) {
         $this->setVariables($account);

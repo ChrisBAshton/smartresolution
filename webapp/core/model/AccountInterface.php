@@ -34,13 +34,13 @@ interface AccountInterface {
 
     /**
      * Gets all unread notifications associated with the account.
-     * @return Array<Notification>
+     * @return array<Notification>
      */
     public function getNotifications();
 
     /**
      * Gets all disputes associated with the account.
-     * @return Array<Dispute>
+     * @return array<Dispute>
      */
     public function getAllDisputes();
 
