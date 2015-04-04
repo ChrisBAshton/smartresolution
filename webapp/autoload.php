@@ -3,6 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 // load our internal libraries too
+require_all(__DIR__ . '/core/db');
 require_all(__DIR__ . '/core/model');
 require_all(__DIR__ . '/core/controller');
 require_all(__DIR__ . '/core/api');
