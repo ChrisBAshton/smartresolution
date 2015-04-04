@@ -13,14 +13,34 @@
  */
 class DBL {
 
+    /**
+     * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
+     * @param  Array    $params                The details of the offer.
+     *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
+     *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
+     */
     public static function createMediationCentreOffer($params) {
         DBL::createMediationEntityOffer($params, 'mediation_centre');
     }
 
+    /**
+     * Creates an entry in the database representing a proposal of using a Mediator to mediate the dispute.
+     * @param  Array    $params                The details of the offer.
+     *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
+     *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
+     */
     public static function createMediatorOffer($params) {
         DBL::createMediationEntityOffer($params, 'mediator');
     }
 
+    /**
+     * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
+     * Also creates a notification for the opposing party.
+     *
+     * @param  Array $params The details of the offer.
+     * @see DBL::createMediationCentreOffer for a detailed description of parameters.
+     * @param  String $type The type of offer: either 'mediation_centre' or 'mediator'
+     */
     public static function createMediationEntityOffer($params, $type) {
         $dispute         = $params['dispute'];
         $proposedBy      = $params['proposed_by'];
@@ -48,6 +68,14 @@ class DBL {
         ));
     }
 
+    /**
+     * Creates an entry in the database representing a piece of uploaded evidence.
+     * @param  Array   $params              The evidence parameters.
+     *         Dispute $params['dispute']   The Dispute object to make the proposal against.
+     *         Agent   $params['uploader']  The account who uploaded the evidence.
+     *         String  $params['filepath']  The filepath of the uploaded evidence.
+     * @return Int  The ID of the piece of uploaded evidence.
+     */
     public static function createEvidence($params) {
         $disputeID  = $params['dispute']->getDisputeId();
         $uploaderID = $params['uploader']->getLoginId();
@@ -121,6 +149,14 @@ class DBL {
         }
     }
 
+    /**
+     * Creates a dispute party entry.
+     *
+     * @param  Int $organisationId  The ID of the party's organisation.
+     * @param  Int $individualId    (Optional) The ID of the party's individual.
+     * @param  String $summary      The party's summary of the dispute.
+     * @return Int                  The ID of the created party.
+     */
     public static function createDisputeParty($organisationId, $individualId = NULL, $summary = NULL) {
         Database::instance()->exec(
             'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
@@ -133,6 +169,12 @@ class DBL {
         return DBL::getLatestId('dispute_parties', 'party_id');
     }
 
+    /**
+     * Ensures that the account types set for a dispute's agents/law firms etc do actually correspond to agent/law firm accounts. Essentially, this function raises an exception if the system tries to do something like set Agent A as a Mediation Centre account.
+     * @param  Array $accountTypes              The accounts to check.
+     *         Int   $accountTypes['law_firm']  (Optional) The ID of the account that should be a law firm.
+     *         Int   $accountTypes['agent']     (Optional) The ID of the account that should be an agent.
+     */
     public static function ensureCorrectAccountTypes($accountTypes) {
         $correctAccountTypes = true;
         if (isset($accountTypes['law_firm'])) {
@@ -197,6 +239,14 @@ class DBL {
         }
     }
 
+    /**
+     * Creates a notification.
+     * @param  Array  $options                  The notification options.
+     *         Int    $options['recipient_id']  The ID of the recipient of the notification.
+     *         String $option['message']        The notification message.
+     *         String $option['url']            The notification's associated URL.
+     * @return Notification                     The newly-created notification.
+     */
     public static function createNotification($options) {
 
         $recipientId = Utils::getValue($options, 'recipient_id');
@@ -215,6 +265,15 @@ class DBL {
         return new Notification($notificationID);
     }
 
+    /**
+     * Creates a message.
+     * @param  Array  $params                  The message options.
+     *         Int    $params['dispute_id']    The ID of the dispute that the message is connected to.
+     *         Int    $params['author_id']     The ID of the author of the message.
+     *         Int    $params['recipient_id']  (Optional) The ID of the recipient of the message. This is only set when the message is strictly private between two parties, e.g. Agent A and Mediator M. It is not set for normal dispute communication between agents A and B.
+     *         String $params['message']       The message content.
+     * @return Message                         The newly-created message.
+     */
     public static function createMessage($params) {
         $disputeID   = Utils::getValue($params, 'dispute_id');
         $authorID    = Utils::getValue($params, 'author_id');

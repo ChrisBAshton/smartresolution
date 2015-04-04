@@ -1,11 +1,22 @@
 <?php
 
+/**
+ * This class provides the database middle layer between disputes and the database.
+ */
 class DBDispute {
 
+    /**
+     * Constructor.
+     * @param Int $disputeID The dispute ID.
+     */
     function __construct($disputeID) {
         $this->disputeID = $disputeID;
     }
 
+    /**
+     * Gets the dispute data.
+     * @return Array<mixed> The array of associated dispute data.
+     */
     public function getData() {
         $dispute = Database::instance()->exec(
             'SELECT * FROM disputes WHERE dispute_id = :dispute_id LIMIT 1',
@@ -19,14 +30,24 @@ class DBDispute {
         return $dispute[0];
     }
 
+    /**
+     * Persistently marks Round-Table Communication as enabled.
+     */
     public function enableRoundTableCommunication() {
         $this->markRoundTableCommunicationAs('enabled');
     }
 
+    /**
+     * Persistently marks Round-Table Communication as enabled.
+     */
     public function disableRoundTableCommunication() {
         $this->markRoundTableCommunicationAs('disabled');
     }
 
+    /**
+     * Private function used internally by (enable|disable)RoundTableCommunication.
+     * Changes the status of round-table communication in the database.
+     */
     private function markRoundTableCommunicationAs($enabledOrDisabled) {
         Database::instance()->exec(
             'UPDATE disputes SET round_table_communication = :bool WHERE dispute_id = :dispute_id',
@@ -37,6 +58,14 @@ class DBDispute {
         );
     }
 
+    /**
+     * Retrieves the agent, law firm and summary corresponding to the given party ID.
+     * @param  Int $partyID The ID of the party.
+     * @return Array        The corresponding details.
+     *         Array['agent']     The agent.
+     *         Array['law_firm']  The law firm.
+     *         Array['summary']   The summary.
+     */
     public function getPartyDetails($partyID) {
         if ($partyID === 0) {
             return array(
@@ -62,6 +91,13 @@ class DBDispute {
         );
     }
 
+    /**
+     * Sets a property in the dispute_parties table.
+     *
+     * @param String  $party    The role of the party, e.g. 'party_a', 'party_b'
+     * @param String  $field    The field to update.
+     * @param Unknown $value    The value to set.
+     */
     public function setPartyDatabaseField($party, $field, $value) {
         $db = Database::instance();
         $db->begin();
@@ -79,6 +115,12 @@ class DBDispute {
         $db->commit();
     }
 
+    /**
+     * Updates a given field in the dispute.
+     *
+     * @param  String  $key   The field to update.
+     * @param  Unknown $value The value to set it as.
+     */
     public function updateField($key, $value) {
         Database::instance()->exec('UPDATE disputes SET ' . $key . ' = :new_value WHERE dispute_id = :dispute_id',
             array(
