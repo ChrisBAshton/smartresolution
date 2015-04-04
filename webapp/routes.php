@@ -3,6 +3,11 @@
 $routes = array(
 
     'GET  /' => function ($f3, $params) {
+
+        if (Session::loggedIn()) {
+            header('Location: /dashboard');
+        }
+
         $f3->set('content','index.html');
         echo View::instance()->render('layout.html');
     },
