@@ -8,7 +8,7 @@ class Individual extends AccountCommonMethods implements AccountInterface {
 
     public function setVariables($account) {
         if (is_int($account)) {
-            $account = AccountDetails::getDetailsById($account);
+            $account = DBAccount::getDetailsById($account);
         }
 
         $this->loginId      = (int) $account['login_id'];
@@ -16,7 +16,7 @@ class Individual extends AccountCommonMethods implements AccountInterface {
         $this->forename     = $account['forename'];
         $this->surname      = $account['surname'];
         $this->cv           = $account['cv'];
-        $this->organisation = AccountDetails::getAccountById($account['organisation_id']);
+        $this->organisation = DBAccount::getAccountById($account['organisation_id']);
     }
 
     public function getRawCV() {

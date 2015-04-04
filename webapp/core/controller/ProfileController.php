@@ -5,7 +5,7 @@ class ProfileController {
     public function view($f3, $params) {
         mustBeLoggedIn();
         $accountID = (int) $params['accountID'];
-        $viewAccount = AccountDetails::getAccountById($accountID);
+        $viewAccount = DBAccount::getAccountById($accountID);
         $f3->set('viewAccount', $viewAccount);
         $f3->set('content','profile.html');
         echo View::instance()->render('layout.html');

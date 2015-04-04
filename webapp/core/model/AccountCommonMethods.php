@@ -42,7 +42,7 @@ abstract class AccountCommonMethods {
      * @see AccountInterface::getAllDisputes() Implements the corresponding function in AccountInterface.
      */
     public function getAllDisputes() {
-        return AccountDetails::getAllDisputes($this);
+        return DBAccount::getAllDisputes($this);
     }
 
     /**

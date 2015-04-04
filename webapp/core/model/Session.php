@@ -5,7 +5,7 @@ class Session {
 
     public static function getAccount() {
         $email = Utils::getValue($_SESSION, 'ODR_Email', false);
-        return $email ? AccountDetails::getAccountByEmail($email) : false;
+        return $email ? DBAccount::getAccountByEmail($email) : false;
     }
 
     public static function create($email, $password) {

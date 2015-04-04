@@ -51,8 +51,8 @@ class DBDispute {
             array(':party_id' => $partyID)
         )[0];
 
-        $agent   = isset($partyDetails['individual_id'])   ? AccountDetails::getAccountById($partyDetails['individual_id'])   : false;
-        $lawFirm = isset($partyDetails['organisation_id']) ? AccountDetails::getAccountById($partyDetails['organisation_id']) : false;
+        $agent   = isset($partyDetails['individual_id'])   ? DBAccount::getAccountById($partyDetails['individual_id'])   : false;
+        $lawFirm = isset($partyDetails['organisation_id']) ? DBAccount::getAccountById($partyDetails['organisation_id']) : false;
         $summary = isset($partyDetails['summary']) ? htmlspecialchars($partyDetails['summary']) : false;
 
         return array(

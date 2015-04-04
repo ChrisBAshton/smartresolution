@@ -9,8 +9,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     }
 
     private function createNewDispute() {
-        $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
-        $agent = AccountDetails::emailToId('agent_a@t.co');
+        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
+        $agent = DBAccount::emailToId('agent_a@t.co');
 
         return DBL::createDispute(array(
             'law_firm_a' => $lawFirm,
@@ -28,8 +28,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
     public function testOverridingAgentWithAnotherFromSameLawFirm() {
         $dispute = $this->createNewDispute();
-        $agent1 = AccountDetails::emailToId('agent_a@t.co');
-        $agent2 = AccountDetails::emailToId('agent_c@t.co');
+        $agent1 = DBAccount::emailToId('agent_a@t.co');
+        $agent2 = DBAccount::emailToId('agent_c@t.co');
 
         $this->assertEquals($agent1, $dispute->getAgentA()->getLoginId());
         $dispute->setAgentA($agent2);
@@ -42,8 +42,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testOverridingAgentWithMediator() {
         $dispute  = $this->createNewDispute();
-        $agent    = AccountDetails::emailToId('agent_a@t.co');
-        $mediator = AccountDetails::emailToId('john.smith@we-mediate.co.uk');
+        $agent    = DBAccount::emailToId('agent_a@t.co');
+        $mediator = DBAccount::emailToId('john.smith@we-mediate.co.uk');
 
         $this->assertEquals($agent, $dispute->getAgentA()->getLoginId());
         $dispute->setAgentA($mediator);
@@ -55,8 +55,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testOverridingAgentWithAgentFromDifferentLawFirm() {
         $dispute = $this->createNewDispute();
-        $agentInCompanyA = AccountDetails::emailToId('agent_a@t.co');
-        $agentInCompanyB = AccountDetails::emailToId('agent_b@t.co');
+        $agentInCompanyA = DBAccount::emailToId('agent_a@t.co');
+        $agentInCompanyB = DBAccount::emailToId('agent_b@t.co');
 
         $this->assertEquals($agentInCompanyA, $dispute->getAgentA()->getLoginId());
         $dispute->setAgentA($agentInCompanyB);
@@ -64,8 +64,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
     public function testDisputeSimpleGetters() {
         $dispute = $this->createNewDispute();
-        $this->assertEquals(AccountDetails::emailToId('agent_a@t.co'), $dispute->getAgentA()->getLoginId());
-        $this->assertEquals(AccountDetails::emailToId('law_firm_a@t.co'), $dispute->getLawFirmA()->getLoginId());
+        $this->assertEquals(DBAccount::emailToId('agent_a@t.co'), $dispute->getAgentA()->getLoginId());
+        $this->assertEquals(DBAccount::emailToId('law_firm_a@t.co'), $dispute->getLawFirmA()->getLoginId());
         $this->assertEquals('Smith versus Jones', $dispute->getTitle());
         $this->assertEquals('This is my summary', $dispute->getSummaryFromPartyA());
     }
@@ -85,31 +85,31 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $dispute = $this->createNewDispute();
 
         // first, let's set up the second party
-        $dispute->setLawFirmB(AccountDetails::emailToId('law_firm_b@t.co'));
-        $dispute->setAgentB(AccountDetails::emailToId('agent_b@t.co'));
+        $dispute->setLawFirmB(DBAccount::emailToId('law_firm_b@t.co'));
+        $dispute->setAgentB(DBAccount::emailToId('agent_b@t.co'));
 
         // next, let's set up Mediation
         DBL::createMediationCentreOffer(array(
             'dispute'          => $dispute,
             'proposed_by'      => $dispute->getAgentA(),
-            'mediation_centre' => AccountDetails::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')
+            'mediation_centre' => DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();
         DBL::createMediatorOffer(array(
             'dispute'     => $dispute,
             'proposed_by' => $dispute->getAgentA(),
-            'mediator'    => AccountDetails::getAccountByEmail('john.smith@we-mediate.co.uk')
+            'mediator'    => DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk')
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();
 
         // now we can test the mediation
         $this->assertTrue($dispute->isAMediationParty(
-            AccountDetails::emailToId('mediation_centre_email@we-mediate.co.uk')
+            DBAccount::emailToId('mediation_centre_email@we-mediate.co.uk')
         ));
         $this->assertTrue($dispute->isAMediationParty(
-            AccountDetails::emailToId('john.smith@we-mediate.co.uk')
+            DBAccount::emailToId('john.smith@we-mediate.co.uk')
         ));
 
         $shouldNotPass = array(
@@ -124,7 +124,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         );
 
         foreach($shouldNotPass as $email) {
-            $this->assertFalse($dispute->isAMediationParty(AccountDetails::emailToId($email)));
+            $this->assertFalse($dispute->isAMediationParty(DBAccount::emailToId($email)));
         }
     }
 
@@ -132,11 +132,11 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
         $this->assertEquals(
-            AccountDetails::getAccountByEmail('law_firm_a@t.co')->getLoginId(),
+            DBAccount::getAccountByEmail('law_firm_a@t.co')->getLoginId(),
             $dispute->getLawFirmA()->getLoginId()
         );
         $this->assertEquals(
-            AccountDetails::getAccountByEmail('agent_a@t.co')->getLoginId(),
+            DBAccount::getAccountByEmail('agent_a@t.co')->getLoginId(),
             $dispute->getAgentA()->getLoginId()
         );
     }
@@ -151,23 +151,23 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testAuthorisationLogicIsCorrect() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
-        $this->assertTrue($dispute->canBeViewedBy(AccountDetails::emailToId('law_firm_a@t.co')));
-        $this->assertTrue($dispute->canBeViewedBy(AccountDetails::emailToId('agent_a@t.co')));
-        $this->assertFalse($dispute->canBeViewedBy(AccountDetails::emailToId('law_firm_b@t.co')));
-        $this->assertFalse($dispute->canBeViewedBy(AccountDetails::emailToId('john.smith@we-mediate.co.uk')));
+        $this->assertTrue($dispute->canBeViewedBy(DBAccount::emailToId('law_firm_a@t.co')));
+        $this->assertTrue($dispute->canBeViewedBy(DBAccount::emailToId('agent_a@t.co')));
+        $this->assertFalse($dispute->canBeViewedBy(DBAccount::emailToId('law_firm_b@t.co')));
+        $this->assertFalse($dispute->canBeViewedBy(DBAccount::emailToId('john.smith@we-mediate.co.uk')));
     }
 
     public function testDisputeWorkflowCorrect() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
-        $state   = $dispute->getState(AccountDetails::getAccountByEmail('agent_a@t.co'));
+        $state   = $dispute->getState(DBAccount::getAccountByEmail('agent_a@t.co'));
         $this->assertTrue($state->canOpenDispute());
 
-        $lawFirmB = AccountDetails::emailToId('law_firm_b@t.co');
+        $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
         $dispute->setLawFirmB($lawFirmB);
         $this->assertEquals($lawFirmB, $dispute->getLawFirmB()->getLoginId());
 
-        $agentB = AccountDetails::emailToId('agent_b@t.co');
+        $agentB = DBAccount::emailToId('agent_b@t.co');
         $dispute->setAgentB($agentB);
         $this->assertEquals($agentB, $dispute->getAgentB()->getLoginId());
         $this->assertFalse($state->canOpenDispute());
@@ -180,10 +180,10 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testGetOpposingPartyId() {
         DisputeTest::setUpBeforeClass();
         $dispute = $this->createNewDispute();
-        $lawFirmA = AccountDetails::emailToId('law_firm_a@t.co');
-        $agentA   = AccountDetails::emailToId('agent_a@t.co');
-        $lawFirmB = AccountDetails::emailToId('law_firm_b@t.co');
-        $agentB   = AccountDetails::emailToId('agent_b@t.co');
+        $lawFirmA = DBAccount::emailToId('law_firm_a@t.co');
+        $agentA   = DBAccount::emailToId('agent_a@t.co');
+        $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
+        $agentB   = DBAccount::emailToId('agent_b@t.co');
         $dispute->setLawFirmB($lawFirmB);
         $dispute->setAgentB($agentB);
 
@@ -195,7 +195,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testSettingDisputeAgentToLawFirm() {
-        $agentA   = AccountDetails::emailToId('agent_a@t.co');
+        $agentA   = DBAccount::emailToId('agent_a@t.co');
 
         return DBL::createDispute(array(
             'law_firm_a' => $agentA, // shouldn't be able to set law firm as an agent
@@ -208,8 +208,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testSettingDisputeLawFirmToAgent() {
-        $lawFirmA = AccountDetails::emailToId('law_firm_a@t.co');
-        $lawFirmB = AccountDetails::emailToId('law_firm_b@t.co');
+        $lawFirmA = DBAccount::emailToId('law_firm_a@t.co');
+        $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
 
         $dispute = DBL::createDispute(array(
             'law_firm_a' => $lawFirmA,
@@ -236,7 +236,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNullType() {
 
-        $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
+        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
 
         DBL::createDispute(array(
             'law_firm_a' => $lawFirm,
@@ -250,7 +250,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNullTitle() {
 
-        $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
+        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
 
         DBL::createDispute(array(
             'law_firm_a' => $lawFirm,
@@ -273,7 +273,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNoType() {
-        $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
+        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
         DBL::createDispute(array(
             'law_firm_a' => $lawFirm,
             'title'      => 'Smith versus Jones'
@@ -284,7 +284,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNoTitle() {
-        $lawFirm = AccountDetails::emailToId('law_firm_a@t.co');
+        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
         DBL::createDispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other'

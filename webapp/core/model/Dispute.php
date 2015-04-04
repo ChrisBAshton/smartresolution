@@ -159,7 +159,7 @@ class Dispute {
     }
 
     public function setAgent($party, $loginID) {
-        $agent = AccountDetails::getAccountById($loginID);
+        $agent = DBAccount::getAccountById($loginID);
         $this->validateBeforeSettingAgent($agent, $party);
         $this->db->setPartyDatabaseField($party, 'individual_id', $loginID);
         $this->refresh();

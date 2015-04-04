@@ -182,7 +182,7 @@ class MediationController {
     public function viewMessages($f3, $params) {
         $this->setUp($f3, $params);
         $recipientID = (int) $params['recipientID'];
-        if (!$this->dispute->canBeViewedBy($recipientID) || AccountDetails::getAccountById($recipientID) instanceof Organisation) {
+        if (!$this->dispute->canBeViewedBy($recipientID) || DBAccount::getAccountById($recipientID) instanceof Organisation) {
             errorPage("The account you're trying to send a message to is not involved in this dispute!");
         }
         $this->viewMessagesWith($recipientID);

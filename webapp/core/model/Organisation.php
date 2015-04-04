@@ -8,7 +8,7 @@ class Organisation extends AccountCommonMethods implements AccountInterface {
 
     public function setVariables($account) {
         if (is_int($account)) {
-            $account = AccountDetails::getDetailsById($account);
+            $account = DBAccount::getDetailsById($account);
         }
         $this->loginId     = (int) $account['login_id'];
         $this->email       = $account['email'];
