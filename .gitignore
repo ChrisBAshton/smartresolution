@@ -3,3 +3,6 @@ vendor
 *.db
 features/screenshots
 uploads/
+webapp/modules/*
+!webapp/modules/config.php
+!webapp/modules/other
