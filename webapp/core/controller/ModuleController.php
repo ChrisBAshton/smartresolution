@@ -89,10 +89,16 @@ class ModuleController {
     }
 
     private static function tryToCallFunction($functionToCall, $parameters) {
-        if (function_exists($functionToCall)) {
+        // if $functionToCall is an anonymous function
+        if (is_callable($functionToCall)) {
+            $functionToCall($parameters);
+        }
+        // if $functionToCall is the name (string) of a global function
+        else if (function_exists($functionToCall)) {
             call_user_func_array($functionToCall, $parameters);
         }
         else {
+            // $functionToCall is the name of a class function (e.g. 'Foo->bar') and needs to be parsed
             ModuleController::tryToCallClassFunction($functionToCall, $parameters);
         }
     }
@@ -109,5 +115,69 @@ class ModuleController {
         else {
             throw new Exception('Invalid event handler: ' . $functionToCall);
         }
+    }
+
+    public static function initModuleTable($moduleName, $tableName, $columns) {
+        $sqlString = '';
+        foreach($columns as $columnName => $type) {
+            $sqlString = $sqlString . ', ' . $columnName . ' ' . $type;
+        }
+        $query = 'CREATE TABLE IF NOT EXISTS module__' . $moduleName . '__' . $tableName . '(dispute_id INTEGER NOT NULL' . $sqlString . ');';
+        Database::instance()->exec($query);
+    }
+
+    public static function queryModuleTable($moduleName, $tableAndColumn, $disputeID) {
+        $table  = ModuleController::extractTableName($tableAndColumn);
+        $column = ModuleController::extractColumnName($tableAndColumn);
+
+        $results = Database::instance()->exec(
+            'SELECT ' . $column . ' FROM module__' . $moduleName . '__' . $table . ' WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID)
+        );
+
+        if (count($results) === 1) {
+            return $results[0][$column];
+        }
+        else if (count($results) > 1) {
+            throw new Exception('Query returned multiple results, but SmartResolution does not support multiple results yet!!!');
+        }
+
+        return false; // no record was found
+    }
+
+    public static function setModuleTable($moduleName, $tableAndColumn, $value, $disputeID) {
+        $table  = 'module__' . $moduleName . '__' . ModuleController::extractTableName($tableAndColumn);
+        $column = ModuleController::extractColumnName($tableAndColumn);
+
+        $results = Database::instance()->exec(
+            'SELECT ' . $column . ' FROM ' . $table . ' WHERE dispute_id = :dispute_id',
+            array(':dispute_id' => $disputeID)
+        );
+
+        if (count($results) === 0) {
+            $query = 'INSERT INTO ' . $table . ' (dispute_id, ' . $column . ') VALUES (:dispute_id, :value)';
+        }
+        else {
+            $query = 'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id';
+        }
+
+        Database::instance()->exec(
+            $query,
+            array(
+                ':dispute_id' => $disputeID,
+                ':value'      => $value
+            )
+        );
+
+        return true; // query was successful. @TODO return false/raise exception if there is a problem
+    }
+
+    private static function extractTableName($tableAndColumn) {
+        $parts  = explode('.', $tableAndColumn);
+        return $parts[0];
+    }
+
+    private static function extractColumnName($tableAndColumn) {
+        $parts  = explode('.', $tableAndColumn);
+        return $parts[1];
     }
 }

@@ -121,6 +121,10 @@ function get_dispute_id() {
     return (int) $f3->get('PARAMS')['disputeID'];
 }
 
+function get_login_id() {
+    return Session::getAccount()->getLoginId();
+}
+
 /**
  * Renders a HTML template.
  *
@@ -150,12 +154,48 @@ function render_markdown($template) {
     echo View::instance()->render('layout.html');
 }
 
-function get_dispute_property($property) {
+/**
+ * Creates a number of module-specific tables in the database.
+ * @see    declare_table  The elements of the array you pass could instead be passed individually to the declare_table function.
+ * @param  array $tables  Array of tables to create, in the form array('table_name' => array(columns))
+ */
+function declare_tables($tables) {
     $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    // @TODO use moduleName in determining which table to draw data from
+    foreach($tables as $tableName => $columns) {
+        ModuleController::initModuleTable($moduleName, $tableName, $columns);
+    }
 }
 
-function set_dispute_property($property, $value) {
+/**
+ * Creates a module-specific table in the database, if the table does not already exist. If the table already exists, you'll need to manually delete it before your new declaration takes effect.
+ * No need to worry about namespacing: SmartResolution does this automatically, so that your table name becomes module__[module_name]__[table_name] internally. This could change, however, and you should not ever need to know this.
+ *
+ * @param  string $tableName The name of the table you'd like to create.
+ * @param  array  $columns   Array of columns describing your table, in the format 'column_name' => 'type', e.g. 'question_number' => 'INTEGER'
+ */
+function declare_table($tableName, $columns) {
     $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    // @TODO use moduleName in determining which table to save data to
+    ModuleController::initModuleTable($moduleName, $tableName, $columns);
+}
+
+/**
+ * Gets the value of a column in a module-specific table.
+ *
+ * @param  string $tableAndColumn Dot-separated table and column, e.g. 'table_name.column_name'
+ * @return Unknown|boolean        Returns the value as it is stored in the database. Beware: this does not cast to integer or boolean, so you'll need to manually cast type where appropriate. Returns boolean false if no record is found.
+ */
+function get($tableAndColumn) {
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::queryModuleTable($moduleName, $tableAndColumn, get_dispute_id());
+}
+
+/**
+ * Sets a value in the database.
+ * @param  string $tableAndColumn Dot-separated table and column, e.g. 'table_name.column_name'
+ * @param  Unknown $value         The value to set. Depending on the field type, you may pass a string, integer, etc.
+ * @return true                   @TODO. Right now, this always returns true. In future this may change to be more useful.
+ */
+function set($tableAndColumn, $value) {
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::setModuleTable($moduleName, $tableAndColumn, $value, get_dispute_id());
 }

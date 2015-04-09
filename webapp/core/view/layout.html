@@ -60,6 +60,8 @@
 									$part = ucfirst($part);
 									// make safe to render to browser
 									$part = htmlspecialchars($part);
+									// replace hyphens with spaces
+									$part = str_replace('-', ' ', $part);
 									if ($i < count($urlParts)) {
 										$breadcrumbs[] = array(
 											'url'   => $url,
