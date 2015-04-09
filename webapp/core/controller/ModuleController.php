@@ -6,6 +6,13 @@ class ModuleController {
     private static $routes  = array();
     private static $subscriptions = array();
 
+    /**
+     * Extracts the name of the module from the results of the `debug_backtrace` function.
+     * This means we don't have to manually pass the module name from inside a module definition, making the API cleaner from the perspective of the module developers.
+     *
+     * @param  array $trace The stack trace.
+     * @return string       The module name.
+     */
     public static function extractModuleNameFromStackTrace($trace) {
         $moduleLocation = $trace[0]['file'];
         preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
@@ -82,38 +89,9 @@ class ModuleController {
         if ($actions) {
             foreach ($actions as $action) {
                 if ($action['module'] === $dispute->getType()) {
-                    ModuleController::tryToCallFunction($action['functionToCall'], $parameters);
+                    new FunctionParser($action['functionToCall'], $parameters);
                 }
             }
-        }
-    }
-
-    private static function tryToCallFunction($functionToCall, $parameters) {
-        // if $functionToCall is an anonymous function
-        if (is_callable($functionToCall)) {
-            $functionToCall($parameters);
-        }
-        // if $functionToCall is the name (string) of a global function
-        else if (function_exists($functionToCall)) {
-            call_user_func_array($functionToCall, $parameters);
-        }
-        else {
-            // $functionToCall is the name of a class function (e.g. 'Foo->bar') and needs to be parsed
-            ModuleController::tryToCallClassFunction($functionToCall, $parameters);
-        }
-    }
-
-    private static function tryToCallClassFunction($functionToCall, $parameters) {
-        $classFunction = strpos($functionToCall, '->') !== false;
-        if ($classFunction) {
-            $parts = explode('->', $functionToCall);
-            $class = $parts[0];
-            $method = $parts[1];
-            $classInstance = new $class();
-            call_user_func_array(array($classInstance, $method), $parameters);
-        }
-        else {
-            throw new Exception('Invalid event handler: ' . $functionToCall);
         }
     }
 
@@ -148,16 +126,11 @@ class ModuleController {
         $table  = 'module__' . $moduleName . '__' . ModuleController::extractTableName($tableAndColumn);
         $column = ModuleController::extractColumnName($tableAndColumn);
 
-        $results = Database::instance()->exec(
-            'SELECT ' . $column . ' FROM ' . $table . ' WHERE dispute_id = :dispute_id',
-            array(':dispute_id' => $disputeID)
-        );
-
-        if (count($results) === 0) {
-            $query = 'INSERT INTO ' . $table . ' (dispute_id, ' . $column . ') VALUES (:dispute_id, :value)';
+        if (ModuleController::queryModuleTable($moduleName, $tableAndColumn, $disputeID)) {
+            $query = 'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id';
         }
         else {
-            $query = 'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id';
+            $query = 'INSERT INTO ' . $table . ' (dispute_id, ' . $column . ') VALUES (:dispute_id, :value)';
         }
 
         Database::instance()->exec(
