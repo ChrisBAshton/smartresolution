@@ -140,6 +140,11 @@ class Dispute {
         ));
     }
 
+    public function setType($type) {
+        $this->db->updateField('type', $type);
+        $this->refresh();
+    }
+
     public function setSummaryForPartyA($summary) {
         $this->db->setPartyDatabaseField('party_a', 'summary', $summary);
         $this->refresh();

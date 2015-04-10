@@ -1,4 +1,11 @@
 <?php
+// @TODO move to DisputeController, now that we're editing the Dispute as a whole rather than just the summary.
+
+
+
+
+
+
 
 class SummaryController {
 
@@ -6,13 +13,19 @@ class SummaryController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
+        $modules = ModuleController::getModules();
+        if (count($modules) === 0) {
+            errorPage('The system administrator must install at least one dispute module before you can create a Dispute. Please contact the admin.');
+        }
+
         if (!$dispute->getState($account)->canEditSummary()) {
-            errorPage('You cannot edit this summary!');
+            errorPage('You cannot edit this dispute!');
         }
 
         $callback($f3, $account, $dispute);
 
-        $f3->set('content', 'summary.html');
+        $f3->set('modules', $modules);
+        $f3->set('content', 'dispute_edit.html');
         echo View::instance()->render('layout.html');
     }
 
@@ -27,10 +40,14 @@ class SummaryController {
         $this->commonSummaryActions($f3, $params, function ($f3, $account, $dispute) {
 
             $summary = $f3->get('POST.dispute_summary');
+            $type    = $f3->get('POST.type');
 
             if (!$summary) {
                 $f3->set('error_message', 'You must fill in a summary.');
                 $f3->set('summary', '');
+            }
+            elseif (!$type) {
+                $f3->set('error_message', 'You must select a dispute type.');
             }
             else {
                 if ($dispute->isInPartyA($account->getLoginId())) {
@@ -40,8 +57,10 @@ class SummaryController {
                     $dispute->setSummaryForPartyB($summary);
                 }
 
+                $dispute->setType($type);
+
                 $f3->set('summary', $summary);
-                $f3->set('success_message', 'You have updated your summary.');
+                $f3->set('success_message', 'You have updated the dispute details.');
             }
         });
     }

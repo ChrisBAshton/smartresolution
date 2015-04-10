@@ -128,7 +128,7 @@ class DisputeStateCalculator {
 
         if ($state->canEditSummary()) {
             $dashboardActions[] = array(
-                'title' => 'Edit summary',
+                'title' => 'Edit',
                 'image' => '/core/view/images/summary.png',
                 'href'  => $dispute->getUrl() . '/summary'
             );
