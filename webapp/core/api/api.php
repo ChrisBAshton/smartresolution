@@ -193,9 +193,9 @@ function declare_table($tableName, $columns) {
  * @param  string $tableAndColumn Dot-separated table and column, e.g. 'table_name.column_name'
  * @return Unknown|boolean        Returns the value as it is stored in the database. Beware: this does not cast to integer or boolean, so you'll need to manually cast type where appropriate. Returns boolean false if no record is found.
  */
-function get($tableAndColumn) {
+function get($tableAndColumn, $andClause = array()) {
     $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    return ModuleController::queryModuleTable($moduleName, $tableAndColumn, get_dispute_id());
+    return ModuleController::queryModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
 }
 
 /**

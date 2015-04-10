@@ -104,12 +104,23 @@ class ModuleController {
         Database::instance()->exec($query);
     }
 
-    public static function queryModuleTable($moduleName, $tableAndColumn, $disputeID) {
+    public static function queryModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
         $table  = ModuleController::extractTableName($tableAndColumn);
         $column = ModuleController::extractColumnName($tableAndColumn);
 
+        // @TODO - extract this and the same code in createModuleTableRow into another function
+        $condition = '';
+        $values = array(
+            ':dispute_id' => $disputeID
+        );
+        foreach($andClause as $key => $value) {
+            $condition = $condition . ' AND ' . $key . ' = :' . $key;
+            $values[':' . $key] = $value;
+        }
+
         $results = Database::instance()->exec(
-            'SELECT ' . $column . ' FROM module__' . $moduleName . '__' . $table . ' WHERE dispute_id = :dispute_id', array(':dispute_id' => $disputeID)
+            'SELECT ' . $column . ' FROM module__' . $moduleName . '__' . $table . ' WHERE dispute_id = :dispute_id' . $condition,
+            $values
         );
 
         if (count($results) === 1) {
