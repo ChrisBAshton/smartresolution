@@ -105,6 +105,20 @@ class ModuleController {
     }
 
     public static function queryModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
+        $column  = ModuleController::extractColumnName($tableAndColumn);
+        $results = ModuleController::getRowsFromModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause);
+
+        if (count($results) === 1) {
+            return $results[0][$column];
+        }
+        else if (count($results) > 1) {
+            throw new Exception('Query returned multiple results. If you were expecting this, please call get_multiple() instead.');
+        }
+
+        return false; // no record was found
+    }
+
+    public static function getRowsFromModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
         $table  = ModuleController::extractTableName($tableAndColumn);
         $column = ModuleController::extractColumnName($tableAndColumn);
         $values = ModuleController::createQueryValuesArray($disputeID, $andClause);
@@ -117,14 +131,7 @@ class ModuleController {
         $query = 'SELECT ' . $column . ' FROM module__' . $moduleName . '__' . $table . ' WHERE dispute_id = :dispute_id' . $condition;
         $results = Database::instance()->exec($query, $values);
 
-        if (count($results) === 1) {
-            return $results[0][$column];
-        }
-        else if (count($results) > 1) {
-            throw new Exception('Query returned multiple results, but SmartResolution does not support multiple results yet!!!');
-        }
-
-        return false; // no record was found
+        return $results;
     }
 
     public static function createModuleTableRow($moduleName, $table, $valuesToSet, $disputeID) {

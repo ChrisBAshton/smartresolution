@@ -198,6 +198,12 @@ function get($tableAndColumn, $andClause = array()) {
     return ModuleController::queryModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
 }
 
+// where multiple rows are expected.
+function get_multiple($tableAndColumn, $andClause = array()) {
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::getRowsFromModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
+}
+
 /**
  * Sets a value in the database.
  * @param  string $tableAndColumn Dot-separated table and column, e.g. 'table_name.column_name'
