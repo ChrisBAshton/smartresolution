@@ -67,7 +67,7 @@ Then(/^I should be able to edit the summary$/) do
   visit dispute_url + '/summary'
   assert find_field('dispute_summary').has_content? 'Here is a summary for party A.'
   fill_in 'dispute_summary', :with => 'New summary for party A'
-  click_button 'Update Summary'
+  click_button 'Update Details'
   visit dispute_url
   assert page.has_content? 'New summary for party A'
 end
