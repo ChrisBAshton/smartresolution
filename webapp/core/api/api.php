@@ -206,5 +206,10 @@ function get($tableAndColumn) {
  */
 function set($tableAndColumn, $value) {
     $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    return ModuleController::setModuleTable($moduleName, $tableAndColumn, $value, get_dispute_id());
+    return ModuleController::setModuleTableValue($moduleName, $tableAndColumn, $value, get_dispute_id());
+}
+
+function createRow($table, $values = array()) {
+    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::createModuleTableRow($moduleName, $table, $values, get_dispute_id());
 }

@@ -122,19 +122,31 @@ class ModuleController {
         return false; // no record was found
     }
 
-    public static function setModuleTable($moduleName, $tableAndColumn, $value, $disputeID) {
+    public static function createModuleTableRow($moduleName, $table, $valuesToSet, $disputeID) {
+        $table        = 'module__' . $moduleName . '__' . $table;
+        $columns      = 'dispute_id';
+        $placeholders = ':dispute_id';
+        $values       = array(
+            ':dispute_id' => $disputeID
+        );
+
+        foreach($valuesToSet as $column => $value) {
+            $columns               = $columns . ', ' . $column;
+            $placeholders          = $placeholders  . ', :' . $column;
+            $values[':' . $column] = $value;
+        }
+
+        $query = 'INSERT INTO ' . $table . ' (' . $columns . ') VALUES (' . $placeholders . ')';
+
+        Database::instance()->exec($query, $values);
+    }
+
+    public static function setModuleTableValue($moduleName, $tableAndColumn, $value, $disputeID) {
         $table  = 'module__' . $moduleName . '__' . ModuleController::extractTableName($tableAndColumn);
         $column = ModuleController::extractColumnName($tableAndColumn);
 
-        if (ModuleController::queryModuleTable($moduleName, $tableAndColumn, $disputeID) !== false) {
-            $query = 'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id';
-        }
-        else {
-            $query = 'INSERT INTO ' . $table . ' (dispute_id, ' . $column . ') VALUES (:dispute_id, :value)';
-        }
-
         Database::instance()->exec(
-            $query,
+            'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id',
             array(
                 ':dispute_id' => $disputeID,
                 ':value'      => $value
