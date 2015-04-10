@@ -107,21 +107,15 @@ class ModuleController {
     public static function queryModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
         $table  = ModuleController::extractTableName($tableAndColumn);
         $column = ModuleController::extractColumnName($tableAndColumn);
+        $values = ModuleController::createQueryValuesArray($disputeID, $andClause);
 
-        // @TODO - extract this and the same code in createModuleTableRow into another function
         $condition = '';
-        $values = array(
-            ':dispute_id' => $disputeID
-        );
         foreach($andClause as $key => $value) {
             $condition = $condition . ' AND ' . $key . ' = :' . $key;
-            $values[':' . $key] = $value;
         }
 
-        $results = Database::instance()->exec(
-            'SELECT ' . $column . ' FROM module__' . $moduleName . '__' . $table . ' WHERE dispute_id = :dispute_id' . $condition,
-            $values
-        );
+        $query = 'SELECT ' . $column . ' FROM module__' . $moduleName . '__' . $table . ' WHERE dispute_id = :dispute_id' . $condition;
+        $results = Database::instance()->exec($query, $values);
 
         if (count($results) === 1) {
             return $results[0][$column];
@@ -134,22 +128,28 @@ class ModuleController {
     }
 
     public static function createModuleTableRow($moduleName, $table, $valuesToSet, $disputeID) {
-        $table        = 'module__' . $moduleName . '__' . $table;
-        $columns      = 'dispute_id';
-        $placeholders = ':dispute_id';
-        $values       = array(
-            ':dispute_id' => $disputeID
-        );
+        $table   = 'module__' . $moduleName . '__' . $table;
+        $columns = 'dispute_id';
+        $values  = ModuleController::createQueryValuesArray($disputeID, $valuesToSet);
 
+        $placeholders = ':dispute_id';
         foreach($valuesToSet as $column => $value) {
-            $columns               = $columns . ', ' . $column;
-            $placeholders          = $placeholders  . ', :' . $column;
-            $values[':' . $column] = $value;
+            $columns      = $columns . ', ' . $column;
+            $placeholders = $placeholders  . ', :' . $column;
         }
 
         $query = 'INSERT INTO ' . $table . ' (' . $columns . ') VALUES (' . $placeholders . ')';
-
         Database::instance()->exec($query, $values);
+    }
+
+    private static function createQueryValuesArray($disputeID, $columnValues) {
+        $values = array(
+            ':dispute_id' => $disputeID
+        );
+        foreach($columnValues as $key => $value) {
+            $values[':' . $key] = $value;
+        }
+        return $values;
     }
 
     public static function setModuleTableValue($moduleName, $tableAndColumn, $value, $disputeID) {
