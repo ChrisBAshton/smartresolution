@@ -126,7 +126,7 @@ class ModuleController {
         $table  = 'module__' . $moduleName . '__' . ModuleController::extractTableName($tableAndColumn);
         $column = ModuleController::extractColumnName($tableAndColumn);
 
-        if (ModuleController::queryModuleTable($moduleName, $tableAndColumn, $disputeID)) {
+        if (ModuleController::queryModuleTable($moduleName, $tableAndColumn, $disputeID) !== false) {
             $query = 'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id';
         }
         else {
