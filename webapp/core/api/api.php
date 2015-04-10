@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * Global variable, used internally for defining the Home/Dispute dashboards. You should interact with it through the functions provided, e.g. dashboard_add_item().
+ * @var array
+ */
+$dashboardActions = array();
+
+/**
  * api.php contains all of the global methods exposed to the modules. Internally, these global methods call classes that are contained in the core platform, but modules should refrain from calling those classes. Modules should ONLY interact with the systme through the global methods defined here.
  */
 
@@ -55,35 +61,38 @@ function route($route, $handler) {
 }
 
 /**
- * Adds multiple items to the dashboard, in the order passed.
- *
- * @param  array<$item> $items      Items to add to the dashboard.
- *         string $item['title']    Title of the dashboard item.
- *         string $item['image']    Icon to use.
- *         string $item['href']     URL to link to.
+ * Adds multiple items to the end of the dashboard, in the order passed. For full description and parameter list, see `dashboard_add_item`.
  */
-function dashboard_add_items($items) {
+function dashboard_add_items($items, $addToFront = false) {
     $items = array_reverse($items); // since each added item is pushed to the beginning of the array, and thus the beginning of the menu, if we want the items to appear in the menu in the order they were passed then we need to reverse the array.
     foreach($items as $item) {
-        dashboard_add_item($item);
+        dashboard_add_item($item, $addToFront);
     }
 }
 
 /**
- * Adds an item to the dashboard.
+ * Adds an item to the end of the dashboard. The dashboard context depends on the event hooked into. For example, if called after hooking into the 'homescreen_dashboard' event, you will affect the homescreen dashboard, whereas if you call it after hooking into the 'dispute_dashboard' event, it will affect the dispute dashboard.
  *
- * @param  array  $params           Item to add to the dashboard.
- *         string $params['title']  Title of the dashboard item.
- *         string $params['image']  Icon to use.
- *         string $params['href']   URL to link to.
+ * @param  array   $params           Item to add to the dashboard.
+ *         string  $params['title']  Title of the dashboard item.
+ *         string  $params['image']  Icon to use.
+ *         string  $params['href']   URL to link to.
+ *
+ * @param  boolean $addToFront      (Optional) If set to true, item will be added to beginning of dashboard. If false, it will be added to the end. Defaults to false.
  */
-function dashboard_add_item($params) {
-    // @TODO - call a method on DisputeStateCalculator rather than directly modifying its attribute.
-    array_unshift(DisputeStateCalculator::$actions, array(
+function dashboard_add_item($params, $addToFront = false) {
+    global $dashboardActions;
+    $item =  array(
         'title' => $params['title'],
         'image' => $params['image'],
         'href'  => $params['href']
-    ));
+    );
+    if ($addToFront) {
+        array_unshift($dashboardActions, $item);
+    }
+    else {
+        array_push($dashboardActions, $item);
+    }
 }
 
 /**

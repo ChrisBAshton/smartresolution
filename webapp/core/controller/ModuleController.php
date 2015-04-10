@@ -80,15 +80,15 @@ class ModuleController {
      * This triggers all of the functions that have hooked into the event.
      *
      * @param  string $event      The name of the event to emit.
-     * @param  Dispute $dispute   The current dispute. This is needed so that we can check the dispute type, and therefore only trigger the functions that have been subscribed to from the corresponding module.
-     * @param  array  $parameters Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
+     * @param  Dispute $dispute   (Optional) The current dispute. This is needed so that we can check the dispute type, and therefore only trigger the functions that have been subscribed to from the corresponding module. If the event has nothing to do with a dispute, e.g. the module simply wants to display a message on the homescreen, then nothing needs to be passed.
+     * @param  array  $parameters (Optional) Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
      */
-    public static function emit($event, $dispute, $parameters = array()) {
+    public static function emit($event, $dispute = false, $parameters = array()) {
         $actions = @ModuleController::$subscriptions[$event];
         // if no modules have hooked into the event, $actions will be null
         if ($actions) {
             foreach ($actions as $action) {
-                if ($action['module'] === $dispute->getType()) {
+                if (!$dispute || $action['module'] === $dispute->getType()) {
                     new FunctionParser($action['functionToCall'], $parameters);
                 }
             }
