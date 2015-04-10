@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="<?php echo $ENCODING; ?>" />
+		<title>SmartResolution</title>
+		<base href="<?php echo $SCHEME.'://'.$HOST.':'.$PORT.$BASE.'/'; ?>" />
+
+		<link rel="stylesheet" href="/core/view/css/bootstrap.css">
+		<link rel="stylesheet" href="/core/view/css/style.css">
+		<link rel="shortcut icon" href="/core/view/css/favicon.ico">
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="content">
+
+				<header class="container">
+				    <div class="row">
+				        <div class="col-sm-5">
+				            <a href="/"><img class="logo" src="/core/view/images/logo.png"></a>
+				        </div>
+
+				        <div class="col-sm-7 text-right">
+				        	<?php if (isset($account)) : ?>
+				            <p>
+				                Welcome back, <?php echo $account->getName() ; ?>
+				                <?php
+				                    if (count($notifications) > 0) {
+				                        echo ' | <a href="/notifications" class="notification_link"><img src="/core/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
+				                    }
+				                    else {
+				                        echo ' | ';
+				                    }
+				                ?>
+				                <a href="/logout">Logout</a>
+				            </p>
+				        <?php else: ?>
+				            <p>
+				                <a href="/login">Login</a> | <a href="/register">Register</a>
+				            </p>
+					    <?php endif; ?>
+				        </div>
+				    </div>
+				</header>
+
+				<div class="container">
+					<?php
+						if (isset($account)) :
+							// based on code found at http://stackoverflow.com/questions/2594211/php-simple-dynamic-breadcrumb
+							$breadcrumbs = array();
+
+							$urlParts = explode('/', $_SERVER['REQUEST_URI']);
+							$i = 1;
+							$url = '';
+							foreach($urlParts as $part){
+								if (strlen($part) > 0) {
+									$url = $url . '/' . $part;
+									// remove everything after the ?
+									$part = preg_replace('/\?.*/', '', $part);
+									// make first letter uppercase
+									$part = ucfirst($part);
+									// make safe to render to browser
+									$part = htmlspecialchars($part);
+									// replace hyphens with spaces
+									$part = str_replace('-', ' ', $part);
+									if ($i < count($urlParts)) {
+										$breadcrumbs[] = array(
+											'url'   => $url,
+											'title' => $part
+										);
+									}
+									$i++;
+								}
+							}
+
+							if (count($breadcrumbs) > 0) {
+								echo '<a href="/">Home</a>';
+							}
+							foreach($breadcrumbs as $crumb) {
+								echo ' / <a href="' . $crumb['url'] .'">' . $crumb['title'] . '</a>';
+							}
+						endif;
+					?>
+				</div>
+
+				<?php if (isset($dispute)) : ?>
+					<div class="container">
+						<?php if (!isset($disputeDashboard)) : ?>
+							<div class="return_to_dispute bg-padded bg-primary">
+								<a href="<?php echo $dispute->getUrl(); ?>">&lt;&lt;&lt; Return to dispute dashboard</a>
+							</div>
+						<?php endif; ?>
+						<div class="lifespan_status bg-padded bg-info">
+						    <?php
+						    $status = $dispute->getLatestLifespan()->status();
+						    if ($dispute->getLatestLifespan()) {
+						        $status = $dispute->getLatestLifespan()->status();
+						    }
+						    echo '<a href="' . $dispute->getUrl() . '/lifespan">' . $status . '</a>';
+						    ?>
+						</div>
+					</div>
+				<?php endif; ?>
+
+				<div class="container">
+
+					<?php if (Base::instance()->get('error_message')) : ?>
+						<p class="bg-padded bg-danger">
+							<?= Base::instance()->get('error_message'); ?>
+						</p>
+					<?php elseif (Base::instance()->get('success_message')) : ?>
+						<p class="bg-padded bg-success">
+							<?= Base::instance()->get('success_message'); ?>
+						</p>
+					<?php endif; ?>
+
+					<?php echo $this->render(Base::instance()->get('content')); ?>
+
+				</div>
+			</div>
+			<footer>
+			    <p>
+			    	SmartResolution is proudly powered by the <a href="http://fatfreeframework.com/"><?php echo $PACKAGE; ?></a> (v<?php echo $VERSION; ?>) and is licensed under the terms of the GPLv3. <a href="https://github.com/ChrisBAshton/smartresolution">View the project on GitHub</a>.
+				</p>
+			    <p class="stats">
+			    	<code><?php echo Base::instance()->format('Page rendered in {0} msecs / Memory usage {1} Kibytes',round(1e3*(microtime(TRUE)-$TIME),2),round(memory_get_usage(TRUE)/1e3,1)); ?></code>
+			    </p>
+			</footer>
+		</div>
+	</body>
+</html>

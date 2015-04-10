@@ -41,7 +41,7 @@ end
 
 Then(/^I should be able to upload evidence to the Dispute$/) do
   visit '/disputes/' + $dispute_id + '/evidence/new'
-  attach_file('fileToUpload', File.expand_path('../../../webapp/view/images/logo.png', __FILE__))
+  attach_file('fileToUpload', File.expand_path('../../../webapp/core/view/images/logo.png', __FILE__))
   click_button 'Upload'
   assert page.has_content? 'File uploaded.'
 end

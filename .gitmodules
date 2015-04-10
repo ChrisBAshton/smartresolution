@@ -1,3 +1,0 @@
-[submodule "modules/maritime_collision"]
-	path = modules/maritime_collision
-	url = https://github.com/ChrisBAshton/smartresolution-module-maritime-collision

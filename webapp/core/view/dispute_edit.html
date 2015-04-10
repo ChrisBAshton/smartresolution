@@ -1,0 +1,35 @@
+<h1>Edit dispute</h1>
+
+<?php if (noSystemMessages()) : ?>
+    <p class="bg-padded bg-info">
+        You can change dispute type and edit your summary here.
+    </p>
+<?php endif; ?>
+
+<form name="summary" method="post">
+
+    <div class="col-lg-4">
+        <label for="summary">Dispute summary:</label>
+    </div>
+    <div class="col-lg-8">
+        <textarea class="form-control" id="dispute_summary" name="dispute_summary" placeholder="Dispute summary"><?php echo $summary; ?></textarea>
+    </div>
+
+    <div class="col-lg-4">
+        <label for="type">Dispute type:</label>
+    </div>
+    <div class="col-lg-8">
+        <select name="type" id="type" class="form-control">
+            <?php
+                foreach($modules as $module) {
+                    $selected = $dispute->getType() === $module->key() ? 'selected="selected"' : '';
+                    echo '<option value="' . $module->key() . '" ' . $selected . '>' . $module->title() . '</option>';
+                }
+            ?>
+        </select>
+    </div>
+
+    <div class="col-lg-12 text-center">
+        <button class="btn btn-lg btn-primary" type="submit">Update Details</button>
+    </div>
+</form>

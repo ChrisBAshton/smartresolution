@@ -17,7 +17,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
      */
     public function testRegisterWithEmptyArray() {
         $agent = array();
-        DBL::createAccountDetails($agent);
+        DBL::createDBAccount($agent);
     }
 
     /**
@@ -28,7 +28,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
         $agent = array(
             'email' => 'test@test.com'
         );
-        DBL::createAccountDetails($agent);
+        DBL::createDBAccount($agent);
     }
 
     /**
@@ -39,7 +39,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
         $agent = array(
             'password' => 'secret'
         );
-        DBL::createAccountDetails($agent);
+        DBL::createDBAccount($agent);
     }
 
     public function testRegisterWithValidInputs() {
@@ -47,7 +47,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
             'email'    => 'test@test.com',
             'password' => 'secret'
         );
-        $loginID = DBL::createAccountDetails($agent);
+        $loginID = DBL::createDBAccount($agent);
         $this->assertTrue(is_int($loginID));
     }
 
@@ -60,7 +60,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
             'email'    => 'law_firm_a@t.co',
             'password' => 'secret'
         );
-        DBL::createAccountDetails($agent);
+        DBL::createDBAccount($agent);
     }
 
     /**

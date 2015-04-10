@@ -43,18 +43,18 @@ foreach($data['organisations'] as $org) {
 foreach($data['disputes'] as $dataItem) {
     $dispute = DBL::createDispute(array(
         'title'      => $dataItem['title'],
-        'law_firm_a' => AccountDetails::emailToId($dataItem['law_firm_a']),
+        'law_firm_a' => DBAccount::emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
-    $agentAId = AccountDetails::emailToId($dataItem['agent_a']);
+    $agentAId = DBAccount::emailToId($dataItem['agent_a']);
     $dispute->setAgentA($agentAId);
 
     if (isset($dataItem['law_firm_b'])) {
-        $dispute->setLawFirmB(AccountDetails::emailToId($dataItem['law_firm_b']));
+        $dispute->setLawFirmB(DBAccount::emailToId($dataItem['law_firm_b']));
     }
 
     if (isset($dataItem['agent_b'])) {
-        $dispute->setAgentB(AccountDetails::emailToId($dataItem['agent_b']));
+        $dispute->setAgentB(DBAccount::emailToId($dataItem['agent_b']));
     }
 
     if (isset($dataItem['summary_a'])) {
@@ -123,7 +123,7 @@ foreach($data['disputes'] as $dataItem) {
         DBL::createMediationCentreOffer(array(
             'dispute'          => $dispute,
             'proposed_by'      => $dispute->getAgentA(),
-            'mediation_centre' => AccountDetails::getAccountByEmail($dataItem['mediation_centre'])
+            'mediation_centre' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])
         ));
 
         $dispute->refresh();
@@ -134,7 +134,7 @@ foreach($data['disputes'] as $dataItem) {
         DBL::createMediatorOffer(array(
             'dispute'     => $dispute,
             'proposed_by' => $dispute->getAgentA(),
-            'mediator'    => AccountDetails::getAccountByEmail($dataItem['mediator'])
+            'mediator'    => DBAccount::getAccountByEmail($dataItem['mediator'])
         ));
 
         $dispute->refresh();
