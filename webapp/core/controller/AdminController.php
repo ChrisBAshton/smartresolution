@@ -35,7 +35,7 @@ class AdminController {
         $moduleDirectory = __DIR__ . '/../../modules/' . $moduleName;
         $this->rrmdir($moduleDirectory);
         // remove config.json, it will get re-initialised on next page load.
-        unset(__DIR__ . '/../../modules/config.json');
+        unlink(__DIR__ . '/../../modules/config.json');
 
         header('Location: /admin-modules');
     }

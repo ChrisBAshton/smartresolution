@@ -5,8 +5,9 @@ $configFileContents = @file_get_contents($configFilepath);
 if (!$configFileContents) {
     $moduleNames = scandir(__DIR__);
     $modulesConfig = array();
+    $ignoreFiles   = array('.', '..', '.DS_Store', 'config.php');
     foreach($moduleNames as $name) {
-        if (!in_array($name, array('.', '..', '.DS_Store', 'config.php'))) {
+        if (!(in_array($name, $ignoreFiles))) {
             $active = $name === 'other';
             $modulesConfig[$name] = $active;
         }
