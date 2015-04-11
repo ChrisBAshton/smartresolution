@@ -33,7 +33,13 @@ class AdminController {
         global $modulesConfig;
         unset($modulesConfig[$moduleName]);
         file_put_contents(__DIR__ . '/../../modules/config.json', json_encode($modulesConfig));
-        shell_exec('rm -r ' . __DIR__ . '/../../modules/' . $moduleName);
+
+        $moduleDirectory = __DIR__ . '/../../modules/' . $moduleName;
+        // delete each file in the directory
+        array_map('unlink', glob("$moduleDirectory/*.*"));
+        // now we can delete the directory
+        rmdir($moduleDirectory);
+
         header('Location: /admin-modules');
     }
 
