@@ -14,6 +14,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             'title'       => 'Test Module used by unit tests',
             'description' => ''
         ), function () {
+
             on('arbitrary_event', function () {
                 global $eventFired;
                 $eventFired = true;
@@ -56,19 +57,13 @@ class ModuleTest extends PHPUnit_Framework_TestCase
                     'title' => 'this was added with MEDIUM priority (2)', 'image' => '', 'href'  => ''
                 ));
             }, 'medium');
-
-            declare_table('my_test_table', array(
-                'a_text_field' => 'TEXT NOT NULL',
-                'an_int_field' => 'INTEGER DEFAULT 0'
-            ));
-
-            on('test_database', function () {
-                createRow('my_test_table', array(
-                    'a_text_field' => 'This is a test value',
-                    'an_int_field' => 1337
-                ));
-            });
         });
+
+        ModuleController::getModuleByKey('unit_test')->toggleActiveness();
+    }
+
+    public static function tearDownAfterClass() {
+        shell_exec('rm ' . __DIR__ . '/../webapp/modules/config.json');
     }
 
     public function testHookedFunctionIsCalledWhenEventIsFired() {
@@ -118,10 +113,5 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             )
         ), $dashboardActions);
 
-    }
-
-    // @TODO
-    public function testDatabaseInsertAndSelect() {
-        //ModuleController::emit('test_database');
     }
 }

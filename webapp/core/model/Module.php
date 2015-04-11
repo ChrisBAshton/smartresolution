@@ -2,11 +2,18 @@
 
 class Module {
 
-    function __construct($config, $active) {
+    private $moduleDefinitionFunction;
+
+    function __construct($config, $active, $moduleDefinitionFunction) {
         $this->key         = $config['key'];
         $this->title       = $config['title'];
         $this->description = $config['description'];
         $this->active      = $active;
+        $this->moduleDefinitionFunction = $moduleDefinitionFunction;
+    }
+
+    public function callModuleDefinitionFunction() {
+        call_user_func($this->moduleDefinitionFunction);
     }
 
     public function key() {
@@ -39,6 +46,10 @@ class Module {
             $modulesConfig[$this->key()] = !$modulesConfig[$this->key()];
             file_put_contents($configFilepath, json_encode($modulesConfig));
             $this->active = !$this->active;
+
+            if ($this->active()) {
+                $this->callModuleDefinitionFunction();
+            }
         }
     }
 }

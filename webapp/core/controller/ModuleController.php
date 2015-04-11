@@ -34,10 +34,13 @@ class ModuleController {
         throw new Exception('Could not detect module name.');
     }
 
-    public static function registerModule($config) {
+    public static function registerModule($config, $moduleDefinitionFunction) {
         global $modulesConfig;
-        $module = new Module($config, $modulesConfig[$config['key']]);
+        $module = new Module($config, $modulesConfig[$config['key']], $moduleDefinitionFunction);
         ModuleController::$modules[] = $module;
+        if ($module->active()) {
+            $module->callModuleDefinitionFunction();
+        }
         return $module;
     }
 

@@ -21,10 +21,7 @@ $dashboardActions = array();
  * @param  Function $moduleDefinitionFunction   The module definition. This function should hook into events exposed by the SmartResolution platform and specify which functions to call on those events.
  */
 function declare_module($config, $moduleDefinitionFunction) {
-    $module = ModuleController::registerModule($config);
-    if ($module->active()) {
-        $moduleDefinitionFunction();
-    }
+    ModuleController::registerModule($config, $moduleDefinitionFunction);
 }
 
 /**
