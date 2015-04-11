@@ -4,6 +4,8 @@ class AdminController {
 
     function showMarketplace($f3, $params) {
         $account = mustBeLoggedInAsAn('Admin');
+        $modules = json_decode(file_get_contents('http://smartresolution.org/marketplace/feed'), true);
+        $f3->set('modules', $modules);
         $f3->set('content', 'admin_marketplace.html');
         echo View::instance()->render('layout.html');
     }

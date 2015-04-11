@@ -66,7 +66,7 @@ class ModuleController {
                 return $module;
             }
         }
-        throw new Exception('Module not found.');
+        return false;
     }
 
     public static function defineRoute($route, $handler) {
