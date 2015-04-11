@@ -30,12 +30,12 @@ class AdminController {
     function deleteModule($f3, $params) {
         $account = mustBeLoggedInAsAn('Admin');
         $moduleName = $f3->get('GET.id');
-        global $modulesConfig;
-        unset($modulesConfig[$moduleName]);
-        file_put_contents(__DIR__ . '/../../modules/config.json', json_encode($modulesConfig));
 
+        // delete module
         $moduleDirectory = __DIR__ . '/../../modules/' . $moduleName;
         $this->rrmdir($moduleDirectory);
+        // remove config.json, it will get re-initialised on next page load.
+        unset(__DIR__ . '/../../modules/config.json');
 
         header('Location: /admin-modules');
     }

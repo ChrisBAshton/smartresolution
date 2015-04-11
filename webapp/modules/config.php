@@ -6,7 +6,7 @@ if (!$configFileContents) {
     $moduleNames = scandir(__DIR__);
     $modulesConfig = array();
     foreach($moduleNames as $name) {
-        if ($name !== '.' && $name !== '..' && $name !== 'config.php') {
+        if (!in_array($name, array('.', '..', '.DS_Store', 'config.php'))) {
             $active = $name === 'other';
             $modulesConfig[$name] = $active;
         }
