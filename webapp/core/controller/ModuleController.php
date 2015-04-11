@@ -10,14 +10,28 @@ class ModuleController {
      * Extracts the name of the module from the results of the `debug_backtrace` function.
      * This means we don't have to manually pass the module name from inside a module definition, making the API cleaner from the perspective of the module developers.
      *
-     * @param  array $trace The stack trace.
-     * @return string       The module name.
+     * @param  array $stackTrace The stack trace.
+     * @return string            The module name.
      */
-    public static function extractModuleNameFromStackTrace($trace) {
-        $moduleLocation = $trace[0]['file'];
+    public static function extractModuleNameFromStackTrace($stackTrace) {
+        // the module name can be detected in one of two ways.
+        // The first and most reliable way is to get the module name argument
+        // from the declare_module() function call.
+        foreach($stackTrace as $trace) {
+            if ($trace['function'] === 'declare_module') {
+                return $trace['args'][0]['key'];
+            }
+        }
+
+        // if the declare_module function isn't in the stack trace, our next
+        // best bet is to get the name of the file where the function was triggered,
+        // as this ought to be modules/NAME/index.php.
+        $moduleLocation = $stackTrace[0]['file'];
         preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
         $moduleName = $results[1];
         return $moduleName;
+
+        throw new Exception('Could not detect module name.');
     }
 
     public static function registerModule($config) {
@@ -46,15 +60,35 @@ class ModuleController {
         }
 
         $lastKnownModule = ModuleController::$modules[count(ModuleController::$modules) - 1]->key();
+        $priority        = ModuleController::getPriority($priority);
 
-        $priority = ModuleController::getPriority($priority);
-
-        // @TODO use $priority to determine where this item is pushed in the array.
-        ModuleController::$subscriptions[$event][] = array(
+        $newElement = array(
             'functionToCall' => $action,
             'priority'       => $priority,
             'module'         => $lastKnownModule
         );
+
+        ModuleController::insertSubscriptionIntoArray($event, $newElement);
+    }
+
+    private static function insertSubscriptionIntoArray($event, $newElement) {
+        $existingSubscriptions = ModuleController::$subscriptions[$event];
+
+        $inserted = false;
+        $count = 0;
+        foreach($existingSubscriptions as $subscription) {
+            if ($subscription['priority'] < $newElement['priority']) {
+                // insert our new subscription at this point
+                array_splice(ModuleController::$subscriptions[$event], $count, 0, array($newElement));
+                $inserted = true;
+                break;
+            }
+            $count++;
+        }
+
+        if (!$inserted) { // our new element had the lowest priority (or was the first element) so we just append.
+            ModuleController::$subscriptions[$event][] = $newElement;
+        }
     }
 
     /**

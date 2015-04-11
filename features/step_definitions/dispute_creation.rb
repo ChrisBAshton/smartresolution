@@ -71,3 +71,12 @@ Then(/^I should be able to edit the summary$/) do
   visit dispute_url
   assert page.has_content? 'New summary for party A'
 end
+
+Then(/^I should be able to edit the dispute type$/) do
+  dispute_url = '/disputes/4'
+  visit dispute_url + '/summary'
+  select 'Test Module', :from => 'Dispute type:'
+  click_button 'Update Details'
+  visit dispute_url
+  assert page.has_content? 'Test Dashboard Item'
+end

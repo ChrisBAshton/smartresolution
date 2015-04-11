@@ -304,4 +304,11 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $dispute->closeUnsuccessfully();
         $this->assertEquals("failed", $this->getDisputeStatus($dispute));
     }
+
+    public function testGetAndSetType() {
+        $dispute = $this->createNewDispute();
+        $this->assertEquals("other", $dispute->getType());
+        $dispute->setType('test');
+        $this->assertEquals("test", $dispute->getType());
+    }
 }

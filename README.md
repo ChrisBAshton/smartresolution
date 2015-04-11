@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ChrisBAshton/smartresolution.svg?branch=master)](https://travis-ci.org/ChrisBAshton/smartresolution) [![Code Climate](https://codeclimate.com/github/ChrisBAshton/smartresolution/badges/gpa.svg)](https://codeclimate.com/github/ChrisBAshton/smartresolution) [![Dependency Status](https://gemnasium.com/ChrisBAshton/smartresolution.svg)](https://gemnasium.com/ChrisBAshton/smartresolution)
+[![Build Status](https://travis-ci.org/ChrisBAshton/smartresolution.svg?branch=master)](https://travis-ci.org/ChrisBAshton/smartresolution) [![Code Climate](https://codeclimate.com/github/ChrisBAshton/smartresolution/badges/gpa.svg)](https://codeclimate.com/github/ChrisBAshton/smartresolution) [![Dependency Status](https://gemnasium.com/ChrisBAshton/smartresolution.svg)](https://gemnasium.com/ChrisBAshton/smartresolution) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
 # SmartResolution
 

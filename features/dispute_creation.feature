@@ -38,3 +38,7 @@ Feature: Dispute creation
   Scenario: Editing a summary
     Given I have submitted a Dispute
     Then I should be able to edit the summary
+
+  Scenario: Editing a dispute type
+    Given I have submitted a Dispute
+    Then I should be able to edit the dispute type

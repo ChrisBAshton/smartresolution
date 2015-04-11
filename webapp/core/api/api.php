@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Global variable, used internally for defining the Home/Dispute dashboards. You should interact with it through the functions provided, e.g. dashboard_add_item().
+ * Global variable, used internally for defining the Home/Dispute dashboards. You should only interact with it through the functions provided, e.g. dashboard_add_item().
  * @var array
+ * @internal    We don't want this variable to appear in the Module Developer documentation, since it might change.
  */
 $dashboardActions = array();
 
