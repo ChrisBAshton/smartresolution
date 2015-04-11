@@ -3,3 +3,13 @@
 <p>
     <?php echo $message; ?>
 </p>
+
+<p>
+    Entries in database: <?php echo $entryCount; ?>
+</p>
+
+<form method="post" action="<?php echo $disputeUrl; ?>/test-database">
+    <p class="text-center">
+        <button class="btn btn-lg btn-primary" type="submit">Create Database entry</button>
+    </p>
+</form>

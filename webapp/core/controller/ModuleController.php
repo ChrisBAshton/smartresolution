@@ -14,16 +14,22 @@ class ModuleController {
      * @return string            The module name.
      */
     public static function extractModuleNameFromStackTrace($stackTrace) {
+        // the module name can be detected in one of two ways.
+        // The first and most reliable way is to get the module name argument
+        // from the declare_module() function call.
         foreach($stackTrace as $trace) {
             if ($trace['function'] === 'declare_module') {
                 return $trace['args'][0]['key'];
             }
         }
 
-        // $moduleLocation = $stackTrace[0]['file'];
-        // preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
-        // $moduleName = $results[1];
-        // return $moduleName;
+        // if the declare_module function isn't in the stack trace, our next
+        // best bet is to get the name of the file where the function was triggered,
+        // as this ought to be modules/NAME/index.php.
+        $moduleLocation = $stackTrace[0]['file'];
+        preg_match('/modules\/([^\/]+)/', $moduleLocation, $results);
+        $moduleName = $results[1];
+        return $moduleName;
 
         throw new Exception('Could not detect module name.');
     }
