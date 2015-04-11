@@ -35,10 +35,7 @@ class AdminController {
         file_put_contents(__DIR__ . '/../../modules/config.json', json_encode($modulesConfig));
 
         $moduleDirectory = __DIR__ . '/../../modules/' . $moduleName;
-        // delete each file in the directory
-        array_map('unlink', glob("$moduleDirectory/*.*"));
-        // now we can delete the directory
-        rmdir($moduleDirectory);
+        $this->rrmdir($moduleDirectory);
 
         header('Location: /admin-modules');
     }
@@ -48,4 +45,19 @@ class AdminController {
         $f3->set('content', 'admin_customise.html');
         echo View::instance()->render('layout.html');
     }
+
+    // copied from http://php.net/rmdir#98622
+    function rrmdir($dir) {
+       if (is_dir($dir)) {
+         $objects = scandir($dir);
+         foreach ($objects as $object) {
+           if ($object != "." && $object != "..") {
+             if (filetype($dir."/".$object) == "dir") $this->rrmdir($dir."/".$object); else unlink($dir."/".$object);
+           }
+         }
+         reset($objects);
+         rmdir($dir);
+       }
+    }
+
 }
