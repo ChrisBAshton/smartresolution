@@ -5,6 +5,7 @@
  */
 $modules = array(
     'other'              => true,
+    'test'               => true,
     'maritime_collision' => false
 );
 foreach($modules as $moduleKey => $active) {
