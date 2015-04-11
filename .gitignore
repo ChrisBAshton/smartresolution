@@ -6,3 +6,4 @@ uploads/
 webapp/modules/*
 !webapp/modules/config.php
 !webapp/modules/other
+!webapp/modules/test
