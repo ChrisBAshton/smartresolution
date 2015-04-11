@@ -35,11 +35,35 @@ class ModuleController {
     }
 
     public static function registerModule($config) {
-        ModuleController::$modules[] = new Module($config);
+        global $modulesConfig;
+        $module = new Module($config, $modulesConfig[$config['key']]);
+        ModuleController::$modules[] = $module;
+        return $module;
     }
 
-    public static function getModules() {
+    public static function getActiveModules() {
+        $modules    = array();
+        $allModules = ModuleController::$modules;
+        foreach($allModules as $module) {
+            if ($module->active()) {
+                array_push($modules, $module);
+            }
+        }
+        return $modules;
+    }
+
+    public static function getAllModules() {
         return ModuleController::$modules;
+    }
+
+    public static function getModuleByKey($key) {
+        $modules = ModuleController::$modules;
+        foreach($modules as $module) {
+            if ($key === $module->key()) {
+                return $module;
+            }
+        }
+        throw new Exception('Module not found.');
     }
 
     public static function defineRoute($route, $handler) {

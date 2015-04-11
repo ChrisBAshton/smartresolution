@@ -70,7 +70,13 @@ $routes = array(
     'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
 
     // notifications
-    'GET /notifications' => 'notificationsList'
+    'GET /notifications' => 'notificationsList',
+
+    // admin options
+    'GET /admin-modules'         => 'AdminController->showModulesPage',
+    'GET /admin-modules-new'     => 'AdminController->showMarketplace',
+    'POST /admin-modules-toggle' => 'AdminController->toggleModule',
+    'GET /admin-customise'       => 'AdminController->showCustomisePage'
 );
 
 foreach($routes as $request => $handler) {

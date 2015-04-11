@@ -90,15 +90,20 @@ class DBAccount {
      * @return array<Mixed>  Associated database row.
      */
     public static function getDetailsBy($key, $value) {
-        $individual   = DBAccount::getRowsFromTable('individuals', $key, $value);
-        $organisation = DBAccount::getRowsFromTable('organisations', $key, $value);
-        $details      = false;
+        $individual    = DBAccount::getRowsFromTable('individuals', $key, $value);
+        $organisation  = DBAccount::getRowsFromTable('organisations', $key, $value);
+        $administrator = DBAccount::getRowsFromTable('administrators', $key, $value);
+        $details       = false;
 
         if (count($individual) === 1) {
             $details = $individual[0];
         }
         else if (count($organisation) === 1) {
             $details = $organisation[0];
+        }
+        else if (count($administrator) === 1) {
+            $details = $administrator[0];
+            $details['type'] = 'administrator';
         }
 
         return $details;
@@ -140,6 +145,8 @@ class DBAccount {
                 return new LawFirm($account);
             case "mediation_centre":
                 return new MediationCentre($account);
+            case "administrator":
+                return new Admin($account);
             default:
                 var_dump($account);
                 throw new Exception("Invalid account type.");

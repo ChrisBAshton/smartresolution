@@ -13,7 +13,7 @@ class SummaryController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
-        $modules = ModuleController::getModules();
+        $modules = ModuleController::getActiveModules();
         if (count($modules) === 0) {
             errorPage('The system administrator must install at least one dispute module before you can create a Dispute. Please contact the admin.');
         }

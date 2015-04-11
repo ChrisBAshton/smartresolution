@@ -9,6 +9,11 @@ CREATE TABLE IF NOT EXISTS account_details (
     verified BOOLEAN DEFAULT true
 );
 
+CREATE TABLE IF NOT EXISTS administrators (
+    login_id INTEGER,
+    FOREIGN KEY(login_id) REFERENCES account_details(login_id)
+);
+
 CREATE TABLE IF NOT EXISTS organisations (
     login_id        INTEGER,
     type            VARCHAR(30),

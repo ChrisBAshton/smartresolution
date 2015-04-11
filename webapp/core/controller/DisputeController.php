@@ -28,7 +28,7 @@ class DisputeController {
     function newDisputeGet ($f3) {
         mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
-        $modules = ModuleController::getModules();
+        $modules = ModuleController::getActiveModules();
         if (count($agents) === 0) {
             errorPage('You must create an Agent account before you can create a Dispute!');
         }
