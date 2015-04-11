@@ -75,6 +75,7 @@ $routes = array(
     // admin options
     'GET /admin-modules'         => 'AdminController->showModulesPage',
     'GET /admin-modules-new'     => 'AdminController->showMarketplace',
+    'GET /admin-modules-download'=> 'AdminController->downloadModule',
     'POST /admin-modules-toggle' => 'AdminController->toggleModule',
     'GET /admin-modules-delete'  => 'AdminController->deleteModule',
     'GET /admin-customise'       => 'AdminController->showCustomisePage'

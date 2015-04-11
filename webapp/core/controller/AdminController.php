@@ -34,16 +34,39 @@ class AdminController {
         // delete module
         $moduleDirectory = __DIR__ . '/../../modules/' . $moduleName;
         $this->rrmdir($moduleDirectory);
-        // remove config.json, it will get re-initialised on next page load.
-        unlink(__DIR__ . '/../../modules/config.json');
-
+        $this->updateModuleConfig();
         header('Location: /admin-modules');
+    }
+
+    function downloadModule($f3, $params) {
+        $account      = mustBeLoggedInAsAn('Admin');
+        $downloadLink = $f3->get('GET.url');
+        $zipLocation  = __DIR__ . '/../../modules/tmp.zip';
+
+        file_put_contents($zipLocation, file_get_contents($downloadLink));
+
+        $zip = new ZipArchive;
+        $response = $zip->open($zipLocation);
+        if ($response === TRUE) {
+            $zip->extractTo(__DIR__ . '/../../modules');
+            $zip->close();
+            unlink($zipLocation);
+            $this->updateModuleConfig();
+            header('Location: /admin-modules');
+        } else {
+            errorPage('There was a problem installing your module.');
+        }
     }
 
     function showCustomisePage($f3, $params) {
         $account = mustBeLoggedInAsAn('Admin');
         $f3->set('content', 'admin_customise.html');
         echo View::instance()->render('layout.html');
+    }
+
+    function updateModuleConfig() {
+        // remove config.json, it will get re-initialised on next page load.
+        unlink(__DIR__ . '/../../modules/config.json');
     }
 
     // copied from http://php.net/rmdir#98622
