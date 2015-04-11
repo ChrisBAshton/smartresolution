@@ -34,7 +34,10 @@ class Module {
             throw new Exception("Tried to change active status of module " . $this->title() . " but it is a special module and cannot be changed!");
         }
         else {
-            // @TODO - make active change persistent
+            global $modulesConfig;
+            $configFilepath = __DIR__ . '/../../modules/config.json';
+            $modulesConfig[$this->key()] = !$modulesConfig[$this->key()];
+            file_put_contents($configFilepath, json_encode($modulesConfig));
             $this->active = !$this->active;
         }
     }
