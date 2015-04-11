@@ -76,6 +76,7 @@ $routes = array(
     'GET /admin-modules'         => 'AdminController->showModulesPage',
     'GET /admin-modules-new'     => 'AdminController->showMarketplace',
     'POST /admin-modules-toggle' => 'AdminController->toggleModule',
+    'GET /admin-modules-delete'  => 'AdminController->deleteModule',
     'GET /admin-customise'       => 'AdminController->showCustomisePage'
 );
 

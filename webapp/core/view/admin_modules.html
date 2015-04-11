@@ -21,7 +21,7 @@
                     </form>
                 </p>
                 <p>
-                    <a href="#" class="text-danger delete_module" id="delete-<?php echo $module->key(); ?>">Delete</a>
+                    <a href="/admin-modules-delete/?id=<?php echo $module->key(); ?>" class="text-danger delete_module" id="delete-<?php echo $module->key(); ?>">Delete</a>
                 </p>
             <?php endif; ?>
         </div>
@@ -42,9 +42,8 @@
 <script src="/core/view/js/jquery.min.js"></script>
 <script>
 $('.delete_module').on('click', function (e) {
-    e.preventDefault();
     if (confirm("Are you sure you want to delete the module?") == true) {
-        $('.information').html("<p class='bg-padded bg-danger'>The ability to delete modules hasn't been implemented yet. Sorry.</p>");
+        return true;
     }
     return false;
 });
