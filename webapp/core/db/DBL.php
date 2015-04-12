@@ -333,6 +333,15 @@ class DBL {
         return ($type === 'agent') ? new Agent($login_id) : new Mediator($login_id);
     }
 
+    public static function createAdmin($params) {
+        Database::instance()->begin();
+        $login_id = DBL::createDBAccount($params);
+        Database::instance()->exec('INSERT INTO administrators (login_id) VALUES (:login_id)', array(
+            ':login_id' => $login_id,
+        ));
+        Database::instance()->commit();
+    }
+
     /**
      * Stores account details in the database.
      *

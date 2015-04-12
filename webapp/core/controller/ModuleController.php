@@ -34,12 +34,39 @@ class ModuleController {
         throw new Exception('Could not detect module name.');
     }
 
-    public static function registerModule($config) {
-        ModuleController::$modules[] = new Module($config);
+    public static function registerModule($config, $moduleDefinitionFunction) {
+        global $modulesConfig;
+        $module = new Module($config, $modulesConfig[$config['key']], $moduleDefinitionFunction);
+        ModuleController::$modules[] = $module;
+        if ($module->active()) {
+            $module->callModuleDefinitionFunction();
+        }
+        return $module;
     }
 
-    public static function getModules() {
+    public static function getActiveModules() {
+        $modules    = array();
+        $allModules = ModuleController::$modules;
+        foreach($allModules as $module) {
+            if ($module->active()) {
+                array_push($modules, $module);
+            }
+        }
+        return $modules;
+    }
+
+    public static function getAllModules() {
         return ModuleController::$modules;
+    }
+
+    public static function getModuleByKey($key) {
+        $modules = ModuleController::$modules;
+        foreach($modules as $module) {
+            if ($key === $module->key()) {
+                return $module;
+            }
+        }
+        return false;
     }
 
     public static function defineRoute($route, $handler) {

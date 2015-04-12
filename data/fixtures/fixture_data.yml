@@ -1,3 +1,6 @@
+administrators:
+  - email:    admin@smartresolution.org
+    password: test
 organisations:
   - account_details:
         email:    law_firm_a@t.co

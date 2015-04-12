@@ -19,7 +19,7 @@ class DBAccountTest extends PHPUnit_Framework_TestCase
 
     public function testGetIdFromEmail() {
         $testUser = DBAccount::emailToId('law_firm_a@t.co');
-        $this->assertEquals(1, $testUser);
+        $this->assertEquals(2, $testUser);
     }
 
     public function testGetDBAccountIds()

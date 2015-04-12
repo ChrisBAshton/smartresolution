@@ -17,7 +17,7 @@ class DBL
   end
 
   def self.email_to_id(email)
-    count = 0
+    count = @data['administrators'].size # admins affect the login id too
     @data['organisations'].each do |org|
       count = count + 1
       return count.to_s if org['account_details']['email'] == email

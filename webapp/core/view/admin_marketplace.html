@@ -1,0 +1,89 @@
+<h1>Featured Modules</h1>
+
+<div class="row">
+    <?php
+    foreach($modules['featured'] as $module) :
+        if (isset($module['location'])) :
+    ?>
+
+        <div class="col-sm-12">
+            <h3>
+                <?php echo $module['title']; ?>
+            </h3>
+
+            <?php echoPriceAndVersion($module); ?>
+
+            <div class="col-sm-8">
+                <p>
+                    <?php echo $module['description']; ?>
+                </p>
+            </div>
+            <div class="col-sm-4 text-center">
+                <?php makeButton($module); ?>
+            </div>
+        </div>
+
+    <?php
+            endif;
+        endforeach;
+    ?>
+</div>
+
+<h1>Other Modules</h1>
+
+<?php
+foreach($modules['others'] as $module) :
+    if (isset($module['location'])) :
+?>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <?php makeButton($module); ?>
+        </div>
+
+        <div class="col-sm-9">
+            <h3>
+                <?php echo $module['title']; ?>
+            </h3>
+
+            <?php echoPriceAndVersion($module); ?>
+
+            <p>
+                <?php echo $module['description']; ?>
+            </p>
+        </div>
+    </div>
+
+<?php
+    endif;
+endforeach;
+?>
+
+<?php
+function makeButton($module) {
+    $linkText = $module['price'] === "0" ? 'Install Module' : 'Buy Module ($' . $module['price'] . ')';
+    $moduleAlreadyInstalled = ModuleController::getModuleByKey($module['key']);
+
+    if ($moduleAlreadyInstalled) {
+        $linkText = 'Module already installed.';
+    }
+?>
+    <a
+        id="module--<?php echo $module['key']; ?>"
+        class="btn btn-lg btn-primary"
+        href="/admin-modules-download/?url=<?php echo urlencode($module['location']); ?>"
+        <?php if ($moduleAlreadyInstalled) echo 'disabled="disabled"'; ?>
+    >
+        <?php echo $linkText; ?>
+    </a>
+<?php
+}
+?>
+
+<?php
+function echoPriceAndVersion($module) {
+?>
+    <em><strong><?php echo $module['price'] === "0" ? 'Free' : '£' . $module['price']; ?></strong>, Version <?php echo $module['version']; ?></em>
+<?php
+}
+?>

@@ -52,3 +52,7 @@ end
 Given(/^I am logged into an Agent account that is not associated with the Dispute$/) do
   Session.login_with_credentials 'one_dispute_agent@company.com', 'test'
 end
+
+Given(/^I am logged into an Admin account$/) do
+  Session.login_as_admin
+end

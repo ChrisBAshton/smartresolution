@@ -76,6 +76,25 @@ class Dashboard {
                 )
             );
         }
+        elseif ($account instanceof Admin) {
+            $dashboardActions = array(
+                array(
+                    'href'  => '/admin-modules-new',
+                    'image' => '/core/view/images/cloud.png',
+                    'title' => 'Marketplace'
+                ),
+                array(
+                    'href'  => '/admin-modules',
+                    'image' => '/core/view/images/security.png',
+                    'title' => 'Modules'
+                ),
+                array(
+                    'href'  => '/admin-customise',
+                    'image' => '/core/view/images/settings.png',
+                    'title' => 'Customise'
+                )
+            );
+        }
 
         ModuleController::emit('homescreen_dashboard');
 

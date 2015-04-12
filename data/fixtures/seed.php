@@ -11,6 +11,13 @@ use Symfony\Component\Yaml\Parser;
 $yaml = new Parser();
 $data = $yaml->parse(file_get_contents(__DIR__ . '/fixture_data.yml'));
 
+foreach($data['administrators'] as $admin) {
+    DBL::createAdmin(array(
+        'email'    => $admin['email'],
+        'password' => $admin['password']
+    ));
+}
+
 foreach($data['organisations'] as $org) {
     $organisation = DBL::createOrganisation(array(
         'email'    => $org['account_details']['email'],

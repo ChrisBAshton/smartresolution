@@ -1,0 +1,50 @@
+<h1>Modules</h1>
+
+<div class="information">
+    <p class="bg-padded bg-info">
+        Want more modules? <a href="/admin-modules-new">Check out the SmartResolution Marketplace</a>.
+    </p>
+</div>
+
+<?php foreach($modules as $module) : ?>
+    <div class="row">
+        <div class="col-sm-3 text-center">
+            <?php if ($module->special()) : ?>
+                <p>
+                    <em>This module is required by the system and cannot be deleted.</em>
+                </p>
+            <?php else: ?>
+                <p>
+                    <form method="post" action="/admin-modules-toggle">
+                        <input type="hidden" name="module" value="<?php echo $module->key(); ?>" />
+                        <button id="module--<?php echo $module->key(); ?>" class="btn btn-lg <?php echo $module->active() ? '':'btn-primary'; ?> btn-block" type="submit"><?php echo $module->active() ? 'Deactivate':'Activate'; ?></button>
+                    </form>
+                </p>
+                <p>
+                    <a href="/admin-modules-delete/?id=<?php echo $module->key(); ?>" class="text-danger delete_module" id="delete-<?php echo $module->key(); ?>">Delete</a>
+                </p>
+            <?php endif; ?>
+        </div>
+        <div class="col-sm-9">
+            <h3>
+                <?php echo $module->title(); ?>
+            </h3>
+
+            <p>
+                <?php echo $module->description(); ?>
+            </p>
+        </div>
+    </div>
+
+    <hr />
+<?php endforeach; ?>
+
+<script src="/core/view/js/jquery.min.js"></script>
+<script>
+$('.delete_module').on('click', function (e) {
+    if (confirm("Are you sure you want to delete the module?") == true) {
+        return true;
+    }
+    return false;
+});
+</script>
