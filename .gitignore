@@ -4,6 +4,7 @@ vendor
 *.db
 features/screenshots
 uploads/
+!uploads/.gitkeep
 webapp/modules/*
 !webapp/modules/config.php
 !webapp/modules/other
