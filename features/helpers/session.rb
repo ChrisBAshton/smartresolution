@@ -32,6 +32,10 @@ class Session
     Session.login_as_agent
   end
 
+  def self.login_as_admin
+    Session.login_with_credentials 'admin@smartresolution.org', 'test'
+  end
+
   def self.login_with_credentials (email, password)
     Session.clear_session_before_login
     fill_in 'Email',    :with => email
