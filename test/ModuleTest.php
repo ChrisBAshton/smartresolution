@@ -8,6 +8,16 @@ class ModuleTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass() {
         Database::setEnvironment('test');
         Database::clear();
+    }
+
+    public static function tearDownAfterClass() {
+        shell_exec('rm ' . __DIR__ . '/../webapp/modules/config.json');
+    }
+
+    public function testDeclareModule() {
+
+        $allModules = ModuleController::getAllModules();
+        $this->assertEquals(0, count($allModules));
 
         declare_module(array(
             'key'         => 'unit_test',
@@ -59,11 +69,23 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             }, 'medium');
         });
 
-        ModuleController::getModuleByKey('unit_test')->toggleActiveness();
+        $allModules = ModuleController::getAllModules();
+        $this->assertEquals(1, count($allModules));
     }
 
-    public static function tearDownAfterClass() {
-        shell_exec('rm ' . __DIR__ . '/../webapp/modules/config.json');
+    public function testGetModuleByKey() {
+        $module = ModuleController::getModuleByKey('unit_test');
+        $this->assertTrue($module instanceof Module);
+        $module = ModuleController::getModuleByKey('module that does not exist');
+        $this->assertFalse($module);
+    }
+
+    public function testModuleBecomesActive() {
+        $activeModules = ModuleController::getActiveModules();
+        $this->assertEquals(0, count($activeModules));
+        ModuleController::getModuleByKey('unit_test')->toggleActiveness();
+        $activeModules = ModuleController::getActiveModules();
+        $this->assertEquals(1, count($activeModules));
     }
 
     public function testHookedFunctionIsCalledWhenEventIsFired() {
@@ -112,6 +134,20 @@ class ModuleTest extends PHPUnit_Framework_TestCase
                 'title' => 'this was added with LOW priority', 'image' => '', 'href' => ''
             )
         ), $dashboardActions);
+    }
 
+    public function testModuleFunctions() {
+        $module = ModuleController::registerModule(array(
+            'key'         => 'some_key',
+            'title'       => 'a title',
+            'description' => 'my description'
+        ), function () {});
+        $this->assertTrue($module instanceof Module);
+        $this->assertFalse($module->active() === true);
+        $module->toggleActiveness();
+        $this->assertTrue($module->active());
+        $this->assertEquals('some_key', $module->key());
+        $this->assertEquals('a title', $module->title());
+        $this->assertEquals('my description', $module->description());
     }
 }

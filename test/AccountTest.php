@@ -13,16 +13,19 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $mediator        = DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk');
         $lawFirm         = DBAccount::getAccountByEmail('law_firm_a@t.co');
         $mediationCentre = DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
+        $administrator   = DBAccount::getAccountByEmail('admin@smartresolution.org');
 
         $this->assertTrue($agent           instanceof Agent);
         $this->assertTrue($mediator        instanceof Mediator);
         $this->assertTrue($lawFirm         instanceof LawFirm);
         $this->assertTrue($mediationCentre instanceof MediationCentre);
+        $this->assertTrue($administrator   instanceof Admin);
 
         $this->assertEquals('Agent',            $agent->getRole());
         $this->assertEquals('Mediator',         $mediator->getRole());
         $this->assertEquals('Law Firm',         $lawFirm->getRole());
         $this->assertEquals('Mediation Centre', $mediationCentre->getRole());
+        $this->assertEquals('Administrator',    $administrator->getRole());
     }
 
     public function testCommonGetters() {
@@ -77,5 +80,4 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $account->setDescription('TEST');
         $this->assertEquals('TEST', $account->getRawDescription());
     }
-
 }
