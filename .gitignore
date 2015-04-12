@@ -3,8 +3,8 @@ __MACOSX
 vendor
 *.db
 features/screenshots
-uploads/
-!uploads/.gitkeep
+webapp/uploads/*
+!webapp/uploads/.gitkeep
 webapp/modules/*
 !webapp/modules/config.php
 !webapp/modules/other
