@@ -17,7 +17,7 @@
                 <p>
                     <form method="post" action="/admin-modules-toggle">
                         <input type="hidden" name="module" value="<?php echo $module->key(); ?>" />
-                        <button class="btn btn-lg btn-<?php echo $module->active() ? '':'primary'; ?> btn-block" type="submit"><?php echo $module->active() ? 'Deactivate':'Activate'; ?></button>
+                        <button id="module--<?php echo $module->key(); ?>" class="btn btn-lg <?php echo $module->active() ? '':'btn-primary'; ?> btn-block" type="submit"><?php echo $module->active() ? 'Deactivate':'Activate'; ?></button>
                     </form>
                 </p>
                 <p>

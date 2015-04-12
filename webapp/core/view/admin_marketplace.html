@@ -69,6 +69,7 @@ function makeButton($module) {
     }
 ?>
     <a
+        id="module--<?php echo $module['key']; ?>"
         class="btn btn-lg btn-primary"
         href="/admin-modules-download/?url=<?php echo urlencode($module['location']); ?>"
         <?php if ($moduleAlreadyInstalled) echo 'disabled="disabled"'; ?>

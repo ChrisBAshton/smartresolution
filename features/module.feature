@@ -8,7 +8,8 @@ Feature: Module
     is a module REQUIRED to define custom routes and dashboard items, etc.
 
   Background:
-    Given I am logged into an Agent account
+    Given the Test Module has been installed and activated
+    And I am logged into an Agent account
     And the Dispute is fully underway
     And the Dispute type has been set to 'Test Module'
 

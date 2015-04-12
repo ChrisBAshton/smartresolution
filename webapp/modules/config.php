@@ -21,12 +21,3 @@ else {
 foreach($modulesConfig as $moduleKey => $active) {
     require __DIR__ . '/' . $moduleKey . '/index.php';
 }
-
-// we need to make the Test module available to the Cucumber test suite.
-if (IN_TEST_MODE) {
-    $testModule = ModuleController::getModuleByKey('test');
-
-    if (!$testModule->active()) {
-        $testModule->toggleActiveness();
-    }
-}
