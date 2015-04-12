@@ -72,7 +72,10 @@ Then(/^I should be able to uninstall the module$/) do
   visit '/admin-modules-new'
   install_button = page.find('#module--test')
   assert button_text install_button, "Install Module"
+
   # and indeed, we will install it again, to stop the module being removed from Git
-  # if this is the only cuke we run!
+  # if this is the only cuke we run! This tidies up the test suite and prepares it
+  # for the module.feature tests.
   install_button.click
+  step "I should be able to activate the module"
 end
