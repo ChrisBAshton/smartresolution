@@ -9,7 +9,7 @@ class NotificationTest extends PHPUnit_Framework_TestCase
     }
 
     private function createNotification() {
-        return DBL::createNotification(array(
+        return DBCreate::notification(array(
             'recipient_id' => 1,
             'message'      => 'Test message',
             'url'          => 'http://example.com/disputes/view/147'

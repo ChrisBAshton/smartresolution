@@ -12,7 +12,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
         $agent = DBAccount::emailToId('agent_a@t.co');
 
-        return DBL::createDispute(array(
+        return DBCreate::dispute(array(
             'law_firm_a' => $lawFirm,
             'agent_a'    => $agent,
             'type'       => 'other',
@@ -89,14 +89,14 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $dispute->setAgentB(DBAccount::emailToId('agent_b@t.co'));
 
         // next, let's set up Mediation
-        DBL::createMediationCentreOffer(array(
+        DBCreate::mediationCentreOffer(array(
             'dispute'          => $dispute,
             'proposed_by'      => $dispute->getAgentA(),
             'mediation_centre' => DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();
-        DBL::createMediatorOffer(array(
+        DBCreate::mediatorOffer(array(
             'dispute'     => $dispute,
             'proposed_by' => $dispute->getAgentA(),
             'mediator'    => DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk')
@@ -197,7 +197,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testSettingDisputeAgentToLawFirm() {
         $agentA   = DBAccount::emailToId('agent_a@t.co');
 
-        return DBL::createDispute(array(
+        return DBCreate::dispute(array(
             'law_firm_a' => $agentA, // shouldn't be able to set law firm as an agent
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -211,7 +211,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $lawFirmA = DBAccount::emailToId('law_firm_a@t.co');
         $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
 
-        $dispute = DBL::createDispute(array(
+        $dispute = DBCreate::dispute(array(
             'law_firm_a' => $lawFirmA,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -224,7 +224,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNullLawFirm() {
-        DBL::createDispute(array(
+        DBCreate::dispute(array(
             'law_firm_a' => NULL,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -238,7 +238,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
 
-        DBL::createDispute(array(
+        DBCreate::dispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => NULL,
             'title'      => 'Smith versus Jones'
@@ -252,7 +252,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
 
-        DBL::createDispute(array(
+        DBCreate::dispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other',
             'title'      => NULL
@@ -263,7 +263,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNoLawFirm() {
-        DBL::createDispute(array(
+        DBCreate::dispute(array(
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
         ));
@@ -274,7 +274,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNoType() {
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
-        DBL::createDispute(array(
+        DBCreate::dispute(array(
             'law_firm_a' => $lawFirm,
             'title'      => 'Smith versus Jones'
         ));
@@ -285,7 +285,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNoTitle() {
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
-        DBL::createDispute(array(
+        DBCreate::dispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other'
         ));

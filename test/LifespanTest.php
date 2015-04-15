@@ -14,7 +14,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         $this->lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
         $this->agentB   = DBAccount::emailToId('agent_b@t.co');
 
-        $this->dispute = DBL::createDispute(array(
+        $this->dispute = DBCreate::dispute(array(
             'law_firm_a' => $this->lawFirmA,
             'agent_a'    => $this->agentA,
             'type'       => 'other',
@@ -29,7 +29,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
 
     private function createLifespan() {
         $currentTime = time();
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 3600,
@@ -45,7 +45,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
      */
     public function testLifespanInvalidWhenValidUntilIsInPast() {
         $currentTime = time();
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime - 3600,
@@ -60,7 +60,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
      */
     public function testLifespanInvalidWhenStartTimeIsInPast() {
         $currentTime = time();
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 3600,
@@ -75,7 +75,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
      */
     public function testLifespanInvalidWhenEndTimeIsInPast() {
         $currentTime = time();
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 3600,
@@ -90,7 +90,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
      */
     public function testLifespanInvalidWhenValidUntilIsAheadOfStartTime() {
         $currentTime = time();
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 7200,
@@ -105,7 +105,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
      */
     public function testLifespanInvalidWhenEndTimeBeforeStartTime() {
         $currentTime = time();
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $this->dispute->getDisputeId(),
             'proposer'    => $this->agentA,
             'valid_until' => $currentTime + 3600,

@@ -12,14 +12,14 @@ $yaml = new Parser();
 $data = $yaml->parse(file_get_contents(__DIR__ . '/fixture_data.yml'));
 
 foreach($data['administrators'] as $admin) {
-    DBL::createAdmin(array(
+    DBCreate::admin(array(
         'email'    => $admin['email'],
         'password' => $admin['password']
     ));
 }
 
 foreach($data['organisations'] as $org) {
-    $organisation = DBL::createOrganisation(array(
+    $organisation = DBCreate::organisation(array(
         'email'    => $org['account_details']['email'],
         'password' => $org['account_details']['password'],
         'type'     => $org['details']['type'],
@@ -32,7 +32,7 @@ foreach($data['organisations'] as $org) {
 
     if (isset($org['individuals'])) {
         foreach($org['individuals'] as $individual) {
-            $account = DBL::createIndividual(array(
+            $account = DBCreate::individual(array(
                 'email'           => $individual['account_details']['email'],
                 'password'        => $individual['account_details']['password'],
                 'organisation_id' => $organisation->getLoginId(),
@@ -48,7 +48,7 @@ foreach($data['organisations'] as $org) {
 }
 
 foreach($data['disputes'] as $dataItem) {
-    $dispute = DBL::createDispute(array(
+    $dispute = DBCreate::dispute(array(
         'title'      => $dataItem['title'],
         'law_firm_a' => DBAccount::emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
@@ -95,7 +95,7 @@ foreach($data['disputes'] as $dataItem) {
                 break;
         }
 
-        DBL::createLifespan(array(
+        DBCreate::lifespan(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer'    => $agentAId,
             'valid_until' => $validUntil,
@@ -118,7 +118,7 @@ foreach($data['disputes'] as $dataItem) {
         shell_exec('echo "This is an example evidence document." > ' . __DIR__ . '/../../webapp/uploads/tmp.txt');
 
         if ($dataItem['evidence'] === 'one_item') {
-            DBL::createEvidence(array(
+            DBCreate::evidence(array(
                 'uploader' => $dispute->getAgentA(),
                 'dispute'  => $dispute,
                 'filepath' => '/uploads/tmp.txt'
@@ -127,7 +127,7 @@ foreach($data['disputes'] as $dataItem) {
     }
 
     if (isset($dataItem['mediation_centre'])) {
-        DBL::createMediationCentreOffer(array(
+        DBCreate::mediationCentreOffer(array(
             'dispute'          => $dispute,
             'proposed_by'      => $dispute->getAgentA(),
             'mediation_centre' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])
@@ -138,7 +138,7 @@ foreach($data['disputes'] as $dataItem) {
     }
 
     if (isset($dataItem['mediator'])) {
-        DBL::createMediatorOffer(array(
+        DBCreate::mediatorOffer(array(
             'dispute'     => $dispute,
             'proposed_by' => $dispute->getAgentA(),
             'mediator'    => DBAccount::getAccountByEmail($dataItem['mediator'])

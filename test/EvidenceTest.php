@@ -11,7 +11,7 @@ class EvidenceTest extends PHPUnit_Framework_TestCase
 
     protected function setUp() {
         $this->dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
-        $evidenceID = DBL::createEvidence(array(
+        $evidenceID = DBCreate::evidence(array(
             'uploader' => $this->dispute->getAgentA(),
             'dispute'  => $this->dispute,
             'filepath' => 'test_filepath'

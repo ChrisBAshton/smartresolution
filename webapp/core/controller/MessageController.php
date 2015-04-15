@@ -33,7 +33,7 @@ class MessageController {
         $message = $f3->get('POST.message');
 
         if ($message) {
-            DBL::createMessage(array(
+            DBCreate::message(array(
                 'dispute_id' => $this->dispute->getDisputeId(),
                 'author_id'  => $this->account->getLoginId(),
                 'message'    => $message

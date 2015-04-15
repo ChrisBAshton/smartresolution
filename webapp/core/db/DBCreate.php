@@ -6,12 +6,7 @@
 
 
 
-
-/**
- * This is the Database Layer class - it acts as middleware between the application and the database,
- * and is mainly used for defining methods that create new rows in the database.
- */
-class DBL {
+class DBCreate {
 
     /**
      * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
@@ -19,8 +14,8 @@ class DBL {
      *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
      *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
-    public static function createMediationCentreOffer($params) {
-        DBL::createMediationEntityOffer($params, 'mediation_centre');
+    public static function mediationCentreOffer($params) {
+        DBCreate::mediationEntityOffer($params, 'mediation_centre');
     }
 
     /**
@@ -29,8 +24,8 @@ class DBL {
      *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
      *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
-    public static function createMediatorOffer($params) {
-        DBL::createMediationEntityOffer($params, 'mediator');
+    public static function mediatorOffer($params) {
+        DBCreate::mediationEntityOffer($params, 'mediator');
     }
 
     /**
@@ -38,10 +33,10 @@ class DBL {
      * Also creates a notification for the opposing party.
      *
      * @param  array $params The details of the offer.
-     * @see DBL::createMediationCentreOffer for a detailed description of parameters.
+     * @see DBCreate::mediationCentreOffer for a detailed description of parameters.
      * @param  string $type The type of offer: either 'mediation_centre' or 'mediator'
      */
-    public static function createMediationEntityOffer($params, $type) {
+    public static function mediationEntityOffer($params, $type) {
         $dispute         = $params['dispute'];
         $proposedBy      = $params['proposed_by'];
         $mediationEntity = $params[$type];
@@ -61,7 +56,7 @@ class DBL {
             )
         );
 
-        DBL::createNotification(array(
+        DBCreate::notification(array(
             'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
             'message'      => 'Mediation has been proposed.',
             'url'          => $dispute->getUrl() . '/mediation'
@@ -76,7 +71,7 @@ class DBL {
      *         string  $params['filepath']  The filepath of the uploaded evidence.
      * @return int  The ID of the piece of uploaded evidence.
      */
-    public static function createEvidence($params) {
+    public static function evidence($params) {
         $disputeID  = $params['dispute']->getDisputeId();
         $uploaderID = $params['uploader']->getLoginId();
         $filepath   = $params['filepath'];
@@ -94,7 +89,7 @@ class DBL {
             )
         );
 
-        return DBL::getLatestId('evidence', 'evidence_id');
+        return DBQuery::getLatestId('evidence', 'evidence_id');
     }
 
     /**
@@ -103,21 +98,21 @@ class DBL {
      * @param  array $details array of details to populate the database with.
      * @return Dispute        The Dispute object associated with the new entry.
      */
-    public static function createDispute($details) {
+    public static function dispute($details) {
         $lawFirmA = (int) Utils::getValue($details, 'law_firm_a');
         $type     = Utils::getValue($details, 'type');
         $title    = Utils::getValue($details, 'title');
         $agentA   = isset($details['agent_a']) ? $details['agent_a'] : NULL;
         $summary  = isset($details['summary']) ? $details['summary'] : NULL;
 
-        DBL::ensureCorrectAccountTypes(array(
+        DBQuery::ensureCorrectAccountTypes(array(
             'law_firm' => $lawFirmA,
             'agent'    => $agentA
         ));
 
         $db = Database::instance();
         $db->begin();
-        $partyID = DBL::createDisputeParty($lawFirmA, $agentA, $summary);
+        $partyID = DBCreate::disputeParty($lawFirmA, $agentA, $summary);
         $db->exec(
             'INSERT INTO disputes (dispute_id, party_a, type, title)
              VALUES (NULL, :party_a, :type, :title)', array(
@@ -125,7 +120,7 @@ class DBL {
             ':type'       => $type,
             ':title'      => $title
         ));
-        $newDispute = DBL::getLatestRow('disputes', 'dispute_id');
+        $newDispute = DBQuery::getLatestRow('disputes', 'dispute_id');
 
         // sanity check
         if ((int)$newDispute['party_a'] !== $partyID ||
@@ -138,7 +133,7 @@ class DBL {
             $dispute = new Dispute((int) $newDispute['dispute_id']);
 
             if ($agentA) {
-                DBL::createNotification(array(
+                DBCreate::notification(array(
                     'recipient_id' => $agentA,
                     'message'      => 'A new dispute has been assigned to you.',
                     'url'          => $dispute->getUrl()
@@ -157,7 +152,7 @@ class DBL {
      * @param  string $summary      The party's summary of the dispute.
      * @return int                  The ID of the created party.
      */
-    public static function createDisputeParty($organisationId, $individualId = NULL, $summary = NULL) {
+    public static function disputeParty($organisationId, $individualId = NULL, $summary = NULL) {
         Database::instance()->exec(
             'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
              VALUES (NULL, :organisation_id, :individual_id, :summary)', array(
@@ -166,31 +161,7 @@ class DBL {
             ':summary'         => $summary
         ));
 
-        return DBL::getLatestId('dispute_parties', 'party_id');
-    }
-
-    /**
-     * Ensures that the account types set for a dispute's agents/law firms etc do actually correspond to agent/law firm accounts. Essentially, this function raises an exception if the system tries to do something like set Agent A as a Mediation Centre account.
-     * @param  array $accountTypes              The accounts to check.
-     *         int   $accountTypes['law_firm']  (Optional) The ID of the account that should be a law firm.
-     *         int   $accountTypes['agent']     (Optional) The ID of the account that should be an agent.
-     */
-    public static function ensureCorrectAccountTypes($accountTypes) {
-        $correctAccountTypes = true;
-        if (isset($accountTypes['law_firm'])) {
-            if (!DBAccount::getAccountById($accountTypes['law_firm']) instanceof LawFirm) {
-                $correctAccountTypes = false;
-            }
-        }
-        if (isset($accountTypes['agent'])) {
-            if (!DBAccount::getAccountById($accountTypes['agent']) instanceof Agent) {
-                $correctAccountTypes = false;
-            }
-        }
-
-        if (!$correctAccountTypes) {
-            throw new Exception('Invalid account types were set.');
-        }
+        return DBQuery::getLatestId('dispute_parties', 'party_id');
     }
 
     /**
@@ -198,7 +169,7 @@ class DBL {
      * @param  array $params Parameters outlining start and end dates, etc.
      * @return Lifespan      The newly created lifespan.
      */
-    public static function createLifespan($params, $allowDatesInThePast = false) {
+    public static function lifespan($params, $allowDatesInThePast = false) {
         $disputeID  = Utils::getValue($params, 'dispute_id');
         $proposer   = Utils::getValue($params, 'proposer');
         $validUntil = Utils::getValue($params, 'valid_until');
@@ -217,7 +188,7 @@ class DBL {
             ':end_time'    => $endTime
         ));
 
-        $lifespanID = DBL::getLatestId('lifespans', 'lifespan_id');
+        $lifespanID = DBQuery::getLatestId('lifespans', 'lifespan_id');
 
         try {
             $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
@@ -225,7 +196,7 @@ class DBL {
             $db->commit();
 
             $dispute = new Dispute($disputeID);
-            DBL::createNotification(array(
+            DBCreate::notification(array(
                 'recipient_id' => $dispute->getOpposingPartyId($proposer),
                 'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($validUntil) . ' to accept or deny the offer.',
                 'url'          => $dispute->getUrl() . '/lifespan'
@@ -247,7 +218,7 @@ class DBL {
      *         string $option['url']            The notification's associated URL.
      * @return Notification                     The newly-created notification.
      */
-    public static function createNotification($options) {
+    public static function notification($options) {
 
         $recipientId = Utils::getValue($options, 'recipient_id');
         $message     = Utils::getValue($options, 'message');
@@ -261,7 +232,7 @@ class DBL {
             )
         );
 
-        $notificationID = DBL::getLatestId('notifications', 'notification_id');
+        $notificationID = DBQuery::getLatestId('notifications', 'notification_id');
         return new Notification($notificationID);
     }
 
@@ -274,7 +245,7 @@ class DBL {
      *         string $params['message']       The message content.
      * @return Message                         The newly-created message.
      */
-    public static function createMessage($params) {
+    public static function message($params) {
         $disputeID   = Utils::getValue($params, 'dispute_id');
         $authorID    = Utils::getValue($params, 'author_id');
         $message     = Utils::getValue($params, 'message');
@@ -290,18 +261,18 @@ class DBL {
             )
         );
 
-        $messageID = DBL::getLatestId('messages', 'message_id');
+        $messageID = DBQuery::getLatestId('messages', 'message_id');
         return new Message($messageID);
     }
 
 
-    public static function createOrganisation($orgObject) {
+    public static function organisation($orgObject) {
         $type        = Utils::getValue($orgObject, 'type');
         $name        = Utils::getValue($orgObject, 'name', '');
         $description = Utils::getValue($orgObject, 'description', '');
 
         Database::instance()->begin();
-        $login_id = DBL::createDBAccount($orgObject);
+        $login_id = DBCreate::dbAccount($orgObject);
         Database::instance()->exec('INSERT INTO organisations (login_id, type, name, description) VALUES (:login_id, :type, :name, :description)', array(
             ':login_id'    => $login_id,
             ':type'        => $type,
@@ -313,14 +284,14 @@ class DBL {
         return ($type === 'law_firm') ? new LawFirm($login_id) : new MediationCentre($login_id);
     }
 
-    public static function createIndividual($individualObject) {
+    public static function individual($individualObject) {
         $type     = Utils::getValue($individualObject, 'type');
         $orgId    = Utils::getValue($individualObject, 'organisation_id');
         $forename = Utils::getValue($individualObject, 'forename', '');
         $surname  = Utils::getValue($individualObject, 'surname',  '');
 
         Database::instance()->begin();
-        $login_id = DBL::createDBAccount($individualObject);
+        $login_id = DBCreate::dbAccount($individualObject);
         Database::instance()->exec('INSERT INTO individuals (login_id, organisation_id, type, forename, surname) VALUES (:login_id, :organisation_id, :type, :forename, :surname)', array(
             ':login_id'        => $login_id,
             ':organisation_id' => $orgId,
@@ -333,9 +304,9 @@ class DBL {
         return ($type === 'agent') ? new Agent($login_id) : new Mediator($login_id);
     }
 
-    public static function createAdmin($params) {
+    public static function admin($params) {
         Database::instance()->begin();
-        $login_id = DBL::createDBAccount($params);
+        $login_id = DBCreate::dbAccount($params);
         Database::instance()->exec('INSERT INTO administrators (login_id) VALUES (:login_id)', array(
             ':login_id' => $login_id,
         ));
@@ -348,7 +319,7 @@ class DBL {
      * @param  array $object An array of registration values, including email and password.
      * @return int           The login ID associated with the newly registered account.
      */
-    public static function createDBAccount($object) {
+    public static function dbAccount($object) {
         if (!isset($object['email']) || !isset($object['password'])) {
             throw new Exception("The minimum required to register is an email and password!");
         }
@@ -368,31 +339,5 @@ class DBL {
             throw new Exception("Could not retrieve login_id. Abort.");
         }
         return $login_id;
-    }
-
-    /**
-     * Returns the latest ID in the database from table name $tableName, ordered by primary key $idName (DESC).
-     * Calls DBL::getLatestRow internally.
-     *
-     * @param  string $tableName Name of the table.
-     * @param  string $idName    Primary key of the table.
-     * @return int               The primary key of the latest database entry.
-     */
-    public static function getLatestId($tableName, $idName) {
-        $latestRow = DBL::getLatestRow($tableName, $idName);
-        return (int) $latestRow[$idName];
-    }
-
-    /**
-     * Returns the latest row in the database from table name $tableName, ordered by primary key $idName (DESC).
-     * @param  string $tableName Name of the table.
-     * @param  string $idName    Primary key of the table.
-     * @return array             Latest table row.
-     */
-    public static function getLatestRow($tableName, $idName) {
-        $rows = Database::instance()->exec(
-            'SELECT * FROM ' . $tableName . ' ORDER BY ' . $idName . ' DESC LIMIT 1'
-        );
-        return $rows[0];
     }
 }

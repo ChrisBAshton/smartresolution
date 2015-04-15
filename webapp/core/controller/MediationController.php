@@ -127,7 +127,7 @@ class MediationController {
             try {
                 $mediationCentre = new MediationCentre((int) $mediationCentreId);
 
-                DBL::createMediationCentreOffer(array(
+                DBCreate::mediationCentreOffer(array(
                     'dispute'          => $dispute,
                     'proposed_by'      => $account,
                     'mediation_centre' => $mediationCentre
@@ -152,7 +152,7 @@ class MediationController {
             try {
                 $mediator = new Mediator((int) $mediatorId);
 
-                DBL::createMediatorOffer(array(
+                DBCreate::mediatorOffer(array(
                     'dispute'     => $dispute,
                     'proposed_by' => $account,
                     'mediator'    => $mediator
@@ -166,13 +166,13 @@ class MediationController {
     }
 
     private function notifyAgentsOfUpdatedList() {
-        DBL::createNotification(array(
+        DBCreate::notification(array(
             'recipient_id' => $this->dispute->getAgentA()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
 
-        DBL::createNotification(array(
+        DBCreate::notification(array(
             'recipient_id' => $this->dispute->getAgentB()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
@@ -203,7 +203,7 @@ class MediationController {
 
         if ($message && $recipientID) {
 
-            DBL::createMessage(array(
+            DBCreate::message(array(
                 'dispute_id'   => $this->dispute->getDisputeId(),
                 'author_id'    => $this->account->getLoginId(),
                 'message'      => $message,

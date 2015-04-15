@@ -106,7 +106,7 @@ class Dispute {
 
         foreach($notifyAgents as $agent) {
             if ($agent) {
-                DBL::createNotification(array(
+                DBCreate::notification(array(
                     'recipient_id' => $agent->getLoginId(),
                     'message'      => 'The mediator has ' . $enabledOrDisabled . ' round-table-communication.',
                     'url'          => $this->getUrl() . '/chat'
@@ -129,11 +129,11 @@ class Dispute {
 
     // we should never need to set Law Firm A through a method, so there is no corresponding setLawFirmA.
     public function setLawFirmB($organisationId) {
-        $partyId = DBL::createDisputeParty($organisationId);
+        $partyId = DBCreate::disputeParty($organisationId);
         $this->db->updateField('party_b', $partyId);
         $this->refresh();
 
-        DBL::createNotification(array(
+        DBCreate::notification(array(
             'recipient_id' => $organisationId,
             'message'      => 'A dispute has been opened against your company.',
             'url'          => $this->getUrl()
@@ -169,14 +169,14 @@ class Dispute {
         $this->db->setPartyDatabaseField($party, 'individual_id', $loginID);
         $this->refresh();
 
-        DBL::createNotification(array(
+        DBCreate::notification(array(
             'recipient_id' => $loginID,
             'message'      => 'A new dispute has been assigned to you.',
             'url'          => $this->getUrl()
         ));
 
         if ($this->getOpposingPartyId($loginID)) {
-            DBL::createNotification(array(
+            DBCreate::notification(array(
                 'recipient_id' => $this->getOpposingPartyId($loginID),
                 'message'      => 'The other party has assigned an agent to the case.',
                 'url'          => $this->getUrl()

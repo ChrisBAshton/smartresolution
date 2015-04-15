@@ -92,7 +92,7 @@ class MediationState {
 
         $dispute = new Dispute($this->disputeID);
 
-        DBL::createNotification(array(
+        DBCreate::notification(array(
             'recipient_id' => $partyID,
             'message'      => $message,
             'url'          => $dispute->getUrl()

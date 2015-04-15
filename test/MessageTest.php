@@ -16,7 +16,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessfulMessage()
     {
-        $message = DBL::createMessage(array(
+        $message = DBCreate::message(array(
             'dispute_id' => $this->dispute->getDisputeId(),
             'author_id'  => $this->dispute->getAgentA()->getLoginId(),
             'message'    => 'This is a test message.'
@@ -47,7 +47,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
      */
     public function testMessageFailsWithoutDisputeId()
     {
-        $message = DBL::createMessage(array(
+        $message = DBCreate::message(array(
             'author_id'  => $this->dispute->getAgentA()->getLoginId(),
             'message'    => 'This is a test message.'
         ));
@@ -58,7 +58,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
      */
     public function testMessageFailsWithoutAuthorId()
     {
-        $message = DBL::createMessage(array(
+        $message = DBCreate::message(array(
             'dispute_id' => $this->dispute->getDisputeId(),
             'message'    => 'This is a test message.'
         ));
@@ -69,7 +69,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
      */
     public function testMessageFailsWithoutMessage()
     {
-        $message = DBL::createMessage(array(
+        $message = DBCreate::message(array(
             'dispute_id' => $this->dispute->getDisputeId(),
             'author_id'  => $this->dispute->getAgentA()->getLoginId()
         ));

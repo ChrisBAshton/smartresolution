@@ -56,7 +56,7 @@ class DisputeController {
         }
         else {
             try {
-                $dispute = DBL::createDispute(array(
+                $dispute = DBCreate::dispute(array(
                     'title'      => $title,
                     'law_firm_a' => $f3->get('account')->getLoginId(),
                     'agent_a'    => $agent,
