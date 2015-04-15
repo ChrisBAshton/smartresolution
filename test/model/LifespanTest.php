@@ -98,10 +98,10 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         ));
     }
 
-    *
+    /**
      * @expectedException Exception
      * @expectedExceptionMessage Start date must be before end date.
-
+     */
     public function testLifespanInvalidWhenEndTimeBeforeStartTime() {
         $currentTime = time();
         DBCreate::lifespan(array(
