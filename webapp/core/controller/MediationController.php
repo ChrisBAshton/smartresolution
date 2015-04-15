@@ -191,9 +191,8 @@ class MediationController {
 
     private function viewMessagesWith($recipientID) {
         global $f3;
-        $messages = new Messages($this->dispute->getDisputeId(), $this->account->getLoginId(), $recipientID);
         $f3->set('recipientID', $recipientID);
-        $f3->set('messages', $messages->getMessages());
+        $f3->set('messages', $this->dispute->getMessagesBetween($this->account->getLoginId(), $recipientID));
         $f3->set('content', 'messages.html');
     }
 

@@ -23,8 +23,7 @@ class MessageController {
 
     public function view ($f3, $params) {
         $this->setUp($f3, $params);
-        $messages = new Messages($this->dispute->getDisputeId());
-        $f3->set('messages', $messages->getMessages());
+        $f3->set('messages', $this->dispute->getMessages());
         $f3->set('content', 'messages.html');
         echo View::instance()->render('layout.html');
     }

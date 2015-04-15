@@ -277,4 +277,12 @@ class Dispute {
         }
     }
 
+    public function getMessages() {
+        return DBMessage::retrieveDisputeMessages($this->getDisputeId());
+    }
+
+    public function getMessagesBetween($individualA, $individualB) {
+        return DBMessage::retrieveMediationMessages($this->getDisputeId(), $individualA, $individualB);
+    }
+
 }
