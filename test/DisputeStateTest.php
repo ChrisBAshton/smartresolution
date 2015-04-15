@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../webapp/autoload.php';
+require_once '_helper.php';
 
 class DisputeStateTest extends PHPUnit_Framework_TestCase
 {
@@ -14,53 +15,53 @@ class DisputeStateTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDisputeCreated() {
-        $dispute = Utils::getDisputeByTitle('A simple test dispute');
+        $dispute = TestHelper::getDisputeByTitle('A simple test dispute');
         $this->assertTrue($this->extractState($dispute) instanceof DisputeCreated);
     }
 
     public function testDisputeAssignedToLawFirmB() {
-        $dispute = Utils::getDisputeByTitle('A dispute assigned to law firm B');
+        $dispute = TestHelper::getDisputeByTitle('A dispute assigned to law firm B');
         $this->assertTrue($this->extractState($dispute) instanceof DisputeAssignedToLawFirmB);
     }
 
     public function testDisputeOpened() {
-        $dispute = Utils::getDisputeByTitle('A fully assigned dispute with no lifespan');
+        $dispute = TestHelper::getDisputeByTitle('A fully assigned dispute with no lifespan');
         $this->assertTrue($this->extractState($dispute) instanceof DisputeOpened);
 
-        $dispute = Utils::getDisputeByTitle('A dispute with a proposed lifespan');
+        $dispute = TestHelper::getDisputeByTitle('A dispute with a proposed lifespan');
         $this->assertTrue($this->extractState($dispute) instanceof DisputeOpened);
 
-        $dispute = Utils::getDisputeByTitle('A dispute with a declined lifespan');
+        $dispute = TestHelper::getDisputeByTitle('A dispute with a declined lifespan');
         $this->assertTrue($this->extractState($dispute) instanceof DisputeOpened);
     }
 
     public function testLifespanNegotiated() {
-        $dispute = Utils::getDisputeByTitle('Smith versus Jones');
+        $dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $this->assertTrue($this->extractState($dispute) instanceof LifespanNegotiated);
 
         // until mediation is finalised, dispute should not be "in mediation"
-        $dispute = Utils::getDisputeByTitle('Dispute that has agreed on a Mediation Centre');
+        $dispute = TestHelper::getDisputeByTitle('Dispute that has agreed on a Mediation Centre');
         $this->assertTrue($this->extractState($dispute) instanceof LifespanNegotiated);
     }
 
     public function testDisputeInMediation() {
-        $dispute = Utils::getDisputeByTitle('Dispute that is in mediation');
+        $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $this->assertTrue($this->extractState($dispute) instanceof InMediation);
     }
 
     public function testDisputeInRoundTableMediation() {
-        $dispute = Utils::getDisputeByTitle('Dispute that is in mediation');
+        $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $dispute->enableRoundTableCommunication();
         $this->assertTrue($this->extractState($dispute) instanceof InRoundTableMediation);
     }
 
     public function testDisputeClosed() {
-        $dispute = Utils::getDisputeByTitle('A dispute that has ended');
+        $dispute = TestHelper::getDisputeByTitle('A dispute that has ended');
         $this->assertTrue($this->extractState($dispute) instanceof DisputeClosed);
     }
 
     public function testStateUpdates() {
-        $dispute = Utils::getDisputeByTitle('Smith versus Jones');
+        $dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $dispute->closeSuccessfully();
         $this->assertTrue($this->extractState($dispute) instanceof DisputeClosed);
     }

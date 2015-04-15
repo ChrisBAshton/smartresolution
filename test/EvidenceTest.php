@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../webapp/autoload.php';
+require_once '_helper.php';
 
 class EvidenceTest extends PHPUnit_Framework_TestCase
 {
@@ -9,7 +10,7 @@ class EvidenceTest extends PHPUnit_Framework_TestCase
     }
 
     protected function setUp() {
-        $this->dispute = Utils::getDisputeByTitle('Smith versus Jones');
+        $this->dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $evidenceID = DBL::createEvidence(array(
             'uploader' => $this->dispute->getAgentA(),
             'dispute'  => $this->dispute,

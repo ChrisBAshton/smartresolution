@@ -188,7 +188,6 @@ class DBAccount {
             case "administrator":
                 return new Admin($account);
             default:
-                var_dump($account);
                 throw new Exception("Invalid account type.");
         }
     }
