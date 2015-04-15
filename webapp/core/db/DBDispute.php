@@ -55,63 +55,6 @@ class DBDispute {
         );
     }
 
-    // /**
-    //  * Retrieves the agent, law firm and summary corresponding to the given party ID.
-    //  * @param  int $partyID The ID of the party.
-    //  * @return array        The corresponding details.
-    //  *         Array['agent']     The agent.
-    //  *         Array['law_firm']  The law firm.
-    //  *         Array['summary']   The summary.
-    //  */
-    // public function getPartyDetails($partyID) {
-    //     if ($partyID === 0) {
-    //         return array(
-    //             'agent'    => false,
-    //             'law_firm' => false,
-    //             'summary'  => false
-    //         );
-    //     }
-
-    //     $partyDetails = Database::instance()->exec(
-    //         'SELECT * FROM dispute_parties WHERE party_id = :party_id LIMIT 1',
-    //         array(':party_id' => $partyID)
-    //     )[0];
-
-    //     $agent   = isset($partyDetails['individual_id'])   ? DBAccount::getAccountById($partyDetails['individual_id'])   : false;
-    //     $lawFirm = isset($partyDetails['organisation_id']) ? DBAccount::getAccountById($partyDetails['organisation_id']) : false;
-    //     $summary = isset($partyDetails['summary']) ? htmlspecialchars($partyDetails['summary']) : false;
-
-    //     return array(
-    //         'agent'    => $agent,
-    //         'law_firm' => $lawFirm,
-    //         'summary'  => $summary
-    //     );
-    // }
-
-    // /**
-    //  * Sets a property in the dispute_parties table.
-    //  *
-    //  * @param string  $party    The role of the party, e.g. 'party_a', 'party_b'
-    //  * @param string  $field    The field to update.
-    //  * @param Unknown $value    The value to set.
-    //  */
-    // public function setPartyDatabaseField($party, $field, $value) {
-    //     $db = Database::instance();
-    //     $db->begin();
-    //     $partyID = $db->exec(
-    //         'SELECT ' . $party . ' FROM disputes WHERE dispute_id = :dispute_id',
-    //         array(':dispute_id' => $this->disputeID)
-    //     )[0][$party];
-    //     $db->exec(
-    //         'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
-    //         array(
-    //             ':value'    => $value,
-    //             ':party_id' => $partyID
-    //         )
-    //     );
-    //     $db->commit();
-    // }
-
     /**
      * Updates a given field in the dispute.
      *
@@ -126,4 +69,25 @@ class DBDispute {
             )
         );
     }
+
+    public static function updateDisputePartyB($partyID, $disputeID) {
+        Database::instance()->exec(
+            'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',
+            array(
+                ':party_id'   => $partyID,
+                ':dispute_id' => $disputeID
+            )
+        );
+    }
+
+    public static function updatePartyRecord($partyID, $field, $value) {
+        Database::instance()->exec(
+            'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
+            array(
+                ':value'    => $value,
+                ':party_id' => $partyID
+            )
+        );
+    }
+
 }

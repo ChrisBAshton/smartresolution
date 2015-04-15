@@ -86,23 +86,10 @@ class DisputeParty {
     public function setPartyDatabaseField($field, $value) {
         if ($this->partyID === 0 && $field === 'organisation_id') {
             $this->partyID = DBCreate::disputeParty($value);
-
-            Database::instance()->exec(
-                'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',
-                array(
-                    ':party_id'   => $this->partyID,
-                    ':dispute_id' => $this->disputeID
-                )
-            );
+            DBDispute::updateDisputePartyB($this->partyID, $this->disputeID);
         }
-        elseif ($this->partyID !== 0) {
-            Database::instance()->exec(
-                'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
-                array(
-                    ':value'    => $value,
-                    ':party_id' => $this->getPartyId()
-                )
-            );
+        elseif ($this->getPartyId() !== 0) {
+            DBDispute::updatePartyRecord($this->getPartyId(), $field, $value);
         }
         else {
             throw new Exception("Tried setting something other than Law Firm when the record for the party has not been created yet.");
