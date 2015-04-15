@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../webapp/autoload.php';
-require_once '_helper.php';
+require_once __DIR__ . '/../../webapp/autoload.php';
+require_once __DIR__ . '/../_helper.php';
 
 class DisputeStateTest extends PHPUnit_Framework_TestCase
 {
