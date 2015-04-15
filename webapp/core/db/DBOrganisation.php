@@ -2,16 +2,6 @@
 
 class DBOrganisation {
 
-    public static function setProperty($loginID, $key, $value) {
-        Database::instance()->exec(
-            'UPDATE organisations SET ' . $key . ' = :value WHERE login_id = :uid',
-            array(
-                ':value' => $value,
-                ':uid'   => $loginID
-            )
-        );
-    }
-
     public static function getIndividuals($organisationID, $type) {
         $individuals = array();
 

@@ -44,32 +44,4 @@ class Utils {
             return new Dispute((int) $dispute[0]['dispute_id']);
         }
     }
-
-    /**
-     * Gets organisations as an array.
-     * @param  array  $params           Parameters:
-     *         string $params['type']   Organisation type ('law_firm' / 'mediation_centre')
-     *         int    $params['except'] Integer ID of an account to remove from the results.
-     * @return array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
-     */
-    public static function getOrganisations($params) {
-        $type   = Utils::getValue($params, 'type');
-        $class  = $type === 'law_firm' ? 'LawFirm' : 'MediationCentre';
-        $except = Utils::getValue($params, 'except', false);
-
-        $organisations = array();
-        $orgDetails = Database::instance()->exec(
-            'SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = :type AND organisations.login_id != :except ORDER BY name DESC',
-            array(
-                ':type'   => $type,
-                ':except' => $except
-            )
-        );
-
-        foreach($orgDetails as $details) {
-            $organisations[] = new $class($details);
-        }
-
-        return $organisations;
-    }
 }

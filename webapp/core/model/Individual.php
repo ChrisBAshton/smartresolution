@@ -39,7 +39,7 @@ class Individual extends Account implements AccountInterface {
     }
 
     private function setProperty($key, $value) {
-        DBIndividual::setProperty($this->getLoginId(), $key, $value);
+        DBAccount::setAccountProperty($this->getLoginId(), $key, $value);
         $this->setVariables($this->getLoginId());
     }
 

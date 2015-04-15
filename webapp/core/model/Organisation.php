@@ -40,7 +40,7 @@ class Organisation extends Account implements AccountInterface {
     }
 
     private function setProperty($key, $value) {
-        DBOrganisation::setProperty($this->getLoginId(), $key, $value);
+        DBAccount::setAccountProperty($this->getLoginId(), $key, $value);
         $this->setVariables($this->getLoginId());
     }
 

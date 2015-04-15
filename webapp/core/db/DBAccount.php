@@ -5,6 +5,46 @@
  */
 class DBAccount {
 
+    public static function setAccountProperty($loginID, $key, $value) {
+        $account = DBAccount::getAccountById($loginID);
+        $table   = ($account instanceof Individual) ? 'individuals' : 'organisations';
+        Database::instance()->exec(
+            'UPDATE ' . $table . ' SET ' . $key . ' = :value WHERE login_id = :uid',
+            array(
+                ':value' => $value,
+                ':uid'   => $loginID
+            )
+        );
+    }
+
+    /**
+     * Gets organisations as an array.
+     * @param  array  $params           Parameters:
+     *         string $params['type']   Organisation type ('law_firm' / 'mediation_centre')
+     *         int    $params['except'] Integer ID of an account to remove from the results.
+     * @return array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
+     */
+    public static function getOrganisations($params) {
+        $type   = Utils::getValue($params, 'type');
+        $class  = $type === 'law_firm' ? 'LawFirm' : 'MediationCentre';
+        $except = Utils::getValue($params, 'except', false);
+
+        $organisations = array();
+        $orgDetails = Database::instance()->exec(
+            'SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = :type AND organisations.login_id != :except ORDER BY name DESC',
+            array(
+                ':type'   => $type,
+                ':except' => $except
+            )
+        );
+
+        foreach($orgDetails as $details) {
+            $organisations[] = new $class($details);
+        }
+
+        return $organisations;
+    }
+
     /**
      * Gets all of the disputes associated with an account. For Agents, this would be disputes that they have created or been assigned to. For mediators, this would be disputes that are in mediation and that they are assigned to, and so on.
      * @param  Account $account The account to get the disputes from.
@@ -49,7 +89,7 @@ class DBAccount {
      */
     public static function getAccountById($id) {
         $account = DBAccount::getDetailsById($id);
-        return DBAccount::arrayToObject($account);
+        return DBAccount::arrayToAccountObject($account);
     }
 
     /**
@@ -59,7 +99,7 @@ class DBAccount {
      */
     public static function getAccountByEmail($email) {
         $account = DBAccount::getDetailsByEmail($email);
-        return DBAccount::arrayToObject($account);
+        return DBAccount::arrayToAccountObject($account);
     }
 
     /**
@@ -132,7 +172,7 @@ class DBAccount {
      * @param  array<Mixed> $account    The account details
      * @return Account  The account object.
      */
-    public static function arrayToObject($account) {
+    public static function arrayToAccountObject($account) {
         if (!$account) {
             return false;
         }

@@ -54,7 +54,7 @@ class MediationController {
     private function viewInContextOfAgents($f3) {
         if (!$this->mediationState->mediationCentreProposed()) :
 
-            $mediationCentres = Utils::getOrganisations(array(
+            $mediationCentres = DBAccount::getOrganisations(array(
                 'type'   => 'mediation_centre'
             ));
 
