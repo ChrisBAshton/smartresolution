@@ -26,16 +26,7 @@ abstract class Account {
      * @see AccountInterface::getNotifications() Implements the corresponding function in AccountInterface.
      */
     public function getNotifications() {
-        $notifications = array();
-
-        $notificationsDetails = Database::instance()->exec('SELECT notification_id FROM notifications WHERE recipient_id = :login_id AND read = "false" ORDER BY notification_id DESC',
-            array(':login_id' => $this->getLoginId()));
-
-        foreach ($notificationsDetails as $details) {
-            $notifications[] = new Notification($details['notification_id']);
-        }
-
-        return $notifications;
+        return DBNotification::getNotificationsForLoginId($this->getLoginId());
     }
 
     /**

@@ -13,8 +13,7 @@ class Notification {
     }
 
     private function setVariables($notificationID) {
-        $details = Database::instance()->exec('SELECT * FROM notifications WHERE notification_id = :notification_id', array(':notification_id' => $notificationID))[0];
-        
+        $details = DBNotification::getNotificationById($notificationID);
         $this->notificationID = (int) $details['notification_id'];
         $this->loginID        = (int) $details['recipient_id'];
         $this->url            = $details['url'];
@@ -39,7 +38,7 @@ class Notification {
     }
 
     public function markAsRead() {
-        Database::instance()->exec('UPDATE notifications SET read = "true" WHERE notification_id = :notification_id', array(':notification_id' => $this->getNotificationId()));
+        DBNotification::markNotificationAsRead($this->getNotificationId());
         $this->setVariables($this->getNotificationId());
     }
 }

@@ -40,29 +40,12 @@ class Organisation extends Account implements AccountInterface {
     }
 
     private function setProperty($key, $value) {
-        Database::instance()->exec(
-            'UPDATE organisations SET ' . $key . ' = :value WHERE login_id = :uid',
-            array(
-                ':value' => $value,
-                ':uid'   => $this->getLoginId()
-            )
-        );
+        DBOrganisation::setProperty($this->getLoginId(), $key, $value);
         $this->setVariables($this->getLoginId());
     }
 
     public function getIndividuals($type) {
-        $individuals = array();
-
-        $individualsDetails = Database::instance()->exec(
-            'SELECT * FROM individuals INNER JOIN account_details ON individuals.login_id = account_details.login_id WHERE organisation_id = :organisation_id',
-            array(':organisation_id' => $this->getLoginId())
-        );
-
-        foreach($individualsDetails as $individual) {
-            $individuals[] = new $type($individual);
-        }
-
-        return $individuals;
+        return DBOrganisation::getIndividuals($this->getLoginId(), $type);
     }
 }
 
@@ -87,22 +70,4 @@ class MediationCentre extends Organisation {
     public function getMediators() {
         return parent::getIndividuals('Mediator');
     }
-
-    public function getAllDisputes() {
-        $disputes = array();
-        $disputesDetails = Database::instance()->exec(
-            'SELECT  dispute_id  FROM mediation_offers
-            WHERE    status      = "accepted"
-            AND      proposed_id = :login_id
-            ORDER BY mediation_offer_id DESC',
-            array(
-                ':login_id' => $this->getLoginId()
-            )
-        );
-        foreach($disputesDetails as $dispute) {
-            $disputes[] = new Dispute($dispute['dispute_id']);
-        }
-        return $disputes;
-    }
-
 }

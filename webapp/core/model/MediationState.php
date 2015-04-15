@@ -60,22 +60,13 @@ class MediationState {
     }
 
     public function acceptLatestProposal() {
-        $this->respondToLatestProposal('accepted');
+        DBMediation::respondToMediationProposal($this->getLatestProposalId(), 'accepted');
+        $this->setVariables($this->disputeID);
         $this->notifyAcceptedParty();
     }
 
     public function declineLatestProposal() {
-        $this->respondToLatestProposal('declined');
-    }
-
-    private function respondToLatestProposal($response) {
-        Database::instance()->exec(
-            'UPDATE mediation_offers SET status = :response WHERE mediation_offer_id = :offer_id',
-            array(
-                ':offer_id' => $this->getLatestProposalId(),
-                ':response' => $response
-            )
-        );
+        DBMediation::respondToMediationProposal($this->getLatestProposalId(), 'declined');
         $this->setVariables($this->disputeID);
     }
 

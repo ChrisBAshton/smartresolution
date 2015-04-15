@@ -2,6 +2,16 @@
 
 class DBMediation {
 
+    public static function respondToMediationProposal($proposalID, $response) {
+        Database::instance()->exec(
+            'UPDATE mediation_offers SET status = :response WHERE mediation_offer_id = :offer_id',
+            array(
+                ':offer_id' => $proposalID,
+                ':response' => $response
+            )
+        );
+    }
+
     public static function getMediationCentreOfferForDispute($disputeID) {
         return DBMediation::getOfferOfType('mediation_centre', $disputeID);
     }

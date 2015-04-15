@@ -39,13 +39,7 @@ class Individual extends Account implements AccountInterface {
     }
 
     private function setProperty($key, $value) {
-        Database::instance()->exec(
-            'UPDATE individuals SET ' . $key . ' = :value WHERE login_id = :uid',
-            array(
-                ':value' => $value,
-                ':uid'   => $this->getLoginId()
-            )
-        );
+        DBIndividual::setProperty($this->getLoginId(), $key, $value);
         $this->setVariables($this->getLoginId());
     }
 
