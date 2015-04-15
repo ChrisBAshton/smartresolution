@@ -1,95 +1,42 @@
 <?php
-// @TODO - some create methods return the ID, others return the object, others return nothing!
-// Let's standardise the create() API.
-
-
-
-
 
 class DBCreate {
 
-    /**
-     * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
-     * @param  array    $params                The details of the offer.
-     *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
-     *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
-     */
-    public static function mediationCentreOffer($params) {
-        DBCreate::mediationEntityOffer($params, 'mediation_centre');
-    }
-
-    /**
-     * Creates an entry in the database representing a proposal of using a Mediator to mediate the dispute.
-     * @param  array    $params                The details of the offer.
-     *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
-     *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
-     */
-    public static function mediatorOffer($params) {
-        DBCreate::mediationEntityOffer($params, 'mediator');
-    }
-
-    /**
-     * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
-     * Also creates a notification for the opposing party.
-     *
-     * @param  array $params The details of the offer.
-     * @see DBCreate::mediationCentreOffer for a detailed description of parameters.
-     * @param  string $type The type of offer: either 'mediation_centre' or 'mediator'
-     */
-    public static function mediationEntityOffer($params, $type) {
-        $dispute         = $params['dispute'];
-        $proposedBy      = $params['proposed_by'];
-        $mediationEntity = $params[$type];
-
-        if (!$dispute || !$proposedBy || !$mediationEntity) {
-            throw new Exception('Missing key fields.');
-        }
-
-        Database::instance()->exec(
-            'INSERT INTO mediation_offers (dispute_id, type, proposer, proposed_id)
-            VALUES (:dispute_id, :type, :proposer, :proposed_id)',
-            array(
-                ':dispute_id'  => $dispute->getDisputeId(),
-                ':type'        => $type,
-                ':proposer'    => $proposedBy->getLoginId(),
-                ':proposed_id' => $mediationEntity->getLoginId()
-            )
-        );
-
-        DBCreate::notification(array(
-            'recipient_id' => $dispute->getOpposingPartyId($proposedBy->getLoginId()),
-            'message'      => 'Mediation has been proposed.',
-            'url'          => $dispute->getUrl() . '/mediation'
+    public static function admin($params) {
+        Database::instance()->begin();
+        $login_id = DBCreate::dbAccount($params);
+        Database::instance()->exec('INSERT INTO administrators (login_id) VALUES (:login_id)', array(
+            ':login_id' => $login_id,
         ));
+        Database::instance()->commit();
     }
 
     /**
-     * Creates an entry in the database representing a piece of uploaded evidence.
-     * @param  array   $params              The evidence parameters.
-     *         Dispute $params['dispute']   The Dispute object to make the proposal against.
-     *         Agent   $params['uploader']  The account who uploaded the evidence.
-     *         string  $params['filepath']  The filepath of the uploaded evidence.
-     * @return int  The ID of the piece of uploaded evidence.
+     * Stores account details in the database.
+     *
+     * @param  array $object An array of registration values, including email and password.
+     * @return int           The login ID associated with the newly registered account.
      */
-    public static function evidence($params) {
-        $disputeID  = $params['dispute']->getDisputeId();
-        $uploaderID = $params['uploader']->getLoginId();
-        $filepath   = $params['filepath'];
-
-        if (!$disputeID || !$uploaderID || !$filepath) {
-            throw new Exception('Missing key evidence information.');
+    public static function dbAccount($object) {
+        if (!isset($object['email']) || !isset($object['password'])) {
+            throw new Exception("The minimum required to register is an email and password!");
         }
 
-        Database::instance()->exec(
-            'INSERT INTO evidence (evidence_id, dispute_id, uploader_id, filepath) VALUES (NULL, :dispute_id, :uploader_id, :filepath)',
-            array(
-                ':dispute_id'  => $disputeID,
-                ':uploader_id' => $uploaderID,
-                ':filepath'    => $filepath,
-            )
-        );
+        if (DBAccount::getAccountByEmail($object['email'])) {
+            throw new Exception("An account is already registered to that email address.");
+        }
 
-        return DBQuery::getLatestId('evidence', 'evidence_id');
+        $crypt = \Bcrypt::instance();
+        Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
+            ':email'    => $object['email'],
+            ':password' => $crypt->hash($object['password'])
+        ));
+
+        $login_id = DBAccount::emailToId($object['email']);
+        if (!$login_id) {
+            throw new Exception("Could not retrieve login_id. Abort.");
+        }
+        return $login_id;
     }
 
     /**
@@ -165,29 +112,71 @@ class DBCreate {
     }
 
     /**
+     * Creates an entry in the database representing a piece of uploaded evidence.
+     * @param  array  $params                 The evidence parameters.
+     *         int    $params['dispute_id']   The ID of the dispute to make the proposal against.
+     *         int    $params['uploader_id']  The ID of the account who uploaded the evidence.
+     *         string $params['filepath']     The filepath of the uploaded evidence.
+     * @return int  The ID of the piece of uploaded evidence.
+     */
+    public static function evidence($params) {
+        $params = Utils::requiredParams(array(
+            'dispute_id'  => true,
+            'uploader_id' => true,
+            'filepath'    => true
+        ), $params);
+        DBCreate::insertRow('evidence', $params);
+        $latestID = DBQuery::getLatestId('evidence', 'evidence_id');
+        return new Evidence($latestID);
+    }
+
+    private static function insertRow($tableName, $columnValues) {
+        $columns = array();
+        $values  = array();
+        foreach($columnValues as $columnName => $value) {
+            $columns[] = $columnName;
+            $values[':' . $columnName] = $value;
+        }
+
+        $query = 'INSERT INTO ' . $tableName . ' (' . implode(', ', $columns) . ')
+                  VALUES (' . implode(', ', array_keys($values)) . ')';
+
+        Database::instance()->exec($query, $values);
+    }
+
+    public static function individual($individualObject) {
+        Database::instance()->begin();
+        $login_id = DBCreate::dbAccount($individualObject);
+        $params = Utils::requiredParams(array(
+            'type'            => true,
+            'organisation_id' => true,
+            'forename'        => false,
+            'surname'         => false
+        ), $individualObject);
+
+        $params['login_id'] = $login_id;
+        DBCreate::insertRow('individuals', $params);
+        Database::instance()->commit();
+        return DBAccount::getAccountById($login_id);
+    }
+
+    /**
      * Creates a new lifespan proposal.
      * @param  array $params Parameters outlining start and end dates, etc.
      * @return Lifespan      The newly created lifespan.
      */
     public static function lifespan($params, $allowDatesInThePast = false) {
-        $disputeID  = Utils::getValue($params, 'dispute_id');
-        $proposer   = Utils::getValue($params, 'proposer');
-        $validUntil = Utils::getValue($params, 'valid_until');
-        $startTime  = Utils::getValue($params, 'start_time');
-        $endTime    = Utils::getValue($params, 'end_time');
+        $params = Utils::requiredParams(array(
+            'dispute_id'  => true,
+            'proposer'    => true,
+            'valid_until' => true,
+            'start_time'  => true,
+            'end_time'    => true
+        ), $params);
 
         $db = Database::instance();
         $db->begin();
-        $db->exec(
-            'INSERT INTO lifespans (dispute_id, proposer, valid_until, start_time, end_time)
-             VALUES (:dispute_id, :proposer, :valid_until, :start_time, :end_time)', array(
-            ':dispute_id'  => $disputeID,
-            ':proposer'    => $proposer,
-            ':valid_until' => $validUntil,
-            ':start_time'  => $startTime,
-            ':end_time'    => $endTime
-        ));
-
+        DBCreate::insertRow('lifespans', $params);
         $lifespanID = DBQuery::getLatestId('lifespans', 'lifespan_id');
 
         try {
@@ -195,10 +184,10 @@ class DBCreate {
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
 
-            $dispute = new Dispute($disputeID);
+            $dispute = new Dispute($params['dispute_id']);
             DBCreate::notification(array(
-                'recipient_id' => $dispute->getOpposingPartyId($proposer),
-                'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($validUntil) . ' to accept or deny the offer.',
+                'recipient_id' => $dispute->getOpposingPartyId($params['proposer']),
+                'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($params['valid_until']) . ' to accept or deny the offer.',
                 'url'          => $dispute->getUrl() . '/lifespan'
             ));
 
@@ -211,32 +200,6 @@ class DBCreate {
     }
 
     /**
-     * Creates a notification.
-     * @param  array  $options                  The notification options.
-     *         int    $options['recipient_id']  The ID of the recipient of the notification.
-     *         string $option['message']        The notification message.
-     *         string $option['url']            The notification's associated URL.
-     * @return Notification                     The newly-created notification.
-     */
-    public static function notification($options) {
-
-        $recipientId = Utils::getValue($options, 'recipient_id');
-        $message     = Utils::getValue($options, 'message');
-        $url         = Utils::getValue($options, 'url');
-
-        Database::instance()->exec('INSERT INTO notifications (recipient_id, message, url) VALUES (:recipient_id, :message, :url)',
-            array(
-                ':recipient_id' => $recipientId,
-                ':message'      => $message,
-                ':url'          => $url,
-            )
-        );
-
-        $notificationID = DBQuery::getLatestId('notifications', 'notification_id');
-        return new Notification($notificationID);
-    }
-
-    /**
      * Creates a message.
      * @param  array  $params                  The message options.
      *         int    $params['dispute_id']    The ID of the dispute that the message is connected to.
@@ -246,98 +209,100 @@ class DBCreate {
      * @return Message                         The newly-created message.
      */
     public static function message($params) {
-        $disputeID   = Utils::getValue($params, 'dispute_id');
-        $authorID    = Utils::getValue($params, 'author_id');
-        $message     = Utils::getValue($params, 'message');
-        $recipientID = Utils::getValue($params, 'recipient_id', false);
+        $params = Utils::requiredParams(array(
+            'dispute_id'   => true,
+            'author_id'    => true,
+            'message'      => true,
+            'recipient_id' => false
+        ), $params);
+        $params['timestamp'] = time();
 
-        Database::instance()->exec('INSERT INTO messages (dispute_id, author_id, recipient_id, message, timestamp) VALUES (:dispute_id, :author_id, :recipient_id, :message, :timestamp)',
-            array(
-                ':dispute_id'   => $disputeID,
-                ':author_id'    => $authorID,
-                ':recipient_id' => $recipientID ? $recipientID : NULL,
-                ':message'      => $message,
-                ':timestamp'    => time()
-            )
-        );
+        DBCreate::insertRow('messages', $params);
 
         $messageID = DBQuery::getLatestId('messages', 'message_id');
         return new Message($messageID);
     }
 
+    /**
+     * Creates a notification.
+     * @param  array  $options                  The notification options.
+     *         int    $options['recipient_id']  The ID of the recipient of the notification.
+     *         string $option['message']        The notification message.
+     *         string $option['url']            The notification's associated URL.
+     * @return Notification                     The newly-created notification.
+     */
+    public static function notification($options) {
+        $params = Utils::requiredParams(array(
+            'recipient_id' => true,
+            'message'      => true,
+            'url'          => true
+        ), $options);
+
+        DBCreate::insertRow('notifications', $params);
+        $notificationID = DBQuery::getLatestId('notifications', 'notification_id');
+        return new Notification($notificationID);
+    }
+
 
     public static function organisation($orgObject) {
-        $type        = Utils::getValue($orgObject, 'type');
-        $name        = Utils::getValue($orgObject, 'name', '');
-        $description = Utils::getValue($orgObject, 'description', '');
+        $params = Utils::requiredParams(array(
+            'type'        => true,
+            'name'        => false,
+            'description' => false
+        ), $orgObject);
 
         Database::instance()->begin();
         $login_id = DBCreate::dbAccount($orgObject);
-        Database::instance()->exec('INSERT INTO organisations (login_id, type, name, description) VALUES (:login_id, :type, :name, :description)', array(
-            ':login_id'    => $login_id,
-            ':type'        => $type,
-            ':name'        => $name,
-            ':description' => $description
-        ));
+        $params['login_id'] = $login_id;
+        DBCreate::insertRow('organisations', $params);
         Database::instance()->commit();
 
-        return ($type === 'law_firm') ? new LawFirm($login_id) : new MediationCentre($login_id);
+        return DBAccount::getAccountById($login_id);
     }
-
-    public static function individual($individualObject) {
-        $type     = Utils::getValue($individualObject, 'type');
-        $orgId    = Utils::getValue($individualObject, 'organisation_id');
-        $forename = Utils::getValue($individualObject, 'forename', '');
-        $surname  = Utils::getValue($individualObject, 'surname',  '');
-
-        Database::instance()->begin();
-        $login_id = DBCreate::dbAccount($individualObject);
-        Database::instance()->exec('INSERT INTO individuals (login_id, organisation_id, type, forename, surname) VALUES (:login_id, :organisation_id, :type, :forename, :surname)', array(
-            ':login_id'        => $login_id,
-            ':organisation_id' => $orgId,
-            ':type'            => $type,
-            ':forename'        => $forename,
-            ':surname'         => $surname
-        ));
-        Database::instance()->commit();
-
-        return ($type === 'agent') ? new Agent($login_id) : new Mediator($login_id);
-    }
-
-    public static function admin($params) {
-        Database::instance()->begin();
-        $login_id = DBCreate::dbAccount($params);
-        Database::instance()->exec('INSERT INTO administrators (login_id) VALUES (:login_id)', array(
-            ':login_id' => $login_id,
-        ));
-        Database::instance()->commit();
+    /**
+     * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
+     * @param  array    $params                The details of the offer.
+     *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
+     *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
+     */
+    public static function mediationCentreOffer($params) {
+        DBCreate::_mediationEntityOffer($params, 'mediation_centre');
     }
 
     /**
-     * Stores account details in the database.
-     *
-     * @param  array $object An array of registration values, including email and password.
-     * @return int           The login ID associated with the newly registered account.
+     * Creates an entry in the database representing a proposal of using a Mediator to mediate the dispute.
+     * @param  array    $params                The details of the offer.
+     *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
+     *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
-    public static function dbAccount($object) {
-        if (!isset($object['email']) || !isset($object['password'])) {
-            throw new Exception("The minimum required to register is an email and password!");
-        }
+    public static function mediatorOffer($params) {
+        DBCreate::_mediationEntityOffer($params, 'mediator');
+    }
 
-        if (DBAccount::getAccountByEmail($object['email'])) {
-            throw new Exception("An account is already registered to that email address.");
-        }
+    /**
+     * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
+     * Also creates a notification for the opposing party.
+     *
+     * @param  array $params The details of the offer.
+     * @see DBCreate::mediationCentreOffer for a detailed description of parameters.
+     * @param  string $type The type of offer: either 'mediation_centre' or 'mediator'
+     */
+    private static function _mediationEntityOffer($obj, $type) {
+        $params = Utils::requiredParams(array(
+            'dispute_id'  => true,
+            'proposer_id' => true,
+            'proposed_id' => true
+        ), $obj);
+        $params['type'] = $type;
 
-        $crypt = \Bcrypt::instance();
-        Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
-            ':email'    => $object['email'],
-            ':password' => $crypt->hash($object['password'])
+        DBCreate::insertRow('mediation_offers', $params);
+
+        $dispute = new Dispute($params['dispute_id']);
+
+        DBCreate::notification(array(
+            'recipient_id' => $dispute->getOpposingPartyId($params['proposer_id']),
+            'message'      => 'Mediation has been proposed.',
+            'url'          => $dispute->getUrl() . '/mediation'
         ));
-
-        $login_id = DBAccount::emailToId($object['email']);
-        if (!$login_id) {
-            throw new Exception("Could not retrieve login_id. Abort.");
-        }
-        return $login_id;
     }
 }

@@ -90,16 +90,16 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
         // next, let's set up Mediation
         DBCreate::mediationCentreOffer(array(
-            'dispute'          => $dispute,
-            'proposed_by'      => $dispute->getAgentA(),
-            'mediation_centre' => DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposed_id' => DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')->getLoginId()
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();
         DBCreate::mediatorOffer(array(
-            'dispute'     => $dispute,
-            'proposed_by' => $dispute->getAgentA(),
-            'mediator'    => DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk')
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposed_id' => DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk')->getLoginId()
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();

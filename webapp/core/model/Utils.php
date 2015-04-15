@@ -24,4 +24,47 @@ class Utils {
         }
         return isset($array[$key]) ? $array[$key] : $default;
     }
+
+    /**
+     * Extracts parameters from an array, ready for creating database queries etc.
+     * Strips out parameters that are not required, and allows you to specify which parameters
+     * are REQUIRED and which are optional.
+     *
+     * Example usage:
+     *
+     *      $inputs = array(
+     *          'foo' => 'hello',
+     *          'bar' => 123,
+     *          'obj' => $object
+     *      );
+     *
+     *      $params = Utils::requiredParams(array(
+     *          'foo' => true, // if 'foo' is missing, raises an exception
+     *          'bar' => false // if 'bar' is missing, it simply isn't included
+     *      ), $inputs);
+     *
+     *      // OUTPUT:
+     *      array(
+     *          'foo' => 'hello',
+     *          'bar' => 123
+     *      );
+     *
+     * @param  array $requiredParams An array of the required parameters in the form array('key_name' => boolean), where the boolean dictates whether the key is required or not.
+     * @param  array $array          The array to extract the parameters from.
+     * @return array                 The array of extracted parameters.
+     */
+    public static function requiredParams($requiredParams, $array) {
+        $filteredParams = array();
+        foreach($requiredParams as $fieldName => $required) {
+            if (!isset($array[$fieldName])) {
+                if ($required) {
+                    throw new Exception('Missing required field: ' . $fieldName);
+                }
+            }
+            else {
+                $filteredParams[$fieldName] = $array[$fieldName];
+            }
+        }
+        return $filteredParams;
+    }
 }

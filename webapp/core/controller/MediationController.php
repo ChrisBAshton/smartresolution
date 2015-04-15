@@ -128,9 +128,9 @@ class MediationController {
                 $mediationCentre = new MediationCentre((int) $mediationCentreId);
 
                 DBCreate::mediationCentreOffer(array(
-                    'dispute'          => $dispute,
-                    'proposed_by'      => $account,
-                    'mediation_centre' => $mediationCentre
+                    'dispute_id'  => $dispute->getDisputeId(),
+                    'proposer_id' => $account->getLoginId(),
+                    'proposed_id' => $mediationCentre->getLoginId()
                 ));
 
                 $f3->set('success_message', "You have proposed " . $mediationCentre->getName() . " to mediate your dispute.");
@@ -153,9 +153,9 @@ class MediationController {
                 $mediator = new Mediator((int) $mediatorId);
 
                 DBCreate::mediatorOffer(array(
-                    'dispute'     => $dispute,
-                    'proposed_by' => $account,
-                    'mediator'    => $mediator
+                    'dispute_id'  => $dispute->getDisputeId(),
+                    'proposer_id' => $account->getLoginId(),
+                    'proposed_id' => $mediator->getLoginId()
                 ));
 
             } catch(Exception $e) {

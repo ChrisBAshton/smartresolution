@@ -3,7 +3,7 @@
 class DBNotification {
 
     public static function getNotificationById($notificationID) {
-        return Database::instance()->exec('SELECT * FROM notifications WHERE notification_id = :notification_id', array(':notification_id' => $notificationID))[0];
+        return DBQuery::getRowById('notifications', 'notification_id', $notificationID);
     }
 
     public static function markNotificationAsRead($notificationID) {

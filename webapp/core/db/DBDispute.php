@@ -18,16 +18,13 @@ class DBDispute {
      * @return array<mixed> The array of associated dispute data.
      */
     public function getData() {
-        $dispute = Database::instance()->exec(
-            'SELECT * FROM disputes WHERE dispute_id = :dispute_id LIMIT 1',
-            array(':dispute_id' => $this->disputeID)
-        );
+        $dispute = DBQuery::getRowById('disputes', 'dispute_id', $this->disputeID);
 
-        if (count($dispute) !== 1) {
+        if (!$dispute) {
             throw new Exception("The dispute you are trying to view does not exist.");
         }
 
-        return $dispute[0];
+        return $dispute;
     }
 
     /**

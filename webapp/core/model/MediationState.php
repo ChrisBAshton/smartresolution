@@ -48,7 +48,7 @@ class MediationState {
     }
 
     public function getMediationCentreProposer() {
-        return new Agent((int) $this->mediationCentreOffer['proposer']);
+        return new Agent((int) $this->mediationCentreOffer['proposer_id']);
     }
 
     public function getMediator() {
@@ -56,7 +56,7 @@ class MediationState {
     }
 
     public function getMediatorProposer() {
-        return new Agent((int) $this->mediatorOffer['proposer']);
+        return new Agent((int) $this->mediatorOffer['proposer_id']);
     }
 
     public function acceptLatestProposal() {

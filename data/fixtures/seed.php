@@ -119,18 +119,18 @@ foreach($data['disputes'] as $dataItem) {
 
         if ($dataItem['evidence'] === 'one_item') {
             DBCreate::evidence(array(
-                'uploader' => $dispute->getAgentA(),
-                'dispute'  => $dispute,
-                'filepath' => '/uploads/tmp.txt'
+                'uploader_id' => $dispute->getAgentA()->getLoginId(),
+                'dispute_id'  => $dispute->getDisputeId(),
+                'filepath'    => '/uploads/tmp.txt'
             ));
         }
     }
 
     if (isset($dataItem['mediation_centre'])) {
         DBCreate::mediationCentreOffer(array(
-            'dispute'          => $dispute,
-            'proposed_by'      => $dispute->getAgentA(),
-            'mediation_centre' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposed_id' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
         ));
 
         $dispute->refresh();
@@ -139,9 +139,9 @@ foreach($data['disputes'] as $dataItem) {
 
     if (isset($dataItem['mediator'])) {
         DBCreate::mediatorOffer(array(
-            'dispute'     => $dispute,
-            'proposed_by' => $dispute->getAgentA(),
-            'mediator'    => DBAccount::getAccountByEmail($dataItem['mediator'])
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposed_id' => DBAccount::getAccountByEmail($dataItem['mediator'])->getLoginId()
         ));
 
         $dispute->refresh();

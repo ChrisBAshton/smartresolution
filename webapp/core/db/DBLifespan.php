@@ -3,12 +3,7 @@
 class DBLifespan {
 
     public static function getLifespanById($lifespanID) {
-        $lifespan = Database::instance()->exec(
-            'SELECT * FROM lifespans WHERE lifespan_id = :lifespan_id',
-            array(':lifespan_id' => $lifespanID)
-        );
-
-        return $lifespan[0];
+        return DBQuery::getRowById('lifespans', 'lifespan_id', $lifespanID);
     }
 
     public static function endLifespan($lifespanID) {
