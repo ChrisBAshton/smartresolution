@@ -11,10 +11,10 @@ class DisputeStateCalculator {
             return new DisputeClosed($dispute, $account);
         }
 
-        if ($dispute->getLawFirmB() === false) {
+        if ($dispute->getPartyB()->getLawFirm() === false) {
             return new DisputeCreated($dispute, $account);
         }
-        else if ($dispute->getAgentB() === false) {
+        else if ($dispute->getPartyB()->getAgent() === false) {
             return new DisputeAssignedToLawFirmB($dispute, $account);
         }
 
@@ -66,15 +66,15 @@ class DisputeStateCalculator {
             );
 
             $dashboardActions[] = array(
-                'title' => 'Communicate with ' . $dispute->getAgentA()->getName(),
+                'title' => 'Communicate with ' . $dispute->getPartyA()->getAgent()->getName(),
                 'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentA()->getLoginId()
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getPartyA()->getAgent()->getLoginId()
             );
 
             $dashboardActions[] = array(
-                'title' => 'Communicate with ' . $dispute->getAgentB()->getName(),
+                'title' => 'Communicate with ' . $dispute->getPartyB()->getAgent()->getName(),
                 'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentB()->getLoginId()
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getPartyB()->getAgent()->getLoginId()
             );
         }
 

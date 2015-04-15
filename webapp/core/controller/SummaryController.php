@@ -31,7 +31,12 @@ class SummaryController {
 
     function view ($f3, $params) {
         $this->commonSummaryActions($f3, $params, function ($f3, $account, $dispute) {
-            $summary = $dispute->isInPartyA($account->getLoginId()) ? $dispute->getSummaryFromPartyA() : $dispute->getSummaryFromPartyB();
+            if ($dispute->getPartyA()->contains($account->getLoginId())) {
+                $summary = $dispute->getPartyA()->getSummary();
+            }
+            else {
+                $summary = $dispute->getPartyB()->getSummary();
+            }
             $f3->set('summary', $summary);
         });
     }
@@ -50,11 +55,11 @@ class SummaryController {
                 $f3->set('error_message', 'You must select a dispute type.');
             }
             else {
-                if ($dispute->isInPartyA($account->getLoginId())) {
-                    $dispute->setSummaryForPartyA($summary);
+                if ($dispute->getPartyA()->contains($account->getLoginId())) {
+                    $dispute->getPartyA()->setSummary($summary);
                 }
-                elseif($dispute->isInPartyB($account->getLoginId())) {
-                    $dispute->setSummaryForPartyB($summary);
+                elseif($dispute->getPartyB()->contains($account->getLoginId())) {
+                    $dispute->getPartyB()->setSummary($summary);
                 }
 
                 $dispute->setType($type);

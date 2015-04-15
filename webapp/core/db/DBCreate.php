@@ -9,6 +9,7 @@ class DBCreate {
             ':login_id' => $login_id,
         ));
         Database::instance()->commit();
+        return DBAccount::getAccountById($login_id);
     }
 
     /**
@@ -38,7 +39,7 @@ class DBCreate {
         }
         return $login_id;
     }
-
+    public static $firstTestRan = false;
     /**
      * Creates a new Dispute, saving it to the database.
      *
@@ -100,6 +101,7 @@ class DBCreate {
      * @return int                  The ID of the created party.
      */
     public static function disputeParty($organisationId, $individualId = NULL, $summary = NULL) {
+
         Database::instance()->exec(
             'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
              VALUES (NULL, :organisation_id, :individual_id, :summary)', array(
@@ -108,7 +110,9 @@ class DBCreate {
             ':summary'         => $summary
         ));
 
-        return DBQuery::getLatestId('dispute_parties', 'party_id');
+        $partyID = DBQuery::getLatestId('dispute_parties', 'party_id');
+
+        return $partyID;
     }
 
     /**
@@ -128,20 +132,6 @@ class DBCreate {
         DBCreate::insertRow('evidence', $params);
         $latestID = DBQuery::getLatestId('evidence', 'evidence_id');
         return new Evidence($latestID);
-    }
-
-    private static function insertRow($tableName, $columnValues) {
-        $columns = array();
-        $values  = array();
-        foreach($columnValues as $columnName => $value) {
-            $columns[] = $columnName;
-            $values[':' . $columnName] = $value;
-        }
-
-        $query = 'INSERT INTO ' . $tableName . ' (' . implode(', ', $columns) . ')
-                  VALUES (' . implode(', ', array_keys($values)) . ')';
-
-        Database::instance()->exec($query, $values);
     }
 
     public static function individual($individualObject) {
@@ -185,6 +175,7 @@ class DBCreate {
             $db->commit();
 
             $dispute = new Dispute($params['dispute_id']);
+
             DBCreate::notification(array(
                 'recipient_id' => $dispute->getOpposingPartyId($params['proposer']),
                 'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($params['valid_until']) . ' to accept or deny the offer.',
@@ -194,7 +185,6 @@ class DBCreate {
             return $lifespan;
         }
         catch(Exception $e) {
-            $db->rollback();
             throw new Exception($e->getMessage());
         }
     }
@@ -304,5 +294,19 @@ class DBCreate {
             'message'      => 'Mediation has been proposed.',
             'url'          => $dispute->getUrl() . '/mediation'
         ));
+    }
+
+    private static function insertRow($tableName, $columnValues) {
+        $columns = array();
+        $values  = array();
+        foreach($columnValues as $columnName => $value) {
+            $columns[] = $columnName;
+            $values[':' . $columnName] = $value;
+        }
+
+        $query = 'INSERT INTO ' . $tableName . ' (' . implode(', ', $columns) . ')
+                  VALUES (' . implode(', ', array_keys($values)) . ')';
+
+        Database::instance()->exec($query, $values);
     }
 }

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../webapp/autoload.php';
+require_once __DIR__ . '/../_helper.php';
 
 class DisputeTest extends PHPUnit_Framework_TestCase
 {
@@ -8,70 +9,18 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         Database::clear();
     }
 
-    private function createNewDispute() {
-        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
-        $agent = DBAccount::emailToId('agent_a@t.co');
-
-        return DBCreate::dispute(array(
-            'law_firm_a' => $lawFirm,
-            'agent_a'    => $agent,
-            'type'       => 'other',
-            'title'      => 'Smith versus Jones',
-            'summary'    => 'This is my summary'
-        ));
-    }
-
     public function testCreateDisputeSuccessfully() {
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute instanceof Dispute);
     }
 
-    public function testOverridingAgentWithAnotherFromSameLawFirm() {
-        $dispute = $this->createNewDispute();
-        $agent1 = DBAccount::emailToId('agent_a@t.co');
-        $agent2 = DBAccount::emailToId('agent_c@t.co');
-
-        $this->assertEquals($agent1, $dispute->getAgentA()->getLoginId());
-        $dispute->setAgentA($agent2);
-        $this->assertEquals($agent2, $dispute->getAgentA()->getLoginId());
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Tried setting a non-agent type as an agent!
-     */
-    public function testOverridingAgentWithMediator() {
-        $dispute  = $this->createNewDispute();
-        $agent    = DBAccount::emailToId('agent_a@t.co');
-        $mediator = DBAccount::emailToId('john.smith@we-mediate.co.uk');
-
-        $this->assertEquals($agent, $dispute->getAgentA()->getLoginId());
-        $dispute->setAgentA($mediator);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage You can only assign agents that are in your law firm!
-     */
-    public function testOverridingAgentWithAgentFromDifferentLawFirm() {
-        $dispute = $this->createNewDispute();
-        $agentInCompanyA = DBAccount::emailToId('agent_a@t.co');
-        $agentInCompanyB = DBAccount::emailToId('agent_b@t.co');
-
-        $this->assertEquals($agentInCompanyA, $dispute->getAgentA()->getLoginId());
-        $dispute->setAgentA($agentInCompanyB);
-    }
-
     public function testDisputeSimpleGetters() {
-        $dispute = $this->createNewDispute();
-        $this->assertEquals(DBAccount::emailToId('agent_a@t.co'), $dispute->getAgentA()->getLoginId());
-        $this->assertEquals(DBAccount::emailToId('law_firm_a@t.co'), $dispute->getLawFirmA()->getLoginId());
+        $dispute = TestHelper::createNewDispute();
         $this->assertEquals('Smith versus Jones', $dispute->getTitle());
-        $this->assertEquals('This is my summary', $dispute->getSummaryFromPartyA());
     }
 
     public function testRoundTableCommunication() {
-        $dispute = $this->createNewDispute(); // by default, should NOT be in round table communication
+        $dispute = TestHelper::createNewDispute(); // by default, should NOT be in round table communication
         $this->assertFalse($dispute->inRoundTableCommunication());
 
         $dispute->enableRoundTableCommunication();
@@ -82,23 +31,23 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testIsAMediationParty() {
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
 
         // first, let's set up the second party
-        $dispute->setLawFirmB(DBAccount::emailToId('law_firm_b@t.co'));
-        $dispute->setAgentB(DBAccount::emailToId('agent_b@t.co'));
+        $dispute->getPartyB()->setLawFirm(DBAccount::emailToId('law_firm_b@t.co'));
+        $dispute->getPartyB()->setAgent(DBAccount::emailToId('agent_b@t.co'));
 
         // next, let's set up Mediation
         DBCreate::mediationCentreOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
-            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
             'proposed_id' => DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')->getLoginId()
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();
         DBCreate::mediatorOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
-            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
             'proposed_id' => DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk')->getLoginId()
         ));
         $dispute->refresh();
@@ -128,29 +77,9 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testDisputeGettersObjectsMatch() {
-        DisputeTest::setUpBeforeClass();
-        $dispute = $this->createNewDispute();
-        $this->assertEquals(
-            DBAccount::getAccountByEmail('law_firm_a@t.co')->getLoginId(),
-            $dispute->getLawFirmA()->getLoginId()
-        );
-        $this->assertEquals(
-            DBAccount::getAccountByEmail('agent_a@t.co')->getLoginId(),
-            $dispute->getAgentA()->getLoginId()
-        );
-    }
-
-    public function testDisputeGettersObjectsCorrectType() {
-        DisputeTest::setUpBeforeClass();
-        $dispute = $this->createNewDispute();
-        $this->assertTrue($dispute->getLawFirmA() instanceof LawFirm);
-        $this->assertTrue($dispute->getAgentA() instanceof Agent);
-    }
-
     public function testAuthorisationLogicIsCorrect() {
         DisputeTest::setUpBeforeClass();
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute->canBeViewedBy(DBAccount::emailToId('law_firm_a@t.co')));
         $this->assertTrue($dispute->canBeViewedBy(DBAccount::emailToId('agent_a@t.co')));
         $this->assertFalse($dispute->canBeViewedBy(DBAccount::emailToId('law_firm_b@t.co')));
@@ -159,33 +88,33 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
     public function testDisputeWorkflowCorrect() {
         DisputeTest::setUpBeforeClass();
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
         $state   = $dispute->getState(DBAccount::getAccountByEmail('agent_a@t.co'));
         $this->assertTrue($state->canOpenDispute());
 
         $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
-        $dispute->setLawFirmB($lawFirmB);
-        $this->assertEquals($lawFirmB, $dispute->getLawFirmB()->getLoginId());
+        $dispute->getPartyB()->setLawFirm($lawFirmB);
+        $this->assertEquals($lawFirmB, $dispute->getPartyB()->getLawFirm()->getLoginId());
 
         $agentB = DBAccount::emailToId('agent_b@t.co');
-        $dispute->setAgentB($agentB);
-        $this->assertEquals($agentB, $dispute->getAgentB()->getLoginId());
+        $dispute->getPartyB()->setAgent($agentB);
+        $this->assertEquals($agentB, $dispute->getPartyB()->getAgent()->getLoginId());
         $this->assertFalse($state->canOpenDispute());
 
-        $this->assertFalse($dispute->getSummaryFromPartyB());
-        $dispute->setSummaryForPartyB('Test summary');
-        $this->assertEquals('Test summary', $dispute->getSummaryFromPartyB());
+        $this->assertFalse($dispute->getPartyB()->getSummary());
+        $dispute->getPartyB()->setSummary('Test summary');
+        $this->assertEquals('Test summary', $dispute->getPartyB()->getSummary());
     }
 
     public function testGetOpposingPartyId() {
         DisputeTest::setUpBeforeClass();
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
         $lawFirmA = DBAccount::emailToId('law_firm_a@t.co');
         $agentA   = DBAccount::emailToId('agent_a@t.co');
         $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
         $agentB   = DBAccount::emailToId('agent_b@t.co');
-        $dispute->setLawFirmB($lawFirmB);
-        $dispute->setAgentB($agentB);
+        $dispute->getPartyB()->setLawFirm($lawFirmB);
+        $dispute->getPartyB()->setAgent($agentB);
 
         $this->assertEquals($agentB, $dispute->getOpposingPartyId($agentA));
         $this->assertEquals($agentA, $dispute->getOpposingPartyId($agentB));
@@ -217,7 +146,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
             'title'      => 'Smith versus Jones'
         ));
 
-        $dispute->setAgentB($lawFirmB); // shouldn't be able to set agent as a law firm
+        $dispute->getPartyB()->setAgent($lawFirmB); // shouldn't be able to set agent as a law firm
     }
 
     /**
@@ -299,14 +228,14 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testCloseUnsuccessfully() {
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
         $this->assertEquals("ongoing", $this->getDisputeStatus($dispute));
         $dispute->closeUnsuccessfully();
         $this->assertEquals("failed", $this->getDisputeStatus($dispute));
     }
 
     public function testGetAndSetType() {
-        $dispute = $this->createNewDispute();
+        $dispute = TestHelper::createNewDispute();
         $this->assertEquals("other", $dispute->getType());
         $dispute->setType('test');
         $this->assertEquals("test", $dispute->getType());

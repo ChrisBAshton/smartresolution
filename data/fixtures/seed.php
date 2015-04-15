@@ -54,22 +54,22 @@ foreach($data['disputes'] as $dataItem) {
         'type'       => $dataItem['type']
     ));
     $agentAId = DBAccount::emailToId($dataItem['agent_a']);
-    $dispute->setAgentA($agentAId);
+    $dispute->getPartyA()->setAgent($agentAId);
 
     if (isset($dataItem['law_firm_b'])) {
-        $dispute->setLawFirmB(DBAccount::emailToId($dataItem['law_firm_b']));
+        $dispute->getPartyB()->setLawFirm(DBAccount::emailToId($dataItem['law_firm_b']));
     }
 
     if (isset($dataItem['agent_b'])) {
-        $dispute->setAgentB(DBAccount::emailToId($dataItem['agent_b']));
+        $dispute->getPartyB()->setAgent(DBAccount::emailToId($dataItem['agent_b']));
     }
 
     if (isset($dataItem['summary_a'])) {
-        $dispute->setSummaryForPartyA($dataItem['summary_a']);
+        $dispute->getPartyA()->setSummary($dataItem['summary_a']);
     }
 
     if (isset($dataItem['summary_b'])) {
-        $dispute->setSummaryForPartyB($dataItem['summary_b']);
+        $dispute->getPartyB()->setSummary($dataItem['summary_b']);
     }
 
     if (isset($dataItem['lifespan'])) {
@@ -119,7 +119,7 @@ foreach($data['disputes'] as $dataItem) {
 
         if ($dataItem['evidence'] === 'one_item') {
             DBCreate::evidence(array(
-                'uploader_id' => $dispute->getAgentA()->getLoginId(),
+                'uploader_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
                 'dispute_id'  => $dispute->getDisputeId(),
                 'filepath'    => '/uploads/tmp.txt'
             ));
@@ -129,7 +129,7 @@ foreach($data['disputes'] as $dataItem) {
     if (isset($dataItem['mediation_centre'])) {
         DBCreate::mediationCentreOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
-            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
             'proposed_id' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
         ));
 
@@ -140,7 +140,7 @@ foreach($data['disputes'] as $dataItem) {
     if (isset($dataItem['mediator'])) {
         DBCreate::mediatorOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
-            'proposer_id' => $dispute->getAgentA()->getLoginId(),
+            'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
             'proposed_id' => DBAccount::getAccountByEmail($dataItem['mediator'])->getLoginId()
         ));
 

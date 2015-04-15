@@ -11,7 +11,7 @@ abstract class DisputeDefaults {
     }
 
     public function canOpenDispute() {
-        return $this->account instanceof Agent && !$this->dispute->getLawFirmB();
+        return $this->account instanceof Agent && !$this->dispute->getPartyB()->getLawFirm();
     }
 
     public function canAssignDisputeToAgent() {
@@ -52,10 +52,10 @@ abstract class DisputeDefaults {
 
     private function accountIsLinkedToDispute() {
         return (
-            $this->accountIs($this->dispute->getLawFirmA()) ||
-            $this->accountIs($this->dispute->getLawFirmB()) ||
-            $this->accountIs($this->dispute->getAgentA())   ||
-            $this->accountIs($this->dispute->getAgentB())   ||
+            $this->accountIs($this->dispute->getPartyA()->getLawFirm()) ||
+            $this->accountIs($this->dispute->getPartyB()->getLawFirm()) ||
+            $this->accountIs($this->dispute->getPartyA()->getAgent())   ||
+            $this->accountIs($this->dispute->getPartyB()->getAgent())   ||
             $this->accountIs($this->dispute->getMediationState()->getMediationCentre()) ||
             $this->accountIs($this->dispute->getMediationState()->getMediator())
         );

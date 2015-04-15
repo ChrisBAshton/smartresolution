@@ -167,13 +167,13 @@ class MediationController {
 
     private function notifyAgentsOfUpdatedList() {
         DBCreate::notification(array(
-            'recipient_id' => $this->dispute->getAgentA()->getLoginId(),
+            'recipient_id' => $this->dispute->getPartyA()->getAgent()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
 
         DBCreate::notification(array(
-            'recipient_id' => $this->dispute->getAgentB()->getLoginId(),
+            'recipient_id' => $this->dispute->getPartyB()->getAgent()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));

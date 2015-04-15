@@ -99,8 +99,8 @@ class DisputeController {
             $this->assignDisputeGet($f3, $params);
         }
         else {
-            $dispute->setAgentB((int) $agent);
-            $dispute->setSummaryForPartyB($summary);
+            $dispute->getPartyB()->setAgent((int) $agent);
+            $dispute->getPartyB()->setSummary($summary);
 
             header('Location: ' . $dispute->getUrl());
         }
@@ -111,12 +111,12 @@ class DisputeController {
         $dispute = setDisputeFromParams($f3, $params);
 
         if (!$dispute->getState($account)->canOpenDispute()) {
-            errorPage('You have already opened this dispute against ' . $dispute->getLawFirmB()->getName() . '!');
+            errorPage('You have already opened this dispute against ' . $dispute->getPartyB()->getLawFirm()->getName() . '!');
         }
 
         $lawFirms = DBAccount::getOrganisations(array(
             'type'   => 'law_firm',
-            'except' => $f3->get('dispute')->getLawFirmA()->getLoginId()
+            'except' => $f3->get('dispute')->getPartyA()->getLawFirm()->getLoginId()
         ));
 
         $f3->set('lawFirms', $lawFirms);
@@ -134,7 +134,7 @@ class DisputeController {
         }
         else {
             $dispute = setDisputeFromParams($f3, $params);
-            $dispute->setLawFirmB($lawFirmB);
+            $dispute->getPartyB()->setLawFirm($lawFirmB);
 
             header('Location: ' . $dispute->getUrl());
         }

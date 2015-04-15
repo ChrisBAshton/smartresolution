@@ -18,7 +18,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
     {
         $message = DBCreate::message(array(
             'dispute_id' => $this->dispute->getDisputeId(),
-            'author_id'  => $this->dispute->getAgentA()->getLoginId(),
+            'author_id'  => $this->dispute->getPartyA()->getAgent()->getLoginId(),
             'message'    => 'This is a test message.'
         ));
 
@@ -28,7 +28,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            $this->dispute->getAgentA()->getLoginId(),
+            $this->dispute->getPartyA()->getAgent()->getLoginId(),
             $message->author()->getLoginId()
         );
 
@@ -48,7 +48,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
     public function testMessageFailsWithoutDisputeId()
     {
         $message = DBCreate::message(array(
-            'author_id'  => $this->dispute->getAgentA()->getLoginId(),
+            'author_id'  => $this->dispute->getPartyA()->getAgent()->getLoginId(),
             'message'    => 'This is a test message.'
         ));
     }
@@ -71,7 +71,7 @@ class ChatTest extends PHPUnit_Framework_TestCase
     {
         $message = DBCreate::message(array(
             'dispute_id' => $this->dispute->getDisputeId(),
-            'author_id'  => $this->dispute->getAgentA()->getLoginId()
+            'author_id'  => $this->dispute->getPartyA()->getAgent()->getLoginId()
         ));
     }
 }

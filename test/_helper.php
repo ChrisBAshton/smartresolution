@@ -21,4 +21,17 @@ class TestHelper {
             return new Dispute((int) $dispute[0]['dispute_id']);
         }
     }
+
+    public static function createNewDispute() {
+        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
+        $agent = DBAccount::emailToId('agent_a@t.co');
+
+        return DBCreate::dispute(array(
+            'law_firm_a' => $lawFirm,
+            'agent_a'    => $agent,
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones',
+            'summary'    => 'This is my summary'
+        ));
+    }
 }

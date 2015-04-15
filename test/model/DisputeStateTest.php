@@ -10,7 +10,7 @@ class DisputeStateTest extends PHPUnit_Framework_TestCase
     }
 
     private function extractState($dispute) {
-        $accountContext = $dispute->getAgentA();
+        $accountContext = $dispute->getPartyA()->getAgent();
         return $dispute->getState($accountContext);
     }
 

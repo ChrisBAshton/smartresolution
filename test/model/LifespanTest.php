@@ -3,12 +3,11 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class LifespanTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
 
     protected function setUp() {
+        Database::setEnvironment('test');
+        Database::clear();
+
         $this->lawFirmA = DBAccount::emailToId('law_firm_a@t.co');
         $this->agentA   = DBAccount::emailToId('agent_a@t.co');
         $this->lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
@@ -22,9 +21,9 @@ class LifespanTest extends PHPUnit_Framework_TestCase
             'summary'    => 'This is my summary'
         ));
 
-        $this->dispute->setLawFirmB($this->lawFirmB);
-        $this->dispute->setAgentB($this->agentB);
-        $this->dispute->setSummaryForPartyB('Summary for Agent B');
+        $this->dispute->getPartyB()->setLawFirm($this->lawFirmB);
+        $this->dispute->getPartyB()->setAgent($this->agentB);
+        $this->dispute->getPartyB()->setSummary('Summary for Agent B');
     }
 
     private function createLifespan() {
@@ -99,10 +98,10 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         ));
     }
 
-    /**
+    *
      * @expectedException Exception
      * @expectedExceptionMessage Start date must be before end date.
-     */
+
     public function testLifespanInvalidWhenEndTimeBeforeStartTime() {
         $currentTime = time();
         DBCreate::lifespan(array(

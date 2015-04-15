@@ -12,7 +12,7 @@ class EvidenceTest extends PHPUnit_Framework_TestCase
     protected function setUp() {
         $this->dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $this->evidence = DBCreate::evidence(array(
-            'uploader_id' => $this->dispute->getAgentA()->getLoginId(),
+            'uploader_id' => $this->dispute->getPartyA()->getAgent()->getLoginId(),
             'dispute_id'  => $this->dispute->getDisputeId(),
             'filepath'    => 'test_filepath'
         ));
@@ -20,7 +20,7 @@ class EvidenceTest extends PHPUnit_Framework_TestCase
 
     public function testGetters() {
         $this->assertEquals(
-            $this->dispute->getAgentA()->getLoginId(),
+            $this->dispute->getPartyA()->getAgent()->getLoginId(),
             $this->evidence->getUploader()->getLoginId()
         );
         $this->assertEquals(
