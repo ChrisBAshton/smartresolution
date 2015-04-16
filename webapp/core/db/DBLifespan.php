@@ -2,10 +2,6 @@
 
 class DBLifespan {
 
-    public static function getLifespanById($lifespanID) {
-        return DBQuery::getRowById('lifespans', 'lifespan_id', $lifespanID);
-    }
-
     public static function endLifespan($lifespanID) {
         Database::instance()->exec(
             'UPDATE lifespans SET end_time = :end_time WHERE lifespan_id = :lifespan_id',

@@ -3,7 +3,7 @@
 class Message {
 
     function __construct($messageID) {
-        $message = DBMessage::getMessageById($messageID);
+        $message = DBGet::instance()->message($messageID);
         $this->disputeID = $message['dispute_id'];
         $this->authorID  = $message['author_id'];
         $this->contents  = $message['message'];

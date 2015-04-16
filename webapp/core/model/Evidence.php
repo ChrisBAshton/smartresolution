@@ -6,7 +6,7 @@ class Evidence {
     private $url;
 
     function __construct($evidenceID) {
-        $evidence       = DBEvidence::getEvidence($evidenceID);
+        $evidence       = DBGet::instance()->evidence($evidenceID);
         $this->uploader = new Individual((int) $evidence['uploader_id']);
         $this->url      = $evidence['filepath'];
     }

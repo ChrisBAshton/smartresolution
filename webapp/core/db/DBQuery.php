@@ -2,16 +2,6 @@
 
 class DBQuery {
 
-    public static function getRowById($tableName, $idName, $id) {
-        $rows = Database::instance()->exec(
-            'SELECT * FROM ' . $tableName . ' WHERE ' . $idName . ' = :' . $idName,
-            array(
-                ':' . $idName => $id
-            )
-        );
-        return (count($rows) === 1) ? $rows[0] : false;
-    }
-
     /**
      * Returns the latest ID in the database from table name $tableName, ordered by primary key $idName (DESC).
      * Calls DBQuery::getLatestRow internally.

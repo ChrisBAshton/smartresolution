@@ -14,20 +14,6 @@ class DBDispute {
     }
 
     /**
-     * Gets the dispute data.
-     * @return array<mixed> The array of associated dispute data.
-     */
-    public function getData() {
-        $dispute = DBQuery::getRowById('disputes', 'dispute_id', $this->disputeID);
-
-        if (!$dispute) {
-            throw new Exception("The dispute you are trying to view does not exist.");
-        }
-
-        return $dispute;
-    }
-
-    /**
      * Persistently marks Round-Table Communication as enabled.
      */
     public function enableRoundTableCommunication() {

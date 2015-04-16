@@ -17,7 +17,7 @@ class DisputeParty {
             $partyDetails = array();
         }
         else {
-            $partyDetails = DBQuery::getRowById('dispute_parties', 'party_id', $partyID);
+            $partyDetails = DBGet::instance()->disputeParty($partyID);
         }
 
         $this->partyID        = $partyID;

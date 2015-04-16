@@ -13,7 +13,7 @@ class Notification {
     }
 
     private function setVariables($notificationID) {
-        $details = DBNotification::getNotificationById($notificationID);
+        $details = DBGet::instance()->notification($notificationID);
         $this->notificationID = (int) $details['notification_id'];
         $this->loginID        = (int) $details['recipient_id'];
         $this->url            = $details['url'];

@@ -3,21 +3,21 @@
 class Dispute {
 
     function __construct($disputeID) {
-        $this->db = new DBDispute($disputeID);
+        $this->db        = new DBDispute($disputeID);
+        $this->disputeID = $disputeID;
         $this->refresh();
     }
 
     public function refresh() {
-        $data = $this->db->getData();
-        $this->disputeId       = (int) $data['dispute_id'];
+        $data                  = DBGet::instance()->dispute($this->disputeID);
         $this->type            = $data['type'];
         $this->title           = $data['title'];
         $this->status          = $data['status'];
-        $this->partyA          = new DisputeParty((int) $data['party_a'], $this->disputeId);
-        $this->partyB          = new DisputeParty((int) $data['party_b'], $this->disputeId);
-        $this->currentLifespan = LifespanFactory::getCurrentLifespan($this->disputeId);
-        $this->latestLifespan  = LifespanFactory::getLatestLifespan($this->disputeId);
-        $this->mediationState  = new MediationState($this->disputeId);
+        $this->partyA          = new DisputeParty((int) $data['party_a'], $this->disputeID);
+        $this->partyB          = new DisputeParty((int) $data['party_b'], $this->disputeID);
+        $this->currentLifespan = LifespanFactory::getCurrentLifespan($this->disputeID);
+        $this->latestLifespan  = LifespanFactory::getLatestLifespan($this->disputeID);
+        $this->mediationState  = new MediationState($this->disputeID);
         $this->inRoundTableCommunication = $data['round_table_communication'] === 'true';
     }
 
@@ -45,12 +45,12 @@ class Dispute {
         return $this->latestLifespan;
     }
 
-    public function getDisputeId() {
-        return $this->disputeId;
+    public function getdisputeID() {
+        return $this->disputeID;
     }
 
     public function getUrl() {
-        return '/disputes/' . $this->getDisputeId();
+        return '/disputes/' . $this->getdisputeID();
     }
 
     public function getTitle() {
@@ -157,11 +157,11 @@ class Dispute {
     }
 
     public function getMessages() {
-        return DBMessage::retrieveDisputeMessages($this->getDisputeId());
+        return DBMessage::retrieveDisputeMessages($this->getdisputeID());
     }
 
     public function getMessagesBetween($individualA, $individualB) {
-        return DBMessage::retrieveMediationMessages($this->getDisputeId(), $individualA, $individualB);
+        return DBMessage::retrieveMediationMessages($this->getdisputeID(), $individualA, $individualB);
     }
 
 }

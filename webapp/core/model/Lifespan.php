@@ -32,7 +32,7 @@ class Lifespan implements LifespanInterface {
     }
 
     private function setVariables($lifespanID) {
-        $lifespan = DBLifespan::getLifespanById($lifespanID);
+        $lifespan = DBGet::instance()->lifespan($lifespanID);
         $this->lifespanID = (int) $lifespan['lifespan_id'];
         $this->disputeID  = (int) $lifespan['dispute_id'];
         $this->proposer   = (int) $lifespan['proposer'];
