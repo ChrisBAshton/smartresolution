@@ -1,15 +1,12 @@
 <?php
 
+/**
+ * This class defines methods which retrieve database records by ID, according to the type of the object.
+ */
 class DBGet extends Prefab {
 
     public function dispute($disputeID) {
-        $dispute = $this->getRowById('disputes', 'dispute_id', $disputeID);
-
-        if (!$dispute) {
-            throw new Exception("The dispute you are trying to view does not exist.");
-        }
-
-        return $dispute;
+        return $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
     }
 
     public function disputeParty($partyID) {
@@ -32,14 +29,22 @@ class DBGet extends Prefab {
         return $this->getRowById('notifications', 'notification_id', $notificationID);
     }
 
-    private function getRowById($tableName, $idName, $id) {
+    private function getRowById($tableName, $idName, $id, $exceptionMessage = false) {
         $rows = Database::instance()->exec(
             'SELECT * FROM ' . $tableName . ' WHERE ' . $idName . ' = :' . $idName,
             array(
                 ':' . $idName => $id
             )
         );
-        return (count($rows) === 1) ? $rows[0] : false;
+
+        if (count($rows) !== 1) {
+            if ($exceptionMessage) {
+                throw new Exception($exceptionMessage);
+            }
+            return false;
+        }
+
+        return $rows[0];
     }
 
 }
