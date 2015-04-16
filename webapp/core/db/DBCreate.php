@@ -13,34 +13,6 @@ class DBCreate {
     }
 
     /**
-     * Stores account details in the database.
-     *
-     * @param  array $object An array of registration values, including email and password.
-     * @return int           The login ID associated with the newly registered account.
-     */
-    public static function dbAccount($object) {
-        if (!isset($object['email']) || !isset($object['password'])) {
-            throw new Exception("The minimum required to register is an email and password!");
-        }
-
-        if (DBAccount::getAccountByEmail($object['email'])) {
-            throw new Exception("An account is already registered to that email address.");
-        }
-
-        $crypt = \Bcrypt::instance();
-        Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
-            ':email'    => $object['email'],
-            ':password' => $crypt->hash($object['password'])
-        ));
-
-        $login_id = DBAccount::emailToId($object['email']);
-        if (!$login_id) {
-            throw new Exception("Could not retrieve login_id. Abort.");
-        }
-        return $login_id;
-    }
-    public static $firstTestRan = false;
-    /**
      * Creates a new Dispute, saving it to the database.
      *
      * @param  array $details array of details to populate the database with.
@@ -60,7 +32,8 @@ class DBCreate {
 
         $db = Database::instance();
         $db->begin();
-        $partyID = DBCreate::disputeParty($lawFirmA, $agentA, $summary);
+        $party = DBCreate::disputeParty($lawFirmA, $agentA, $summary);
+        $partyID = $party->getPartyId();
         $db->exec(
             'INSERT INTO disputes (dispute_id, party_a, type, title)
              VALUES (NULL, :party_a, :type, :title)', array(
@@ -98,7 +71,7 @@ class DBCreate {
      * @param  int $organisationId  The ID of the party's organisation.
      * @param  int $individualId    (Optional) The ID of the party's individual.
      * @param  string $summary      The party's summary of the dispute.
-     * @return int                  The ID of the created party.
+     * @return DisputeParty         The newly created Dispute Party.
      */
     public static function disputeParty($organisationId, $individualId = NULL, $summary = NULL) {
 
@@ -112,7 +85,7 @@ class DBCreate {
 
         $partyID = DBQuery::getLatestId('dispute_parties', 'party_id');
 
-        return $partyID;
+        return new DisputeParty($partyID);
     }
 
     /**
@@ -121,7 +94,7 @@ class DBCreate {
      *         int    $params['dispute_id']   The ID of the dispute to make the proposal against.
      *         int    $params['uploader_id']  The ID of the account who uploaded the evidence.
      *         string $params['filepath']     The filepath of the uploaded evidence.
-     * @return int  The ID of the piece of uploaded evidence.
+     * @return Evidence                       The object representing the piece of uploaded evidence.
      */
     public static function evidence($params) {
         $params = Utils::requiredParams(array(
@@ -249,6 +222,38 @@ class DBCreate {
 
         return DBAccount::getAccountById($login_id);
     }
+
+// --------------------------------------------------------------------------- the functions from this point onwards do not return an object like the rest of the createX API. Maybe these should be extracted?? Or made private?? (Whereas the above are public.)
+
+
+    /**
+     * Stores account details in the database.
+     *
+     * @param  array $object An array of registration values, including email and password.
+     * @return int           The login ID associated with the newly registered account.
+     */
+    public static function dbAccount($object) {
+        if (!isset($object['email']) || !isset($object['password'])) {
+            throw new Exception("The minimum required to register is an email and password!");
+        }
+
+        if (DBAccount::getAccountByEmail($object['email'])) {
+            throw new Exception("An account is already registered to that email address.");
+        }
+
+        $crypt = \Bcrypt::instance();
+        Database::instance()->exec('INSERT INTO account_details (email, password) VALUES (:email, :password)', array(
+            ':email'    => $object['email'],
+            ':password' => $crypt->hash($object['password'])
+        ));
+
+        $login_id = DBAccount::emailToId($object['email']);
+        if (!$login_id) {
+            throw new Exception("Could not retrieve login_id. Abort.");
+        }
+        return $login_id;
+    }
+
     /**
      * Creates an entry in the database representing a proposal of using a Mediation Centre to mediate the dispute.
      * @param  array    $params                The details of the offer.

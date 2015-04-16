@@ -85,7 +85,8 @@ class DisputeParty {
 
     public function setPartyDatabaseField($field, $value) {
         if ($this->partyID === 0 && $field === 'organisation_id') {
-            $this->partyID = DBCreate::disputeParty($value);
+            $createdParty = DBCreate::disputeParty($value);
+            $this->partyID = $createdParty->getPartyId();
             DBDispute::updateDisputePartyB($this->partyID, $this->disputeID);
         }
         elseif ($this->getPartyId() !== 0) {
