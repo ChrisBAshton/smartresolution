@@ -86,7 +86,7 @@ class Dispute {
 
         foreach($notifyAgents as $agent) {
             if ($agent) {
-                DBCreate::notification(array(
+                DBCreate::instance()->notification(array(
                     'recipient_id' => $agent->getLoginId(),
                     'message'      => 'The mediator has ' . $enabledOrDisabled . ' round-table-communication.',
                     'url'          => $this->getUrl() . '/chat'

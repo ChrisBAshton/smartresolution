@@ -26,7 +26,7 @@ class TestHelper {
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
         $agent = DBAccount::emailToId('agent_a@t.co');
 
-        return DBCreate::dispute(array(
+        return DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,
             'agent_a'    => $agent,
             'type'       => 'other',

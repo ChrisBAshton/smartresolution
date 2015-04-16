@@ -1,10 +1,10 @@
 <?php
 
-class DBCreate {
+class DBCreate extends Prefab {
 
-    public static function admin($params) {
+    public function admin($params) {
         Database::instance()->begin();
-        $login_id = DBCreate::dbAccount($params);
+        $login_id = $this->dbAccount($params);
         Database::instance()->exec('INSERT INTO administrators (login_id) VALUES (:login_id)', array(
             ':login_id' => $login_id,
         ));
@@ -18,7 +18,7 @@ class DBCreate {
      * @param  array $details array of details to populate the database with.
      * @return Dispute        The Dispute object associated with the new entry.
      */
-    public static function dispute($details) {
+    public function dispute($details) {
         $lawFirmA = (int) Utils::getValue($details, 'law_firm_a');
         $type     = Utils::getValue($details, 'type');
         $title    = Utils::getValue($details, 'title');
@@ -32,7 +32,7 @@ class DBCreate {
 
         $db = Database::instance();
         $db->begin();
-        $party = DBCreate::disputeParty($lawFirmA, $agentA, $summary);
+        $party = $this->disputeParty($lawFirmA, $agentA, $summary);
         $partyID = $party->getPartyId();
         $db->exec(
             'INSERT INTO disputes (dispute_id, party_a, type, title)
@@ -54,7 +54,7 @@ class DBCreate {
             $dispute = new Dispute((int) $newDispute['dispute_id']);
 
             if ($agentA) {
-                DBCreate::notification(array(
+                $this->notification(array(
                     'recipient_id' => $agentA,
                     'message'      => 'A new dispute has been assigned to you.',
                     'url'          => $dispute->getUrl()
@@ -73,7 +73,7 @@ class DBCreate {
      * @param  string $summary      The party's summary of the dispute.
      * @return DisputeParty         The newly created Dispute Party.
      */
-    public static function disputeParty($organisationId, $individualId = NULL, $summary = NULL) {
+    public function disputeParty($organisationId, $individualId = NULL, $summary = NULL) {
 
         Database::instance()->exec(
             'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
@@ -96,20 +96,20 @@ class DBCreate {
      *         string $params['filepath']     The filepath of the uploaded evidence.
      * @return Evidence                       The object representing the piece of uploaded evidence.
      */
-    public static function evidence($params) {
+    public function evidence($params) {
         $params = Utils::requiredParams(array(
             'dispute_id'  => true,
             'uploader_id' => true,
             'filepath'    => true
         ), $params);
-        DBCreate::insertRow('evidence', $params);
+        $this->insertRow('evidence', $params);
         $latestID = DBQuery::getLatestId('evidence', 'evidence_id');
         return new Evidence($latestID);
     }
 
-    public static function individual($individualObject) {
+    public function individual($individualObject) {
         Database::instance()->begin();
-        $login_id = DBCreate::dbAccount($individualObject);
+        $login_id = $this->dbAccount($individualObject);
         $params = Utils::requiredParams(array(
             'type'            => true,
             'organisation_id' => true,
@@ -118,7 +118,7 @@ class DBCreate {
         ), $individualObject);
 
         $params['login_id'] = $login_id;
-        DBCreate::insertRow('individuals', $params);
+        $this->insertRow('individuals', $params);
         Database::instance()->commit();
         return DBAccount::getAccountById($login_id);
     }
@@ -128,7 +128,7 @@ class DBCreate {
      * @param  array $params Parameters outlining start and end dates, etc.
      * @return Lifespan      The newly created lifespan.
      */
-    public static function lifespan($params, $allowDatesInThePast = false) {
+    public function lifespan($params, $allowDatesInThePast = false) {
         $params = Utils::requiredParams(array(
             'dispute_id'  => true,
             'proposer'    => true,
@@ -139,7 +139,7 @@ class DBCreate {
 
         $db = Database::instance();
         $db->begin();
-        DBCreate::insertRow('lifespans', $params);
+        $this->insertRow('lifespans', $params);
         $lifespanID = DBQuery::getLatestId('lifespans', 'lifespan_id');
 
         try {
@@ -149,7 +149,7 @@ class DBCreate {
 
             $dispute = new Dispute($params['dispute_id']);
 
-            DBCreate::notification(array(
+            $this->notification(array(
                 'recipient_id' => $dispute->getOpposingPartyId($params['proposer']),
                 'message'      => 'A lifespan offer has been made. You have until ' . prettyTime($params['valid_until']) . ' to accept or deny the offer.',
                 'url'          => $dispute->getUrl() . '/lifespan'
@@ -171,7 +171,7 @@ class DBCreate {
      *         string $params['message']       The message content.
      * @return Message                         The newly-created message.
      */
-    public static function message($params) {
+    public function message($params) {
         $params = Utils::requiredParams(array(
             'dispute_id'   => true,
             'author_id'    => true,
@@ -180,7 +180,7 @@ class DBCreate {
         ), $params);
         $params['timestamp'] = time();
 
-        DBCreate::insertRow('messages', $params);
+        $this->insertRow('messages', $params);
 
         $messageID = DBQuery::getLatestId('messages', 'message_id');
         return new Message($messageID);
@@ -194,20 +194,20 @@ class DBCreate {
      *         string $option['url']            The notification's associated URL.
      * @return Notification                     The newly-created notification.
      */
-    public static function notification($options) {
+    public function notification($options) {
         $params = Utils::requiredParams(array(
             'recipient_id' => true,
             'message'      => true,
             'url'          => true
         ), $options);
 
-        DBCreate::insertRow('notifications', $params);
+        $this->insertRow('notifications', $params);
         $notificationID = DBQuery::getLatestId('notifications', 'notification_id');
         return new Notification($notificationID);
     }
 
 
-    public static function organisation($orgObject) {
+    public function organisation($orgObject) {
         $params = Utils::requiredParams(array(
             'type'        => true,
             'name'        => false,
@@ -215,9 +215,9 @@ class DBCreate {
         ), $orgObject);
 
         Database::instance()->begin();
-        $login_id = DBCreate::dbAccount($orgObject);
+        $login_id = $this->dbAccount($orgObject);
         $params['login_id'] = $login_id;
-        DBCreate::insertRow('organisations', $params);
+        $this->insertRow('organisations', $params);
         Database::instance()->commit();
 
         return DBAccount::getAccountById($login_id);
@@ -232,7 +232,7 @@ class DBCreate {
      * @param  array $object An array of registration values, including email and password.
      * @return int           The login ID associated with the newly registered account.
      */
-    public static function dbAccount($object) {
+    public function dbAccount($object) {
         if (!isset($object['email']) || !isset($object['password'])) {
             throw new Exception("The minimum required to register is an email and password!");
         }
@@ -260,8 +260,8 @@ class DBCreate {
      *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
      *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
-    public static function mediationCentreOffer($params) {
-        DBCreate::_mediationEntityOffer($params, 'mediation_centre');
+    public function mediationCentreOffer($params) {
+        $this->_mediationEntityOffer($params, 'mediation_centre');
     }
 
     /**
@@ -270,8 +270,8 @@ class DBCreate {
      *         Dispute  $params['dispute']     The Dispute object to make the proposal against.
      *         Agent    $params['proposed_by'] The Agent object representing the Agent who made the proposal.
      */
-    public static function mediatorOffer($params) {
-        DBCreate::_mediationEntityOffer($params, 'mediator');
+    public function mediatorOffer($params) {
+        $this->_mediationEntityOffer($params, 'mediator');
     }
 
     /**
@@ -279,10 +279,10 @@ class DBCreate {
      * Also creates a notification for the opposing party.
      *
      * @param  array $params The details of the offer.
-     * @see DBCreate::mediationCentreOffer for a detailed description of parameters.
+     * @see $this->mediationCentreOffer for a detailed description of parameters.
      * @param  string $type The type of offer: either 'mediation_centre' or 'mediator'
      */
-    private static function _mediationEntityOffer($obj, $type) {
+    private function _mediationEntityOffer($obj, $type) {
         $params = Utils::requiredParams(array(
             'dispute_id'  => true,
             'proposer_id' => true,
@@ -290,18 +290,18 @@ class DBCreate {
         ), $obj);
         $params['type'] = $type;
 
-        DBCreate::insertRow('mediation_offers', $params);
+        $this->insertRow('mediation_offers', $params);
 
         $dispute = new Dispute($params['dispute_id']);
 
-        DBCreate::notification(array(
+        $this->notification(array(
             'recipient_id' => $dispute->getOpposingPartyId($params['proposer_id']),
             'message'      => 'Mediation has been proposed.',
             'url'          => $dispute->getUrl() . '/mediation'
         ));
     }
 
-    private static function insertRow($tableName, $columnValues) {
+    private function insertRow($tableName, $columnValues) {
         $columns = array();
         $values  = array();
         foreach($columnValues as $columnName => $value) {

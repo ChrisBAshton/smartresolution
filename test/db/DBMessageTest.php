@@ -13,33 +13,35 @@ class MessagesTest extends PHPUnit_Framework_TestCase
         $this->agentBId   = DBAccount::emailToId('agent_b@t.co');
         $this->mediatorId = DBAccount::emailToId('john.smith@we-mediate.co.uk');
 
-        DBCreate::message(array(
+        $create = DBCreate::instance();
+
+        $create->message(array(
             'dispute_id' => $this->disputeID,
             'author_id'  => $this->agentAId,
             'message'    => 'Open message to Agent B'
         ));
 
-        DBCreate::message(array(
+        $create->message(array(
             'dispute_id' => $this->disputeID,
             'author_id'  => $this->agentBId,
             'message'    => 'Open message to Agent A'
         ));
 
-        DBCreate::message(array(
+        $create->message(array(
             'dispute_id'   => $this->disputeID,
             'author_id'    => $this->mediatorId,
             'recipient_id' => $this->agentAId,
             'message'      => 'Direct message from mediator to agent A'
         ));
 
-        DBCreate::message(array(
+        $create->message(array(
             'dispute_id'   => $this->disputeID,
             'author_id'    => $this->mediatorId,
             'recipient_id' => $this->agentBId,
             'message'      => 'Direct message from mediator to agent B'
         ));
 
-        DBCreate::message(array(
+        $create->message(array(
             'dispute_id'   => $this->disputeID,
             'author_id'    => $this->agentAId,
             'recipient_id' => $this->mediatorId,

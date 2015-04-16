@@ -60,7 +60,7 @@ class EvidenceController {
             $dbEntryCreated = false;
 
             if ($successfulUpload) {
-                $dbEntryCreated = DBCreate::evidence(array(
+                $dbEntryCreated = DBCreate::instance()->evidence(array(
                     'uploader_id' => $account->getLoginId(),
                     'dispute_id'  => $dispute->getDisputeId(),
                     'filepath'    => $filepath

@@ -34,7 +34,7 @@ class DBLifespan {
 
         $dispute = new Dispute($disputeID);
 
-        DBCreate::notification(array(
+        DBCreate::instance()->notification(array(
             'recipient_id' => $dispute->getOpposingPartyId(Session::getAccount()),
             'message'      => $notification,
             'url'          => $dispute->getUrl() . '/lifespan'

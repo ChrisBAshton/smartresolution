@@ -8,7 +8,7 @@ class DisputeParty {
     private $individualID;
     private $summary;
 
-    function __construct($partyID, $disputeID) {
+    function __construct($partyID, $disputeID = false) {
         $this->setVariables($partyID, $disputeID);
     }
 
@@ -55,12 +55,14 @@ class DisputeParty {
     }
 
     private function notify($loginID, $message) {
-        $dispute = new Dispute($this->disputeID);
-        DBCreate::notification(array(
-            'recipient_id' => $loginID,
-            'message'      => $message,
-            'url'          => $dispute->getUrl()
-        ));
+        if ($this->disputeID) {
+            $dispute = new Dispute($this->disputeID);
+            DBCreate::instance()->notification(array(
+                'recipient_id' => $loginID,
+                'message'      => $message,
+                'url'          => $dispute->getUrl()
+            ));
+        }
     }
 
     private function validateBeforeSettingAgent($individualID) {
@@ -85,7 +87,7 @@ class DisputeParty {
 
     public function setPartyDatabaseField($field, $value) {
         if ($this->partyID === 0 && $field === 'organisation_id') {
-            $createdParty = DBCreate::disputeParty($value);
+            $createdParty = DBCreate::instance()->disputeParty($value);
             $this->partyID = $createdParty->getPartyId();
             DBDispute::updateDisputePartyB($this->partyID, $this->disputeID);
         }

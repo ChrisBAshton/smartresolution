@@ -17,7 +17,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
      */
     public function testRegisterWithEmptyArray() {
         $agent = array();
-        DBCreate::dbAccount($agent);
+        DBCreate::instance()->dbAccount($agent);
     }
 
     /**
@@ -28,7 +28,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
         $agent = array(
             'email' => 'test@test.com'
         );
-        DBCreate::dbAccount($agent);
+        DBCreate::instance()->dbAccount($agent);
     }
 
     /**
@@ -39,7 +39,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
         $agent = array(
             'password' => 'secret'
         );
-        DBCreate::dbAccount($agent);
+        DBCreate::instance()->dbAccount($agent);
     }
 
     public function testRegisterWithValidInputs() {
@@ -47,7 +47,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
             'email'    => 'test@test.com',
             'password' => 'secret'
         );
-        $loginID = DBCreate::dbAccount($agent);
+        $loginID = DBCreate::instance()->dbAccount($agent);
         $this->assertTrue(is_int($loginID));
     }
 
@@ -60,7 +60,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
             'email'    => 'law_firm_a@t.co',
             'password' => 'secret'
         );
-        DBCreate::dbAccount($agent);
+        DBCreate::instance()->dbAccount($agent);
     }
 
     /**
@@ -69,7 +69,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
      */
     public function testTypeCheckConstraintForOrganisations()
     {
-        DBCreate::organisation(array(
+        DBCreate::instance()->organisation(array(
             'email'       => 'valid_email@email.co.uk',
             'password'    => 'test',
             'type'        => 'invalid type',
@@ -84,7 +84,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
      */
     public function testTypeCheckConstraintForIndividuals()
     {
-        DBCreate::individual(array(
+        DBCreate::instance()->individual(array(
             'email'           => 'valid_email@email.co.uk',
             'password'        => 'test',
             'organisation_id' => 1,
@@ -98,7 +98,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
     {
         Database::setEnvironment('test');
         Database::clear();
-        DBCreate::organisation(array(
+        DBCreate::instance()->organisation(array(
             'email'       => 'cba12@aber.ac.uk',
             'password'    => 'test',
             'type'        => 'law_firm',
@@ -111,7 +111,7 @@ class RegisterTest extends PHPUnit_Framework_TestCase
     {
         Database::setEnvironment('test');
         Database::clear();
-        DBCreate::individual(array(
+        DBCreate::instance()->individual(array(
             'email'           => 'cba12@aber.ac.uk',
             'password'        => 'test',
             'organisation_id' => 1,

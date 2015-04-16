@@ -38,14 +38,14 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $dispute->getPartyB()->setAgent(DBAccount::emailToId('agent_b@t.co'));
 
         // next, let's set up Mediation
-        DBCreate::mediationCentreOffer(array(
+        DBCreate::instance()->mediationCentreOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
             'proposed_id' => DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk')->getLoginId()
         ));
         $dispute->refresh();
         $dispute->getMediationState()->acceptLatestProposal();
-        DBCreate::mediatorOffer(array(
+        DBCreate::instance()->mediatorOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
             'proposed_id' => DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk')->getLoginId()
@@ -126,7 +126,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testSettingDisputeAgentToLawFirm() {
         $agentA   = DBAccount::emailToId('agent_a@t.co');
 
-        return DBCreate::dispute(array(
+        return DBCreate::instance()->dispute(array(
             'law_firm_a' => $agentA, // shouldn't be able to set law firm as an agent
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -140,7 +140,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $lawFirmA = DBAccount::emailToId('law_firm_a@t.co');
         $lawFirmB = DBAccount::emailToId('law_firm_b@t.co');
 
-        $dispute = DBCreate::dispute(array(
+        $dispute = DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirmA,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -153,7 +153,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNullLawFirm() {
-        DBCreate::dispute(array(
+        DBCreate::instance()->dispute(array(
             'law_firm_a' => NULL,
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
@@ -167,7 +167,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
 
-        DBCreate::dispute(array(
+        DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => NULL,
             'title'      => 'Smith versus Jones'
@@ -181,7 +181,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
 
-        DBCreate::dispute(array(
+        DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other',
             'title'      => NULL
@@ -192,7 +192,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      */
     public function testCreateDisputeFailsWhenNoLawFirm() {
-        DBCreate::dispute(array(
+        DBCreate::instance()->dispute(array(
             'type'       => 'other',
             'title'      => 'Smith versus Jones'
         ));
@@ -203,7 +203,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNoType() {
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
-        DBCreate::dispute(array(
+        DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,
             'title'      => 'Smith versus Jones'
         ));
@@ -214,7 +214,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDisputeFailsWhenNoTitle() {
         $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
-        DBCreate::dispute(array(
+        DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,
             'type'       => 'other'
         ));

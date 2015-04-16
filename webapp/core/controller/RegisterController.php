@@ -21,7 +21,7 @@ class RegisterController {
         }
         else {
             try {
-                DBCreate::organisation(array(
+                DBCreate::instance()->organisation(array(
                     'email'       => $email,
                     'password'    => $password,
                     'name'        => $orgName,
@@ -59,7 +59,7 @@ class RegisterController {
             try {
                 $organisation = Session::getAccount();
 
-                DBCreate::individual(array(
+                DBCreate::instance()->individual(array(
                     'email'           => $email,
                     'password'        => $password,
                     'organisation_id' => $organisation->getLoginId(),

@@ -127,7 +127,7 @@ class MediationController {
             try {
                 $mediationCentre = new MediationCentre((int) $mediationCentreId);
 
-                DBCreate::mediationCentreOffer(array(
+                DBCreate::instance()->mediationCentreOffer(array(
                     'dispute_id'  => $dispute->getDisputeId(),
                     'proposer_id' => $account->getLoginId(),
                     'proposed_id' => $mediationCentre->getLoginId()
@@ -152,7 +152,7 @@ class MediationController {
             try {
                 $mediator = new Mediator((int) $mediatorId);
 
-                DBCreate::mediatorOffer(array(
+                DBCreate::instance()->mediatorOffer(array(
                     'dispute_id'  => $dispute->getDisputeId(),
                     'proposer_id' => $account->getLoginId(),
                     'proposed_id' => $mediator->getLoginId()
@@ -166,13 +166,13 @@ class MediationController {
     }
 
     private function notifyAgentsOfUpdatedList() {
-        DBCreate::notification(array(
+        DBCreate::instance()->notification(array(
             'recipient_id' => $this->dispute->getPartyA()->getAgent()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
 
-        DBCreate::notification(array(
+        DBCreate::instance()->notification(array(
             'recipient_id' => $this->dispute->getPartyB()->getAgent()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
@@ -203,7 +203,7 @@ class MediationController {
 
         if ($message && $recipientID) {
 
-            DBCreate::message(array(
+            DBCreate::instance()->message(array(
                 'dispute_id'   => $this->dispute->getDisputeId(),
                 'author_id'    => $this->account->getLoginId(),
                 'message'      => $message,
