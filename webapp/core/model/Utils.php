@@ -1,6 +1,6 @@
 <?php
 
-class Utils {
+class Utils extends Prefab {
 
     /**
      * Gets the value of the given key from the given array, defaulting to the given default value if no value exists. If no default is provided and no value exists, an exception is raised.
@@ -16,7 +16,7 @@ class Utils {
      * @param  string $default (Optional) - the default value if no value is found.
      * @return Object          Returns the found value, the default value, or raises an exception.
      */
-    public static function getValue($array, $key, $default = NULL) {
+    public function getValue($array, $key, $default = NULL) {
         if (!isset($default)) {
             if (!isset($array[$key])) {
                 throw new Exception ($key . ' is a required index!');
@@ -38,7 +38,7 @@ class Utils {
      *          'obj' => $object
      *      );
      *
-     *      $params = Utils::requiredParams(array(
+     *      $params = Utils::instance()->requiredParams(array(
      *          'foo' => true, // if 'foo' is missing, raises an exception
      *          'bar' => false // if 'bar' is missing, it simply isn't included
      *      ), $inputs);
@@ -53,7 +53,7 @@ class Utils {
      * @param  array $array          The array to extract the parameters from.
      * @return array                 The array of extracted parameters.
      */
-    public static function requiredParams($requiredParams, $array) {
+    public function requiredParams($requiredParams, $array) {
         $filteredParams = array();
         foreach($requiredParams as $fieldName => $required) {
             if (!isset($array[$fieldName])) {

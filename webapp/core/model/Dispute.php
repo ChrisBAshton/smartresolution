@@ -15,8 +15,8 @@ class Dispute {
         $this->status          = $data['status'];
         $this->partyA          = new DisputeParty((int) $data['party_a'], $this->disputeID);
         $this->partyB          = new DisputeParty((int) $data['party_b'], $this->disputeID);
-        $this->currentLifespan = LifespanFactory::getCurrentLifespan($this->disputeID);
-        $this->latestLifespan  = LifespanFactory::getLatestLifespan($this->disputeID);
+        $this->currentLifespan = LifespanFactory::instance()->getCurrentLifespan($this->disputeID);
+        $this->latestLifespan  = LifespanFactory::instance()->getLatestLifespan($this->disputeID);
         $this->mediationState  = new MediationState($this->disputeID);
         $this->inRoundTableCommunication = $data['round_table_communication'] === 'true';
     }
@@ -30,7 +30,7 @@ class Dispute {
     }
 
     public function getState($account = false) {
-        return DisputeStateCalculator::getState($this, $account);
+        return DisputeStateCalculator::instance()->getState($this, $account);
     }
 
     public function getMediationState($account = false) {

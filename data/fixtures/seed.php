@@ -52,18 +52,18 @@ foreach($data['organisations'] as $org) {
 foreach($data['disputes'] as $dataItem) {
     $dispute = $create->dispute(array(
         'title'      => $dataItem['title'],
-        'law_firm_a' => DBAccount::emailToId($dataItem['law_firm_a']),
+        'law_firm_a' => DBAccount::instance()->emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
-    $agentAId = DBAccount::emailToId($dataItem['agent_a']);
+    $agentAId = DBAccount::instance()->emailToId($dataItem['agent_a']);
     $dispute->getPartyA()->setAgent($agentAId);
 
     if (isset($dataItem['law_firm_b'])) {
-        $dispute->getPartyB()->setLawFirm(DBAccount::emailToId($dataItem['law_firm_b']));
+        $dispute->getPartyB()->setLawFirm(DBAccount::instance()->emailToId($dataItem['law_firm_b']));
     }
 
     if (isset($dataItem['agent_b'])) {
-        $dispute->getPartyB()->setAgent(DBAccount::emailToId($dataItem['agent_b']));
+        $dispute->getPartyB()->setAgent(DBAccount::instance()->emailToId($dataItem['agent_b']));
     }
 
     if (isset($dataItem['summary_a'])) {
@@ -132,7 +132,7 @@ foreach($data['disputes'] as $dataItem) {
         $create->mediationCentreOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-            'proposed_id' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
+            'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
         ));
 
         $dispute->refresh();
@@ -143,7 +143,7 @@ foreach($data['disputes'] as $dataItem) {
         $create->mediatorOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-            'proposed_id' => DBAccount::getAccountByEmail($dataItem['mediator'])->getLoginId()
+            'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediator'])->getLoginId()
         ));
 
         $dispute->refresh();

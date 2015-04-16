@@ -9,10 +9,10 @@ class UtilsTest extends PHPUnit_Framework_TestCase
             'exists' => 'this value exists'
         );
 
-        $result = Utils::getValue($testArray, 'exists', 'default value');
+        $result = Utils::instance()->getValue($testArray, 'exists', 'default value');
         $this->assertEquals('this value exists', $result);
 
-        $result = Utils::getValue($testArray, 'does not exist', 'default value');
+        $result = Utils::instance()->getValue($testArray, 'does not exist', 'default value');
         $this->assertEquals('default value', $result);
     }
 
@@ -24,6 +24,6 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     public function testGetValueFunctionExceptionRaising()
     {
         $testArray = array();
-        $result = Utils::getValue($testArray, 'this index must exist or else we raise an exception');
+        $result = Utils::instance()->getValue($testArray, 'this index must exist or else we raise an exception');
     }
 }

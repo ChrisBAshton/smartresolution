@@ -4,7 +4,7 @@ $routes = array(
 
     'GET  /' => function ($f3, $params) {
 
-        if (Session::loggedIn()) {
+        if (Session::instance()->loggedIn()) {
             header('Location: /dashboard');
         }
 

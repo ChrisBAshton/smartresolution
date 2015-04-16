@@ -3,7 +3,7 @@
 /**
  * This class provides the database middle layer between disputes and the database.
  */
-class DBDispute {
+class DBDispute extends Prefab {
 
     /**
      * Constructor.

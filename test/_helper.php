@@ -23,8 +23,8 @@ class TestHelper {
     }
 
     public static function createNewDispute() {
-        $lawFirm = DBAccount::emailToId('law_firm_a@t.co');
-        $agent = DBAccount::emailToId('agent_a@t.co');
+        $lawFirm = DBAccount::instance()->emailToId('law_firm_a@t.co');
+        $agent = DBAccount::instance()->emailToId('agent_a@t.co');
 
         return DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,

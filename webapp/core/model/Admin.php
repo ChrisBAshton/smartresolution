@@ -8,7 +8,7 @@ class Admin extends Account implements AccountInterface {
 
     public function setVariables($account) {
         if (is_int($account)) {
-            $account = DBAccount::getDetailsById($account);
+            $account = DBAccount::instance()->getDetailsById($account);
         }
 
         $this->loginId = (int) $account['login_id'];

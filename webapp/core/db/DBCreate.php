@@ -9,7 +9,7 @@ class DBCreate extends Prefab {
             ':login_id' => $login_id,
         ));
         Database::instance()->commit();
-        return DBAccount::getAccountById($login_id);
+        return DBAccount::instance()->getAccountById($login_id);
     }
 
     /**
@@ -19,9 +19,9 @@ class DBCreate extends Prefab {
      * @return Dispute        The Dispute object associated with the new entry.
      */
     public function dispute($details) {
-        $lawFirmA = (int) Utils::getValue($details, 'law_firm_a');
-        $type     = Utils::getValue($details, 'type');
-        $title    = Utils::getValue($details, 'title');
+        $lawFirmA = (int) Utils::instance()->getValue($details, 'law_firm_a');
+        $type     = Utils::instance()->getValue($details, 'type');
+        $title    = Utils::instance()->getValue($details, 'title');
         $agentA   = isset($details['agent_a']) ? $details['agent_a'] : NULL;
         $summary  = isset($details['summary']) ? $details['summary'] : NULL;
 
@@ -97,7 +97,7 @@ class DBCreate extends Prefab {
      * @return Evidence                       The object representing the piece of uploaded evidence.
      */
     public function evidence($params) {
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'dispute_id'  => true,
             'uploader_id' => true,
             'filepath'    => true
@@ -110,7 +110,7 @@ class DBCreate extends Prefab {
     public function individual($individualObject) {
         Database::instance()->begin();
         $login_id = $this->dbAccount($individualObject);
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'type'            => true,
             'organisation_id' => true,
             'forename'        => false,
@@ -120,7 +120,7 @@ class DBCreate extends Prefab {
         $params['login_id'] = $login_id;
         $this->insertRow('individuals', $params);
         Database::instance()->commit();
-        return DBAccount::getAccountById($login_id);
+        return DBAccount::instance()->getAccountById($login_id);
     }
 
     /**
@@ -129,7 +129,7 @@ class DBCreate extends Prefab {
      * @return Lifespan      The newly created lifespan.
      */
     public function lifespan($params, $allowDatesInThePast = false) {
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'dispute_id'  => true,
             'proposer'    => true,
             'valid_until' => true,
@@ -172,7 +172,7 @@ class DBCreate extends Prefab {
      * @return Message                         The newly-created message.
      */
     public function message($params) {
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'dispute_id'   => true,
             'author_id'    => true,
             'message'      => true,
@@ -195,7 +195,7 @@ class DBCreate extends Prefab {
      * @return Notification                     The newly-created notification.
      */
     public function notification($options) {
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'recipient_id' => true,
             'message'      => true,
             'url'          => true
@@ -208,7 +208,7 @@ class DBCreate extends Prefab {
 
 
     public function organisation($orgObject) {
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'type'        => true,
             'name'        => false,
             'description' => false
@@ -220,7 +220,7 @@ class DBCreate extends Prefab {
         $this->insertRow('organisations', $params);
         Database::instance()->commit();
 
-        return DBAccount::getAccountById($login_id);
+        return DBAccount::instance()->getAccountById($login_id);
     }
 
 // --------------------------------------------------------------------------- the functions from this point onwards do not return an object like the rest of the createX API. Maybe these should be extracted?? Or made private?? (Whereas the above are public.)
@@ -237,7 +237,7 @@ class DBCreate extends Prefab {
             throw new Exception("The minimum required to register is an email and password!");
         }
 
-        if (DBAccount::getAccountByEmail($object['email'])) {
+        if (DBAccount::instance()->getAccountByEmail($object['email'])) {
             throw new Exception("An account is already registered to that email address.");
         }
 
@@ -247,7 +247,7 @@ class DBCreate extends Prefab {
             ':password' => $crypt->hash($object['password'])
         ));
 
-        $login_id = DBAccount::emailToId($object['email']);
+        $login_id = DBAccount::instance()->emailToId($object['email']);
         if (!$login_id) {
             throw new Exception("Could not retrieve login_id. Abort.");
         }
@@ -283,7 +283,7 @@ class DBCreate extends Prefab {
      * @param  string $type The type of offer: either 'mediation_centre' or 'mediator'
      */
     private function _mediationEntityOffer($obj, $type) {
-        $params = Utils::requiredParams(array(
+        $params = Utils::instance()->requiredParams(array(
             'dispute_id'  => true,
             'proposer_id' => true,
             'proposed_id' => true

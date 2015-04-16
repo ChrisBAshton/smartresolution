@@ -9,9 +9,9 @@ class MessagesTest extends PHPUnit_Framework_TestCase
         Database::clear();
 
         $this->disputeID  = 2; // made up, doesn't matter
-        $this->agentAId   = DBAccount::emailToId('agent_a@t.co');
-        $this->agentBId   = DBAccount::emailToId('agent_b@t.co');
-        $this->mediatorId = DBAccount::emailToId('john.smith@we-mediate.co.uk');
+        $this->agentAId   = DBAccount::instance()->emailToId('agent_a@t.co');
+        $this->agentBId   = DBAccount::instance()->emailToId('agent_b@t.co');
+        $this->mediatorId = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
 
         $create = DBCreate::instance();
 

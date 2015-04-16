@@ -32,11 +32,11 @@ class DisputeParty {
     }
 
     public function getLawFirm() {
-        return DBAccount::getAccountById($this->organisationID);
+        return DBAccount::instance()->getAccountById($this->organisationID);
     }
 
     public function getAgent() {
-        return DBAccount::getAccountById($this->individualID);
+        return DBAccount::instance()->getAccountById($this->individualID);
     }
 
     public function getSummary() {
@@ -66,7 +66,7 @@ class DisputeParty {
     }
 
     private function validateBeforeSettingAgent($individualID) {
-        $agent = DBAccount::getAccountById($individualID);
+        $agent = DBAccount::instance()->getAccountById($individualID);
 
         if (!$this->organisationID) {
             throw new Exception('Tried setting the agent before setting the law firm!');

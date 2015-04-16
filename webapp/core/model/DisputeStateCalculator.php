@@ -1,10 +1,10 @@
 <?php
 
-class DisputeStateCalculator {
+class DisputeStateCalculator extends Prefab {
 
-    public static function getState($dispute, $account = false) {
+    public function getState($dispute, $account = false) {
         if (!$account) {
-            $account = Session::getAccount();
+            $account = Session::instance()->getAccount();
         }
 
         if ($dispute->getStatus() !== 'ongoing') {
@@ -45,14 +45,14 @@ class DisputeStateCalculator {
 
     // @TODO - NB, I got the icons from http://www.flaticon.com/packs/web-pictograms
     // Should probably document that somewhere better than here.
-    public static function getActions($dispute, $account) {
+    public function getActions($dispute, $account) {
         global $dashboardActions;
-        DisputeStateCalculator::setDefaultActions($dispute, $account);
+        $this->setDefaultActions($dispute, $account);
         ModuleController::emit('dispute_dashboard', $dispute);
         return $dashboardActions;
     }
 
-    public static function setDefaultActions($dispute, $account) {
+    public function setDefaultActions($dispute, $account) {
         $state = $dispute->getState($account);
         global $dashboardActions;
         $dashboardActions = array();

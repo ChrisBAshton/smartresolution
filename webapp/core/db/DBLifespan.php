@@ -1,8 +1,8 @@
 <?php
 
-class DBLifespan {
+class DBLifespan extends Prefab {
 
-    public static function endLifespan($lifespanID) {
+    public function endLifespan($lifespanID) {
         Database::instance()->exec(
             'UPDATE lifespans SET end_time = :end_time WHERE lifespan_id = :lifespan_id',
             array(
@@ -12,7 +12,7 @@ class DBLifespan {
         );
     }
 
-    public static function updateLifespanStatus($lifespanID, $disputeID, $status) {
+    public function updateLifespanStatus($lifespanID, $disputeID, $status) {
         Database::instance()->exec(
             'UPDATE lifespans SET status = :status WHERE lifespan_id = :lifespan_id',
             array(
@@ -31,7 +31,7 @@ class DBLifespan {
         $dispute = new Dispute($disputeID);
 
         DBCreate::instance()->notification(array(
-            'recipient_id' => $dispute->getOpposingPartyId(Session::getAccount()),
+            'recipient_id' => $dispute->getOpposingPartyId(Session::instance()->getAccount()),
             'message'      => $notification,
             'url'          => $dispute->getUrl() . '/lifespan'
         ));
@@ -44,7 +44,7 @@ class DBLifespan {
      * @param  string  $status    Get latest dispute that matches the given status. Special case: 'any'
      * @return Lifespan|false     Returns the Lifespan if one exists, or false if it doesn't.
      */
-    public static function getLatestLifespanWithStatus($disputeID, $status) {
+    public function getLatestLifespanWithStatus($disputeID, $status) {
         if ($status === 'notDeclined') {
             $lifespans = Database::instance()->exec(
                 'SELECT lifespan_id FROM lifespans WHERE dispute_id = :dispute_id AND status != "declined" ORDER BY lifespan_id DESC LIMIT 1',

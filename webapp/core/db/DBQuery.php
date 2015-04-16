@@ -37,12 +37,12 @@ class DBQuery {
     public static function ensureCorrectAccountTypes($accountTypes) {
         $correctAccountTypes = true;
         if (isset($accountTypes['law_firm'])) {
-            if (!DBAccount::getAccountById($accountTypes['law_firm']) instanceof LawFirm) {
+            if (!DBAccount::instance()->getAccountById($accountTypes['law_firm']) instanceof LawFirm) {
                 $correctAccountTypes = false;
             }
         }
         if (isset($accountTypes['agent'])) {
-            if (!DBAccount::getAccountById($accountTypes['agent']) instanceof Agent) {
+            if (!DBAccount::instance()->getAccountById($accountTypes['agent']) instanceof Agent) {
                 $correctAccountTypes = false;
             }
         }

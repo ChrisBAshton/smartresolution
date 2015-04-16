@@ -8,7 +8,7 @@ class Organisation extends Account implements AccountInterface {
 
     public function setVariables($account) {
         if (is_int($account)) {
-            $account = DBAccount::getDetailsById($account);
+            $account = DBAccount::instance()->getDetailsById($account);
         }
         $this->loginId     = (int) $account['login_id'];
         $this->email       = $account['email'];
@@ -40,7 +40,7 @@ class Organisation extends Account implements AccountInterface {
     }
 
     private function setProperty($key, $value) {
-        DBAccount::setAccountProperty($this->getLoginId(), $key, $value);
+        DBAccount::instance()->setAccountProperty($this->getLoginId(), $key, $value);
         $this->setVariables($this->getLoginId());
     }
 

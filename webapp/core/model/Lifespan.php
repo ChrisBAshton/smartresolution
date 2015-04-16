@@ -3,8 +3,10 @@
 class Lifespan implements LifespanInterface {
 
     private $status;
+    private $db;
 
     function __construct($lifespanID, $justCreated = false) {
+        $this->db = DBLifespan::instance();
         $this->setVariables($lifespanID);
         if ($justCreated) {
             $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
@@ -69,7 +71,7 @@ class Lifespan implements LifespanInterface {
     }
 
     public function disputeClosed() {
-        DBLifespan::endLifespan($this->getLifespanId());
+        $this->db->endLifespan($this->getLifespanId());
         $this->setVariables($this->getLifespanId());
     }
 
@@ -88,12 +90,12 @@ class Lifespan implements LifespanInterface {
     }
 
     public function accept() {
-        DBLifespan::updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'accepted');
+        $this->db->updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'accepted');
         $this->setVariables($this->getLifespanId());
     }
 
     public function decline() {
-        DBLifespan::updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'declined');
+        $this->db->updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'declined');
         $this->setVariables($this->getLifespanId());
     }
 

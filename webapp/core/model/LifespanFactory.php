@@ -1,6 +1,12 @@
 <?php
 
-class LifespanFactory {
+class LifespanFactory extends Prefab {
+
+    private $db;
+
+    function __construct() {
+        $this->db = DBLifespan::instance();
+    }
 
     /**
      * Retrieves the most recent accepted Lifespan that has been attributed to the given dispute.
@@ -10,9 +16,9 @@ class LifespanFactory {
      * @param integer $disputeID ID of the dispute.
      * @return Lifespan
      */
-    public static function getCurrentLifespan($disputeID) {
-        $acceptedLifespan = DBLifespan::getLatestLifespanWithStatus($disputeID, 'accepted');
-        $proposedLifespan = DBLifespan::getLatestLifespanWithStatus($disputeID, 'offered');
+    public function getCurrentLifespan($disputeID) {
+        $acceptedLifespan = $this->db->getLatestLifespanWithStatus($disputeID, 'accepted');
+        $proposedLifespan = $this->db->getLatestLifespanWithStatus($disputeID, 'offered');
 
         if ($acceptedLifespan) {
             return $acceptedLifespan;
@@ -25,8 +31,8 @@ class LifespanFactory {
         }
     }
 
-    public static function getLatestLifespan($disputeID) {
-        $lifespan = DBLifespan::getLatestLifespanWithStatus($disputeID, 'notDeclined');
+    public function getLatestLifespan($disputeID) {
+        $lifespan = $this->db->getLatestLifespanWithStatus($disputeID, 'notDeclined');
         if ($lifespan) {
             return $lifespan;
         }

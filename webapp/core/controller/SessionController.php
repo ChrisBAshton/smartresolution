@@ -2,16 +2,22 @@
 
 class SessionController {
 
+    private $session;
+
+    function __construct() {
+        $this->session = Session::instance();
+    }
+
     function dashboard ($f3) {
-        if (Session::loggedIn()) {
-            $account = Session::getAccount();
+        if ($this->session->loggedIn()) {
+            $account = $this->session->getAccount();
             $f3->set('account', $account);
         }
         else {
             header('Location: /logout');
         }
 
-        $dashboardActions = Dashboard::getTopLevelActions($account);
+        $dashboardActions = Dashboard::instance()->getTopLevelActions($account);
 
         $f3->set('dashboardActions', $dashboardActions);
         $f3->set('content','dashboard.html');
@@ -20,7 +26,7 @@ class SessionController {
     }
 
     function loginGet ($f3) {
-        $f3->set('user_email', Session::lastKnownEmail());
+        $f3->set('user_email', $this->session->lastKnownEmail());
         $f3->set('content','login.html');
         echo View::instance()->render('layout.html');
     }
@@ -28,10 +34,10 @@ class SessionController {
     function loginPost ($f3) {
         $email = $f3->get('POST.email');
         $password = $f3->get('POST.password');
-        $validCredentials = DBAccount::validCredentials($email, $password);
+        $validCredentials = DBAccount::instance()->validCredentials($email, $password);
 
         if ($validCredentials) {
-            Session::create($email, $password);
+            $this->session->create($email, $password);
             header('Location: /dashboard');
         }
         else {
@@ -43,7 +49,7 @@ class SessionController {
     }
 
     function logout ($f3) {
-        Session::clear();
+        $this->session->clear();
         header('Location: /');
     }
 }

@@ -10,7 +10,7 @@ class DisputeController {
             errorPage('You do not have permission to view this Dispute!');
         }
         else {
-            $dashboardActions = DisputeStateCalculator::getActions($dispute, $account);
+            $dashboardActions = DisputeStateCalculator::instance()->getActions($dispute, $account);
             $f3->set('dashboardActions', $dashboardActions);
             $f3->set('disputeDashboard', true);
             $f3->set('content', 'dispute_view--single.html');
@@ -114,7 +114,7 @@ class DisputeController {
             errorPage('You have already opened this dispute against ' . $dispute->getPartyB()->getLawFirm()->getName() . '!');
         }
 
-        $lawFirms = DBAccount::getOrganisations(array(
+        $lawFirms = DBAccount::instance()->getOrganisations(array(
             'type'   => 'law_firm',
             'except' => $f3->get('dispute')->getPartyA()->getLawFirm()->getLoginId()
         ));

@@ -33,7 +33,7 @@ abstract class Account {
      * @see AccountInterface::getAllDisputes() Implements the corresponding function in AccountInterface.
      */
     public function getAllDisputes() {
-        return DBAccount::getAllDisputes($this);
+        return DBAccount::instance()->getAllDisputes($this);
     }
 
     /**

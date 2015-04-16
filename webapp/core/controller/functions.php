@@ -8,9 +8,10 @@ function noSystemMessages() {
 }
 
 function mustBeLoggedIn() {
-    if (Session::loggedIn()) {
+    $session = Session::instance();
+    if ($session->loggedIn()) {
         global $f3;
-        $account = Session::getAccount();
+        $account = $session->getAccount();
         $f3->set('account', $account);
     }
     else {

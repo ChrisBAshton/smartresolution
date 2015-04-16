@@ -3,7 +3,7 @@
 class RegisterController {
 
     function organisationGet ($f3) {
-        if (Session::loggedIn()) {
+        if (Session::instance()->loggedIn()) {
             header('Location: /dashboard');
         }
         $f3->set('content','register_organisation.html');
@@ -57,7 +57,7 @@ class RegisterController {
         }
         else {
             try {
-                $organisation = Session::getAccount();
+                $organisation = Session::instance()->getAccount();
 
                 DBCreate::instance()->individual(array(
                     'email'           => $email,

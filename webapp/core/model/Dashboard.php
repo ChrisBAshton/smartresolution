@@ -1,24 +1,24 @@
 <?php
 
-class Dashboard {
+class Dashboard extends Prefab {
 
-    public static function getTopLevelActions($account) {
+    public function getTopLevelActions($account) {
         global $dashboardActions;
 
         if ($account instanceof LawFirm) {
-            $dashboardActions = Dashboard::getLawFirmActions();
+            $dashboardActions = $this->getLawFirmActions();
         }
         elseif ($account instanceof MediationCentre) {
-            $dashboardActions = Dashboard::getMediationCentreActions();
+            $dashboardActions = $this->getMediationCentreActions();
         }
         elseif ($account instanceof Agent) {
-            $dashboardActions = Dashboard::getAgentActions();
+            $dashboardActions = $this->getAgentActions();
         }
         elseif ($account instanceof Mediator) {
-            $dashboardActions = Dashboard::getMediatorActions();
+            $dashboardActions = $this->getMediatorActions();
         }
         elseif ($account instanceof Admin) {
-            $dashboardActions = Dashboard::getAdminActions();
+            $dashboardActions = $this->getAdminActions();
         }
 
         ModuleController::emit('homescreen_dashboard');
@@ -26,7 +26,7 @@ class Dashboard {
         return $dashboardActions;
     }
 
-    private static function getLawFirmActions() {
+    private function getLawFirmActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -51,7 +51,7 @@ class Dashboard {
         );
     }
 
-    private static function getMediationCentreActions() {
+    private function getMediationCentreActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -71,7 +71,7 @@ class Dashboard {
         );
     }
 
-    private static function getAgentActions() {
+    private function getAgentActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -86,7 +86,7 @@ class Dashboard {
         );
     }
 
-    private static function getMediatorActions() {
+    private function getMediatorActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -101,7 +101,7 @@ class Dashboard {
         );
     }
 
-    private static function getAdminActions() {
+    private function getAdminActions() {
         return array(
             array(
                 'href'  => '/admin-modules-new',
