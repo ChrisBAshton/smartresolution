@@ -60,7 +60,7 @@ class DisputeStateCalculator extends Prefab {
         $dashboardActions = array();
         $state = $dispute->getState($account);
 
-        $this->getMediatorSpecificOptions();
+        $this->getMediatorSpecificOptions($dispute, $account);
 
         if ($state->canOpenDispute()) {
             $dashboardActions[] = array(
@@ -127,7 +127,7 @@ class DisputeStateCalculator extends Prefab {
         }
     }
 
-    private function getMediatorSpecificOptions() {
+    private function getMediatorSpecificOptions($dispute, $account) {
         global $dashboardActions;
 
         if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
