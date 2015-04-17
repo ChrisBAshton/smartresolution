@@ -2,6 +2,7 @@
 
 <div class="list">
     <?php
+    $notifications = Session::instance()->getAccount()->getNotifications();
     if (count($notifications) === 0) {
         echo '
             <div class="list__item col-sm-12">
