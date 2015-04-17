@@ -10,17 +10,7 @@ class EvidenceController {
             errorPage('You are not allowed to view these documents.');
         }
 
-        $evidences = array();
-        $evidenceDetails = Database::instance()->exec(
-            'SELECT evidence_id FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
-            array(':dispute_id' => $dispute->getDisputeId())
-        );
-
-        foreach($evidenceDetails as $evidence) {
-            $evidences[] = new Evidence((int) $evidence['evidence_id']);
-        }
-
-        $f3->set('evidences', $evidences);
+        $f3->set('evidences', $dispute->getEvidences());
         $f3->set('content', 'evidence.html');
         echo View::instance()->render('layout.html');
     }

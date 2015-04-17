@@ -64,6 +64,10 @@ class Dispute {
         return $this->partyB;
     }
 
+    public function getEvidences() {
+        return DBDispute::instance()->getEvidences($this->getDisputeId());
+    }
+
     public function inRoundTableCommunication() {
         return $this->inRoundTableCommunication;
     }

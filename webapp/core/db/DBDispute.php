@@ -5,8 +5,21 @@
  */
 class DBDispute extends Prefab {
 
+    public function getEvidences($disputeID) {
+        $evidences = array();
+        $evidenceDetails = Database::instance()->exec(
+            'SELECT evidence_id FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
+            array(':dispute_id' => $dispute->getDisputeId())
+        );
+
+        foreach($evidenceDetails as $evidence) {
+            $evidences[] = new Evidence((int) $evidence['evidence_id']);
+        }
+
+        return $evidences;
+    }
+
     /**
-     * Private function used internally by (enable|disable)RoundTableCommunication.
      * Changes the status of round-table communication in the database.
      */
     public function markRoundTableCommunicationAs($enabledOrDisabled, $disputeID) {
