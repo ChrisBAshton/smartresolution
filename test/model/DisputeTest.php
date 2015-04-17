@@ -88,22 +88,18 @@ class DisputeTest extends PHPUnit_Framework_TestCase
 
     public function testDisputeWorkflowCorrect() {
         DisputeTest::setUpBeforeClass();
-        $dispute = TestHelper::createNewDispute();
-        $state   = $dispute->getState(DBAccount::instance()->getAccountByEmail('agent_a@t.co'));
+        $dispute  = TestHelper::createNewDispute();
+        $state    = $dispute->getState(DBAccount::instance()->getAccountByEmail('agent_a@t.co'));
+        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
+        $agentB   = DBAccount::instance()->emailToId('agent_b@t.co');
+
+        // dispute should be able to be opened against a law firm - we've only just created it
         $this->assertTrue($state->canOpenDispute());
 
-        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
         $dispute->getPartyB()->setLawFirm($lawFirmB);
-        $this->assertEquals($lawFirmB, $dispute->getPartyB()->getLawFirm()->getLoginId());
-
-        $agentB = DBAccount::instance()->emailToId('agent_b@t.co');
         $dispute->getPartyB()->setAgent($agentB);
-        $this->assertEquals($agentB, $dispute->getPartyB()->getAgent()->getLoginId());
+        // now that we've opened the dispute against a law firm, it shouldn't be openable anymore
         $this->assertFalse($state->canOpenDispute());
-
-        $this->assertFalse($dispute->getPartyB()->getSummary());
-        $dispute->getPartyB()->setSummary('Test summary');
-        $this->assertEquals('Test summary', $dispute->getPartyB()->getSummary());
     }
 
     public function testGetOpposingPartyId() {

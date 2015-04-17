@@ -1,17 +1,41 @@
 <?php
 require_once __DIR__ . '/../../webapp/autoload.php';
+require_once __DIR__ . '/../_helper.php';
 
 class DisputePartyTest extends PHPUnit_Framework_TestCase
 {
-
-    public function test() {
-        //$this->assertEquals('This is my summary', $dispute->getPartyA()->getSummary());
+    public static function setUpBeforeClass() {
+        Database::setEnvironment('test');
+        Database::clear();
     }
 
     public function testDisputeSimpleGetters() {
         $dispute = TestHelper::createNewDispute();
+        $this->assertEquals('This is my summary', $dispute->getPartyA()->getSummary());
         $this->assertEquals(DBAccount::instance()->emailToId('agent_a@t.co'), $dispute->getPartyA()->getAgent()->getLoginId());
         $this->assertEquals(DBAccount::instance()->emailToId('law_firm_a@t.co'), $dispute->getPartyA()->getLawFirm()->getLoginId());
+    }
+
+    public function testSimpleSetters() {
+        DisputeTest::setUpBeforeClass();
+        $dispute  = TestHelper::createNewDispute();
+        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
+        $agentB   = DBAccount::instance()->emailToId('agent_b@t.co');
+
+        // new dispute should not have party B set yet.
+        $this->assertFalse($dispute->getPartyB()->getLawFirm());
+        $this->assertFalse($dispute->getPartyB()->getAgent());
+        $this->assertFalse($dispute->getPartyB()->getSummary());
+
+        // so we set the party b properties
+        $dispute->getPartyB()->setLawFirm($lawFirmB);
+        $dispute->getPartyB()->setAgent($agentB);
+        $dispute->getPartyB()->setSummary('Test summary');
+
+        // now the getters should retrieve what we've just set
+        $this->assertEquals($dispute->getPartyB()->getLawFirm()->getLoginId(), $lawFirmB);
+        $this->assertEquals($dispute->getPartyB()->getAgent()->getLoginId(), $agentB);
+        $this->assertEquals($dispute->getPartyB()->getSummary(), 'Test summary');
     }
 
     public function testOverridingAgentWithAnotherFromSameLawFirm() {
@@ -51,7 +75,7 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDisputeGettersObjectsMatch() {
-        DisputeTest::setUpBeforeClass();
+        DisputePartyTest::setUpBeforeClass();
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals(
             DBAccount::instance()->getAccountByEmail('law_firm_a@t.co')->getLoginId(),
@@ -64,7 +88,7 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDisputeGettersObjectsCorrectType() {
-        DisputeTest::setUpBeforeClass();
+        DisputePartyTest::setUpBeforeClass();
         $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute->getPartyA()->getLawFirm() instanceof LawFirm);
         $this->assertTrue($dispute->getPartyA()->getAgent() instanceof Agent);

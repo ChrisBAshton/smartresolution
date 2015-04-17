@@ -26,7 +26,7 @@ class Dashboard extends Prefab {
         return $dashboardActions;
     }
 
-    private function getLawFirmActions() {
+    public function getLawFirmActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -51,7 +51,7 @@ class Dashboard extends Prefab {
         );
     }
 
-    private function getMediationCentreActions() {
+    public function getMediationCentreActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -71,7 +71,7 @@ class Dashboard extends Prefab {
         );
     }
 
-    private function getAgentActions() {
+    public function getAgentActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -86,7 +86,7 @@ class Dashboard extends Prefab {
         );
     }
 
-    private function getMediatorActions() {
+    public function getMediatorActions() {
         return array(
             array(
                 'href'  => '/disputes',
@@ -101,7 +101,7 @@ class Dashboard extends Prefab {
         );
     }
 
-    private function getAdminActions() {
+    public function getAdminActions() {
         return array(
             array(
                 'href'  => '/admin-modules-new',

@@ -2,13 +2,9 @@
 
 class FunctionParser {
 
-    function __construct($functionToCall, $parameters) {
-        // if $functionToCall is an anonymous function
+    function __construct($functionToCall, $parameters = array()) {
+        // if $functionToCall is an anonymous function or a string representing a global function
         if (is_callable($functionToCall)) {
-            $functionToCall($parameters);
-        }
-        // if $functionToCall is the name (string) of a global function
-        else if (function_exists($functionToCall)) {
             call_user_func_array($functionToCall, $parameters);
         }
         else {
