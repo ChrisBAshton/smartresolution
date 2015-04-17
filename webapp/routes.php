@@ -66,7 +66,8 @@ $routes = array(
 
     // lifespans
     'GET  /disputes/@disputeID/lifespan'          => 'LifespanController->view',
-    'GET|POST /disputes/@disputeID/lifespan/new'  => 'LifespanController->newLifespan',
+    'GET /disputes/@disputeID/lifespan/new'       => 'LifespanController->newLifespanGet',
+    'POST /disputes/@disputeID/lifespan/new'      => 'LifespanController->newLifespanPost',
     'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
 
     // notifications

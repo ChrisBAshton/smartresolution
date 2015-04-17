@@ -7,37 +7,42 @@ class DisputeStateCalculator extends Prefab {
             $account = Session::instance()->getAccount();
         }
 
+        $stateClass = $this->calculateStateClass($dispute);
+        return new $stateClass($dispute, $account);
+    }
+
+    private function calculateStateClass($dispute) {
         if ($dispute->getStatus() !== 'ongoing') {
-            return new DisputeClosed($dispute, $account);
+            return "DisputeClosed";
         }
 
         if ($dispute->getPartyB()->getLawFirm() === false) {
-            return new DisputeCreated($dispute, $account);
+            return "DisputeCreated";
         }
         else if ($dispute->getPartyB()->getAgent() === false) {
-            return new DisputeAssignedToLawFirmB($dispute, $account);
+            return "DisputeAssignedToLawFirmB";
         }
 
         if ($dispute->getCurrentLifespan()) {
 
             if ($dispute->getCurrentLifespan()->isEnded()) {
-                return new DisputeClosed($dispute, $account);
+                return "DisputeClosed";
             }
             if (!$dispute->getCurrentLifespan()->accepted()) {
-                return new DisputeOpened($dispute, $account);
+                return "DisputeOpened";
             }
             else {
 
                 $mediationState = $dispute->getMediationState();
 
                 if (!$mediationState->inMediation()) {
-                    return new LifespanNegotiated($dispute, $account);
+                    return "LifespanNegotiated";
                 }
                 elseif (!$dispute->inRoundTableCommunication()) {
-                    return new InMediation($dispute, $account);
+                    return "InMediation";
                 }
                 else {
-                    return new InRoundTableMediation($dispute, $account);
+                    return "InRoundTableMediation";
                 }
             }
         }
@@ -51,30 +56,11 @@ class DisputeStateCalculator extends Prefab {
     }
 
     public function setDefaultActions($dispute, $account) {
-        $state = $dispute->getState($account);
         global $dashboardActions;
         $dashboardActions = array();
+        $state = $dispute->getState($account);
 
-        if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
-
-            $dashboardActions[] = array(
-                'title' => 'Round-Table Communication',
-                'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/chat/'
-            );
-
-            $dashboardActions[] = array(
-                'title' => 'Communicate with ' . $dispute->getPartyA()->getAgent()->getName(),
-                'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getPartyA()->getAgent()->getLoginId()
-            );
-
-            $dashboardActions[] = array(
-                'title' => 'Communicate with ' . $dispute->getPartyB()->getAgent()->getName(),
-                'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getPartyB()->getAgent()->getLoginId()
-            );
-        }
+        $this->getMediatorSpecificOptions();
 
         if ($state->canOpenDispute()) {
             $dashboardActions[] = array(
@@ -137,6 +123,34 @@ class DisputeStateCalculator extends Prefab {
                 'title' => 'Close dispute',
                 'image' => '/core/view/images/delete.png',
                 'href'  => $dispute->getUrl() . '/close'
+            );
+        }
+    }
+
+    private function getMediatorSpecificOptions() {
+        global $dashboardActions;
+
+        if ($account instanceof Mediator && $dispute->getMediationState()->inMediation()) {
+
+            $agentA = $dispute->getPartyA()->getAgent();
+            $agentB = $dispute->getPartyB()->getAgent();
+
+            $dashboardActions[] = array(
+                'title' => 'Round-Table Communication',
+                'image' => '/core/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/chat/'
+            );
+
+            $dashboardActions[] = array(
+                'title' => 'Communicate with ' . $agentA->getName(),
+                'image' => '/core/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $agentA->getLoginId()
+            );
+
+            $dashboardActions[] = array(
+                'title' => 'Communicate with ' . $agentB->getName(),
+                'image' => '/core/view/images/message.png',
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $agentB->getLoginId()
             );
         }
     }
