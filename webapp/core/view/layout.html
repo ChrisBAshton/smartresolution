@@ -24,6 +24,7 @@
 				            <p>
 				                Welcome back, <?php echo $account->getName() ; ?>
 				                <?php
+    								$notifications = Session::instance()->getAccount()->getNotifications();
 				                    if (count($notifications) > 0) {
 				                        echo ' | <a href="/notifications" class="notification_link"><img src="/core/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
 				                    }

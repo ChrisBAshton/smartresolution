@@ -19,7 +19,18 @@ else {
 }
 
 require __DIR__ . '/modules/config.php';
-require __DIR__ . '/on_each_page_load.php';
 require __DIR__ . '/routes.php';
+
+// In production, this should be called from regular cron job (every 1-10 mins) instead. For now, as a temporary solution, I'm running it on every page load. This is not very efficient!
+// @TODO - REMOVE THIS LINE. This is a temporary solution - we run our cron script on every page load.
+require 'cron.php';
+
+// @TODO - move to a URLController class?
+if ($f3->get('GET.mark_notification_as_read')) {
+    $notificationID = (int) $f3->get('GET.mark_notification_as_read');
+    $notification = new Notification($notificationID);
+    $notification->markAsRead(); // @TODO - should probably add checks to see if user is logged in and authorised
+    header('Location: ' . $notification->getUrl());
+}
 
 $f3->run();
