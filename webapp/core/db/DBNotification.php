@@ -1,13 +1,13 @@
 <?php
 
-class DBNotification {
+class DBNotification extends Prefab {
 
-    public static function markNotificationAsRead($notificationID) {
+    public function markNotificationAsRead($notificationID) {
         Database::instance()->exec('UPDATE notifications SET read = "true" WHERE notification_id = :notification_id', array(':notification_id' => $notificationID)
         );
     }
 
-    public static function getNotificationsForLoginId($loginId) {
+    public function getNotificationsForLoginId($loginId) {
         $notifications = array();
 
         $notificationsDetails = Database::instance()->exec('SELECT notification_id FROM notifications WHERE recipient_id = :login_id AND read = "false" ORDER BY notification_id DESC',

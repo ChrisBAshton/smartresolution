@@ -51,7 +51,7 @@ class MessagesTest extends PHPUnit_Framework_TestCase
 
     public function testGetDisputeMessages()
     {
-        $messages = DBMessage::retrieveDisputeMessages($this->disputeID);
+        $messages = DBMessage::instance()->retrieveDisputeMessages($this->disputeID);
 
         foreach($messages as $message) {
             $this->assertTrue(
@@ -61,18 +61,18 @@ class MessagesTest extends PHPUnit_Framework_TestCase
     }
 
     public function testGetDirectMessagesBetweenMediatorAndAgent() {
-        $messages = DBMessage::retrieveMediationMessages($this->disputeID, $this->mediatorId, $this->agentBId);
+        $messages = DBMessage::instance()->retrieveMediationMessages($this->disputeID, $this->mediatorId, $this->agentBId);
         $this->assertEquals(1, count($messages));
         $this->assertEquals('Direct message from mediator to agent B', $messages[0]->contents());
 
         // same as above, parameters reversed = should give same results
-        $messages = DBMessage::retrieveMediationMessages($this->disputeID, $this->agentBId, $this->mediatorId);
+        $messages = DBMessage::instance()->retrieveMediationMessages($this->disputeID, $this->agentBId, $this->mediatorId);
         $this->assertEquals(1, count($messages));
         $this->assertEquals('Direct message from mediator to agent B', $messages[0]->contents());
     }
 
     public function testMoreMediatorAgentMessages() {
-        $messages = DBMessage::retrieveMediationMessages($this->disputeID, $this->mediatorId, $this->agentAId);
+        $messages = DBMessage::instance()->retrieveMediationMessages($this->disputeID, $this->mediatorId, $this->agentAId);
         $this->assertEquals(2, count($messages));
         // messages are in chronological order
         $this->assertEquals('Direct message from agent A to mediator', $messages[0]->contents());
@@ -80,7 +80,7 @@ class MessagesTest extends PHPUnit_Framework_TestCase
     }
 
     public function testNoMessages() {
-        $messages = DBMessage::retrieveMediationMessages($this->disputeID, $this->mediatorId, 1337);
+        $messages = DBMessage::instance()->retrieveMediationMessages($this->disputeID, $this->mediatorId, 1337);
         $this->assertEquals(array(), $messages);
     }
 }

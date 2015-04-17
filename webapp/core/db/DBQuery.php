@@ -1,17 +1,16 @@
 <?php
 
-class DBQuery {
+class DBQuery extends Prefab {
 
     /**
      * Returns the latest ID in the database from table name $tableName, ordered by primary key $idName (DESC).
-     * Calls DBQuery::getLatestRow internally.
      *
      * @param  string $tableName Name of the table.
      * @param  string $idName    Primary key of the table.
      * @return int               The primary key of the latest database entry.
      */
-    public static function getLatestId($tableName, $idName) {
-        $latestRow = DBQuery::getLatestRow($tableName, $idName);
+    public function getLatestId($tableName, $idName) {
+        $latestRow = $this->getLatestRow($tableName, $idName);
         return $latestRow ? (int) $latestRow[$idName] : false;
     }
 
@@ -21,7 +20,7 @@ class DBQuery {
      * @param  string $idName    Primary key of the table.
      * @return array             Latest table row.
      */
-    public static function getLatestRow($tableName, $idName) {
+    public function getLatestRow($tableName, $idName) {
         $rows = Database::instance()->exec(
             'SELECT * FROM ' . $tableName . ' ORDER BY ' . $idName . ' DESC LIMIT 1'
         );
@@ -34,7 +33,7 @@ class DBQuery {
      *         int   $accountTypes['law_firm']  (Optional) The ID of the account that should be a law firm.
      *         int   $accountTypes['agent']     (Optional) The ID of the account that should be an agent.
      */
-    public static function ensureCorrectAccountTypes($accountTypes) {
+    public function ensureCorrectAccountTypes($accountTypes) {
         $correctAccountTypes = true;
         if (isset($accountTypes['law_firm'])) {
             if (!DBAccount::instance()->getAccountById($accountTypes['law_firm']) instanceof LawFirm) {

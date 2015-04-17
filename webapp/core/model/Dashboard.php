@@ -21,7 +21,7 @@ class Dashboard extends Prefab {
             $dashboardActions = $this->getAdminActions();
         }
 
-        ModuleController::emit('homescreen_dashboard');
+        ModuleController::instance()->emit('homescreen_dashboard');
 
         return $dashboardActions;
     }

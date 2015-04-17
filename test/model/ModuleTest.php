@@ -18,7 +18,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
 
     public function testDeclareModule() {
 
-        $allModules = ModuleController::getAllModules();
+        $allModules = ModuleController::instance()->getAllModules();
         $this->assertEquals(0, count($allModules));
 
         declare_module(array(
@@ -71,22 +71,22 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             }, 'medium');
         });
 
-        $allModules = ModuleController::getAllModules();
+        $allModules = ModuleController::instance()->getAllModules();
         $this->assertEquals(1, count($allModules));
     }
 
     public function testGetModuleByKey() {
-        $module = ModuleController::getModuleByKey('unit_test');
+        $module = ModuleController::instance()->getModuleByKey('unit_test');
         $this->assertTrue($module instanceof Module);
-        $module = ModuleController::getModuleByKey('module that does not exist');
+        $module = ModuleController::instance()->getModuleByKey('module that does not exist');
         $this->assertFalse($module);
     }
 
     public function testModuleBecomesActive() {
-        $activeModules = ModuleController::getActiveModules();
+        $activeModules = ModuleController::instance()->getActiveModules();
         $this->assertEquals(0, count($activeModules));
-        ModuleController::getModuleByKey('unit_test')->toggleActiveness();
-        $activeModules = ModuleController::getActiveModules();
+        ModuleController::instance()->getModuleByKey('unit_test')->toggleActiveness();
+        $activeModules = ModuleController::instance()->getActiveModules();
         $this->assertEquals(1, count($activeModules));
     }
 
@@ -94,17 +94,17 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         global $eventFired;
         $this->assertFalse($eventFired);
 
-        ModuleController::emit('arbitrary_event--misspelled');
+        ModuleController::instance()->emit('arbitrary_event--misspelled');
         $this->assertFalse($eventFired);
 
-        ModuleController::emit('arbitrary_event');
+        ModuleController::instance()->emit('arbitrary_event');
         $this->assertTrue($eventFired);
     }
 
     public function testDashboardAPI() {
         global $dashboardActions;
         $dashboardActions = array();
-        ModuleController::emit('test_dashboard');
+        ModuleController::instance()->emit('test_dashboard');
         $this->assertEquals(array(
             array(
                 'title' => 'item1', 'image' => '', 'href' => ''
@@ -121,7 +121,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
     public function testPriority() {
         global $dashboardActions;
         $dashboardActions = array();
-        ModuleController::emit('test_priority');
+        ModuleController::instance()->emit('test_priority');
         $this->assertEquals(array(
             array(
                 'title' => 'this was added with HIGH priority', 'image' => '', 'href' => ''
@@ -139,7 +139,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
     }
 
     public function testModuleFunctions() {
-        $module = ModuleController::registerModule(array(
+        $module = ModuleController::instance()->registerModule(array(
             'key'         => 'some_key',
             'title'       => 'a title',
             'description' => 'my description'

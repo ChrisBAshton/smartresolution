@@ -38,7 +38,7 @@ class Notification {
     }
 
     public function markAsRead() {
-        DBNotification::markNotificationAsRead($this->getNotificationId());
+        DBNotification::instance()->markNotificationAsRead($this->getNotificationId());
         $this->setVariables($this->getNotificationId());
     }
 }

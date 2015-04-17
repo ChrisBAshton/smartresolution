@@ -11,8 +11,8 @@ class MediationState {
 
     private function setVariables($disputeID) {
         $this->disputeID            = $disputeID;
-        $this->mediationCentreOffer = DBMediation::getMediationCentreOfferForDispute($disputeID);
-        $this->mediatorOffer        = DBMediation::getMediatorOfferForDispute($disputeID);
+        $this->mediationCentreOffer = DBMediation::instance()->getMediationCentreOfferForDispute($disputeID);
+        $this->mediatorOffer        = DBMediation::instance()->getMediatorOfferForDispute($disputeID);
     }
 
     public function mediationCentreProposed() {
@@ -60,13 +60,13 @@ class MediationState {
     }
 
     public function acceptLatestProposal() {
-        DBMediation::respondToMediationProposal($this->getLatestProposalId(), 'accepted');
+        DBMediation::instance()->respondToMediationProposal($this->getLatestProposalId(), 'accepted');
         $this->setVariables($this->disputeID);
         $this->notifyAcceptedParty();
     }
 
     public function declineLatestProposal() {
-        DBMediation::respondToMediationProposal($this->getLatestProposalId(), 'declined');
+        DBMediation::instance()->respondToMediationProposal($this->getLatestProposalId(), 'declined');
         $this->setVariables($this->disputeID);
     }
 

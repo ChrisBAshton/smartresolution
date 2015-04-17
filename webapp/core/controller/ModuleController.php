@@ -1,10 +1,10 @@
 <?php
 
-class ModuleController {
+class ModuleController extends Prefab {
 
-    private static $modules = array();
-    private static $routes  = array();
-    private static $subscriptions = array();
+    private $modules = array();
+    private $routes  = array();
+    private $subscriptions = array();
 
     /**
      * Extracts the name of the module from the results of the `debug_backtrace` function.
@@ -13,7 +13,7 @@ class ModuleController {
      * @param  array $stackTrace The stack trace.
      * @return string            The module name.
      */
-    public static function extractModuleNameFromStackTrace($stackTrace) {
+    public function extractModuleNameFromStackTrace($stackTrace) {
         // the module name can be detected in one of two ways.
         // The first and most reliable way is to get the module name argument
         // from the declare_module() function call.
@@ -34,19 +34,19 @@ class ModuleController {
         Utils::instance()->throwException('Could not detect module name.');
     }
 
-    public static function registerModule($config, $moduleDefinitionFunction) {
+    public function registerModule($config, $moduleDefinitionFunction) {
         global $modulesConfig;
         $module = new Module($config, $modulesConfig[$config['key']], $moduleDefinitionFunction);
-        ModuleController::$modules[] = $module;
+        array_push($this->modules, $module);
         if ($module->active()) {
             $module->callModuleDefinitionFunction();
         }
         return $module;
     }
 
-    public static function getActiveModules() {
+    public function getActiveModules() {
         $modules    = array();
-        $allModules = ModuleController::$modules;
+        $allModules = $this->modules;
         foreach($allModules as $module) {
             if ($module->active()) {
                 array_push($modules, $module);
@@ -55,12 +55,12 @@ class ModuleController {
         return $modules;
     }
 
-    public static function getAllModules() {
-        return ModuleController::$modules;
+    public function getAllModules() {
+        return $this->modules;
     }
 
-    public static function getModuleByKey($key) {
-        $modules = ModuleController::$modules;
+    public function getModuleByKey($key) {
+        $modules = $this->modules;
         foreach($modules as $module) {
             if ($key === $module->key()) {
                 return $module;
@@ -69,25 +69,25 @@ class ModuleController {
         return false;
     }
 
-    public static function defineRoute($route, $handler) {
-        ModuleController::$routes[] = array(
+    public function defineRoute($route, $handler) {
+        array_push($this->$routes, array(
             'route'   => $route,
             'handler' => $handler
-        );
+        ));
     }
 
-    public static function getRoutes() {
-        return ModuleController::$routes;
+    public function getRoutes() {
+        return $this->$routes;
     }
 
-    public static function subscribe($event, $action, $priority = 20) {
+    public function subscribe($event, $action, $priority = 20) {
 
-        if (!isset(ModuleController::$subscriptions[$event])) {
-            ModuleController::$subscriptions[$event] = array();
+        if (!isset($this->subscriptions[$event])) {
+            $this->subscriptions[$event] = array();
         }
 
-        $lastKnownModule = ModuleController::$modules[count(ModuleController::$modules) - 1]->key();
-        $priority        = ModuleController::getPriority($priority);
+        $lastKnownModule = $this->modules[count($this->modules) - 1]->key();
+        $priority        = $this->getPriority($priority);
 
         $newElement = array(
             'functionToCall' => $action,
@@ -95,18 +95,18 @@ class ModuleController {
             'module'         => $lastKnownModule
         );
 
-        ModuleController::insertSubscriptionIntoArray($event, $newElement);
+        $this->insertSubscriptionIntoArray($event, $newElement);
     }
 
-    private static function insertSubscriptionIntoArray($event, $newElement) {
-        $existingSubscriptions = ModuleController::$subscriptions[$event];
+    private function insertSubscriptionIntoArray($event, $newElement) {
+        $existingSubscriptions = $this->subscriptions[$event];
 
         $inserted = false;
         $count = 0;
         foreach($existingSubscriptions as $subscription) {
             if ($subscription['priority'] < $newElement['priority']) {
                 // insert our new subscription at this point
-                array_splice(ModuleController::$subscriptions[$event], $count, 0, array($newElement));
+                array_splice($this->subscriptions[$event], $count, 0, array($newElement));
                 $inserted = true;
                 break;
             }
@@ -114,7 +114,7 @@ class ModuleController {
         }
 
         if (!$inserted) { // our new element had the lowest priority (or was the first element) so we just append.
-            ModuleController::$subscriptions[$event][] = $newElement;
+            array_push($this->subscriptions[$event], $newElement);
         }
     }
 
@@ -123,7 +123,7 @@ class ModuleController {
      * @param  String|int|float $priority Priority, e.g. 'high'
      * @return int                        Priority as an integer
      */
-    private static function getPriority($priority) {
+    private function getPriority($priority) {
         switch($priority) {
             case 'high':
                 return 80;
@@ -144,8 +144,8 @@ class ModuleController {
      * @param  Dispute $dispute   (Optional) The current dispute. This is needed so that we can check the dispute type, and therefore only trigger the functions that have been subscribed to from the corresponding module. If the event has nothing to do with a dispute, e.g. the module simply wants to display a message on the homescreen, then nothing needs to be passed.
      * @param  array  $parameters (Optional) Parameters to pass to the functions that have hooked into the event. The array gets converted to full parameters, i.e. [a, b] => func(a, b)
      */
-    public static function emit($event, $dispute = false, $parameters = array()) {
-        $actions = @ModuleController::$subscriptions[$event];
+    public function emit($event, $dispute = false, $parameters = array()) {
+        $actions = @$this->subscriptions[$event];
         // if no modules have hooked into the event, $actions will be null
         if ($actions) {
             foreach ($actions as $action) {
@@ -156,7 +156,7 @@ class ModuleController {
         }
     }
 
-    public static function initModuleTable($moduleName, $tableName, $columns) {
+    public function initModuleTable($moduleName, $tableName, $columns) {
         $sqlString = '';
         foreach($columns as $columnName => $type) {
             $sqlString = $sqlString . ', ' . $columnName . ' ' . $type;
@@ -165,9 +165,9 @@ class ModuleController {
         Database::instance()->exec($query);
     }
 
-    public static function queryModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
-        $column  = ModuleController::extractColumnName($tableAndColumn);
-        $results = ModuleController::getRowsFromModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause);
+    public function queryModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
+        $column  = $this->extractColumnName($tableAndColumn);
+        $results = $this->getRowsFromModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause);
 
         if (count($results) === 1) {
             return $results[0][$column];
@@ -179,10 +179,10 @@ class ModuleController {
         return false; // no record was found
     }
 
-    public static function getRowsFromModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
-        $table  = ModuleController::extractTableName($tableAndColumn);
-        $column = ModuleController::extractColumnName($tableAndColumn);
-        $values = ModuleController::createQueryValuesArray($disputeID, $andClause);
+    public function getRowsFromModuleTable($moduleName, $tableAndColumn, $disputeID, $andClause) {
+        $table  = $this->extractTableName($tableAndColumn);
+        $column = $this->extractColumnName($tableAndColumn);
+        $values = $this->createQueryValuesArray($disputeID, $andClause);
 
         $condition = '';
         foreach($andClause as $key => $value) {
@@ -195,10 +195,10 @@ class ModuleController {
         return $results;
     }
 
-    public static function createModuleTableRow($moduleName, $table, $valuesToSet, $disputeID) {
+    public function createModuleTableRow($moduleName, $table, $valuesToSet, $disputeID) {
         $table   = 'module__' . $moduleName . '__' . $table;
         $columns = 'dispute_id';
-        $values  = ModuleController::createQueryValuesArray($disputeID, $valuesToSet);
+        $values  = $this->createQueryValuesArray($disputeID, $valuesToSet);
 
         $placeholders = ':dispute_id';
         foreach($valuesToSet as $column => $value) {
@@ -210,7 +210,7 @@ class ModuleController {
         Database::instance()->exec($query, $values);
     }
 
-    private static function createQueryValuesArray($disputeID, $columnValues) {
+    private function createQueryValuesArray($disputeID, $columnValues) {
         $values = array(
             ':dispute_id' => $disputeID
         );
@@ -220,9 +220,9 @@ class ModuleController {
         return $values;
     }
 
-    public static function setModuleTableValue($moduleName, $tableAndColumn, $value, $disputeID) {
-        $table  = 'module__' . $moduleName . '__' . ModuleController::extractTableName($tableAndColumn);
-        $column = ModuleController::extractColumnName($tableAndColumn);
+    public function setModuleTableValue($moduleName, $tableAndColumn, $value, $disputeID) {
+        $table  = 'module__' . $moduleName . '__' . $this->extractTableName($tableAndColumn);
+        $column = $this->extractColumnName($tableAndColumn);
 
         Database::instance()->exec(
             'UPDATE ' . $table . ' SET ' . $column . ' = :value WHERE dispute_id = :dispute_id',
@@ -236,12 +236,12 @@ class ModuleController {
         return true;
     }
 
-    private static function extractTableName($tableAndColumn) {
+    private function extractTableName($tableAndColumn) {
         $parts  = explode('.', $tableAndColumn);
         return $parts[0];
     }
 
-    private static function extractColumnName($tableAndColumn) {
+    private function extractColumnName($tableAndColumn) {
         $parts  = explode('.', $tableAndColumn);
         return $parts[1];
     }

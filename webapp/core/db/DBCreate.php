@@ -19,7 +19,7 @@ class DBCreate extends Prefab {
         $agentA   = isset($details['agent_a']) ? $details['agent_a'] : NULL;
         $summary  = isset($details['summary']) ? $details['summary'] : NULL;
 
-        DBQuery::ensureCorrectAccountTypes(array(
+        DBQuery::instance()->ensureCorrectAccountTypes(array(
             'law_firm' => $lawFirmA,
             'agent'    => $agentA
         ));
@@ -39,7 +39,7 @@ class DBCreate extends Prefab {
             ':type'       => $type,
             ':title'      => $title
         ));
-        $newDispute = DBQuery::getLatestRow('disputes', 'dispute_id');
+        $newDispute = DBQuery::instance()->getLatestRow('disputes', 'dispute_id');
 
         // sanity check
         if ((int)$newDispute['party_a'] !== $partyID ||
@@ -72,7 +72,7 @@ class DBCreate extends Prefab {
 
         $this->insertRow('dispute_parties', $params);
 
-        $partyID = DBQuery::getLatestId('dispute_parties', 'party_id');
+        $partyID = DBQuery::instance()->getLatestId('dispute_parties', 'party_id');
 
         return new DisputeParty($partyID);
     }
@@ -92,7 +92,7 @@ class DBCreate extends Prefab {
             'filepath'    => true
         ), $params);
         $this->insertRow('evidence', $params);
-        $latestID = DBQuery::getLatestId('evidence', 'evidence_id');
+        $latestID = DBQuery::instance()->getLatestId('evidence', 'evidence_id');
         return new Evidence($latestID);
     }
 
@@ -129,7 +129,7 @@ class DBCreate extends Prefab {
         $db = Database::instance();
         $db->begin();
         $this->insertRow('lifespans', $params);
-        $lifespanID = DBQuery::getLatestId('lifespans', 'lifespan_id');
+        $lifespanID = DBQuery::instance()->getLatestId('lifespans', 'lifespan_id');
 
         try {
             $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
@@ -171,7 +171,7 @@ class DBCreate extends Prefab {
 
         $this->insertRow('messages', $params);
 
-        $messageID = DBQuery::getLatestId('messages', 'message_id');
+        $messageID = DBQuery::instance()->getLatestId('messages', 'message_id');
         return new Message($messageID);
     }
 
@@ -191,7 +191,7 @@ class DBCreate extends Prefab {
         ), $options);
 
         $this->insertRow('notifications', $params);
-        $notificationID = DBQuery::getLatestId('notifications', 'notification_id');
+        $notificationID = DBQuery::instance()->getLatestId('notifications', 'notification_id');
         return new Notification($notificationID);
     }
 

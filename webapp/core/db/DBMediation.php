@@ -1,8 +1,8 @@
 <?php
 
-class DBMediation {
+class DBMediation extends Prefab {
 
-    public static function respondToMediationProposal($proposalID, $response) {
+    public function respondToMediationProposal($proposalID, $response) {
         Database::instance()->exec(
             'UPDATE mediation_offers SET status = :response WHERE mediation_offer_id = :offer_id',
             array(
@@ -12,15 +12,15 @@ class DBMediation {
         );
     }
 
-    public static function getMediationCentreOfferForDispute($disputeID) {
-        return DBMediation::getOfferOfType('mediation_centre', $disputeID);
+    public function getMediationCentreOfferForDispute($disputeID) {
+        return $this->getOfferOfType('mediation_centre', $disputeID);
     }
 
-    public static function getMediatorOfferForDispute($disputeID) {
-        return DBMediation::getOfferOfType('mediator', $disputeID);
+    public function getMediatorOfferForDispute($disputeID) {
+        return $this->getOfferOfType('mediator', $disputeID);
     }
 
-    public static function getOfferOfType($type, $disputeID) {
+    public function getOfferOfType($type, $disputeID) {
         $offers = Database::instance()->exec(
             'SELECT * FROM mediation_offers
             WHERE type     = :type
@@ -40,7 +40,7 @@ class DBMediation {
         return false;
     }
 
-    public static function saveListOfMediators($disputeID, $availableMediators) {
+    public function saveListOfMediators($disputeID, $availableMediators) {
         $db = Database::instance();
         $db->begin();
         $db->exec(
@@ -61,7 +61,7 @@ class DBMediation {
         $db->commit();
     }
 
-    public static function getAvailableMediators($disputeID) {
+    public function getAvailableMediators($disputeID) {
         $availableMediatorsDetails = Database::instance()->exec(
                 'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id',
                 array(
@@ -77,7 +77,7 @@ class DBMediation {
         return $availableMediators;
     }
 
-    public static function mediatorIsAvailableForDispute($mediatorID, $disputeID) {
+    public function mediatorIsAvailableForDispute($mediatorID, $disputeID) {
         $available = Database::instance()->exec(
             'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id AND mediator_id = :mediator_id LIMIT 1',
             array(

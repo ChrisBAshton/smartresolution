@@ -45,7 +45,7 @@ class Organisation extends Account implements AccountInterface {
     }
 
     public function getIndividuals($type) {
-        return DBOrganisation::getIndividuals($this->getLoginId(), $type);
+        return DBOrganisation::instance()->getIndividuals($this->getLoginId(), $type);
     }
 }
 

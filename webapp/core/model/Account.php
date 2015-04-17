@@ -26,7 +26,7 @@ abstract class Account {
      * @see AccountInterface::getNotifications() Implements the corresponding function in AccountInterface.
      */
     public function getNotifications() {
-        return DBNotification::getNotificationsForLoginId($this->getLoginId());
+        return DBNotification::instance()->getNotificationsForLoginId($this->getLoginId());
     }
 
     /**

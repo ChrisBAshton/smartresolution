@@ -13,7 +13,6 @@ $dashboardActions = array();
 
 /**
  * Defines the module in the system.
- * Decorator pattern. Syntactic sugar instead of calling ModuleController static function directly. Improves decoupling.
  * @param  array  $config                       Parameters:
  *         string $config['key']                Module unique ID, e.g. 'maritime_collision'
  *         string $config['title']              Module name, e.g. 'Maritime Collision'
@@ -21,7 +20,7 @@ $dashboardActions = array();
  * @param  Function $moduleDefinitionFunction   The module definition. This function should hook into events exposed by the SmartResolution platform and specify which functions to call on those events.
  */
 function declare_module($config, $moduleDefinitionFunction) {
-    ModuleController::registerModule($config, $moduleDefinitionFunction);
+    ModuleController::instance()->registerModule($config, $moduleDefinitionFunction);
 }
 
 /**
@@ -36,7 +35,7 @@ function declare_module($config, $moduleDefinitionFunction) {
  *         Possible values: 'low', 'medium', 'high', or an integer between 1 and 100 (where 1 is low priority and 100 is high).
  */
 function on($eventName, $action, $priority = 'medium') {
-    ModuleController::subscribe($eventName, $action, $priority);
+    ModuleController::instance()->subscribe($eventName, $action, $priority);
 }
 
 /**
@@ -47,7 +46,7 @@ function on($eventName, $action, $priority = 'medium') {
  * @param  String|Function $handler If String, should be the name of function to call (e.g. 'helloWorld') or the class name and public function, e.g. 'foo->helloWorld'. Could instead pass an anonymous function, e.g. function () {}
  */
 function top_level_route($route, $handler) {
-    ModuleController::defineRoute('GET|POST ' . $route, $handler);
+    ModuleController::instance()->defineRoute('GET|POST ' . $route, $handler);
 }
 
 /**
@@ -57,7 +56,7 @@ function top_level_route($route, $handler) {
  * @param  String|Function $handler If String, should be the name of function to call (e.g. 'helloWorld') or the class name and public function, e.g. 'foo->helloWorld'. Could instead pass an anonymous function, e.g. function () {}
  */
 function route($route, $handler) {
-    ModuleController::defineRoute('GET|POST /disputes/@disputeID' . $route, $handler);
+    ModuleController::instance()->defineRoute('GET|POST /disputes/@disputeID' . $route, $handler);
 }
 
 /**
@@ -106,7 +105,7 @@ function dashboard_add_item($params, $addToFront = false) {
  * @return string URL to the module directory.
  */
 function get_module_url() {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
     return '/modules/' . $moduleName;
 }
 
@@ -169,9 +168,9 @@ function render_markdown($template) {
  * @param  array $tables  Array of tables to create, in the form array('table_name' => array(columns))
  */
 function declare_tables($tables) {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
     foreach($tables as $tableName => $columns) {
-        ModuleController::initModuleTable($moduleName, $tableName, $columns);
+        ModuleController::instance()->initModuleTable($moduleName, $tableName, $columns);
     }
 }
 
@@ -183,8 +182,8 @@ function declare_tables($tables) {
  * @param  array  $columns   Array of columns describing your table, in the format 'column_name' => 'type', e.g. 'question_number' => 'INTEGER'
  */
 function declare_table($tableName, $columns) {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    ModuleController::initModuleTable($moduleName, $tableName, $columns);
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
+    ModuleController::instance()->initModuleTable($moduleName, $tableName, $columns);
 }
 
 /**
@@ -194,14 +193,14 @@ function declare_table($tableName, $columns) {
  * @return Unknown|boolean        Returns the value as it is stored in the database. Beware: this does not cast to integer or boolean, so you'll need to manually cast type where appropriate. Returns boolean false if no record is found.
  */
 function get($tableAndColumn, $andClause = array()) {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    return ModuleController::queryModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::instance()->queryModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
 }
 
 // where multiple rows are expected.
 function get_multiple($tableAndColumn, $andClause = array()) {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    return ModuleController::getRowsFromModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::instance()->getRowsFromModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
 }
 
 /**
@@ -211,11 +210,11 @@ function get_multiple($tableAndColumn, $andClause = array()) {
  * @return boolean                Returns true if successful, false if not.
  */
 function set($tableAndColumn, $value) {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    return ModuleController::setModuleTableValue($moduleName, $tableAndColumn, $value, get_dispute_id());
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::instance()->setModuleTableValue($moduleName, $tableAndColumn, $value, get_dispute_id());
 }
 
 function createRow($table, $values = array()) {
-    $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());
-    return ModuleController::createModuleTableRow($moduleName, $table, $values, get_dispute_id());
+    $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
+    return ModuleController::instance()->createModuleTableRow($moduleName, $table, $values, get_dispute_id());
 }

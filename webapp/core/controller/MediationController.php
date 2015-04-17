@@ -69,7 +69,7 @@ class MediationController {
 
         elseif (!$this->mediationState->mediatorProposed()) :
 
-            $availableMediators = DBMediation::getAvailableMediators($this->dispute->getDisputeId());
+            $availableMediators = DBMediation::instance()->getAvailableMediators($this->dispute->getDisputeId());
             $f3->set('available_mediators', $availableMediators);
             $f3->set('content', 'mediation__choose_mediator_from_list.html');
 
@@ -110,7 +110,7 @@ class MediationController {
         if (!$availableMediators) {
             $availableMediators = array();
         }
-        DBMediation::saveListOfMediators($this->dispute->getDisputeId(), $availableMediators);
+        DBMediation::instance()->saveListOfMediators($this->dispute->getDisputeId(), $availableMediators);
         $this->notifyAgentsOfUpdatedList();
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }

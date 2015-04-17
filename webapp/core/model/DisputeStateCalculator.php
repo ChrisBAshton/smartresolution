@@ -51,7 +51,7 @@ class DisputeStateCalculator extends Prefab {
     public function getActions($dispute, $account) {
         global $dashboardActions;
         $this->setDefaultActions($dispute, $account);
-        ModuleController::emit('dispute_dashboard');
+        ModuleController::instance()->emit('dispute_dashboard');
         return $dashboardActions;
     }
 

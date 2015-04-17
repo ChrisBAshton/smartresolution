@@ -1,8 +1,8 @@
 <?php
 
-class DBMessage {
+class DBMessage extends Prefab {
 
-    public static function retrieveDisputeMessages($disputeID) {
+    public function retrieveDisputeMessages($disputeID) {
         $messages = array();
 
         $messageDetails = Database::instance()->exec(
@@ -17,7 +17,7 @@ class DBMessage {
         return $messages;
     }
 
-    public static function retrieveMediationMessages($disputeID, $individualA, $individualB) {
+    public function retrieveMediationMessages($disputeID, $individualA, $individualB) {
         $messages = array();
 
         $messageDetails = Database::instance()->exec(

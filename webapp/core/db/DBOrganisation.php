@@ -1,8 +1,8 @@
 <?php
 
-class DBOrganisation {
+class DBOrganisation extends Prefab {
 
-    public static function getIndividuals($organisationID, $type) {
+    public function getIndividuals($organisationID, $type) {
         $individuals = array();
 
         $individualsDetails = Database::instance()->exec(
