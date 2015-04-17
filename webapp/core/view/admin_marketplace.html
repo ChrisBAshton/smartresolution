@@ -62,7 +62,7 @@ endforeach;
 <?php
 function makeButton($module) {
     $linkText = $module['price'] === "0" ? 'Install Module' : 'Buy Module ($' . $module['price'] . ')';
-    $moduleAlreadyInstalled = ModuleController::getModuleByKey($module['key']);
+    $moduleAlreadyInstalled = ModuleController::instance()->getModuleByKey($module['key']);
 
     if ($moduleAlreadyInstalled) {
         $linkText = 'Module already installed.';

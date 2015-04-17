@@ -70,14 +70,14 @@ class ModuleController extends Prefab {
     }
 
     public function defineRoute($route, $handler) {
-        array_push($this->$routes, array(
+        array_push($this->routes, array(
             'route'   => $route,
             'handler' => $handler
         ));
     }
 
     public function getRoutes() {
-        return $this->$routes;
+        return $this->routes;
     }
 
     public function subscribe($event, $action, $priority = 20) {

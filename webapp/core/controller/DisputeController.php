@@ -28,7 +28,7 @@ class DisputeController {
     function newDisputeGet ($f3) {
         mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
-        $modules = ModuleController::getActiveModules();
+        $modules = ModuleController::instance()->getActiveModules();
         if (count($agents) === 0) {
             errorPage('You must create an Agent account before you can create a Dispute!');
         }
@@ -173,7 +173,7 @@ class DisputeController {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
-        $modules = ModuleController::getActiveModules();
+        $modules = ModuleController::instance()->getActiveModules();
         if (count($modules) === 0) {
             errorPage('The system administrator must install at least one dispute module before you can create a Dispute. Please contact the admin.');
         }
