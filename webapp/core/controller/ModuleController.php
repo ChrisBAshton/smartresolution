@@ -232,7 +232,8 @@ class ModuleController {
             )
         );
 
-        return true; // query was successful. @TODO return false/raise exception if there is a problem
+        // @TODO - put above in a try-catch and return false if exception thrown.
+        return true;
     }
 
     private static function extractTableName($tableAndColumn) {

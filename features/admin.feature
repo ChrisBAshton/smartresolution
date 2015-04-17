@@ -26,7 +26,7 @@ Feature: Admin
     And I have installed a new module
     Then I should be able to uninstall the module
 
-  # # @TODO
+  # # This could be added in a later version of SmartResolution, when the theme-customisation feature is created.
   # Scenario: Customising the SmartResolution instance
   #   Given I am logged into an Admin account
-  #   Then I should be able to change the SmartResolution logo
+  #   Then I should be able to change the instance logo

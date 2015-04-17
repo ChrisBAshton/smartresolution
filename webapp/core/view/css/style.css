@@ -140,11 +140,6 @@ footer a:hover {
     display: none;
 }
 
-/* @TODO - put environment in body class */
-.env--test .stats {
-    display: block;
-}
-
 @media only screen and (min-width: 1000px) {
     .lifespan_status {
         position: absolute;

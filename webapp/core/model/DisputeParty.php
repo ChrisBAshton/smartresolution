@@ -65,20 +65,20 @@ class DisputeParty {
         }
     }
 
-    // @TODO - write tests for this
     private function validateBeforeSettingAgent($individualID) {
+        $utils = Utils::instance();
         $agent = DBAccount::instance()->getAccountById($individualID);
 
         if (!$this->organisationID) {
-            Utils::instance()->throwException('Tried setting the agent before setting the law firm!');
+            $utils->throwException('Tried setting the agent before setting the law firm!');
         }
 
         if ( ! ($agent instanceof Agent) ) {
-            Utils::instance()->throwException('Tried setting a non-agent type as an agent!');
+            $utils->throwException('Tried setting a non-agent type as an agent!');
         }
 
         if ($agent->getOrganisation()->getLoginId() !== $this->organisationID) {
-            Utils::instance()->throwException('You can only assign agents that are in your law firm!');
+            $utils->throwException('You can only assign agents that are in your law firm!');
         }
     }
 

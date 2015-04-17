@@ -208,7 +208,7 @@ function get_multiple($tableAndColumn, $andClause = array()) {
  * Sets a value in the database.
  * @param  string $tableAndColumn Dot-separated table and column, e.g. 'table_name.column_name'
  * @param  Unknown $value         The value to set. Depending on the field type, you may pass a string, integer, etc.
- * @return true                   @TODO. Right now, this always returns true. In future this may change to be more useful.
+ * @return boolean                Returns true if successful, false if not.
  */
 function set($tableAndColumn, $value) {
     $moduleName = ModuleController::extractModuleNameFromStackTrace(debug_backtrace());

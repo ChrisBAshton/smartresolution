@@ -27,7 +27,6 @@ Feature: Negotiating a Dispute lifespan
     And the Dispute is fully underway
     Then I should be able to make a lifespan offer
     And the Dispute should continue normally despite the renegotiation offer
-    # This should always be an option, whether or not we're in Mediation. @TODO - write a test.
 
   @clear
   Scenario: Renegotiating the Dispute lifespan mid-Dispute

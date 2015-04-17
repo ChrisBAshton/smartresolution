@@ -1,10 +1,6 @@
 <?php
 
 /**
- * @TODO - this file should be called in a cronjob that runs every 1-10 minutes. For now, as a temporary solution, I'm running it on every page load. This is not very efficient!
- */
-
-/**
  * Finds all "offered" lifespans that are no longer valid (the valid until date has elapsed) and
  * declines them.
  */

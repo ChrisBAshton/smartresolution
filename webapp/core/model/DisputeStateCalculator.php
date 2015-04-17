@@ -43,8 +43,6 @@ class DisputeStateCalculator extends Prefab {
         }
     }
 
-    // @TODO - NB, I got the icons from http://www.flaticon.com/packs/web-pictograms
-    // Should probably document that somewhere better than here.
     public function getActions($dispute, $account) {
         global $dashboardActions;
         $this->setDefaultActions($dispute, $account);

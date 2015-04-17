@@ -12,13 +12,6 @@ class DBCreate extends Prefab {
         return DBAccount::instance()->getAccountById($login_id);
     }
 
-    /**
-     * Creates a new Dispute, saving it to the database.
-     *
-     * @param  array $details array of details to populate the database with.
-     * @TODO describe array param more.
-     * @return Dispute        The Dispute object associated with the new entry.
-     */
     public function dispute($details) {
         $lawFirmA = (int) Utils::instance()->getValue($details, 'law_firm_a');
         $type     = Utils::instance()->getValue($details, 'type');

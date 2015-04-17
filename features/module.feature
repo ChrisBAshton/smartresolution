@@ -12,6 +12,9 @@ Feature: Module
     And the Dispute is fully underway
     And the Dispute type has been set to 'Test Module'
 
+  @clear
+  Scenario: Clear the database in preparation for this test suite
+
   Scenario: Dispute dashboard item added
     Then I should see a custom dashboard item
 

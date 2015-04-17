@@ -42,8 +42,6 @@ Feature: Account Creation
     Given I have registered an Organisation account
     When I attempt to log in with invalid credentials
     Then an authentication error should be displayed
-    # @TODO - as discussed, correct and incorrect login attempts should be logged so that we can later add
-    # additional security such as locking out accounts after a threshold of unsuccessful attempts is reached.
 
   Scenario: Create Agent account
     Given I am logged into a Law Firm account
