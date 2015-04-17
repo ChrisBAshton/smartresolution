@@ -65,6 +65,7 @@ class DisputeParty {
         }
     }
 
+    // @TODO - write tests for this
     private function validateBeforeSettingAgent($individualID) {
         $agent = DBAccount::instance()->getAccountById($individualID);
 
@@ -85,6 +86,7 @@ class DisputeParty {
         $this->setPartyDatabaseField('summary', $summary);
     }
 
+    // @TODO - write tests for this
     public function setPartyDatabaseField($field, $value) {
         if ($this->partyID === 0 && $field === 'organisation_id') {
             $createdParty = DBCreate::instance()->disputeParty($value);

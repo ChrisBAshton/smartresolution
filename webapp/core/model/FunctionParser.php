@@ -14,16 +14,27 @@ class FunctionParser {
     }
 
     private function tryToCallClassFunction($functionToCall, $parameters) {
+        $this->checkIfFunctionToCallIsValid($functionToCall);
+        $className     = $this->extractClassName($functionToCall);
+        $methodName    = $this->extractMethodName($functionToCall);
+        $classInstance = new $className();
+        call_user_func_array(array($classInstance, $methodName), $parameters);
+    }
+
+    private function checkIfFunctionToCallIsValid($functionToCall) {
         $classFunction = strpos($functionToCall, '->') !== false;
-        if ($classFunction) {
-            $parts = explode('->', $functionToCall);
-            $class = $parts[0];
-            $method = $parts[1];
-            $classInstance = new $class();
-            call_user_func_array(array($classInstance, $method), $parameters);
-        }
-        else {
+        if (!$classFunction) {
             throw new Exception('Invalid function: ' . $functionToCall);
         }
+    }
+
+    private function extractClassName($functionToCall) {
+        $parts = explode('->', $functionToCall);
+        return $parts[0];
+    }
+
+    private function extractMethodName($functionToCall) {
+        $parts = explode('->', $functionToCall);
+        return $parts[1];
     }
 }

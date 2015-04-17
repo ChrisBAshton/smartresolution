@@ -88,4 +88,12 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($functionCalled, 'HelloWorld');
     }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Invalid function: nonExistentFunction
+     */
+    public function testCallingInvalidFunction() {
+        new FunctionParser('nonExistentFunction');
+    }
 }
