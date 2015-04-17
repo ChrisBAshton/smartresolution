@@ -3,6 +3,28 @@
 class Utils extends Prefab {
 
     /**
+     * Inspired by http://php.net/manual/en/pdo.rollback.php#75431.
+     * This throws an exception but makes sure that any database transaction is rolled back,
+     * preventing errors such as this:
+     *
+     * 2) DBCreateTest::testCreateLawFirmWithExtraFields
+     * PDOException: There is already an active transaction
+     *
+     */
+    public function throwException($message) {
+
+        try {
+            Database::instance()->rollback();
+        } catch (Exception $PDOException) {
+            // do nothing - we only wanted to roll back the transaction if one existed.
+            // since one doesn't exist, there's nothing to roll back. Let's just continue and
+            // throw the Exception we wanted to throw in the first place.
+        }
+
+        throw new Exception($message);
+    }
+
+    /**
      * Gets the value of the given key from the given array, defaulting to the given default value if no value exists. If no default is provided and no value exists, an exception is raised.
      *
      * Example:

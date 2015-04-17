@@ -52,7 +52,7 @@ class DBCreate extends Prefab {
         if ((int)$newDispute['party_a'] !== $partyID ||
             $newDispute['type']         !== $type    ||
             $newDispute['title']        !== $title) {
-            throw new Exception("There was a problem creating your Dispute.");
+            Utils::instance()->throwException("There was a problem creating your Dispute.");
         }
         else {
             $db->commit();
@@ -154,7 +154,7 @@ class DBCreate extends Prefab {
             return $lifespan;
         }
         catch(Exception $e) {
-            throw new Exception($e->getMessage());
+            Utils::instance()->throwException($e->getMessage());
         }
     }
 
@@ -230,11 +230,11 @@ class DBCreate extends Prefab {
      */
     public function dbAccount($object) {
         if (!isset($object['email']) || !isset($object['password'])) {
-            throw new Exception("The minimum required to register is an email and password!");
+            Utils::instance()->throwException("The minimum required to register is an email and password!");
         }
 
         if (DBAccount::instance()->getAccountByEmail($object['email'])) {
-            throw new Exception("An account is already registered to that email address.");
+            Utils::instance()->throwException("An account is already registered to that email address.");
         }
 
         $crypt = \Bcrypt::instance();
@@ -245,7 +245,7 @@ class DBCreate extends Prefab {
 
         $login_id = DBAccount::instance()->emailToId($object['email']);
         if (!$login_id) {
-            throw new Exception("Could not retrieve login_id. Abort.");
+            Utils::instance()->throwException("Could not retrieve login_id. Abort.");
         }
         return $login_id;
     }

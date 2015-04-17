@@ -24,7 +24,7 @@ class FunctionParser {
     private function checkIfFunctionToCallIsValid($functionToCall) {
         $classFunction = strpos($functionToCall, '->') !== false;
         if (!$classFunction) {
-            throw new Exception('Invalid function: ' . $functionToCall);
+            Utils::instance()->throwException('Invalid function: ' . $functionToCall);
         }
     }
 

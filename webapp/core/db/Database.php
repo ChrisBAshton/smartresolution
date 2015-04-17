@@ -38,7 +38,7 @@ class Database {
      */
     public static function clear() {
         if (Database::$environment !== 'test') {
-            throw new Exception('Tried to clear a non-test database! Run Database::setEnvironment("test") before trying to clear.');
+            Utils::instance()->throwException('Tried to clear a non-test database! Run Database::setEnvironment("test") before trying to clear.');
         }
         else {
             $pathToDatabases = __DIR__ . "/../../../data";

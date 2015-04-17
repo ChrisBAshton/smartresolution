@@ -11,7 +11,7 @@ class Lifespan implements LifespanInterface {
         if ($justCreated) {
             $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
             if ($invalid) {
-                throw new Exception($invalid);
+                Utils::instance()->throwException($invalid);
             }
         }
     }

@@ -47,7 +47,7 @@ abstract class Account {
      * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
      */
     public function getRole() {
-        throw new Exception('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
+        Utils::instance()->throwException('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
     }
 
     /**

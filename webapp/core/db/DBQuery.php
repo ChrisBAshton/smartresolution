@@ -48,7 +48,7 @@ class DBQuery {
         }
 
         if (!$correctAccountTypes) {
-            throw new Exception('Invalid account types were set.');
+            Utils::instance()->throwException('Invalid account types were set.');
         }
     }
 

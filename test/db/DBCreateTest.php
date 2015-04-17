@@ -23,7 +23,7 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
     {
         $create  = DBCreate::instance();
         $lawFirm = $create->organisation(array(
-            'email'    => 'law_firm_a@t.co',
+            'email'    => 'law_firm@t.co',
             'password' => 'test',
             'type'     => 'law_firm'
         ));
@@ -88,7 +88,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
     }
 
     public function testCreateLifespan() {
-        DBCreateTest::setUpBeforeClass();
         $currentTime = time();
         DBCreate::instance()->lifespan(array(
             'dispute_id'  => TestHelper::getDisputeByTitle('Smith versus Jones')->getDisputeId(),
@@ -104,7 +103,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage All selected dates must be in the future.
      */
     public function testLifespanInvalidWhenValidUntilIsInPast() {
-        DBCreateTest::setUpBeforeClass();
         $currentTime = time();
         DBCreate::instance()->lifespan(array(
             'dispute_id'  => 1,
@@ -120,7 +118,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage All selected dates must be in the future.
      */
     public function testLifespanInvalidWhenStartTimeIsInPast() {
-        DBCreateTest::setUpBeforeClass();
         $currentTime = time();
         DBCreate::instance()->lifespan(array(
             'dispute_id'  => 1,
@@ -136,7 +133,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage All selected dates must be in the future.
      */
     public function testLifespanInvalidWhenEndTimeIsInPast() {
-        DBCreateTest::setUpBeforeClass();
         $currentTime = time();
         DBCreate::instance()->lifespan(array(
             'dispute_id'  => 1,
@@ -152,7 +148,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage The "Valid Until" date must be before the start and end dates.
      */
     public function testLifespanInvalidWhenValidUntilIsAheadOfStartTime() {
-        DBCreateTest::setUpBeforeClass();
         $currentTime = time();
         DBCreate::instance()->lifespan(array(
             'dispute_id'  => 1,
@@ -168,7 +163,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Start date must be before end date.
      */
     public function testLifespanInvalidWhenEndTimeBeforeStartTime() {
-        DBCreateTest::setUpBeforeClass();
         $currentTime = time();
         DBCreate::instance()->lifespan(array(
             'dispute_id'  => 1,
@@ -264,6 +258,10 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
 
     public function testRegisterOrganisation()
     {
+        // @TODO. At the moment, we need to reset the database because a transaction
+        // doesn't seem to be committed (get the 'There is already an active transaction' error
+        // if we do not clear the database in this connection).
+        // Look at Utils::throwException and see if we can apply the same principle elsewhere.
         DBCreateTest::setUpBeforeClass();
         DBCreate::instance()->organisation(array(
             'email'       => 'cba12@aber.ac.uk',

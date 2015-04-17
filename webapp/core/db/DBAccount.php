@@ -124,7 +124,7 @@ class DBAccount extends Prefab {
             case "administrator":
                 return new Admin($account);
             default:
-                throw new Exception("Invalid account type.");
+                Utils::instance()->throwException("Invalid account type.");
         }
     }
 

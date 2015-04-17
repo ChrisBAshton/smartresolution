@@ -78,7 +78,6 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testAuthorisationLogicIsCorrect() {
-        DisputeTest::setUpBeforeClass();
         $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute->canBeViewedBy(DBAccount::instance()->emailToId('law_firm_a@t.co')));
         $this->assertTrue($dispute->canBeViewedBy(DBAccount::instance()->emailToId('agent_a@t.co')));
@@ -87,7 +86,6 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDisputeWorkflowCorrect() {
-        DisputeTest::setUpBeforeClass();
         $dispute  = TestHelper::createNewDispute();
         $state    = $dispute->getState(DBAccount::instance()->getAccountByEmail('agent_a@t.co'));
         $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
@@ -103,7 +101,6 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testGetOpposingPartyId() {
-        DisputeTest::setUpBeforeClass();
         $dispute = TestHelper::createNewDispute();
         $lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
         $agentA   = DBAccount::instance()->emailToId('agent_a@t.co');

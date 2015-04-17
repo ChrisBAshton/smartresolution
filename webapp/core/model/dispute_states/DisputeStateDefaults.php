@@ -6,7 +6,7 @@ abstract class DisputeDefaults {
         $this->dispute = $dispute;
         $this->account = $account;
         if (!$this->accountIsLinkedToDispute()) {
-            throw new Exception($account->getName() . ' is not permitted to view this dispute!');
+            Utils::instance()->throwException($account->getName() . ' is not permitted to view this dispute!');
         }
     }
 

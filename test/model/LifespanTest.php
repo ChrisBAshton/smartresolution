@@ -5,9 +5,6 @@ class LifespanTest extends PHPUnit_Framework_TestCase
 {
 
     protected function setUp() {
-        Database::setEnvironment('test');
-        Database::clear();
-
         $this->lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
         $this->agentA   = DBAccount::instance()->emailToId('agent_a@t.co');
         $this->lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');

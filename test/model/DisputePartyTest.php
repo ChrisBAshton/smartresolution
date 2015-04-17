@@ -17,7 +17,6 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
     }
 
     public function testSimpleSetters() {
-        DisputeTest::setUpBeforeClass();
         $dispute  = TestHelper::createNewDispute();
         $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
         $agentB   = DBAccount::instance()->emailToId('agent_b@t.co');
@@ -75,7 +74,6 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDisputeGettersObjectsMatch() {
-        DisputePartyTest::setUpBeforeClass();
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals(
             DBAccount::instance()->getAccountByEmail('law_firm_a@t.co')->getLoginId(),
@@ -88,7 +86,6 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDisputeGettersObjectsCorrectType() {
-        DisputePartyTest::setUpBeforeClass();
         $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute->getPartyA()->getLawFirm() instanceof LawFirm);
         $this->assertTrue($dispute->getPartyA()->getAgent() instanceof Agent);

@@ -70,15 +70,15 @@ class DisputeParty {
         $agent = DBAccount::instance()->getAccountById($individualID);
 
         if (!$this->organisationID) {
-            throw new Exception('Tried setting the agent before setting the law firm!');
+            Utils::instance()->throwException('Tried setting the agent before setting the law firm!');
         }
 
         if ( ! ($agent instanceof Agent) ) {
-            throw new Exception('Tried setting a non-agent type as an agent!');
+            Utils::instance()->throwException('Tried setting a non-agent type as an agent!');
         }
 
         if ($agent->getOrganisation()->getLoginId() !== $this->organisationID) {
-            throw new Exception('You can only assign agents that are in your law firm!');
+            Utils::instance()->throwException('You can only assign agents that are in your law firm!');
         }
     }
 
@@ -98,7 +98,7 @@ class DisputeParty {
             DBDispute::instance()->updatePartyRecord($this->getPartyId(), $field, $value);
         }
         else {
-            throw new Exception("Tried setting something other than Law Firm when the record for the party has not been created yet.");
+            Utils::instance()->throwException("Tried setting something other than Law Firm when the record for the party has not been created yet.");
         }
 
         $this->setVariables($this->partyID, $this->disputeID);

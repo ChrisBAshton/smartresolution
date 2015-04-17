@@ -39,7 +39,7 @@ class DBGet extends Prefab {
 
         if (count($rows) !== 1) {
             if ($exceptionMessage) {
-                throw new Exception($exceptionMessage);
+                Utils::instance()->throwException($exceptionMessage);
             }
             return false;
         }
