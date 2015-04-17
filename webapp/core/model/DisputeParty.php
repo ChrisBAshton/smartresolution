@@ -86,15 +86,16 @@ class DisputeParty {
         $this->setPartyDatabaseField('summary', $summary);
     }
 
-    // @TODO - write tests for this
     public function setPartyDatabaseField($field, $value) {
         if ($this->partyID === 0 && $field === 'organisation_id') {
-            $createdParty = DBCreate::instance()->disputeParty($value);
+            $createdParty = DBCreate::instance()->disputeParty(array(
+                'organisation_id' => $value
+            ));
             $this->partyID = $createdParty->getPartyId();
-            DBDispute::updateDisputePartyB($this->partyID, $this->disputeID);
+            DBDispute::instance()->updateDisputePartyB($this->partyID, $this->disputeID);
         }
         elseif ($this->getPartyId() !== 0) {
-            DBDispute::updatePartyRecord($this->getPartyId(), $field, $value);
+            DBDispute::instance()->updatePartyRecord($this->getPartyId(), $field, $value);
         }
         else {
             throw new Exception("Tried setting something other than Law Firm when the record for the party has not been created yet.");

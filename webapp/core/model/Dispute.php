@@ -3,7 +3,6 @@
 class Dispute {
 
     function __construct($disputeID) {
-        $this->db        = new DBDispute($disputeID);
         $this->disputeID = $disputeID;
         $this->refresh();
     }
@@ -70,13 +69,13 @@ class Dispute {
     }
 
     public function enableRoundTableCommunication() {
-        $this->db->enableRoundTableCommunication();
+        DBDispute::instance()->markRoundTableCommunicationAs('enabled', $this->getDisputeId());
         $this->notifyAgentsOfRTC('enabled');
         $this->refresh();
     }
 
     public function disableRoundTableCommunication() {
-        $this->db->disableRoundTableCommunication();
+        DBDispute::instance()->markRoundTableCommunicationAs('disabled', $this->getDisputeId());
         $this->notifyAgentsOfRTC('disabled');
         $this->refresh();
     }
@@ -96,19 +95,19 @@ class Dispute {
     }
 
     public function closeSuccessfully() {
-        $this->db->updateField('status', 'resolved');
+        DBDispute::instance()->updateField('status', 'resolved', $this->getDisputeId());
         $this->getCurrentLifespan()->disputeClosed();
         $this->refresh();
     }
 
     public function closeUnsuccessfully() {
-        $this->db->updateField('status', 'failed');
+        DBDispute::instance()->updateField('status', 'failed', $this->getDisputeId());
         $this->getCurrentLifespan()->disputeClosed();
         $this->refresh();
     }
 
     public function setType($type) {
-        $this->db->updateField('type', $type);
+        DBDispute::instance()->updateField('type', $type, $this->getDisputeId());
         $this->refresh();
     }
 

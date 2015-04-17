@@ -42,6 +42,16 @@ class ChatTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testCreateMessageWithRecipient() {
+        $message = DBCreate::instance()->message(array(
+            'dispute_id'   => TestHelper::getDisputeByTitle('Smith versus Jones')->getDisputeId(),
+            'author_id'    => DBAccount::instance()->emailToId('agent_a@t.co'),
+            'message'      => 'hello, world',
+            'recipient_id' => DBAccount::instance()->emailToId('agent_b@t.co')
+        ));
+        $this->assertTrue($message instanceof Message);
+    }
+
     /**
      * @expectedException Exception
      */
@@ -75,4 +85,3 @@ class ChatTest extends PHPUnit_Framework_TestCase
         ));
     }
 }
-?>

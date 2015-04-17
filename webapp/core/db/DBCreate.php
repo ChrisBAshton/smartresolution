@@ -16,6 +16,7 @@ class DBCreate extends Prefab {
      * Creates a new Dispute, saving it to the database.
      *
      * @param  array $details array of details to populate the database with.
+     * @TODO describe array param more.
      * @return Dispute        The Dispute object associated with the new entry.
      */
     public function dispute($details) {
@@ -32,7 +33,11 @@ class DBCreate extends Prefab {
 
         $db = Database::instance();
         $db->begin();
-        $party = $this->disputeParty($lawFirmA, $agentA, $summary);
+        $party = $this->disputeParty(array(
+            'organisation_id' => $lawFirmA,
+            'individual_id'   => $agentA,
+            'summary'         => $summary
+        ));
         $partyID = $party->getPartyId();
         $db->exec(
             'INSERT INTO disputes (dispute_id, party_a, type, title)
@@ -65,23 +70,14 @@ class DBCreate extends Prefab {
         }
     }
 
-    /**
-     * Creates a dispute party entry.
-     *
-     * @param  int $organisationId  The ID of the party's organisation.
-     * @param  int $individualId    (Optional) The ID of the party's individual.
-     * @param  string $summary      The party's summary of the dispute.
-     * @return DisputeParty         The newly created Dispute Party.
-     */
-    public function disputeParty($organisationId, $individualId = NULL, $summary = NULL) {
+    public function disputeParty($params) {
+        $params = Utils::instance()->requiredParams(array(
+            'organisation_id' => true,
+            'individual_id'   => false,
+            'summary'         => false
+        ), $params);
 
-        Database::instance()->exec(
-            'INSERT INTO dispute_parties (party_id, organisation_id, individual_id, summary)
-             VALUES (NULL, :organisation_id, :individual_id, :summary)', array(
-            ':organisation_id' => $organisationId,
-            ':individual_id'   => $individualId,
-            ':summary'         => $summary
-        ));
+        $this->insertRow('dispute_parties', $params);
 
         $partyID = DBQuery::getLatestId('dispute_parties', 'party_id');
 
