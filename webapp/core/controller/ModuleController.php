@@ -31,7 +31,7 @@ class ModuleController {
         $moduleName = $results[1];
         return $moduleName;
 
-        throw new Exception('Could not detect module name.');
+        Utils::instance()->throwException('Could not detect module name.');
     }
 
     public static function registerModule($config, $moduleDefinitionFunction) {
@@ -173,7 +173,7 @@ class ModuleController {
             return $results[0][$column];
         }
         else if (count($results) > 1) {
-            throw new Exception('Query returned multiple results. If you were expecting this, please call get_multiple() instead.');
+            Utils::instance()->throwException('Query returned multiple results. If you were expecting this, please call get_multiple() instead.');
         }
 
         return false; // no record was found

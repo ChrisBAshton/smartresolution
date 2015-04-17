@@ -3,21 +3,11 @@
 class Message {
 
     function __construct($messageID) {
-        $message = Database::instance()->exec(
-            'SELECT * FROM messages WHERE message_id = :message_id',
-            array(':message_id' => $messageID)
-        );
-
-        if (count($message) !== 1) {
-            throw new Exception('Message not found');
-        }
-        else {
-            $message = $message[0];
-            $this->disputeID = $message['dispute_id'];
-            $this->authorID  = $message['author_id'];
-            $this->contents  = $message['message'];
-            $this->timestamp = $message['timestamp'];
-        }
+        $message = DBGet::instance()->message($messageID);
+        $this->disputeID = $message['dispute_id'];
+        $this->authorID  = $message['author_id'];
+        $this->contents  = $message['message'];
+        $this->timestamp = $message['timestamp'];
     }
 
     public function getDisputeId() {
@@ -37,7 +27,7 @@ class Message {
     }
 
     public function author() {
-        return DBAccount::getAccountById($this->authorID);
+        return DBAccount::instance()->getAccountById($this->authorID);
     }
 
     // based on http://starikovs.com/2011/11/10/php-new-line-to-paragraph/

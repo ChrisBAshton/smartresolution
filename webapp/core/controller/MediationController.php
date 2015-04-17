@@ -54,7 +54,7 @@ class MediationController {
     private function viewInContextOfAgents($f3) {
         if (!$this->mediationState->mediationCentreProposed()) :
 
-            $mediationCentres = Utils::getOrganisations(array(
+            $mediationCentres = DBAccount::instance()->getOrganisations(array(
                 'type'   => 'mediation_centre'
             ));
 
@@ -127,10 +127,10 @@ class MediationController {
             try {
                 $mediationCentre = new MediationCentre((int) $mediationCentreId);
 
-                DBL::createMediationCentreOffer(array(
-                    'dispute'          => $dispute,
-                    'proposed_by'      => $account,
-                    'mediation_centre' => $mediationCentre
+                DBCreate::instance()->mediationCentreOffer(array(
+                    'dispute_id'  => $dispute->getDisputeId(),
+                    'proposer_id' => $account->getLoginId(),
+                    'proposed_id' => $mediationCentre->getLoginId()
                 ));
 
                 $f3->set('success_message', "You have proposed " . $mediationCentre->getName() . " to mediate your dispute.");
@@ -152,10 +152,10 @@ class MediationController {
             try {
                 $mediator = new Mediator((int) $mediatorId);
 
-                DBL::createMediatorOffer(array(
-                    'dispute'     => $dispute,
-                    'proposed_by' => $account,
-                    'mediator'    => $mediator
+                DBCreate::instance()->mediatorOffer(array(
+                    'dispute_id'  => $dispute->getDisputeId(),
+                    'proposer_id' => $account->getLoginId(),
+                    'proposed_id' => $mediator->getLoginId()
                 ));
 
             } catch(Exception $e) {
@@ -166,14 +166,14 @@ class MediationController {
     }
 
     private function notifyAgentsOfUpdatedList() {
-        DBL::createNotification(array(
-            'recipient_id' => $this->dispute->getAgentA()->getLoginId(),
+        DBCreate::instance()->notification(array(
+            'recipient_id' => $this->dispute->getPartyA()->getAgent()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
 
-        DBL::createNotification(array(
-            'recipient_id' => $this->dispute->getAgentB()->getLoginId(),
+        DBCreate::instance()->notification(array(
+            'recipient_id' => $this->dispute->getPartyB()->getAgent()->getLoginId(),
             'message'      => $this->account->getName() . ' has selected a list of available mediators for your dispute.',
             'url'          => $this->dispute->getUrl() . '/mediation'
         ));
@@ -182,7 +182,7 @@ class MediationController {
     public function viewMessages($f3, $params) {
         $this->setUp($f3, $params);
         $recipientID = (int) $params['recipientID'];
-        if (!$this->dispute->canBeViewedBy($recipientID) || DBAccount::getAccountById($recipientID) instanceof Organisation) {
+        if (!$this->dispute->canBeViewedBy($recipientID) || DBAccount::instance()->getAccountById($recipientID) instanceof Organisation) {
             errorPage("The account you're trying to send a message to is not involved in this dispute!");
         }
         $this->viewMessagesWith($recipientID);
@@ -191,9 +191,8 @@ class MediationController {
 
     private function viewMessagesWith($recipientID) {
         global $f3;
-        $messages = new Messages($this->dispute->getDisputeId(), $this->account->getLoginId(), $recipientID);
         $f3->set('recipientID', $recipientID);
-        $f3->set('messages', $messages->getMessages());
+        $f3->set('messages', $this->dispute->getMessagesBetween($this->account->getLoginId(), $recipientID));
         $f3->set('content', 'messages.html');
     }
 
@@ -204,7 +203,7 @@ class MediationController {
 
         if ($message && $recipientID) {
 
-            DBL::createMessage(array(
+            DBCreate::instance()->message(array(
                 'dispute_id'   => $this->dispute->getDisputeId(),
                 'author_id'    => $this->account->getLoginId(),
                 'message'      => $message,

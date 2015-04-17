@@ -2,6 +2,12 @@
 
 class AdminController {
 
+    private $moduleDirectory;
+
+    function __construct() {
+        $this->moduleDirectory = __DIR__ . '/../../modules';
+    }
+
     function showMarketplace($f3, $params) {
         $account = mustBeLoggedInAsAn('Admin');
         $modules = json_decode(file_get_contents('http://smartresolution.org/marketplace/feed'), true);
@@ -28,11 +34,9 @@ class AdminController {
     }
 
     function deleteModule($f3, $params) {
-        $account = mustBeLoggedInAsAn('Admin');
+        mustBeLoggedInAsAn('Admin');
         $moduleName = $f3->get('GET.id');
-
-        // delete module
-        $moduleDirectory = __DIR__ . '/../../modules/' . $moduleName;
+        $moduleDirectory = $this->moduleDirectory . '/' . $moduleName;
         $this->rrmdir($moduleDirectory);
         $this->updateModuleConfig();
         header('Location: /admin-modules');
@@ -41,14 +45,14 @@ class AdminController {
     function downloadModule($f3, $params) {
         $account      = mustBeLoggedInAsAn('Admin');
         $downloadLink = $f3->get('GET.url');
-        $zipLocation  = __DIR__ . '/../../modules/tmp.zip';
+        $zipLocation  = $this->moduleDirectory . '/tmp.zip';
 
         file_put_contents($zipLocation, file_get_contents($downloadLink));
 
         $zip = new ZipArchive;
         $response = $zip->open($zipLocation);
         if ($response === TRUE) {
-            $zip->extractTo(__DIR__ . '/../../modules');
+            $zip->extractTo($this->moduleDirectory);
             $zip->close();
             unlink($zipLocation);
             $this->updateModuleConfig();
@@ -66,7 +70,7 @@ class AdminController {
 
     function updateModuleConfig() {
         // remove config.json, it will get re-initialised on next page load.
-        unlink(__DIR__ . '/../../modules/config.json');
+        unlink($this->moduleDirectory . '/config.json');
     }
 
     // copied from http://php.net/rmdir#98622

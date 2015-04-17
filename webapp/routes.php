@@ -4,7 +4,7 @@ $routes = array(
 
     'GET  /' => function ($f3, $params) {
 
-        if (Session::loggedIn()) {
+        if (Session::instance()->loggedIn()) {
             header('Location: /dashboard');
         }
 
@@ -40,8 +40,8 @@ $routes = array(
     'POST /disputes/@disputeID/assign'           => 'DisputeController->assignDisputePost',
     'GET  /disputes/@disputeID/close'            => 'DisputeController->closeDisputeGet',
     'POST /disputes/@disputeID/close'            => 'DisputeController->closeDisputePost',
-    'GET  /disputes/@disputeID/summary'          => 'SummaryController->view',
-    'POST /disputes/@disputeID/summary'          => 'SummaryController->edit',
+    'GET  /disputes/@disputeID/summary'          => 'DisputeController->editGet',
+    'POST /disputes/@disputeID/summary'          => 'DisputeController->editPost',
     'GET  /disputes/@disputeID/evidence'         => 'EvidenceController->view',
     'POST /disputes/@disputeID/evidence'         => 'EvidenceController->upload',
     'GET  /disputes/@disputeID/evidence'         => 'EvidenceController->view',

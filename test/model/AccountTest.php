@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../webapp/autoload.php';
+require_once __DIR__ . '/../../webapp/autoload.php';
 
 class AccountTest extends PHPUnit_Framework_TestCase
 {
@@ -9,11 +9,11 @@ class AccountTest extends PHPUnit_Framework_TestCase
     }
 
     public function testTypes() {
-        $agent           = DBAccount::getAccountByEmail('agent_a@t.co');
-        $mediator        = DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk');
-        $lawFirm         = DBAccount::getAccountByEmail('law_firm_a@t.co');
-        $mediationCentre = DBAccount::getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
-        $administrator   = DBAccount::getAccountByEmail('admin@smartresolution.org');
+        $agent           = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
+        $mediator        = DBAccount::instance()->getAccountByEmail('john.smith@we-mediate.co.uk');
+        $lawFirm         = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
+        $mediationCentre = DBAccount::instance()->getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
+        $administrator   = DBAccount::instance()->getAccountByEmail('admin@smartresolution.org');
 
         $this->assertTrue($agent           instanceof Agent);
         $this->assertTrue($mediator        instanceof Mediator);
@@ -29,7 +29,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
     }
 
     public function testCommonGetters() {
-        $account = DBAccount::getAccountByEmail('agent_a@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
 
         $this->assertTrue(is_int($account->getLoginId()));
         $this->assertEquals('agent_a@t.co', $account->getEmail());
@@ -38,7 +38,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($account->getAllDisputes()));
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
 
-        $account = DBAccount::getAccountByEmail('law_firm_a@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
 
         $this->assertTrue(is_int($account->getLoginId()));
         $this->assertEquals('law_firm_a@t.co', $account->getEmail());
@@ -49,33 +49,33 @@ class AccountTest extends PHPUnit_Framework_TestCase
     }
 
     public function testIndividualGetters() {
-        $account = DBAccount::getAccountByEmail('agent_a@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
         $this->assertEquals('Webdapper Ltd', $account->getOrganisation()->getName());
 
-        $account = DBAccount::getAccountByEmail('john.smith@we-mediate.co.uk');
+        $account = DBAccount::instance()->getAccountByEmail('john.smith@we-mediate.co.uk');
         $this->assertEquals('#CV coming soon.', $account->getRawCV());
         $this->assertEquals('<h1 id="cv-coming-soon">CV coming soon.</h1>', trim($account->getCV()));
     }
 
     public function testSetCV() {
-        $account = DBAccount::getAccountByEmail('agent_a@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
         $this->assertEquals(false, $account->getRawCV());
         $account->setCV('TEST');
         $this->assertEquals('TEST', $account->getRawCV());
     }
 
     public function testOrganisationGetters() {
-        $account = DBAccount::getAccountByEmail('law_firm_a@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
         $this->assertTrue(is_array($account->getIndividuals('Agent')));
         $this->assertEquals('Chris Ashton', $account->getIndividuals('Agent')[0]->getName());
 
-        $account = DBAccount::getAccountByEmail('law_firm_b@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('law_firm_b@t.co');
         $this->assertEquals('#Description coming soon', $account->getRawDescription());
         $this->assertEquals('<h1 id="description-coming-soon">Description coming soon</h1>', trim($account->getDescription()));
     }
 
     public function testSetDescription() {
-        $account = DBAccount::getAccountByEmail('law_firm_a@t.co');
+        $account = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
         $this->assertEquals(false, $account->getRawDescription());
         $account->setDescription('TEST');
         $this->assertEquals('TEST', $account->getRawDescription());

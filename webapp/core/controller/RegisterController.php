@@ -3,7 +3,7 @@
 class RegisterController {
 
     function organisationGet ($f3) {
-        if (Session::loggedIn()) {
+        if (Session::instance()->loggedIn()) {
             header('Location: /dashboard');
         }
         $f3->set('content','register_organisation.html');
@@ -21,7 +21,7 @@ class RegisterController {
         }
         else {
             try {
-                DBL::createOrganisation(array(
+                DBCreate::instance()->organisation(array(
                     'email'       => $email,
                     'password'    => $password,
                     'name'        => $orgName,
@@ -57,9 +57,9 @@ class RegisterController {
         }
         else {
             try {
-                $organisation = Session::getAccount();
+                $organisation = Session::instance()->getAccount();
 
-                DBL::createIndividual(array(
+                DBCreate::instance()->individual(array(
                     'email'           => $email,
                     'password'        => $password,
                     'organisation_id' => $organisation->getLoginId(),

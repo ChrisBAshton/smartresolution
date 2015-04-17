@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/../webapp/autoload.php';
+define('WEBAPP_DIR', __DIR__ . '/../../webapp');
+
+require_once WEBAPP_DIR . '/autoload.php';
 
 $eventFired = false;
 
@@ -11,7 +13,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
     }
 
     public static function tearDownAfterClass() {
-        shell_exec('rm ' . __DIR__ . '/../webapp/modules/config.json');
+        shell_exec('rm ' . WEBAPP_DIR . '/modules/config.json');
     }
 
     public function testDeclareModule() {

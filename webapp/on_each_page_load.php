@@ -14,6 +14,6 @@ if ($f3->get('GET.mark_notification_as_read')) {
     header('Location: ' . $notification->getUrl());
 }
 
-if (Session::loggedIn()) {
-    $f3->set('notifications', Session::getAccount()->getNotifications());
+if (Session::instance()->loggedIn()) {
+    $f3->set('notifications', Session::instance()->getAccount()->getNotifications());
 }

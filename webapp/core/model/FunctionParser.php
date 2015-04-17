@@ -2,13 +2,9 @@
 
 class FunctionParser {
 
-    function __construct($functionToCall, $parameters) {
-        // if $functionToCall is an anonymous function
+    function __construct($functionToCall, $parameters = array()) {
+        // if $functionToCall is an anonymous function or a string representing a global function
         if (is_callable($functionToCall)) {
-            $functionToCall($parameters);
-        }
-        // if $functionToCall is the name (string) of a global function
-        else if (function_exists($functionToCall)) {
             call_user_func_array($functionToCall, $parameters);
         }
         else {
@@ -18,16 +14,27 @@ class FunctionParser {
     }
 
     private function tryToCallClassFunction($functionToCall, $parameters) {
+        $this->checkIfFunctionToCallIsValid($functionToCall);
+        $className     = $this->extractClassName($functionToCall);
+        $methodName    = $this->extractMethodName($functionToCall);
+        $classInstance = new $className();
+        call_user_func_array(array($classInstance, $methodName), $parameters);
+    }
+
+    private function checkIfFunctionToCallIsValid($functionToCall) {
         $classFunction = strpos($functionToCall, '->') !== false;
-        if ($classFunction) {
-            $parts = explode('->', $functionToCall);
-            $class = $parts[0];
-            $method = $parts[1];
-            $classInstance = new $class();
-            call_user_func_array(array($classInstance, $method), $parameters);
+        if (!$classFunction) {
+            Utils::instance()->throwException('Invalid function: ' . $functionToCall);
         }
-        else {
-            throw new Exception('Invalid function: ' . $functionToCall);
-        }
+    }
+
+    private function extractClassName($functionToCall) {
+        $parts = explode('->', $functionToCall);
+        return $parts[0];
+    }
+
+    private function extractMethodName($functionToCall) {
+        $parts = explode('->', $functionToCall);
+        return $parts[1];
     }
 }

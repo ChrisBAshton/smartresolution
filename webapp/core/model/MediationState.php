@@ -48,7 +48,7 @@ class MediationState {
     }
 
     public function getMediationCentreProposer() {
-        return new Agent((int) $this->mediationCentreOffer['proposer']);
+        return new Agent((int) $this->mediationCentreOffer['proposer_id']);
     }
 
     public function getMediator() {
@@ -56,26 +56,17 @@ class MediationState {
     }
 
     public function getMediatorProposer() {
-        return new Agent((int) $this->mediatorOffer['proposer']);
+        return new Agent((int) $this->mediatorOffer['proposer_id']);
     }
 
     public function acceptLatestProposal() {
-        $this->respondToLatestProposal('accepted');
+        DBMediation::respondToMediationProposal($this->getLatestProposalId(), 'accepted');
+        $this->setVariables($this->disputeID);
         $this->notifyAcceptedParty();
     }
 
     public function declineLatestProposal() {
-        $this->respondToLatestProposal('declined');
-    }
-
-    private function respondToLatestProposal($response) {
-        Database::instance()->exec(
-            'UPDATE mediation_offers SET status = :response WHERE mediation_offer_id = :offer_id',
-            array(
-                ':offer_id' => $this->getLatestProposalId(),
-                ':response' => $response
-            )
-        );
+        DBMediation::respondToMediationProposal($this->getLatestProposalId(), 'declined');
         $this->setVariables($this->disputeID);
     }
 
@@ -101,7 +92,7 @@ class MediationState {
 
         $dispute = new Dispute($this->disputeID);
 
-        DBL::createNotification(array(
+        DBCreate::instance()->notification(array(
             'recipient_id' => $partyID,
             'message'      => $message,
             'url'          => $dispute->getUrl()

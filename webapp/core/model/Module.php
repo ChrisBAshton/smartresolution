@@ -38,7 +38,7 @@ class Module {
 
     public function toggleActiveness() {
         if ($this->special()) {
-            throw new Exception("Tried to change active status of module " . $this->title() . " but it is a special module and cannot be changed!");
+            Utils::instance()->throwException("Tried to change active status of module " . $this->title() . " but it is a special module and cannot be changed!");
         }
         else {
             global $modulesConfig;

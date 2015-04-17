@@ -7,7 +7,7 @@ class DisputeAssignedToLawFirmB extends DisputeDefaults implements DisputeStateI
     }
 
     public function canAssignDisputeToAgent() {
-        return $this->accountIs($this->dispute->getLawFirmB());
+        return $this->accountIs($this->dispute->getPartyB()->getLawFirm());
     }
 
     public function canNegotiateLifespan() {

@@ -3,13 +3,15 @@
 class Lifespan implements LifespanInterface {
 
     private $status;
+    private $db;
 
     function __construct($lifespanID, $justCreated = false) {
+        $this->db = DBLifespan::instance();
         $this->setVariables($lifespanID);
         if ($justCreated) {
             $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
             if ($invalid) {
-                throw new Exception($invalid);
+                Utils::instance()->throwException($invalid);
             }
         }
     }
@@ -32,21 +34,14 @@ class Lifespan implements LifespanInterface {
     }
 
     private function setVariables($lifespanID) {
-        $lifespan = Database::instance()->exec(
-            'SELECT * FROM lifespans WHERE lifespan_id = :lifespan_id',
-            array(':lifespan_id' => $lifespanID)
-        );
-
-        if (count($lifespan) === 1) {
-            $lifespan         = $lifespan[0];
-            $this->lifespanID = (int) $lifespan['lifespan_id'];
-            $this->disputeID  = (int) $lifespan['dispute_id'];
-            $this->proposer   = (int) $lifespan['proposer'];
-            $this->status     = $lifespan['status'];
-            $this->validUntil = $lifespan['valid_until'];
-            $this->startTime  = $lifespan['start_time'];
-            $this->endTime    = $lifespan['end_time'];
-        }
+        $lifespan = DBGet::instance()->lifespan($lifespanID);
+        $this->lifespanID = (int) $lifespan['lifespan_id'];
+        $this->disputeID  = (int) $lifespan['dispute_id'];
+        $this->proposer   = (int) $lifespan['proposer'];
+        $this->status     = $lifespan['status'];
+        $this->validUntil = $lifespan['valid_until'];
+        $this->startTime  = $lifespan['start_time'];
+        $this->endTime    = $lifespan['end_time'];
     }
 
     public function status() {
@@ -76,13 +71,7 @@ class Lifespan implements LifespanInterface {
     }
 
     public function disputeClosed() {
-        Database::instance()->exec(
-            'UPDATE lifespans SET end_time = :end_time WHERE lifespan_id = :lifespan_id',
-            array(
-                ':end_time'    => time(),
-                ':lifespan_id' => $this->getLifespanId()
-            )
-        );
+        $this->db->endLifespan($this->getLifespanId());
         $this->setVariables($this->getLifespanId());
     }
 
@@ -101,11 +90,13 @@ class Lifespan implements LifespanInterface {
     }
 
     public function accept() {
-        $this->updateStatus('accepted');
+        $this->db->updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'accepted');
+        $this->setVariables($this->getLifespanId());
     }
 
     public function decline() {
-        $this->updateStatus('declined');
+        $this->db->updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'declined');
+        $this->setVariables($this->getLifespanId());
     }
 
     public function offered() {
@@ -142,31 +133,5 @@ class Lifespan implements LifespanInterface {
 
     public function getProposer() {
         return $this->proposer;
-    }
-
-    private function updateStatus($status) {
-        Database::instance()->exec(
-            'UPDATE lifespans SET status = :status WHERE lifespan_id = :lifespan_id',
-            array(
-                ':status'      => $status,
-                ':lifespan_id' => $this->getLifespanId()
-            )
-        );
-        $this->setVariables($this->getLifespanId());
-
-        if ($status === 'accepted') {
-            $notification = 'The other party has agreed your lifespan offer.';
-        }
-        else if ($status === 'declined') {
-            $notification = 'The other party has declined your lifespan offer.';
-        }
-
-        $dispute = new Dispute($this->getAssociatedDisputeId());
-
-        DBL::createNotification(array(
-            'recipient_id' => $dispute->getOpposingPartyId(Session::getAccount()),
-            'message'      => $notification,
-            'url'          => $dispute->getUrl() . '/lifespan'
-        ));
     }
 }

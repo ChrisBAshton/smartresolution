@@ -8,7 +8,7 @@ class Individual extends Account implements AccountInterface {
 
     public function setVariables($account) {
         if (is_int($account)) {
-            $account = DBAccount::getDetailsById($account);
+            $account = DBAccount::instance()->getDetailsById($account);
         }
 
         $this->loginId      = (int) $account['login_id'];
@@ -16,7 +16,7 @@ class Individual extends Account implements AccountInterface {
         $this->forename     = $account['forename'];
         $this->surname      = $account['surname'];
         $this->cv           = $account['cv'];
-        $this->organisation = DBAccount::getAccountById($account['organisation_id']);
+        $this->organisation = DBAccount::instance()->getAccountById($account['organisation_id']);
     }
 
     public function getRawCV() {
@@ -39,13 +39,7 @@ class Individual extends Account implements AccountInterface {
     }
 
     private function setProperty($key, $value) {
-        Database::instance()->exec(
-            'UPDATE individuals SET ' . $key . ' = :value WHERE login_id = :uid',
-            array(
-                ':value' => $value,
-                ':uid'   => $this->getLoginId()
-            )
-        );
+        DBAccount::instance()->setAccountProperty($this->getLoginId(), $key, $value);
         $this->setVariables($this->getLoginId());
     }
 

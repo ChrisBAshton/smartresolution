@@ -11,15 +11,17 @@ use Symfony\Component\Yaml\Parser;
 $yaml = new Parser();
 $data = $yaml->parse(file_get_contents(__DIR__ . '/fixture_data.yml'));
 
+$create = DBCreate::instance();
+
 foreach($data['administrators'] as $admin) {
-    DBL::createAdmin(array(
+    $create->admin(array(
         'email'    => $admin['email'],
         'password' => $admin['password']
     ));
 }
 
 foreach($data['organisations'] as $org) {
-    $organisation = DBL::createOrganisation(array(
+    $organisation = $create->organisation(array(
         'email'    => $org['account_details']['email'],
         'password' => $org['account_details']['password'],
         'type'     => $org['details']['type'],
@@ -32,7 +34,7 @@ foreach($data['organisations'] as $org) {
 
     if (isset($org['individuals'])) {
         foreach($org['individuals'] as $individual) {
-            $account = DBL::createIndividual(array(
+            $account = $create->individual(array(
                 'email'           => $individual['account_details']['email'],
                 'password'        => $individual['account_details']['password'],
                 'organisation_id' => $organisation->getLoginId(),
@@ -48,28 +50,28 @@ foreach($data['organisations'] as $org) {
 }
 
 foreach($data['disputes'] as $dataItem) {
-    $dispute = DBL::createDispute(array(
+    $dispute = $create->dispute(array(
         'title'      => $dataItem['title'],
-        'law_firm_a' => DBAccount::emailToId($dataItem['law_firm_a']),
+        'law_firm_a' => DBAccount::instance()->emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
-    $agentAId = DBAccount::emailToId($dataItem['agent_a']);
-    $dispute->setAgentA($agentAId);
+    $agentAId = DBAccount::instance()->emailToId($dataItem['agent_a']);
+    $dispute->getPartyA()->setAgent($agentAId);
 
     if (isset($dataItem['law_firm_b'])) {
-        $dispute->setLawFirmB(DBAccount::emailToId($dataItem['law_firm_b']));
+        $dispute->getPartyB()->setLawFirm(DBAccount::instance()->emailToId($dataItem['law_firm_b']));
     }
 
     if (isset($dataItem['agent_b'])) {
-        $dispute->setAgentB(DBAccount::emailToId($dataItem['agent_b']));
+        $dispute->getPartyB()->setAgent(DBAccount::instance()->emailToId($dataItem['agent_b']));
     }
 
     if (isset($dataItem['summary_a'])) {
-        $dispute->setSummaryForPartyA($dataItem['summary_a']);
+        $dispute->getPartyA()->setSummary($dataItem['summary_a']);
     }
 
     if (isset($dataItem['summary_b'])) {
-        $dispute->setSummaryForPartyB($dataItem['summary_b']);
+        $dispute->getPartyB()->setSummary($dataItem['summary_b']);
     }
 
     if (isset($dataItem['lifespan'])) {
@@ -95,7 +97,7 @@ foreach($data['disputes'] as $dataItem) {
                 break;
         }
 
-        DBL::createLifespan(array(
+        $create->lifespan(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer'    => $agentAId,
             'valid_until' => $validUntil,
@@ -118,19 +120,19 @@ foreach($data['disputes'] as $dataItem) {
         shell_exec('echo "This is an example evidence document." > ' . __DIR__ . '/../../webapp/uploads/tmp.txt');
 
         if ($dataItem['evidence'] === 'one_item') {
-            DBL::createEvidence(array(
-                'uploader' => $dispute->getAgentA(),
-                'dispute'  => $dispute,
-                'filepath' => '/uploads/tmp.txt'
+            $create->evidence(array(
+                'uploader_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
+                'dispute_id'  => $dispute->getDisputeId(),
+                'filepath'    => '/uploads/tmp.txt'
             ));
         }
     }
 
     if (isset($dataItem['mediation_centre'])) {
-        DBL::createMediationCentreOffer(array(
-            'dispute'          => $dispute,
-            'proposed_by'      => $dispute->getAgentA(),
-            'mediation_centre' => DBAccount::getAccountByEmail($dataItem['mediation_centre'])
+        $create->mediationCentreOffer(array(
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
+            'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
         ));
 
         $dispute->refresh();
@@ -138,10 +140,10 @@ foreach($data['disputes'] as $dataItem) {
     }
 
     if (isset($dataItem['mediator'])) {
-        DBL::createMediatorOffer(array(
-            'dispute'     => $dispute,
-            'proposed_by' => $dispute->getAgentA(),
-            'mediator'    => DBAccount::getAccountByEmail($dataItem['mediator'])
+        $create->mediatorOffer(array(
+            'dispute_id'  => $dispute->getDisputeId(),
+            'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
+            'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediator'])->getLoginId()
         ));
 
         $dispute->refresh();

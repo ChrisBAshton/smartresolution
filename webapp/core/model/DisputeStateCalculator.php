@@ -1,20 +1,20 @@
 <?php
 
-class DisputeStateCalculator {
+class DisputeStateCalculator extends Prefab {
 
-    public static function getState($dispute, $account = false) {
+    public function getState($dispute, $account = false) {
         if (!$account) {
-            $account = Session::getAccount();
+            $account = Session::instance()->getAccount();
         }
 
         if ($dispute->getStatus() !== 'ongoing') {
             return new DisputeClosed($dispute, $account);
         }
 
-        if ($dispute->getLawFirmB() === false) {
+        if ($dispute->getPartyB()->getLawFirm() === false) {
             return new DisputeCreated($dispute, $account);
         }
-        else if ($dispute->getAgentB() === false) {
+        else if ($dispute->getPartyB()->getAgent() === false) {
             return new DisputeAssignedToLawFirmB($dispute, $account);
         }
 
@@ -45,14 +45,14 @@ class DisputeStateCalculator {
 
     // @TODO - NB, I got the icons from http://www.flaticon.com/packs/web-pictograms
     // Should probably document that somewhere better than here.
-    public static function getActions($dispute, $account) {
+    public function getActions($dispute, $account) {
         global $dashboardActions;
-        DisputeStateCalculator::setDefaultActions($dispute, $account);
-        ModuleController::emit('dispute_dashboard', $dispute);
+        $this->setDefaultActions($dispute, $account);
+        ModuleController::emit('dispute_dashboard');
         return $dashboardActions;
     }
 
-    public static function setDefaultActions($dispute, $account) {
+    public function setDefaultActions($dispute, $account) {
         $state = $dispute->getState($account);
         global $dashboardActions;
         $dashboardActions = array();
@@ -66,15 +66,15 @@ class DisputeStateCalculator {
             );
 
             $dashboardActions[] = array(
-                'title' => 'Communicate with ' . $dispute->getAgentA()->getName(),
+                'title' => 'Communicate with ' . $dispute->getPartyA()->getAgent()->getName(),
                 'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentA()->getLoginId()
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getPartyA()->getAgent()->getLoginId()
             );
 
             $dashboardActions[] = array(
-                'title' => 'Communicate with ' . $dispute->getAgentB()->getName(),
+                'title' => 'Communicate with ' . $dispute->getPartyB()->getAgent()->getName(),
                 'image' => '/core/view/images/message.png',
-                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getAgentB()->getLoginId()
+                'href'  => $dispute->getUrl() . '/mediation-chat/' . $dispute->getPartyB()->getAgent()->getLoginId()
             );
         }
 

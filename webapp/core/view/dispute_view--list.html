@@ -25,7 +25,7 @@ else :
         <div class="row list__item">
             <div class="list__item__title col-sm-4">
                 <?php
-                    $state = DisputeStateCalculator::getState($dispute, $account);
+                    $state = DisputeStateCalculator::instance()->getState($dispute, $account);
                     echo $state->getStateDescription();
                 ?>
             </div>

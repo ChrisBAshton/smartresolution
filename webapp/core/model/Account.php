@@ -26,23 +26,14 @@ abstract class Account {
      * @see AccountInterface::getNotifications() Implements the corresponding function in AccountInterface.
      */
     public function getNotifications() {
-        $notifications = array();
-
-        $notificationsDetails = Database::instance()->exec('SELECT notification_id FROM notifications WHERE recipient_id = :login_id AND read = "false" ORDER BY notification_id DESC',
-            array(':login_id' => $this->getLoginId()));
-
-        foreach ($notificationsDetails as $details) {
-            $notifications[] = new Notification($details['notification_id']);
-        }
-
-        return $notifications;
+        return DBNotification::getNotificationsForLoginId($this->getLoginId());
     }
 
     /**
      * @see AccountInterface::getAllDisputes() Implements the corresponding function in AccountInterface.
      */
     public function getAllDisputes() {
-        return DBAccount::getAllDisputes($this);
+        return DBAccount::instance()->getAllDisputes($this);
     }
 
     /**
@@ -56,7 +47,7 @@ abstract class Account {
      * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
      */
     public function getRole() {
-        throw new Exception('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
+        Utils::instance()->throwException('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
     }
 
     /**

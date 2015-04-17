@@ -1,29 +1,29 @@
 <?php
 session_start();
 
-class Session {
+class Session extends Prefab {
 
-    public static function getAccount() {
-        $email = Utils::getValue($_SESSION, 'ODR_Email', false);
-        return $email ? DBAccount::getAccountByEmail($email) : false;
+    public function getAccount() {
+        $email = Utils::instance()->getValue($_SESSION, 'ODR_Email', false);
+        return $email ? DBAccount::instance()->getAccountByEmail($email) : false;
     }
 
-    public static function create($email, $password) {
+    public function create($email, $password) {
         $_SESSION['ODR_Email']     = $email;
         $_SESSION['ODR_Password']  = $password;
         $_SESSION['ODR_Logged_In'] = true;
     }
 
-    public static function clear() {
+    public function clear() {
         $_SESSION['ODR_Password']  = false;
         $_SESSION['ODR_Logged_In'] = false;
     }
 
-    public static function lastKnownEmail() {
+    public function lastKnownEmail() {
         return isset($_SESSION['ODR_Email']) ? $_SESSION['ODR_Email'] : false;
     }
 
-    public static function loggedIn() {
+    public function loggedIn() {
         $loggedIn = false;
         if(isset($_SESSION['ODR_Logged_In']))  {
             if ($_SESSION['ODR_Logged_In']) {

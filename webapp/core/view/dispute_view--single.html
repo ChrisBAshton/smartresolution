@@ -61,16 +61,16 @@ endif;
 
             <div class="col-sm-6">
                 <p>
-                    <?php if ($dispute->getLawFirmA()) : ?>
-                        Initiatiated by company: <?php echo $dispute->getLawFirmA(); ?>
+                    <?php if ($dispute->getPartyA()->getLawFirm()) : ?>
+                        Initiatiated by company: <?php echo $dispute->getPartyA()->getLawFirm(); ?>
 
                         <br />
 
                         <?php
-                            if ($dispute->getAgentA()) {
-                                echo 'Represented by: ' . $dispute->getAgentA();
+                            if ($dispute->getPartyA()->getAgent()) {
+                                echo 'Represented by: ' . $dispute->getPartyA()->getAgent();
                             } else {
-                                echo 'Waiting for ' . $dispute->getLawFirmA()->getName() . ' to assign an agent to the dispute.';
+                                echo 'Waiting for ' . $dispute->getPartyA()->getLawFirm()->getName() . ' to assign an agent to the dispute.';
                             }
                         ?>
                     <?php endif; ?>
@@ -78,8 +78,8 @@ endif;
 
                 <p><em>
                     <?php
-                        if ($dispute->getSummaryFromPartyA()) {
-                            echo $dispute->getSummaryFromPartyA();
+                        if ($dispute->getPartyA()->getSummary()) {
+                            echo $dispute->getPartyA()->getSummary();
                         }
                         else {
                             echo 'Awaiting summary.';
@@ -90,16 +90,16 @@ endif;
 
             <div class="col-sm-6">
                 <p>
-                    <?php if ($dispute->getLawFirmB()) : ?>
-                        Opened against company: <?php echo $dispute->getLawFirmB(); ?>
+                    <?php if ($dispute->getPartyB()->getLawFirm()) : ?>
+                        Opened against company: <?php echo $dispute->getPartyB()->getLawFirm(); ?>
 
                         <br />
 
                         <?php
-                            if ($dispute->getAgentB()) {
-                                echo 'Represented by: ' . $dispute->getAgentB();
+                            if ($dispute->getPartyB()->getAgent()) {
+                                echo 'Represented by: ' . $dispute->getPartyB()->getAgent();
                             } else {
-                                echo 'Waiting for ' . $dispute->getLawFirmB()->getName() . ' to assign an agent to the dispute.';
+                                echo 'Waiting for ' . $dispute->getPartyB()->getLawFirm()->getName() . ' to assign an agent to the dispute.';
                             }
                         ?>
                     <?php else: ?>
@@ -109,8 +109,8 @@ endif;
 
                 <p><em>
                     <?php
-                        if ($dispute->getSummaryFromPartyB()) {
-                            echo $dispute->getSummaryFromPartyB();
+                        if ($dispute->getPartyB()->getSummary()) {
+                            echo $dispute->getPartyB()->getSummary();
                         }
                         else {
                             echo 'Awaiting summary.';

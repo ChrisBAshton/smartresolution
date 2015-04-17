@@ -43,7 +43,7 @@ class LifespanController {
             }
             else {
                 try {
-                    $lifespan = DBL::createLifespan(array(
+                    $lifespan = DBCreate::instance()->lifespan(array(
                         'dispute_id'  => $dispute->getDisputeId(),
                         'proposer'    => $account->getLoginId(),
                         'valid_until' => $validUntil,

@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../webapp/autoload.php';
+require_once __DIR__ . '/../../webapp/autoload.php';
+require_once __DIR__ . '/../_helper.php';
 
 class MediationStateTest extends PHPUnit_Framework_TestCase
 {
@@ -9,7 +10,7 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
     }
 
     public function testWhenNotInMediation() {
-        $dispute = Utils::getDisputeByTitle('Smith versus Jones');
+        $dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $state = $dispute->getMediationState();
 
         $this->assertFalse($state->mediationCentreProposed());
@@ -20,7 +21,7 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
     }
 
     public function testWhenInMediation() {
-        $dispute = Utils::getDisputeByTitle('Dispute that is in mediation');
+        $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $state = $dispute->getMediationState();
 
         $this->assertTrue($state->mediationCentreProposed());
@@ -31,7 +32,7 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
     }
 
     public function testWhenMediationProposed() {
-        $dispute = Utils::getDisputeByTitle('Dispute that has agreed on a Mediation Centre');
+        $dispute = TestHelper::getDisputeByTitle('Dispute that has agreed on a Mediation Centre');
         $state = $dispute->getMediationState();
 
         $this->assertTrue($state->mediationCentreProposed());
@@ -42,7 +43,7 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
     }
 
     public function testGetters() {
-        $dispute = Utils::getDisputeByTitle('Dispute that is in mediation');
+        $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $state = $dispute->getMediationState();
         $this->assertTrue($state->getMediationCentre()  instanceof MediationCentre);
         $this->assertTrue($state->getMediator()         instanceof Mediator);

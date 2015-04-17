@@ -131,7 +131,7 @@ function get_dispute_id() {
 }
 
 function get_login_id() {
-    return Session::getAccount()->getLoginId();
+    return Session::instance()->getAccount()->getLoginId();
 }
 
 /**
