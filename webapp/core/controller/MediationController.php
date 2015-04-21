@@ -224,6 +224,7 @@ class MediationController {
             else {
                 $this->dispute->disableRoundTableCommunication();
             }
+            DBUpdate::instance()->dispute($this->dispute);
         }
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }

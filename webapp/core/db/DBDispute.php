@@ -19,35 +19,6 @@ class DBDispute extends Prefab {
         return $evidences;
     }
 
-    /**
-     * Changes the status of round-table communication in the database.
-     */
-    public function markRoundTableCommunicationAs($enabledOrDisabled, $disputeID) {
-        Database::instance()->exec(
-            'UPDATE disputes SET round_table_communication = :bool WHERE dispute_id = :dispute_id',
-            array(
-                ':dispute_id' => $disputeID,
-                ':bool'       => $enabledOrDisabled === 'enabled' ? 'true' : 'false'
-            )
-        );
-    }
-
-    /**
-     * Updates a given field in the dispute.
-     *
-     * @param  string  $key         The field to update.
-     * @param  Unknown $value       The value to set it as.
-     * @param  int     $disputeID   The ID of the dispute.
-     */
-    public function updateField($key, $value, $disputeID) {
-        Database::instance()->exec('UPDATE disputes SET ' . $key . ' = :new_value WHERE dispute_id = :dispute_id',
-            array(
-                ':new_value' => $value,
-                'dispute_id' => $disputeID
-            )
-        );
-    }
-
     public function updateDisputePartyB($partyID, $disputeID) {
         Database::instance()->exec(
             'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',

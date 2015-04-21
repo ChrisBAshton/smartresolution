@@ -90,7 +90,7 @@ class MediationState {
             $message = 'Your Mediation Centre has been selected to mediate a dispute.';
         }
 
-        $dispute = new Dispute($this->disputeID);
+        $dispute = new Dispute(DBGet::instance()->dispute($this->disputeID));
 
         DBCreate::instance()->notification(array(
             'recipient_id' => $partyID,

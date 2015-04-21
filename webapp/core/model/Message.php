@@ -15,7 +15,7 @@ class Message {
     }
 
     public function getDispute() {
-        return new Dispute($this->getDisputeId());
+        return new Dispute(DBGet::instance()->dispute($this->getDisputeId()));
     }
 
     public function timestamp() {

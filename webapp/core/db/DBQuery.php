@@ -62,7 +62,7 @@ class DBQuery extends Prefab {
         }
 
         foreach($disputesDetails as $dispute) {
-            $disputes[] = new Dispute($dispute['dispute_id']);
+            $disputes[] = new Dispute(DBGet::instance()->dispute($dispute['dispute_id']));
         }
         return $disputes;
     }

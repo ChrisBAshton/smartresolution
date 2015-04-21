@@ -115,7 +115,7 @@ function get_module_url() {
  * @return string  Dispute URL.
  */
 function get_dispute_url() {
-    $dispute = new Dispute(get_dispute_id());
+    $dispute = new Dispute(DBGet::instance()->dispute(get_dispute_id()));
     return $dispute->getUrl();
 }
 

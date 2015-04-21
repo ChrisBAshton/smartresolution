@@ -32,7 +32,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
             'start_time'  => $currentTime + 7200,
             'end_time'    => $currentTime + 12000
         ));
-        $this->dispute->refresh();
+        DBUpdate::instance()->dispute($this->dispute);
     }
 
     public function testLifespanStatusStartsOffCorrect() {
@@ -58,8 +58,9 @@ class LifespanTest extends PHPUnit_Framework_TestCase
 
     public function testLifespanDecline() {
         $this->createLifespan();
-        $this->dispute->getCurrentLifespan()->decline();
-        $this->assertTrue($this->dispute->getCurrentLifespan()->declined());
+        $lifespan = $this->dispute->getCurrentLifespan();
+        $lifespan->decline();
+        $this->assertTrue($lifespan->declined());
     }
 
     public function testCurrentAndLatestLifespans() {

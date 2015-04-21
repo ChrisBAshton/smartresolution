@@ -107,7 +107,7 @@ foreach($data['disputes'] as $dataItem) {
             'end_time'    => $endTime
         ), true);
 
-        $dispute->refresh();
+        DBUpdate::instance()->dispute($dispute);
 
         if ($dataItem['lifespan'] === 'declined') {
             $dispute->getCurrentLifespan()->decline();
@@ -137,7 +137,7 @@ foreach($data['disputes'] as $dataItem) {
             'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
         ));
 
-        $dispute->refresh();
+        DBUpdate::instance()->dispute($dispute);
         $dispute->getMediationState()->acceptLatestProposal();
     }
 
@@ -148,7 +148,7 @@ foreach($data['disputes'] as $dataItem) {
             'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediator'])->getLoginId()
         ));
 
-        $dispute->refresh();
+        DBUpdate::instance()->dispute($dispute);
         $dispute->getMediationState()->acceptLatestProposal();
     }
 }

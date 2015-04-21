@@ -33,4 +33,16 @@ class DBUpdate extends Prefab {
         );
     }
 
+    public function dispute($dispute) {
+        Database::instance()->exec(
+            'UPDATE disputes SET round_table_communication = :rtc AND status = :status AND type = :type WHERE dispute_id = :dispute_id',
+            array(
+                ':dispute_id' => $dispute->getDisputeId(),
+                ':rtc'        => $dispute->inRoundTableCommunication(),
+                ':status'     => $dispute->getStatus(),
+                ':type'       => $dispute->getType()
+            )
+        );
+    }
+
 }

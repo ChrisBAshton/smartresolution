@@ -162,6 +162,7 @@ class DisputeController {
             else {
                 $dispute->closeSuccessfully();
             }
+            DBUpdate::instance()->dispute($dispute);
             $f3->set('success_message', 'You have successfully closed the dispute.');
         }
 
@@ -223,6 +224,8 @@ class DisputeController {
                 }
 
                 $dispute->setType($type);
+
+                DBUpdate::instance()->dispute($dispute);
 
                 $f3->set('summary', $summary);
                 $f3->set('success_message', 'You have updated the dispute details.');

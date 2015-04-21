@@ -27,6 +27,6 @@ $expiredLifespans = Database::instance()->exec(
 );
 
 foreach($expiredLifespans as $data) {
-    $dispute = new Dispute((int) $data['dispute_id']);
+    $dispute = new Dispute(DBGet::instance()->dispute((int) $data['dispute_id']));
     $dispute->closeUnsuccessfully();
 }

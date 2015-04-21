@@ -17,6 +17,10 @@ class LifespanFactory extends Prefab {
      * @return Lifespan
      */
     public function getCurrentLifespan($disputeID) {
+        if (!is_int($disputeID)) {
+            var_dump($disputeID);
+            throw new Exception('Dispute ID was not an integer! ');
+        }
         $acceptedLifespan = $this->db->getLatestLifespanWithStatus($disputeID, 'accepted');
         $proposedLifespan = $this->db->getLatestLifespanWithStatus($disputeID, 'offered');
 

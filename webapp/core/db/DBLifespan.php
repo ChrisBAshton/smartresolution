@@ -28,7 +28,7 @@ class DBLifespan extends Prefab {
             $notification = 'The other party has declined your lifespan offer.';
         }
 
-        $dispute = new Dispute($disputeID);
+        $dispute = new Dispute(DBGet::instance()->dispute($disputeID));
 
         DBCreate::instance()->notification(array(
             'recipient_id' => $dispute->getOpposingPartyId(Session::instance()->getAccount()),
@@ -41,7 +41,7 @@ class DBLifespan extends Prefab {
      * Returns the latest Lifespan attributed to the dispute that matches the given status. If no Lifespan is found, returns false.
      *
      * @param  integer $disputeID ID of the dispute.
-     * @param  string  $status    Get latest dispute that matches the given status. Special case: 'any'
+     * @param  string  $status    Get latest dispute that matches the given status. Special case: 'notDeclined'
      * @return Lifespan|false     Returns the Lifespan if one exists, or false if it doesn't.
      */
     public function getLatestLifespanWithStatus($disputeID, $status) {

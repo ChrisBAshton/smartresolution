@@ -6,7 +6,12 @@
 class DBGet extends Prefab {
 
     public function dispute($disputeID) {
-        return $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
+        $details = $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['party_a']);
+        $this->convertToInt($details['party_b']);
+        $this->convertToBoolean($details['round_table_communication']);
+        return $details;
     }
 
     public function disputeParty($partyID) {
@@ -61,7 +66,7 @@ class DBGet extends Prefab {
     }
 
     private function convertToBoolean(&$element) {
-        $element = !($element === 'false');
+        $element = !($element === 'false' || $element === '0');
     }
 
 }

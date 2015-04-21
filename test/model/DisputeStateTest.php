@@ -46,13 +46,13 @@ class DisputeStateTest extends PHPUnit_Framework_TestCase
 
     public function testDisputeInMediation() {
         $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
-        $this->assertTrue($this->extractState($dispute) instanceof InMediation);
+        $this->assertTrue($this->extractState($dispute) instanceof InMediation, 'State should have been InMediation but was ' . DisputeStateCalculator::instance()->calculateStateClass($dispute) );
     }
 
     public function testDisputeInRoundTableMediation() {
         $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $dispute->enableRoundTableCommunication();
-        $this->assertTrue($this->extractState($dispute) instanceof InRoundTableMediation);
+        $this->assertTrue($this->extractState($dispute) instanceof InRoundTableMediation, 'State should have been InRoundTableMediation but was ' . DisputeStateCalculator::instance()->calculateStateClass($dispute) );
     }
 
     public function testDisputeClosed() {

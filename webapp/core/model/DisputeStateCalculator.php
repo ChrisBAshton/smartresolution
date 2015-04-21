@@ -11,7 +11,7 @@ class DisputeStateCalculator extends Prefab {
         return new $stateClass($dispute, $account);
     }
 
-    private function calculateStateClass($dispute) {
+    public function calculateStateClass($dispute) {
         if ($dispute->getStatus() !== 'ongoing') {
             return "DisputeClosed";
         }

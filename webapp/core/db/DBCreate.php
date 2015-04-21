@@ -49,7 +49,7 @@ class DBCreate extends Prefab {
         }
         else {
             $db->commit();
-            $dispute = new Dispute((int) $newDispute['dispute_id']);
+            $dispute = new Dispute(DBGet::instance()->dispute((int) $newDispute['dispute_id']));
 
             if ($agentA) {
                 $this->notification(array(
@@ -136,7 +136,7 @@ class DBCreate extends Prefab {
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
 
-            $dispute = new Dispute($params['dispute_id']);
+            $dispute = new Dispute(DBGet::instance()->dispute($params['dispute_id']));
 
             $this->notification(array(
                 'recipient_id' => $dispute->getOpposingPartyId($params['proposer']),
@@ -281,7 +281,7 @@ class DBCreate extends Prefab {
 
         $this->insertRow('mediation_offers', $params);
 
-        $dispute = new Dispute($params['dispute_id']);
+        $dispute = new Dispute(DBGet::instance()->dispute($params['dispute_id']));
 
         $this->notification(array(
             'recipient_id' => $dispute->getOpposingPartyId($params['proposer_id']),
