@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo  - remove this file. Extract the methods out to another class.
+ * @deprecated
+ */
 class DBMediation extends Prefab {
 
     public function respondToMediationProposal($proposalID, $response) {

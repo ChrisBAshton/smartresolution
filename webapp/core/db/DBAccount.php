@@ -1,8 +1,28 @@
 <?php
 
+/**
+ * @todo  - remove this file. Extract the methods out to another class.
+ * @deprecated
+ */
 class DBAccount extends Prefab {
 
-    // @TODO - move these two functions to Account.php
+    /**
+     * Given an email, returns the login ID of the account.
+     *
+     * @param  string $email
+     * @return int
+     */
+    public function emailToId($email) {
+        $login_id = Database::instance()->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
+            ':email' => $email
+        ));
+        if (!$login_id) {
+            return false;
+        }
+        $login_id = (int) $login_id[0]['login_id'];
+        return $login_id;
+    }
+
     /**
      * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
      *
@@ -32,15 +52,6 @@ class DBAccount extends Prefab {
         return $crypt->verify($inputtedPassword, $encryptedPassword);
     }
 
-
-
-
-
-
-
-
-
-
     /**
      * Gets an account by its login ID.
      * @param  int $id                  The login ID.
@@ -59,53 +70,6 @@ class DBAccount extends Prefab {
     public function getAccountByEmail($email) {
         $account = $this->getDetailsBy('email', $email);
         return $this->arrayToAccountObject($account);
-    }
-
-
-    /**
-     * Converts an account details (name, email, etc) into an account object of the correct type, e.g. Agent, Law Firm, etc.
-     * @param  array<Mixed> $account    The account details
-     * @return Account  The account object.
-     */
-    private function arrayToAccountObject($account) {
-        if (!$account) {
-            return false;
-        }
-
-        switch($account['type']) {
-            case "mediator":
-                return new Mediator($account);
-            case "agent":
-                return new Agent($account);
-            case "law_firm":
-                return new LawFirm($account);
-            case "mediation_centre":
-                return new MediationCentre($account);
-            case "administrator":
-                return new Admin($account);
-            default:
-                Utils::instance()->throwException("Invalid account type.");
-        }
-    }
-
-    /**
-     * Given an email, returns the login ID of the account.
-     *
-     * NOTE: It may be tempting to move this to getDetailsByEmail() but we often call emailToId BEFORE
-     * adding a corresponding entry to individuals or organisations, so this should be left untouched.
-     *
-     * @param  string $email
-     * @return int
-     */
-    public function emailToId($email) {
-        $login_id = Database::instance()->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
-            ':email' => $email
-        ));
-        if (!$login_id) {
-            return false;
-        }
-        $login_id = (int) $login_id[0]['login_id'];
-        return $login_id;
     }
 
     /**
@@ -136,6 +100,33 @@ class DBAccount extends Prefab {
         }
 
         return $details;
+    }
+
+
+    /**
+     * Converts an account details (name, email, etc) into an account object of the correct type, e.g. Agent, Law Firm, etc.
+     * @param  array<Mixed> $account    The account details
+     * @return Account  The account object.
+     */
+    private function arrayToAccountObject($account) {
+        if (!$account) {
+            return false;
+        }
+
+        switch($account['type']) {
+            case "mediator":
+                return new Mediator($account);
+            case "agent":
+                return new Agent($account);
+            case "law_firm":
+                return new LawFirm($account);
+            case "mediation_centre":
+                return new MediationCentre($account);
+            case "administrator":
+                return new Admin($account);
+            default:
+                Utils::instance()->throwException("Invalid account type.");
+        }
     }
 
     /**

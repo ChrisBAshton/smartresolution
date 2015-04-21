@@ -5,53 +5,30 @@ require_once __DIR__ . '/../_helper.php';
 class DisputeTest extends PHPUnit_Framework_TestCase
 {
 
-    // // @TODO - this test needs massively refactoring and fixing.
-    // public function testIsAMediationParty() {
-    //     $dispute = TestHelper::createNewDispute();
+    public function testIsAMediationParty() {
+        $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
+        $mediationCentre = DBAccount::instance()->emailToId('mediation_centre_email@we-mediate.co.uk');
+        $mediator = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
 
-    //     // first, let's set up the second party
-    //     $dispute->getPartyB()->setLawFirm(DBAccount::instance()->emailToId('law_firm_b@t.co'));
-    //     $dispute->getPartyB()->setAgent(DBAccount::instance()->emailToId('agent_b@t.co'));
+        // the mediation centre and mediator associated with the dispute should be
+        // classed as being part of the 'mediation party'
+        $this->assertTrue($dispute->isAMediationParty($mediationCentre));
+        $this->assertTrue($dispute->isAMediationParty($mediator));
 
-    //     // next, let's set up Mediation
-    //     DBCreate::instance()->mediationCentreOffer(array(
-    //         'dispute_id'  => $dispute->getDisputeId(),
-    //         'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-    //         'proposed_id' => DBAccount::instance()->getAccountByEmail('mediation_centre_email@we-mediate.co.uk')->getLoginId()
-    //     ));
-    //     DBUpdate::instance()->dispute($dispute);
-    //     $dispute->getMediationState()->acceptLatestProposal();
-    //     DBCreate::instance()->mediatorOffer(array(
-    //         'dispute_id'  => $dispute->getDisputeId(),
-    //         'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-    //         'proposed_id' => DBAccount::instance()->getAccountByEmail('john.smith@we-mediate.co.uk')->getLoginId()
-    //     ));
-    //     DBUpdate::instance()->dispute($dispute);
-    //     $dispute->getMediationState()->acceptLatestProposal();
-
-    //     // now we can test the mediation
-    //     $this->assertTrue($dispute->isAMediationParty(
-    //         DBAccount::instance()->emailToId('mediation_centre_email@we-mediate.co.uk')
-    //     ));
-    //     $this->assertTrue($dispute->isAMediationParty(
-    //         DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk')
-    //     ));
-
-    //     $shouldNotPass = array(
-    //         // agents and law_firms should not ever pass
-    //         'agent_a@t.co',
-    //         'agent_b@t.co',
-    //         'law_firm_a@t.co',
-    //         'law_firm_b@t.co',
-    //         // other mediation centres and mediators should also not pass
-    //         'we@also-mediate.co',
-    //         'tim@also-mediate.co'
-    //     );
-
-    //     foreach($shouldNotPass as $email) {
-    //         $this->assertFalse($dispute->isAMediationParty(DBAccount::instance()->emailToId($email)));
-    //     }
-    // }
+        $shouldNotPass = array(
+            // agents and law_firms should not ever pass
+            'agent_a@t.co',
+            'agent_b@t.co',
+            'law_firm_a@t.co',
+            'law_firm_b@t.co',
+            // other mediation centres and mediators should also not pass
+            'we@also-mediate.co',
+            'tim@also-mediate.co'
+        );
+        foreach($shouldNotPass as $email) {
+            $this->assertFalse($dispute->isAMediationParty(DBAccount::instance()->emailToId($email)));
+        }
+    }
 
     public function testCreateDisputeSuccessfully() {
         $dispute = TestHelper::createNewDispute();

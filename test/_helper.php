@@ -4,6 +4,7 @@
 // here in order to set up consistent fixture data for use by all of the unit tests.
 Database::setEnvironment('test');
 Database::clear();
+
 class TestHelper {
 
     /**
