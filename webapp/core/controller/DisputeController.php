@@ -99,8 +99,10 @@ class DisputeController {
             $this->assignDisputeGet($f3, $params);
         }
         else {
-            $dispute->getPartyB()->setAgent((int) $agent);
-            $dispute->getPartyB()->setSummary($summary);
+            $disputeParty = $dispute->getPartyB();
+            $disputeParty->setAgent((int) $agent);
+            $disputeParty->setSummary($summary);
+            DBUpdate::instance()->disputeParty($disputeParty);
 
             header('Location: ' . $dispute->getUrl());
         }
@@ -134,7 +136,9 @@ class DisputeController {
         }
         else {
             $dispute = setDisputeFromParams($f3, $params);
-            $dispute->getPartyB()->setLawFirm($lawFirmB);
+            $party   = $dispute->getPartyB();
+            $party->setLawFirm($lawFirmB);
+            DBUpdate::instance()->disputeParty($party);
 
             header('Location: ' . $dispute->getUrl());
         }
@@ -225,9 +229,11 @@ class DisputeController {
             else {
                 if ($dispute->getPartyA()->contains($account->getLoginId())) {
                     $dispute->getPartyA()->setSummary($summary);
+                    DBUpdate::instance()->disputeParty($dispute->getPartyA());
                 }
                 elseif($dispute->getPartyB()->contains($account->getLoginId())) {
                     $dispute->getPartyB()->setSummary($summary);
+                    DBUpdate::instance()->disputeParty($dispute->getPartyB());
                 }
 
                 $dispute->setType($type);

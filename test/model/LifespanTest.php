@@ -21,6 +21,7 @@ class LifespanTest extends PHPUnit_Framework_TestCase
         $this->dispute->getPartyB()->setLawFirm($this->lawFirmB);
         $this->dispute->getPartyB()->setAgent($this->agentB);
         $this->dispute->getPartyB()->setSummary('Summary for Agent B');
+        DBUpdate::instance()->disputeParty($this->dispute->getPartyB());
     }
 
     private function createLifespan() {

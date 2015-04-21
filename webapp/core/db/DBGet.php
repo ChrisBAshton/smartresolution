@@ -15,7 +15,18 @@ class DBGet extends Prefab {
     }
 
     public function disputeParty($partyID) {
-        return $this->getRowById('dispute_parties', 'party_id', $partyID);
+        $details = $this->getRowById('dispute_parties', 'party_id', $partyID);
+
+        if ($details) {
+            $this->convertToInt($details['party_id']);
+            $this->convertToInt($details['organisation_id']);
+            $this->convertToInt($details['individual_id']);
+        }
+        else {
+            $details = array();
+        }
+
+        return $details;
     }
 
     public function evidence($evidenceID) {
@@ -58,7 +69,7 @@ class DBGet extends Prefab {
         $rows = Database::instance()->exec(
             'SELECT * FROM ' . $tableName . ' WHERE ' . $idName . ' = :' . $idName,
             array(
-                ':' . $idName => $id
+                ':' . $idName => (int) $id
             )
         );
 

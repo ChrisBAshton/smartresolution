@@ -41,16 +41,6 @@ class DBQuery extends Prefab {
         );
     }
 
-    public function updatePartyRecord($partyID, $field, $value) {
-        Database::instance()->exec(
-            'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
-            array(
-                ':value'    => $value,
-                ':party_id' => $partyID
-            )
-        );
-    }
-
     /**
      * Gets organisations as an array.
      * @param  array  $params           Parameters:

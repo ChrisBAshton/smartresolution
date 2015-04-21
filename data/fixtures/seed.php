@@ -57,23 +57,29 @@ foreach($data['disputes'] as $dataItem) {
         'law_firm_a' => DBAccount::instance()->emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
+
     $agentAId = DBAccount::instance()->emailToId($dataItem['agent_a']);
     $dispute->getPartyA()->setAgent($agentAId);
+    DBUpdate::instance()->disputeParty($dispute->getPartyA());
 
     if (isset($dataItem['law_firm_b'])) {
         $dispute->getPartyB()->setLawFirm(DBAccount::instance()->emailToId($dataItem['law_firm_b']));
+        DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['agent_b'])) {
         $dispute->getPartyB()->setAgent(DBAccount::instance()->emailToId($dataItem['agent_b']));
+        DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['summary_a'])) {
         $dispute->getPartyA()->setSummary($dataItem['summary_a']);
+        DBUpdate::instance()->disputeParty($dispute->getPartyA());
     }
 
     if (isset($dataItem['summary_b'])) {
         $dispute->getPartyB()->setSummary($dataItem['summary_b']);
+        DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['lifespan'])) {

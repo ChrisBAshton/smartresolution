@@ -7,8 +7,10 @@ class Dispute {
         $this->type      = $data['type'];
         $this->title     = $data['title'];
         $this->status    = $data['status'];
-        $this->partyA    = new DisputeParty($data['party_a'], $this->disputeID);
-        $this->partyB    = new DisputeParty($data['party_b'], $this->disputeID);
+        $this->partyAId  = $data['party_a'];
+        $this->partyBId  = $data['party_b'];
+        $this->partyA    = new DisputeParty(DBGet::instance()->disputeParty($data['party_a']), $this->disputeID);
+        $this->partyB    = new DisputeParty(DBGet::instance()->disputeParty($data['party_b']), $this->disputeID);
         $this->rtc       = $data['round_table_communication'];
     }
 
@@ -49,10 +51,22 @@ class Dispute {
     }
 
     public function getPartyA() {
+        // $this->partyAId = (int) Database::instance()->exec('SELECT party_a FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $this->getDisputeId()))[0];
+
+        // $partyDetails = DBGet::instance()->disputeParty($this->partyAId);
+        // return new DisputeParty($partyDetails, $this->disputeID);
         return $this->partyA;
     }
 
     public function getPartyB() {
+    //     $this->partyBId = Database::instance()->exec('SELECT party_b FROM disputes WHERE dispute_id = :dispute_id', array(':dispute_id' => $this->getDisputeId()))[0]['party_b'];
+
+    //     if (is_null($this->partyBId)) {
+    //         return new DisputeParty(array(), $this->disputeID);
+    //     }
+    //     $partyDetails = DBGet::instance()->disputeParty($this->partyBId);
+    //     return new DisputeParty($partyDetails, $this->disputeID);
+    //     //return new DisputeParty(DBGet::instance()->disputeParty($this->partyBId), $this->disputeID);
         return $this->partyB;
     }
 

@@ -24,7 +24,7 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
         // new dispute should not have party B set yet.
         $this->assertFalse($dispute->getPartyB()->getLawFirm());
         $this->assertFalse($dispute->getPartyB()->getAgent());
-        $this->assertFalse($dispute->getPartyB()->getSummary());
+        $this->assertFalse($dispute->getPartyB()->getRawSummary());
 
         // so we set the party b properties
         $dispute->getPartyB()->setLawFirm($lawFirmB);
