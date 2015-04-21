@@ -3,14 +3,16 @@
 class DBUpdate extends Prefab {
 
     public function lifespan($lifespan) {
-        Database::instance()->exec(
-            'UPDATE lifespans SET status = :status, end_time = :end_time WHERE lifespan_id = :lifespan_id',
-            array(
-                ':lifespan_id' => $lifespan->getLifespanId(),
-                ':end_time'    => $lifespan->endTime(),
-                ':status'      => $lifespan->getRawStatus()
-            )
-        );
+        if (!$lifespan instanceof LifespanMock) {
+            Database::instance()->exec(
+                'UPDATE lifespans SET status = :status, end_time = :end_time WHERE lifespan_id = :lifespan_id',
+                array(
+                    ':lifespan_id' => $lifespan->getLifespanId(),
+                    ':end_time'    => $lifespan->endTime(),
+                    ':status'      => $lifespan->getRawStatus()
+                )
+            );
+        }
     }
 
     public function notification($notification) {
