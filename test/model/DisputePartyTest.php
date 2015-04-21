@@ -4,11 +4,6 @@ require_once __DIR__ . '/../_helper.php';
 
 class DisputePartyTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
-
     public function testDisputeSimpleGetters() {
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals('This is my summary', $dispute->getPartyA()->getSummary());

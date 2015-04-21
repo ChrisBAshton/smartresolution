@@ -4,10 +4,6 @@ require_once __DIR__ . '/../_helper.php';
 
 class EvidenceTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
 
     protected function setUp() {
         $this->dispute = TestHelper::getDisputeByTitle('Smith versus Jones');

@@ -1,52 +1,63 @@
 <?php
 require_once __DIR__ . '/../../webapp/autoload.php';
+require_once __DIR__ . '/../_helper.php';
+
+// global variables for this class
+$disputeID  = 2; // made up, doesn't matter
+$agentAId   = DBAccount::instance()->emailToId('agent_a@t.co');
+$agentBId   = DBAccount::instance()->emailToId('agent_b@t.co');
+$mediatorId = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
 
 class DBQueryTest extends PHPUnit_Framework_TestCase
 {
 
-    public function setUp() {
-        Database::setEnvironment('test');
-        Database::clear();
-
-        $this->disputeID  = 2; // made up, doesn't matter
-        $this->agentAId   = DBAccount::instance()->emailToId('agent_a@t.co');
-        $this->agentBId   = DBAccount::instance()->emailToId('agent_b@t.co');
-        $this->mediatorId = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
+    public static function setUpBeforeClass()
+    {
+        global $disputeID, $agentAId, $agentBId, $mediatorId;
 
         $create = DBCreate::instance();
 
         $create->message(array(
-            'dispute_id' => $this->disputeID,
-            'author_id'  => $this->agentAId,
+            'dispute_id' => $disputeID,
+            'author_id'  => $agentAId,
             'message'    => 'Open message to Agent B'
         ));
 
         $create->message(array(
-            'dispute_id' => $this->disputeID,
-            'author_id'  => $this->agentBId,
+            'dispute_id' => $disputeID,
+            'author_id'  => $agentBId,
             'message'    => 'Open message to Agent A'
         ));
 
         $create->message(array(
-            'dispute_id'   => $this->disputeID,
-            'author_id'    => $this->mediatorId,
-            'recipient_id' => $this->agentAId,
+            'dispute_id'   => $disputeID,
+            'author_id'    => $mediatorId,
+            'recipient_id' => $agentAId,
             'message'      => 'Direct message from mediator to agent A'
         ));
 
         $create->message(array(
-            'dispute_id'   => $this->disputeID,
-            'author_id'    => $this->mediatorId,
-            'recipient_id' => $this->agentBId,
+            'dispute_id'   => $disputeID,
+            'author_id'    => $mediatorId,
+            'recipient_id' => $agentBId,
             'message'      => 'Direct message from mediator to agent B'
         ));
 
         $create->message(array(
-            'dispute_id'   => $this->disputeID,
-            'author_id'    => $this->agentAId,
-            'recipient_id' => $this->mediatorId,
+            'dispute_id'   => $disputeID,
+            'author_id'    => $agentAId,
+            'recipient_id' => $mediatorId,
             'message'      => 'Direct message from agent A to mediator'
         ));
+    }
+
+    public function setUp()
+    {
+        global $disputeID, $agentAId, $agentBId, $mediatorId;
+        $this->disputeID  = $disputeID; // made up, doesn't matter
+        $this->agentAId   = $agentAId;
+        $this->agentBId   = $agentBId;
+        $this->mediatorId = $mediatorId;
     }
 
     public function testGetDisputeMessages()

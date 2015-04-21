@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class AccountTest extends PHPUnit_Framework_TestCase
 {
-
     private function createAgent() {
         return new Agent(array(
             'login_id'        => 1,

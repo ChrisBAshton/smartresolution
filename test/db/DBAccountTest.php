@@ -3,12 +3,8 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class DBAccountTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
-
-    public function testValidCredentials() {
+    public function testValidCredentials()
+    {
         $validCredentials = DBAccount::instance()->validCredentials('law_firm_a@t.co', 'wrong password');
         $this->assertFalse($validCredentials);
         $validCredentials = DBAccount::instance()->validCredentials('wrong email', 'wrong password');
@@ -17,7 +13,8 @@ class DBAccountTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($validCredentials);
     }
 
-    public function testGetIdFromEmail() {
+    public function testGetIdFromEmail()
+    {
         $testUser = DBAccount::instance()->emailToId('law_firm_a@t.co');
         $this->assertEquals(2, $testUser);
     }

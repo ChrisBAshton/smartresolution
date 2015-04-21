@@ -4,10 +4,6 @@ require_once __DIR__ . '/../_helper.php';
 
 class DisputeTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
 
     // // @TODO - this test needs massively refactoring and fixing.
     // public function testIsAMediationParty() {

@@ -7,11 +7,6 @@ $eventFired = false;
 
 class ModuleTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
-
     public static function tearDownAfterClass() {
         shell_exec('rm ' . WEBAPP_DIR . '/modules/config.json');
     }

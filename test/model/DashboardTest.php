@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class DashboardTest extends PHPUnit_Framework_TestCase
 {
-
     public function testGetters() {
         $dashboard = Dashboard::instance();
         $actions = array(
