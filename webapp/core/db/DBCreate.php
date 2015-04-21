@@ -132,7 +132,7 @@ class DBCreate extends Prefab {
         $lifespanID = DBQuery::instance()->getLatestId('lifespans', 'lifespan_id');
 
         try {
-            $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
+            $lifespan = new Lifespan(DBGet::instance()->lifespan($lifespanID), !$allowDatesInThePast);
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
 

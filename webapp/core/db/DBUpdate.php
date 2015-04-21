@@ -2,6 +2,17 @@
 
 class DBUpdate extends Prefab {
 
+    public function lifespan($lifespan) {
+        Database::instance()->exec(
+            'UPDATE lifespans SET status = :status, end_time = :end_time WHERE lifespan_id = :lifespan_id',
+            array(
+                ':lifespan_id' => $lifespan->getLifespanId(),
+                ':end_time'    => $lifespan->endTime(),
+                ':status'      => $lifespan->getRawStatus()
+            )
+        );
+    }
+
     public function notification($notification) {
         Database::instance()->exec('UPDATE notifications
             SET read = :read
@@ -35,7 +46,7 @@ class DBUpdate extends Prefab {
 
     public function dispute($dispute) {
         Database::instance()->exec(
-            'UPDATE disputes SET round_table_communication = :rtc AND status = :status AND type = :type WHERE dispute_id = :dispute_id',
+            'UPDATE disputes SET round_table_communication = :rtc, status = :status, type = :type WHERE dispute_id = :dispute_id',
             array(
                 ':dispute_id' => $dispute->getDisputeId(),
                 ':rtc'        => $dispute->inRoundTableCommunication(),

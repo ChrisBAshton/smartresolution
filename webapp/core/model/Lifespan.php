@@ -2,12 +2,24 @@
 
 class Lifespan implements LifespanInterface {
 
+    private $lifespanID;
+    private $disputeID;
+    private $proposer;
     private $status;
-    private $db;
+    private $validUntil;
+    private $startTime;
+    private $endTime;
 
-    function __construct($lifespanID, $justCreated = false) {
-        $this->db = DBLifespan::instance();
-        $this->setVariables($lifespanID);
+    function __construct($lifespan, $justCreated = false) {
+        $this->lifespanID = $lifespan['lifespan_id'];
+        $this->disputeID  = $lifespan['dispute_id'];
+        $this->proposer   = $lifespan['proposer'];
+        $this->status     = $lifespan['status'];
+        $this->validUntil = $lifespan['valid_until'];
+        $this->startTime  = $lifespan['start_time'];
+        $this->endTime    = $lifespan['end_time'];
+
+        // this is used to check if lifespan proposal is a valid one
         if ($justCreated) {
             $invalid = $this->invalid($this->validUntil, $this->startTime, $this->endTime);
             if ($invalid) {
@@ -33,15 +45,8 @@ class Lifespan implements LifespanInterface {
         return $invalidBecause;
     }
 
-    private function setVariables($lifespanID) {
-        $lifespan = DBGet::instance()->lifespan($lifespanID);
-        $this->lifespanID = (int) $lifespan['lifespan_id'];
-        $this->disputeID  = (int) $lifespan['dispute_id'];
-        $this->proposer   = (int) $lifespan['proposer'];
-        $this->status     = $lifespan['status'];
-        $this->validUntil = $lifespan['valid_until'];
-        $this->startTime  = $lifespan['start_time'];
-        $this->endTime    = $lifespan['end_time'];
+    public function getRawStatus() {
+        return $this->status;
     }
 
     public function status() {
@@ -71,8 +76,7 @@ class Lifespan implements LifespanInterface {
     }
 
     public function disputeClosed() {
-        $this->db->endLifespan($this->getLifespanId());
-        $this->setVariables($this->getLifespanId());
+        $this->endTime = time();
     }
 
     public function isCurrent() {
@@ -90,13 +94,23 @@ class Lifespan implements LifespanInterface {
     }
 
     public function accept() {
-        $this->db->updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'accepted');
-        $this->setVariables($this->getLifespanId());
+        $this->status = 'accepted';
+        $this->notifyOfLifespanStatusChange('The other party has agreed your lifespan offer.');
     }
 
     public function decline() {
-        $this->db->updateLifespanStatus($this->getLifespanId(), $this->getAssociatedDisputeId(), 'declined');
-        $this->setVariables($this->getLifespanId());
+        $this->status = 'declined';
+        $this->notifyOfLifespanStatusChange('The other party has declined your lifespan offer.');
+    }
+
+    private function notifyOfLifespanStatusChange($notification) {
+        $dispute = new Dispute(DBGet::instance()->dispute($this->disputeID));
+
+        DBCreate::instance()->notification(array(
+            'recipient_id' => $dispute->getOpposingPartyId(Session::instance()->getAccount()),
+            'message'      => $notification,
+            'url'          => $dispute->getUrl() . '/lifespan'
+        ));
     }
 
     public function offered() {

@@ -52,8 +52,10 @@ class LifespanTest extends PHPUnit_Framework_TestCase
 
     public function testLifespanAccept() {
         $this->createLifespan();
-        $this->dispute->getCurrentLifespan()->accept();
-        $this->assertTrue($this->dispute->getCurrentLifespan()->accepted());
+        $lifespan = $this->dispute->getCurrentLifespan();
+        $lifespan->accept();
+        $this->assertTrue($lifespan->accepted());
+        DBUpdate::instance()->lifespan($lifespan);
     }
 
     public function testLifespanDecline() {

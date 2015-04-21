@@ -6,6 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 require_all(__DIR__ . '/core/db');
 require_all(__DIR__ . '/core/model');
 require_all(__DIR__ . '/core/model/dispute_states');
+require_all(__DIR__ . '/core/helpers');
 require_all(__DIR__ . '/core/controller');
 require_all(__DIR__ . '/core/api');
 

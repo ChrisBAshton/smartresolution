@@ -162,7 +162,14 @@ class DisputeController {
             else {
                 $dispute->closeSuccessfully();
             }
+
+            $lifespan = $dispute->getCurrentLifespan();
+            $lifespan->disputeClosed();
+
+            // make changes persistent
+            DBUpdate::instance()->lifespan($lifespan);
             DBUpdate::instance()->dispute($dispute);
+
             $f3->set('success_message', 'You have successfully closed the dispute.');
         }
 

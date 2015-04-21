@@ -109,12 +109,14 @@ foreach($data['disputes'] as $dataItem) {
 
         DBUpdate::instance()->dispute($dispute);
 
+        $lifespan = $dispute->getCurrentLifespan();
         if ($dataItem['lifespan'] === 'declined') {
-            $dispute->getCurrentLifespan()->decline();
+            $lifespan->decline();
         }
         elseif ($dataItem['lifespan'] !== 'offered') {
-            $dispute->getCurrentLifespan()->accept();
+            $lifespan->accept();
         }
+        DBUpdate::instance()->lifespan($lifespan);
     }
 
     if (isset($dataItem['evidence'])) {

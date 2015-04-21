@@ -25,8 +25,8 @@ class LifespanController {
     }
 
     private function newLifespanPrechecks($f3, $params) {
-        $this->account    = mustBeLoggedInAsAn('Agent');
-        $this->dispute    = setDisputeFromParams($f3, $params);
+        $this->account = mustBeLoggedInAsAn('Agent');
+        $this->dispute = setDisputeFromParams($f3, $params);
 
         if (!$this->dispute->getState($this->account)->canNegotiateLifespan()) {
             errorPage('You cannot negotiate a lifespan.');
@@ -41,7 +41,6 @@ class LifespanController {
 
     function newLifespanPost($f3, $params) {
         $this->newLifespanPrechecks($f3, $params);
-
         $validUntil = strtotime($f3->get('POST.valid_until'));
         $startTime  = strtotime($f3->get('POST.start_time'));
         $endTime    = strtotime($f3->get('POST.end_time'));
@@ -64,19 +63,23 @@ class LifespanController {
                 $f3->set('error_message', $e->getMessage());
             }
         }
+        $f3->set('content', 'lifespan_new.html');
+        echo View::instance()->render('layout.html');
     }
 
     function acceptOrDecline ($f3, $params) {
         $account = mustBeLoggedInAsAn('Agent');
         $dispute = setDisputeFromParams($f3, $params);
         $resolution = $f3->get('POST.resolution');
-
+        $lifespan = $dispute->getLatestLifespan();
         if ($resolution === 'accept') {
-            $dispute->getLatestLifespan()->accept();
+            $lifespan->accept();
         }
         else if ($resolution === 'decline') {
-            $dispute->getLatestLifespan()->decline();
+            $lifespan->decline();
         }
+
+        DBUpdate::instance()->lifespan($lifespan);
 
         header('Location: ' . $dispute->getUrl() . '/lifespan');
     }

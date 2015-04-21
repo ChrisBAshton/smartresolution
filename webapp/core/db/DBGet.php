@@ -23,7 +23,14 @@ class DBGet extends Prefab {
     }
 
     public function lifespan($lifespanID) {
-        return $this->getRowById('lifespans', 'lifespan_id', $lifespanID);
+        $details = $this->getRowById('lifespans', 'lifespan_id', $lifespanID);
+        $this->convertToInt($details['lifespan_id']);
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['proposer']);
+        $this->convertToInt($details['valid_until']);
+        $this->convertToInt($details['start_time']);
+        $this->convertToInt($details['end_time']);
+        return $details;
     }
 
     public function message($messageID) {

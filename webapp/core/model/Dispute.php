@@ -36,12 +36,12 @@ class Dispute {
         return LifespanFactory::instance()->getLatestLifespan($this->disputeID);
     }
 
-    public function getdisputeID() {
+    public function getDisputeId() {
         return $this->disputeID;
     }
 
     public function getUrl() {
-        return '/disputes/' . $this->getdisputeID();
+        return '/disputes/' . $this->getDisputeId();
     }
 
     public function getTitle() {
@@ -90,12 +90,10 @@ class Dispute {
 
     public function closeSuccessfully() {
         $this->status = 'resolved';
-        $this->getCurrentLifespan()->disputeClosed();
     }
 
     public function closeUnsuccessfully() {
         $this->status = 'failed';
-        $this->getCurrentLifespan()->disputeClosed();
     }
 
     public function setType($type) {
@@ -145,11 +143,11 @@ class Dispute {
     }
 
     public function getMessages() {
-        return DBQuery::instance()->retrieveDisputeMessages($this->getdisputeID());
+        return DBQuery::instance()->retrieveDisputeMessages($this->getDisputeId());
     }
 
     public function getMessagesBetween($individualA, $individualB) {
-        return DBQuery::instance()->retrieveMediationMessages($this->getdisputeID(), $individualA, $individualB);
+        return DBQuery::instance()->retrieveMediationMessages($this->getDisputeId(), $individualA, $individualB);
     }
 
 }
