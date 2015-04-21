@@ -172,7 +172,7 @@ class DBCreate extends Prefab {
         $this->insertRow('messages', $params);
 
         $messageID = DBQuery::instance()->getLatestId('messages', 'message_id');
-        return new Message($messageID);
+        return new Message(DBGet::instance()->message($messageID));
     }
 
     /**

@@ -22,11 +22,20 @@ class DBGet extends Prefab {
     }
 
     public function message($messageID) {
-        return $this->getRowById('messages', 'message_id', $messageID);
+        $details = $this->getRowById('messages', 'message_id', $messageID);
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['author_id']);
+        $this->convertToInt($details['recipient_id']);
+        $this->convertToInt($details['timestamp']);
+        return $details;
     }
 
     public function notification($notificationID) {
-        return $this->getRowById('notifications', 'notification_id', $notificationID);
+        $details = $this->getRowById('notifications', 'notification_id', $notificationID);
+        $this->convertToInt($details['notification_id']);
+        $this->convertToInt($details['recipient_id']);
+        $this->convertToBoolean($details['read']);
+        return $details;
     }
 
     private function getRowById($tableName, $idName, $id, $exceptionMessage = false) {
@@ -45,6 +54,14 @@ class DBGet extends Prefab {
         }
 
         return $rows[0];
+    }
+
+    private function convertToInt(&$element) {
+        $element = (int) $element;
+    }
+
+    private function convertToBoolean(&$element) {
+        $element = !($element === 'false');
     }
 
 }

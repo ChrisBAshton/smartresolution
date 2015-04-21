@@ -28,8 +28,10 @@ require 'cron.php';
 // @TODO - move to a URLController class?
 if ($f3->get('GET.mark_notification_as_read')) {
     $notificationID = (int) $f3->get('GET.mark_notification_as_read');
-    $notification = new Notification($notificationID);
+    $notificationDetails = DBGet::instance()->notification($notificationID);
+    $notification = new Notification($notificationDetails);
     $notification->markAsRead(); // @TODO - should probably add checks to see if user is logged in and authorised
+    DBUpdate::instance()->notification($notification); // make the 'mark as read' change persistent
     header('Location: ' . $notification->getUrl());
 }
 

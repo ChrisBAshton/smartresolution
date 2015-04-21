@@ -3,22 +3,17 @@
 class Notification {
 
     private $notificationID;
-    private $loginID;
+    private $recipientID;
     private $url;
     private $message;
     private $read;
 
-    public function __construct($notificationID) {
-        $this->setVariables($notificationID);
-    }
-
-    private function setVariables($notificationID) {
-        $details = DBGet::instance()->notification($notificationID);
-        $this->notificationID = (int) $details['notification_id'];
-        $this->loginID        = (int) $details['recipient_id'];
+    public function __construct($details) {
+        $this->notificationID = $details['notification_id'];
+        $this->recipientID    = $details['recipient_id'];
         $this->url            = $details['url'];
         $this->message        = $details['message'];
-        $this->read           = !($details['read'] === 'false');
+        $this->read           = $details['read'];
     }
 
     public function getNotificationId() {
@@ -38,7 +33,6 @@ class Notification {
     }
 
     public function markAsRead() {
-        DBNotification::instance()->markNotificationAsRead($this->getNotificationId());
-        $this->setVariables($this->getNotificationId());
+        $this->read = true;
     }
 }

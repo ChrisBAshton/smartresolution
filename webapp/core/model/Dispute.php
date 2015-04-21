@@ -160,11 +160,11 @@ class Dispute {
     }
 
     public function getMessages() {
-        return DBMessage::instance()->retrieveDisputeMessages($this->getdisputeID());
+        return DBQuery::instance()->retrieveDisputeMessages($this->getdisputeID());
     }
 
     public function getMessagesBetween($individualA, $individualB) {
-        return DBMessage::instance()->retrieveMediationMessages($this->getdisputeID(), $individualA, $individualB);
+        return DBQuery::instance()->retrieveMediationMessages($this->getdisputeID(), $individualA, $individualB);
     }
 
 }
