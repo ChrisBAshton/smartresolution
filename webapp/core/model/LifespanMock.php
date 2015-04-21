@@ -2,8 +2,7 @@
 
 class LifespanMock implements LifespanInterface {
 
-    function __construct($lifespanID = 0) {
-        $this->lifespanID = $lifespanID;
+    function __construct($lifespan = array()) {
     }
 
     public function status() {

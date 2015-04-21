@@ -93,7 +93,7 @@ class DBCreate extends Prefab {
         ), $params);
         $this->insertRow('evidence', $params);
         $latestID = DBQuery::instance()->getLatestId('evidence', 'evidence_id');
-        return new Evidence($latestID);
+        return new Evidence(DBGet::instance()->evidence($latestID));
     }
 
     public function individual($individualObject) {

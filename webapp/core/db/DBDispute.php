@@ -13,7 +13,7 @@ class DBDispute extends Prefab {
         );
 
         foreach($evidenceDetails as $evidence) {
-            $evidences[] = new Evidence((int) $evidence['evidence_id']);
+            $evidences[] = new Evidence(DBGet::instance()->evidence((int) $evidence['evidence_id']));
         }
 
         return $evidences;

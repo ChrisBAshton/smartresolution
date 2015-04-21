@@ -19,7 +19,11 @@ class DBGet extends Prefab {
     }
 
     public function evidence($evidenceID) {
-        return $this->getRowById('evidence', 'evidence_id', $evidenceID);
+        $details = $this->getRowById('evidence', 'evidence_id', $evidenceID);
+        $this->convertToInt($details['evidence_id']);
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['uploader_id']);
+        return $details;
     }
 
     public function lifespan($lifespanID) {
