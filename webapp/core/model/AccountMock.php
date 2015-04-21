@@ -5,10 +5,6 @@ class AccountMock implements AccountInterface {
 
     }
 
-    public function setVariables($account) {
-
-    }
-
     public function getLoginId() {
         return false;
     }

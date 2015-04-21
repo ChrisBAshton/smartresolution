@@ -44,19 +44,19 @@ class MediationState {
     }
 
     public function getMediationCentre() {
-        return new MediationCentre((int) $this->mediationCentreOffer['proposed_id']);
+        return DBAccount::instance()->getAccountById((int) $this->mediationCentreOffer['proposed_id']);
     }
 
     public function getMediationCentreProposer() {
-        return new Agent((int) $this->mediationCentreOffer['proposer_id']);
+        return DBAccount::instance()->getAccountById((int) $this->mediationCentreOffer['proposer_id']);
     }
 
     public function getMediator() {
-        return new Mediator((int) $this->mediatorOffer['proposed_id']);
+        return DBAccount::instance()->getAccountById((int) $this->mediatorOffer['proposed_id']);
     }
 
     public function getMediatorProposer() {
-        return new Agent((int) $this->mediatorOffer['proposer_id']);
+        return DBAccount::instance()->getAccountById((int) $this->mediatorOffer['proposer_id']);
     }
 
     public function acceptLatestProposal() {

@@ -114,7 +114,7 @@ class DisputeController {
             errorPage('You have already opened this dispute against ' . $dispute->getPartyB()->getLawFirm()->getName() . '!');
         }
 
-        $lawFirms = DBAccount::instance()->getOrganisations(array(
+        $lawFirms = DBQuery::instance()->getOrganisations(array(
             'type'   => 'law_firm',
             'except' => $f3->get('dispute')->getPartyA()->getLawFirm()->getLoginId()
         ));

@@ -9,7 +9,7 @@ class DBDispute extends Prefab {
         $evidences = array();
         $evidenceDetails = Database::instance()->exec(
             'SELECT evidence_id FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
-            array(':dispute_id' => $dispute->getDisputeId())
+            array(':dispute_id' => $disputeID)
         );
 
         foreach($evidenceDetails as $evidence) {

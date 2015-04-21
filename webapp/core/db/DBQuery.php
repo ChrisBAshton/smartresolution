@@ -2,6 +2,71 @@
 
 class DBQuery extends Prefab {
 
+    /**
+     * Gets organisations as an array.
+     * @param  array  $params           Parameters:
+     *         string $params['type']   Organisation type ('law_firm' / 'mediation_centre')
+     *         int    $params['except'] Integer ID of an account to remove from the results.
+     * @return array<Organisation>      An array of matching organisations of the correct subclass type (LawFirm or MediationCentre)
+     */
+    public function getOrganisations($params) {
+        $type   = Utils::instance()->getValue($params, 'type');
+        $class  = $type === 'law_firm' ? 'LawFirm' : 'MediationCentre';
+        $except = Utils::instance()->getValue($params, 'except', false);
+
+        $organisations = array();
+        $orgDetails = Database::instance()->exec(
+            'SELECT * FROM organisations INNER JOIN account_details ON organisations.login_id = account_details.login_id  WHERE type = :type AND organisations.login_id != :except ORDER BY name DESC',
+            array(
+                ':type'   => $type,
+                ':except' => $except
+            )
+        );
+
+        foreach($orgDetails as $details) {
+            $organisations[] = new $class($details);
+        }
+
+        return $organisations;
+    }
+
+    /**
+     * Gets all of the disputes associated with an account. For Agents, this would be disputes that they have created or been assigned to. For mediators, this would be disputes that are in mediation and that they are assigned to, and so on.
+     * @param  Account $account The account to get the disputes from.
+     * @return array<Dispute>                   The array of associated disputes.
+     */
+    public function getAllDisputes ($account) {
+        $disputes = array();
+
+        if ($account instanceof LawFirm || $account instanceof Agent) {
+            $disputesDetails = Database::instance()->exec(
+                'SELECT dispute_id FROM disputes
+
+                INNER JOIN dispute_parties
+                ON disputes.party_a     = dispute_parties.party_id
+                OR disputes.party_b     = dispute_parties.party_id
+
+                WHERE organisation_id = :login_id OR individual_id = :login_id
+                ORDER BY party_id DESC',
+                array(':login_id' => $account->getLoginId())
+            );
+        }
+        else {
+            $disputesDetails = Database::instance()->exec(
+                'SELECT dispute_id FROM mediation_offers
+                WHERE proposed_id = :login_id
+                AND status = "accepted"
+                ORDER BY mediation_offer_id DESC',
+                array(':login_id' => $account->getLoginId())
+            );
+        }
+
+        foreach($disputesDetails as $dispute) {
+            $disputes[] = new Dispute($dispute['dispute_id']);
+        }
+        return $disputes;
+    }
+
     public function retrieveDisputeMessages($disputeID) {
         $messages = array();
 

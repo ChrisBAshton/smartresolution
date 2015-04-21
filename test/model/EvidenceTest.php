@@ -21,7 +21,8 @@ class EvidenceTest extends PHPUnit_Framework_TestCase
     public function testGetters() {
         $this->assertEquals(
             $this->dispute->getPartyA()->getAgent()->getLoginId(),
-            $this->evidence->getUploader()->getLoginId()
+            $this->evidence->getUploader()->getLoginId(),
+            'Login ID was ' . $this->dispute->getPartyA()->getAgent()->getLoginId()
         );
         $this->assertEquals(
             'test_filepath',

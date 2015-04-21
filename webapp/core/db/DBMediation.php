@@ -71,7 +71,7 @@ class DBMediation extends Prefab {
 
         $availableMediators = array();
         foreach($availableMediatorsDetails as $details) {
-            $availableMediators[] = new Mediator((int) $details['mediator_id']);
+            $availableMediators[] = DBAccount::instance()->getAccountById((int) $details['mediator_id']);
         }
 
         return $availableMediators;

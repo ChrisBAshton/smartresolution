@@ -150,13 +150,11 @@ class Dispute {
     }
 
     public function isAMediationParty($partyID) {
-        if ($this->getMediationState()->inMediation()) {
-            return (
-                $partyID === $this->getMediationState()->getMediator()->getLoginId() ||
-                $partyID === $this->getMediationState()->getMediationCentre()->getLoginId()
-            );
-        }
-        return false;
+        $state = $this->getMediationState();
+        return (
+            ($state->mediationCentreDecided() && $partyID === $state->getMediationCentre()->getLoginId()) ||
+            ($state->mediatorDecided()        && $partyID === $state->getMediator()->getLoginId())
+        );
     }
 
     public function getMessages() {

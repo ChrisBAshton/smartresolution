@@ -30,6 +30,7 @@ foreach($data['organisations'] as $org) {
 
     if (isset($org['details']['description'])) {
         $organisation->setDescription($org['details']['description']);
+        DBUpdate::instance()->organisation($organisation);
     }
 
     if (isset($org['individuals'])) {
@@ -44,6 +45,7 @@ foreach($data['organisations'] as $org) {
             ));
             if (isset($individual['details']['cv'])) {
                 $account->setCV($individual['details']['cv']);
+                DBUpdate::instance()->individual($account);
             }
         }
     }
