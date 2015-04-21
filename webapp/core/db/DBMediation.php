@@ -77,16 +77,4 @@ class DBMediation extends Prefab {
         return $availableMediators;
     }
 
-    public function mediatorIsAvailableForDispute($mediatorID, $disputeID) {
-        $available = Database::instance()->exec(
-            'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id AND mediator_id = :mediator_id LIMIT 1',
-            array(
-                ':dispute_id'  => $disputeID,
-                ':mediator_id' => $mediatorID
-            )
-        );
-
-        return count($available) === 1;
-    }
-
 }

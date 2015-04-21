@@ -57,7 +57,7 @@ class Dispute {
     }
 
     public function getEvidences() {
-        return DBDispute::instance()->getEvidences($this->getDisputeId());
+        return DBQuery::instance()->getEvidences($this->getDisputeId());
     }
 
     public function inRoundTableCommunication() {

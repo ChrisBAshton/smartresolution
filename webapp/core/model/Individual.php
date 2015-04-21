@@ -54,7 +54,13 @@ class Mediator extends Individual {
     }
 
     public function isAvailableForDispute($disputeID) {
-        return DBMediation::instance()->mediatorIsAvailableForDispute($this->getLoginId(), $disputeID);
+        $availableMediators = DBMediation::instance()->getAvailableMediators($disputeID);
+        foreach($availableMediators as $mediator) {
+            if ($mediator->getLoginId() === $this->getLoginId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -92,10 +92,10 @@ class DisputeParty {
                 'organisation_id' => $value
             ));
             $this->partyID = $createdParty->getPartyId();
-            DBDispute::instance()->updateDisputePartyB($this->partyID, $this->disputeID);
+            DBQuery::instance()->updateDisputePartyB($this->partyID, $this->disputeID);
         }
         elseif ($this->getPartyId() !== 0) {
-            DBDispute::instance()->updatePartyRecord($this->getPartyId(), $field, $value);
+            DBQuery::instance()->updatePartyRecord($this->getPartyId(), $field, $value);
         }
         else {
             Utils::instance()->throwException("Tried setting something other than Law Firm when the record for the party has not been created yet.");

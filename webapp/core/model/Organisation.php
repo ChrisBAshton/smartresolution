@@ -32,15 +32,15 @@ class Organisation extends Account implements AccountInterface {
         $this->description = $description;
     }
 
-    public function getIndividuals($type) {
-        return DBOrganisation::instance()->getIndividuals($this->getLoginId(), $type);
+    public function getIndividuals() {
+        return DBQuery::instance()->getIndividuals($this->getLoginId());
     }
 }
 
 class LawFirm extends Organisation {
 
     public function getAgents() {
-        return parent::getIndividuals('Agent');
+        return parent::getIndividuals();
     }
 
     public function getRole() {
@@ -56,6 +56,6 @@ class MediationCentre extends Organisation {
     }
 
     public function getMediators() {
-        return parent::getIndividuals('Mediator');
+        return parent::getIndividuals();
     }
 }

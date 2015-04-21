@@ -1,9 +1,45 @@
 <?php
 
-/**
- * This class is used as the middle layer between the application and the database, in terms of account interaction.
- */
 class DBAccount extends Prefab {
+
+    // @TODO - move these two functions to Account.php
+    /**
+     * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
+     *
+     * @param  string $email    The email address.
+     * @param  string $password The unencrypted password.
+     * @return boolean          True if the credentials are valid, otherwise false.
+     */
+    public function validCredentials($email, $password) {
+        $details = $this->getDetailsBy('email', $email);
+        if (!$details) {
+            return false;
+        }
+        else {
+            return $this->correctPassword($password, $details['password']);
+        }
+    }
+
+    /**
+     * Returns true or false depending on whether or not the inputted password is a match for the encrypted password we have on file.
+     *
+     * @param  string $inputtedPassword  The unencrypted password.
+     * @param  string $encryptedPassword The encrypted password we're checking our unencrypted password against.
+     * @return boolean                   True if the inputted password is a match.
+     */
+    public function correctPassword($inputtedPassword, $encryptedPassword) {
+        $crypt = \Bcrypt::instance();
+        return $crypt->verify($inputtedPassword, $encryptedPassword);
+    }
+
+
+
+
+
+
+
+
+
 
     /**
      * Gets an account by its login ID.
@@ -11,7 +47,7 @@ class DBAccount extends Prefab {
      * @return Account  The account object.
      */
     public function getAccountById($id) {
-        $account = $this->getDetailsById($id);
+        $account = $this->getDetailsBy('login_id', $id);
         return $this->arrayToAccountObject($account);
     }
 
@@ -21,7 +57,7 @@ class DBAccount extends Prefab {
      * @return Account  The account object.
      */
     public function getAccountByEmail($email) {
-        $account = $this->getDetailsByEmail($email);
+        $account = $this->getDetailsBy('email', $email);
         return $this->arrayToAccountObject($account);
     }
 
@@ -70,53 +106,6 @@ class DBAccount extends Prefab {
         }
         $login_id = (int) $login_id[0]['login_id'];
         return $login_id;
-    }
-
-    /**
-     * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
-     *
-     * @param  string $email    The email address.
-     * @param  string $password The unencrypted password.
-     * @return boolean          True if the credentials are valid, otherwise false.
-     */
-    public function validCredentials($email, $password) {
-        $details = $this->getDetailsByEmail($email);
-        if (!$details) {
-            return false;
-        }
-        else {
-            return $this->correctPassword($password, $details['password']);
-        }
-    }
-
-    /**
-     * Returns true or false depending on whether or not the inputted password is a match for the encrypted password we have on file.
-     *
-     * @param  string $inputtedPassword  The unencrypted password.
-     * @param  string $encryptedPassword The encrypted password we're checking our unencrypted password against.
-     * @return boolean                   True if the inputted password is a match.
-     */
-    public function correctPassword($inputtedPassword, $encryptedPassword) {
-        $crypt = \Bcrypt::instance();
-        return $crypt->verify($inputtedPassword, $encryptedPassword);
-    }
-
-    /**
-     * Returns the database record corresponding to the provided account ID.
-     * @param  int $value    ID of the account.
-     * @return array<Mixed>  Associated database row.
-     */
-    public function getDetailsById($value) {
-        return $this->getDetailsBy('login_id', $value);
-    }
-
-    /**
-     * Returns the database record corresponding to the provided account email.
-     * @param  string $value Email of the account.
-     * @return array<Mixed>  Associated database row.
-     */
-    private function getDetailsByEmail($value) {
-        return $this->getDetailsBy('email', $value);
     }
 
     /**

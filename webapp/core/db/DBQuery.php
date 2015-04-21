@@ -2,6 +2,55 @@
 
 class DBQuery extends Prefab {
 
+    public function getIndividuals($organisationID) {
+        $individuals = array();
+
+        $individualsDetails = Database::instance()->exec(
+            'SELECT individuals.login_id FROM individuals INNER JOIN account_details ON individuals.login_id = account_details.login_id WHERE organisation_id = :organisation_id',
+            array(':organisation_id' => $organisationID)
+        );
+
+        foreach($individualsDetails as $individual) {
+            $individuals[] = DBAccount::instance()->getAccountById($individual['login_id']);
+        }
+
+        return $individuals;
+    }
+
+    public function getEvidences($disputeID) {
+        $evidences = array();
+        $evidenceDetails = Database::instance()->exec(
+            'SELECT evidence_id FROM evidence WHERE dispute_id = :dispute_id ORDER BY evidence_id DESC',
+            array(':dispute_id' => $disputeID)
+        );
+
+        foreach($evidenceDetails as $evidence) {
+            $evidences[] = new Evidence(DBGet::instance()->evidence((int) $evidence['evidence_id']));
+        }
+
+        return $evidences;
+    }
+
+    public function updateDisputePartyB($partyID, $disputeID) {
+        Database::instance()->exec(
+            'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',
+            array(
+                ':party_id'   => $partyID,
+                ':dispute_id' => $disputeID
+            )
+        );
+    }
+
+    public function updatePartyRecord($partyID, $field, $value) {
+        Database::instance()->exec(
+            'UPDATE dispute_parties SET ' . $field . ' = :value WHERE party_id = :party_id',
+            array(
+                ':value'    => $value,
+                ':party_id' => $partyID
+            )
+        );
+    }
+
     /**
      * Gets organisations as an array.
      * @param  array  $params           Parameters:
