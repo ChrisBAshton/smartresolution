@@ -4,14 +4,16 @@ require_once __DIR__ . '/../_helper.php';
 
 class DisputePartyTest extends PHPUnit_Framework_TestCase
 {
-    public function testDisputeSimpleGetters() {
+    public function testDisputeSimpleGetters()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals('This is my summary', $dispute->getPartyA()->getSummary());
         $this->assertEquals(DBAccount::instance()->emailToId('agent_a@t.co'), $dispute->getPartyA()->getAgent()->getLoginId());
         $this->assertEquals(DBAccount::instance()->emailToId('law_firm_a@t.co'), $dispute->getPartyA()->getLawFirm()->getLoginId());
     }
 
-    public function testSimpleSetters() {
+    public function testSimpleSetters()
+    {
         $dispute  = TestHelper::createNewDispute();
         $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
         $agentB   = DBAccount::instance()->emailToId('agent_b@t.co');
@@ -32,7 +34,8 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($dispute->getPartyB()->getSummary(), 'Test summary');
     }
 
-    public function testOverridingAgentWithAnotherFromSameLawFirm() {
+    public function testOverridingAgentWithAnotherFromSameLawFirm()
+    {
         $dispute = TestHelper::createNewDispute();
         $agent1 = DBAccount::instance()->emailToId('agent_a@t.co');
         $agent2 = DBAccount::instance()->emailToId('agent_c@t.co');
@@ -46,7 +49,8 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      * @expectedExceptionMessage You can only assign agents that are in your law firm!
      */
-    public function testOverridingAgentWithAgentFromDifferentLawFirm() {
+    public function testOverridingAgentWithAgentFromDifferentLawFirm()
+    {
         $dispute = TestHelper::createNewDispute();
         $agentInCompanyA = DBAccount::instance()->emailToId('agent_a@t.co');
         $agentInCompanyB = DBAccount::instance()->emailToId('agent_b@t.co');
@@ -59,7 +63,8 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      * @expectedExceptionMessage Tried setting a non-agent type as an agent!
      */
-    public function testOverridingAgentWithMediator() {
+    public function testOverridingAgentWithMediator()
+    {
         $dispute  = TestHelper::createNewDispute();
         $agent    = DBAccount::instance()->emailToId('agent_a@t.co');
         $mediator = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
@@ -68,7 +73,8 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
         $dispute->getPartyA()->setAgent($mediator);
     }
 
-    public function testDisputeGettersObjectsMatch() {
+    public function testDisputeGettersObjectsMatch()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals(
             DBAccount::instance()->getAccountByEmail('law_firm_a@t.co')->getLoginId(),
@@ -80,7 +86,8 @@ class DisputePartyTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testDisputeGettersObjectsCorrectType() {
+    public function testDisputeGettersObjectsCorrectType()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute->getPartyA()->getLawFirm() instanceof LawFirm);
         $this->assertTrue($dispute->getPartyA()->getAgent() instanceof Agent);

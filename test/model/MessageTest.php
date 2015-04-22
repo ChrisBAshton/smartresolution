@@ -25,7 +25,8 @@ class MessageTest extends PHPUnit_Framework_TestCase
         $this->assertTrue((time() - $message->timestamp() < 100)); // a few milliseconds margin of error
     }
 
-    public function testCreateMessageWithRecipient() {
+    public function testCreateMessageWithRecipient()
+    {
         $message = new Message(array(
             'dispute_id'   => 1,
             'author_id'    => 1,

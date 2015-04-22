@@ -5,7 +5,8 @@ require_once __DIR__ . '/../_helper.php';
 class DisputeTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testIsAMediationParty() {
+    public function testIsAMediationParty()
+    {
         $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $mediationCentre = DBAccount::instance()->emailToId('mediation_centre_email@we-mediate.co.uk');
         $mediator = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
@@ -30,17 +31,20 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testCreateDisputeSuccessfully() {
+    public function testCreateDisputeSuccessfully()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute instanceof Dispute);
     }
 
-    public function testDisputeSimpleGetters() {
+    public function testDisputeSimpleGetters()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals('Smith versus Jones', $dispute->getTitle());
     }
 
-    public function testRoundTableCommunication() {
+    public function testRoundTableCommunication()
+    {
         $dispute = TestHelper::createNewDispute(); // by default, should NOT be in round table communication
         $this->assertFalse($dispute->inRoundTableCommunication());
 
@@ -51,7 +55,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($dispute->inRoundTableCommunication());
     }
 
-    public function testAuthorisationLogicIsCorrect() {
+    public function testAuthorisationLogicIsCorrect()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertTrue($dispute->canBeViewedBy(DBAccount::instance()->emailToId('law_firm_a@t.co')));
         $this->assertTrue($dispute->canBeViewedBy(DBAccount::instance()->emailToId('agent_a@t.co')));
@@ -59,7 +64,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($dispute->canBeViewedBy(DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk')));
     }
 
-    public function testDisputeWorkflowCorrect() {
+    public function testDisputeWorkflowCorrect()
+    {
         $dispute  = TestHelper::createNewDispute();
         $state    = $dispute->getState(DBAccount::instance()->getAccountByEmail('agent_a@t.co'));
         $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
@@ -74,7 +80,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($state->canOpenDispute());
     }
 
-    public function testGetOpposingPartyId() {
+    public function testGetOpposingPartyId()
+    {
         $dispute = TestHelper::createNewDispute();
         $lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
         $agentA   = DBAccount::instance()->emailToId('agent_a@t.co');
@@ -90,7 +97,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException Exception
      */
-    public function testSettingDisputeAgentToLawFirm() {
+    public function testSettingDisputeAgentToLawFirm()
+    {
         $agentA   = DBAccount::instance()->emailToId('agent_a@t.co');
 
         return DBCreate::instance()->dispute(array(
@@ -103,7 +111,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException Exception
      */
-    public function testSettingDisputeLawFirmToAgent() {
+    public function testSettingDisputeLawFirmToAgent()
+    {
         $lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
         $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
 
@@ -116,7 +125,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
         $dispute->getPartyB()->setAgent($lawFirmB); // shouldn't be able to set agent as a law firm
     }
 
-    public function testGetAndSetType() {
+    public function testGetAndSetType()
+    {
         $dispute = TestHelper::createNewDispute();
         $this->assertEquals("other", $dispute->getType());
         $dispute->setType('test');

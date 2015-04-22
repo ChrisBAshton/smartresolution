@@ -5,7 +5,8 @@ require_once __DIR__ . '/../_helper.php';
 class EvidenceTest extends PHPUnit_Framework_TestCase
 {
 
-    protected function setUp() {
+    protected function setUp()
+    {
         $this->dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $this->evidence = DBCreate::instance()->evidence(array(
             'uploader_id' => $this->dispute->getPartyA()->getAgent()->getLoginId(),
@@ -14,7 +15,8 @@ class EvidenceTest extends PHPUnit_Framework_TestCase
         ));
     }
 
-    public function testGetters() {
+    public function testGetters()
+    {
         $this->assertEquals(
             $this->dispute->getPartyA()->getAgent()->getLoginId(),
             $this->evidence->getUploader()->getLoginId(),

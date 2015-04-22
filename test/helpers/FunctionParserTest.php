@@ -17,7 +17,8 @@ class MyFirstTestClass {
 
 class FunctionParserTest extends PHPUnit_Framework_TestCase
 {
-    public function testAnonymousFunction() {
+    public function testAnonymousFunction()
+    {
         global $functionCalled;
         $functionCalled = false;
 
@@ -29,7 +30,8 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($functionCalled);
     }
 
-    public function testGlobalFunction() {
+    public function testGlobalFunction()
+    {
         global $functionCalled;
         $functionCalled = false;
 
@@ -43,7 +45,8 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($functionCalled);
     }
 
-    public function testGlobalFunctionWithParameter() {
+    public function testGlobalFunctionWithParameter()
+    {
         global $functionCalled;
         $functionCalled = false;
 
@@ -57,7 +60,8 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($functionCalled, 1337);
     }
 
-    public function testGlobalFunctionWithParameters() {
+    public function testGlobalFunctionWithParameters()
+    {
         global $functionCalled;
         $functionCalled = false;
 
@@ -71,7 +75,8 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($functionCalled, array('foo', 'bar'));
     }
 
-    public function testClassFunction() {
+    public function testClassFunction()
+    {
         global $functionCalled;
         $functionCalled = false;
 
@@ -80,7 +85,8 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($functionCalled);
     }
 
-    public function testClassFunctionWithParams() {
+    public function testClassFunctionWithParams()
+    {
         global $functionCalled;
         $functionCalled = false;
 
@@ -93,7 +99,8 @@ class FunctionParserTest extends PHPUnit_Framework_TestCase
      * @expectedException Exception
      * @expectedExceptionMessage Invalid function: nonExistentFunction
      */
-    public function testCallingInvalidFunction() {
+    public function testCallingInvalidFunction()
+    {
         new FunctionParser('nonExistentFunction');
     }
 }

@@ -29,8 +29,7 @@ class LifespanMock implements LifespanInterface {
         return false;
     }
 
-    public function disputeClosed() {
-        // do nothing
+    public function endLifespan() {
     }
 
 }

@@ -3,7 +3,8 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class AccountTest extends PHPUnit_Framework_TestCase
 {
-    private function createAgent() {
+    private function createAgent()
+    {
         return new Agent(array(
             'login_id'        => 1,
             'organisation_id' => 3,
@@ -14,7 +15,8 @@ class AccountTest extends PHPUnit_Framework_TestCase
         ));
     }
 
-    private function createLawFirm() {
+    private function createLawFirm()
+    {
         return new LawFirm(array(
             'login_id'        => 3,
             'email'           => 'law_firm_a@t.co',
@@ -23,7 +25,8 @@ class AccountTest extends PHPUnit_Framework_TestCase
         ));
     }
 
-    public function testIndividualGetters() {
+    public function testIndividualGetters()
+    {
         $account = $this->createAgent();
         $this->assertEquals(1, $account->getLoginId());
         $this->assertEquals('agent_a@t.co', $account->getEmail());
@@ -33,7 +36,8 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
     }
 
-    public function testIndividualSetters() {
+    public function testIndividualSetters()
+    {
         $account = $this->createAgent();
         $this->assertEquals(false, $account->getRawCV());
         $account->setCV('test');
@@ -43,7 +47,8 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('<h1 id="cv-coming-soon">CV coming soon.</h1>', trim($account->getCV()));
     }
 
-    public function testOrganisationGetters() {
+    public function testOrganisationGetters()
+    {
         $account = $this->createLawFirm();
         $this->assertEquals(3, $account->getLoginId());
         $this->assertEquals('law_firm_a@t.co', $account->getEmail());
@@ -53,7 +58,8 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
     }
 
-    public function testOrganisationSetters() {
+    public function testOrganisationSetters()
+    {
         $account = $this->createLawFirm();
         $this->assertEquals(false, $account->getRawDescription());
         $account->setDescription('TEST');

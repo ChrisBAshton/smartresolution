@@ -61,9 +61,6 @@ class Lifespan implements LifespanInterface {
             else if ($this->endTime > $currentTime) {
                 $status = 'Dispute has started and ends in ' . secondsToTime($this->endTime() - $currentTime);
             }
-            else {
-                $status = 'Dispute lifespan ended ' . secondsToTime($currentTime - $this->endTime()) . ' ago';
-            }
         }
         else if ($this->offered()) {
             $status = 'New lifespan proposal offered.';
@@ -75,7 +72,7 @@ class Lifespan implements LifespanInterface {
         return $status;
     }
 
-    public function disputeClosed() {
+    public function endLifespan() {
         $this->endTime = time();
     }
 
@@ -90,7 +87,7 @@ class Lifespan implements LifespanInterface {
     }
 
     public function isEnded() {
-        return ($this->endTime < time());
+        return ($this->endTime <= time());
     }
 
     public function accept() {

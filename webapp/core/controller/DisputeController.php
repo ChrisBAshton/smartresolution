@@ -168,7 +168,7 @@ class DisputeController {
             }
 
             $lifespan = $dispute->getCurrentLifespan();
-            $lifespan->disputeClosed();
+            $lifespan->endLifespan();
 
             // make changes persistent
             DBUpdate::instance()->lifespan($lifespan);

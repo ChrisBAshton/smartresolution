@@ -8,5 +8,5 @@ interface LifespanInterface {
     public function accepted();
     public function declined();
     public function isEnded();
-    public function disputeClosed();
+    public function endLifespan();
 }
