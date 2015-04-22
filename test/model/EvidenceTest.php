@@ -5,27 +5,18 @@ require_once __DIR__ . '/../_helper.php';
 class EvidenceTest extends PHPUnit_Framework_TestCase
 {
 
-    protected function setUp()
+    public function testEvidence()
     {
-        $this->dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
-        $this->evidence = DBCreate::instance()->evidence(array(
-            'uploader_id' => $this->dispute->getPartyA()->getAgent()->getLoginId(),
-            'dispute_id'  => $this->dispute->getDisputeId(),
-            'filepath'    => 'test_filepath'
+        $evidence = new Evidence(array(
+            'evidence_id' => 1,
+            'uploader_id' => 3,
+            'filepath'    => '/some/filepath/test.txt'
         ));
-    }
 
-    public function testGetters()
-    {
-        $this->assertEquals(
-            $this->dispute->getPartyA()->getAgent()->getLoginId(),
-            $this->evidence->getUploader()->getLoginId(),
-            'Login ID was ' . $this->dispute->getPartyA()->getAgent()->getLoginId()
-        );
-        $this->assertEquals(
-            'test_filepath',
-            $this->evidence->getUrl()
-        );
+        $this->assertEquals(1, $evidence->getEvidenceId());
+        $this->assertEquals(3, $evidence->getUploaderId());
+        $this->assertTrue($evidence->getUploader() instanceof Agent);
+        $this->assertEquals('/some/filepath/test.txt', $evidence->getUrl());
     }
 
 }

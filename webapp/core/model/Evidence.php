@@ -12,6 +12,10 @@ class Evidence {
         $this->url        = $evidence['filepath'];
     }
 
+    public function getEvidenceId() {
+        return $this->evidenceID;
+    }
+
     public function getUploaderId() {
         return $this->uploaderID;
     }
