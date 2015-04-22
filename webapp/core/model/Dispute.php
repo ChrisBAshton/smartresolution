@@ -111,26 +111,16 @@ class Dispute {
     }
 
     public function getOpposingPartyId($loginID) {
-        // mock Agent And Organisation Accounts If Necessary
-        $mockIfNecessary = array(
-            'lawFirmA' => $this->getPartyA()->getLawFirm(),
-            'lawFirmB' => $this->getPartyB()->getLawFirm(),
-            'agentA'   => $this->getPartyA()->getAgent(),
-            'agentB'   => $this->getPartyB()->getAgent(),
-        );
-        foreach($mockIfNecessary as $key => $object) {
-            if (!$mockIfNecessary[$key]) {
-                $mockIfNecessary[$key] = new AccountMock();
-            }
-        }
+        $lawFirmA = $this->getPartyA()->getLawFirm();
+        $lawFirmB = $this->getPartyB()->getLawFirm();
+        $agentA   = $this->getPartyA()->getAgent();
+        $agentB   = $this->getPartyB()->getAgent();
 
         if ($this->getPartyA()->contains($loginID)) {
-            $agentB = $this->getPartyB()->getAgent();
-            $opposingParty = $agentB ? $agentB : $this->getPartyB()->getLawFirm();
+            $opposingParty = $agentB ? $agentB : $lawFirmB;
         }
         else {
-            $agentA = $this->getPartyA()->getAgent();
-            $opposingParty = $agentA ? $agentA : $this->getPartyA()->getLawFirm();
+            $opposingParty = $agentA ? $agentA : $lawFirmA;
         }
 
         return $opposingParty ? $opposingParty->getLoginId() : false;

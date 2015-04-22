@@ -3,6 +3,7 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'test/unit/assertions'
+require 'fileutils'
 
 World(Test::Unit::Assertions)
 
