@@ -55,6 +55,37 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dispute instanceof Dispute);
     }
 
+    /**
+     * @expectedException Exception
+     */
+    public function testSettingDisputeAgentToLawFirm()
+    {
+        $agentA   = DBAccount::instance()->emailToId('agent_a@t.co');
+
+        return DBCreate::instance()->dispute(array(
+            'law_firm_a' => $agentA, // shouldn't be able to set law firm as an agent
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testSettingDisputeLawFirmToAgent()
+    {
+        $lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
+        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
+
+        $dispute = DBCreate::instance()->dispute(array(
+            'law_firm_a' => $lawFirmA,
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
+
+        $dispute->getPartyB()->setAgent($lawFirmB); // shouldn't be able to set agent as a law firm
+    }
+
     public function testCreateDisputeParty() {
         $create    = DBCreate::instance();
         $lawFirmID = DBAccount::instance()->emailToId('law_firm_a@t.co');
