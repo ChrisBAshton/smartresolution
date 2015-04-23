@@ -29,6 +29,9 @@ class LifespanFactory extends Prefab {
         }
     }
 
+    /**
+     * Gets the latest lifespan that has not been declined. This is useful for lifespan renegotiation.
+     */
     public function getLatestLifespan($disputeID) {
         $lifespan = $this->getLatestLifespanWithStatus($disputeID, 'notDeclined');
         if ($lifespan) {
