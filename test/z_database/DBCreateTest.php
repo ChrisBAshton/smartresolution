@@ -55,6 +55,37 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dispute instanceof Dispute);
     }
 
+    /**
+     * @expectedException Exception
+     */
+    public function testSettingDisputeAgentToLawFirm()
+    {
+        $agentA   = DBAccount::instance()->emailToId('agent_a@t.co');
+
+        return DBCreate::instance()->dispute(array(
+            'law_firm_a' => $agentA, // shouldn't be able to set law firm as an agent
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testSettingDisputeLawFirmToAgent()
+    {
+        $lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
+        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
+
+        $dispute = DBCreate::instance()->dispute(array(
+            'law_firm_a' => $lawFirmA,
+            'type'       => 'other',
+            'title'      => 'Smith versus Jones'
+        ));
+
+        $dispute->getPartyB()->setAgent($lawFirmB); // shouldn't be able to set agent as a law firm
+    }
+
     public function testCreateDisputeParty() {
         $create    = DBCreate::instance();
         $lawFirmID = DBAccount::instance()->emailToId('law_firm_a@t.co');
@@ -95,81 +126,6 @@ class DBCreateTest extends PHPUnit_Framework_TestCase
             'valid_until' => $currentTime + 3600,
             'start_time'  => $currentTime + 7200,
             'end_time'    => $currentTime + 12000
-        ));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage All selected dates must be in the future.
-     */
-    public function testLifespanInvalidWhenValidUntilIsInPast() {
-        $currentTime = time();
-        DBCreate::instance()->lifespan(array(
-            'dispute_id'  => 1,
-            'proposer'    => 3,
-            'valid_until' => $currentTime - 3600,
-            'start_time'  => $currentTime + 7200,
-            'end_time'    => $currentTime + 12000
-        ));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage All selected dates must be in the future.
-     */
-    public function testLifespanInvalidWhenStartTimeIsInPast() {
-        $currentTime = time();
-        DBCreate::instance()->lifespan(array(
-            'dispute_id'  => 1,
-            'proposer'    => 3,
-            'valid_until' => $currentTime + 3600,
-            'start_time'  => $currentTime - 7200,
-            'end_time'    => $currentTime + 12000
-        ));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage All selected dates must be in the future.
-     */
-    public function testLifespanInvalidWhenEndTimeIsInPast() {
-        $currentTime = time();
-        DBCreate::instance()->lifespan(array(
-            'dispute_id'  => 1,
-            'proposer'    => 3,
-            'valid_until' => $currentTime + 3600,
-            'start_time'  => $currentTime + 7200,
-            'end_time'    => $currentTime - 12000
-        ));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage The "Valid Until" date must be before the start and end dates.
-     */
-    public function testLifespanInvalidWhenValidUntilIsAheadOfStartTime() {
-        $currentTime = time();
-        DBCreate::instance()->lifespan(array(
-            'dispute_id'  => 1,
-            'proposer'    => 3,
-            'valid_until' => $currentTime + 7200,
-            'start_time'  => $currentTime + 3600,
-            'end_time'    => $currentTime + 12000
-        ));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Start date must be before end date.
-     */
-    public function testLifespanInvalidWhenEndTimeBeforeStartTime() {
-        $currentTime = time();
-        DBCreate::instance()->lifespan(array(
-            'dispute_id'  => 1,
-            'proposer'    => 3,
-            'valid_until' => $currentTime + 3600,
-            'start_time'  => $currentTime + 7200,
-            'end_time'    => $currentTime + 5000
         ));
     }
 

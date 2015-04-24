@@ -2,12 +2,12 @@
 
 class Message {
 
-    function __construct($messageID) {
-        $message = DBGet::instance()->message($messageID);
-        $this->disputeID = $message['dispute_id'];
-        $this->authorID  = $message['author_id'];
-        $this->contents  = $message['message'];
-        $this->timestamp = $message['timestamp'];
+    function __construct($message) {
+        $this->disputeID    = $message['dispute_id'];
+        $this->authorID     = $message['author_id'];
+        $this->recipientID  = $message['recipient_id'];
+        $this->contents     = $message['message'];
+        $this->timestamp    = $message['timestamp'];
     }
 
     public function getDisputeId() {
@@ -15,7 +15,7 @@ class Message {
     }
 
     public function getDispute() {
-        return new Dispute($this->getDisputeId());
+        return new Dispute(DBGet::instance()->dispute($this->getDisputeId()));
     }
 
     public function timestamp() {
@@ -24,6 +24,14 @@ class Message {
 
     public function contents() {
         return htmlspecialchars($this->contents);
+    }
+
+    public function getAuthorId() {
+        return $this->authorID;
+    }
+
+    public function getRecipientId() {
+        return $this->recipientID;
     }
 
     public function author() {

@@ -3,14 +3,7 @@
 class Organisation extends Account implements AccountInterface {
 
     function __construct($account) {
-        $this->setVariables($account);
-    }
-
-    public function setVariables($account) {
-        if (is_int($account)) {
-            $account = DBAccount::instance()->getDetailsById($account);
-        }
-        $this->loginId     = (int) $account['login_id'];
+        $this->loginId     = $account['login_id'];
         $this->email       = $account['email'];
         $this->name        = $account['name'];
         $this->description = $account['description'];
@@ -36,23 +29,18 @@ class Organisation extends Account implements AccountInterface {
     }
 
     public function setDescription($description) {
-        $this->setProperty('description', $description);
+        $this->description = $description;
     }
 
-    private function setProperty($key, $value) {
-        DBAccount::instance()->setAccountProperty($this->getLoginId(), $key, $value);
-        $this->setVariables($this->getLoginId());
-    }
-
-    public function getIndividuals($type) {
-        return DBOrganisation::instance()->getIndividuals($this->getLoginId(), $type);
+    public function getIndividuals() {
+        return DBQuery::instance()->getIndividuals($this->getLoginId());
     }
 }
 
 class LawFirm extends Organisation {
 
     public function getAgents() {
-        return parent::getIndividuals('Agent');
+        return parent::getIndividuals();
     }
 
     public function getRole() {
@@ -68,6 +56,6 @@ class MediationCentre extends Organisation {
     }
 
     public function getMediators() {
-        return parent::getIndividuals('Mediator');
+        return parent::getIndividuals();
     }
 }

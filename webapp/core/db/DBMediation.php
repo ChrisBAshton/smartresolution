@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo  - remove this file. Extract the methods out to another class.
+ * @deprecated
+ */
 class DBMediation extends Prefab {
 
     public function respondToMediationProposal($proposalID, $response) {
@@ -71,22 +75,10 @@ class DBMediation extends Prefab {
 
         $availableMediators = array();
         foreach($availableMediatorsDetails as $details) {
-            $availableMediators[] = new Mediator((int) $details['mediator_id']);
+            $availableMediators[] = DBAccount::instance()->getAccountById((int) $details['mediator_id']);
         }
 
         return $availableMediators;
-    }
-
-    public function mediatorIsAvailableForDispute($mediatorID, $disputeID) {
-        $available = Database::instance()->exec(
-            'SELECT * FROM mediators_available WHERE dispute_id = :dispute_id AND mediator_id = :mediator_id LIMIT 1',
-            array(
-                ':dispute_id'  => $disputeID,
-                ':mediator_id' => $mediatorID
-            )
-        );
-
-        return count($available) === 1;
     }
 
 }

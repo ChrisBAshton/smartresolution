@@ -7,8 +7,6 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        Database::setEnvironment('test');
-        Database::clear();
         Database::instance()->exec(
             'INSERT INTO account_details (login_id, email, password) VALUES (NULL, :email, :password)',
             array(

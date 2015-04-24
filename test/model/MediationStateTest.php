@@ -4,12 +4,9 @@ require_once __DIR__ . '/../_helper.php';
 
 class MediationStateTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
 
-    public function testWhenNotInMediation() {
+    public function testWhenNotInMediation()
+    {
         $dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
         $state = $dispute->getMediationState();
 
@@ -20,7 +17,8 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($state->inMediation());
     }
 
-    public function testWhenInMediation() {
+    public function testWhenInMediation()
+    {
         $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $state = $dispute->getMediationState();
 
@@ -31,7 +29,8 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($state->inMediation());
     }
 
-    public function testWhenMediationProposed() {
+    public function testWhenMediationProposed()
+    {
         $dispute = TestHelper::getDisputeByTitle('Dispute that has agreed on a Mediation Centre');
         $state = $dispute->getMediationState();
 
@@ -42,7 +41,8 @@ class MediationStateTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($state->inMediation());
     }
 
-    public function testGetters() {
+    public function testGetters()
+    {
         $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
         $state = $dispute->getMediationState();
         $this->assertTrue($state->getMediationCentre()  instanceof MediationCentre);

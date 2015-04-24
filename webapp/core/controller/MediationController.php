@@ -54,7 +54,7 @@ class MediationController {
     private function viewInContextOfAgents($f3) {
         if (!$this->mediationState->mediationCentreProposed()) :
 
-            $mediationCentres = DBAccount::instance()->getOrganisations(array(
+            $mediationCentres = DBQuery::instance()->getOrganisations(array(
                 'type'   => 'mediation_centre'
             ));
 
@@ -125,7 +125,7 @@ class MediationController {
         }
         else {
             try {
-                $mediationCentre = new MediationCentre((int) $mediationCentreId);
+                $mediationCentre = DBAccount::instance()->getAccountById((int) $mediationCentreId);
 
                 DBCreate::instance()->mediationCentreOffer(array(
                     'dispute_id'  => $dispute->getDisputeId(),
@@ -150,7 +150,7 @@ class MediationController {
 
         if ($mediatorId) {
             try {
-                $mediator = new Mediator((int) $mediatorId);
+                $mediator = DBAccount::instance()->getAccountById((int) $mediatorId);
 
                 DBCreate::instance()->mediatorOffer(array(
                     'dispute_id'  => $dispute->getDisputeId(),
@@ -224,6 +224,7 @@ class MediationController {
             else {
                 $this->dispute->disableRoundTableCommunication();
             }
+            DBUpdate::instance()->dispute($this->dispute);
         }
         header('Location: ' . $this->dispute->getUrl() . '/mediation');
     }

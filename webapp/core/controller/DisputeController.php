@@ -99,8 +99,10 @@ class DisputeController {
             $this->assignDisputeGet($f3, $params);
         }
         else {
-            $dispute->getPartyB()->setAgent((int) $agent);
-            $dispute->getPartyB()->setSummary($summary);
+            $disputeParty = $dispute->getPartyB();
+            $disputeParty->setAgent((int) $agent);
+            $disputeParty->setSummary($summary);
+            DBUpdate::instance()->disputeParty($disputeParty);
 
             header('Location: ' . $dispute->getUrl());
         }
@@ -114,7 +116,7 @@ class DisputeController {
             errorPage('You have already opened this dispute against ' . $dispute->getPartyB()->getLawFirm()->getName() . '!');
         }
 
-        $lawFirms = DBAccount::instance()->getOrganisations(array(
+        $lawFirms = DBQuery::instance()->getOrganisations(array(
             'type'   => 'law_firm',
             'except' => $f3->get('dispute')->getPartyA()->getLawFirm()->getLoginId()
         ));
@@ -134,7 +136,9 @@ class DisputeController {
         }
         else {
             $dispute = setDisputeFromParams($f3, $params);
-            $dispute->getPartyB()->setLawFirm($lawFirmB);
+            $party   = $dispute->getPartyB();
+            $party->setLawFirm($lawFirmB);
+            DBUpdate::instance()->disputeParty($party);
 
             header('Location: ' . $dispute->getUrl());
         }
@@ -162,6 +166,14 @@ class DisputeController {
             else {
                 $dispute->closeSuccessfully();
             }
+
+            $lifespan = $dispute->getCurrentLifespan();
+            $lifespan->endLifespan();
+
+            // make changes persistent
+            DBUpdate::instance()->lifespan($lifespan);
+            DBUpdate::instance()->dispute($dispute);
+
             $f3->set('success_message', 'You have successfully closed the dispute.');
         }
 
@@ -217,12 +229,16 @@ class DisputeController {
             else {
                 if ($dispute->getPartyA()->contains($account->getLoginId())) {
                     $dispute->getPartyA()->setSummary($summary);
+                    DBUpdate::instance()->disputeParty($dispute->getPartyA());
                 }
                 elseif($dispute->getPartyB()->contains($account->getLoginId())) {
                     $dispute->getPartyB()->setSummary($summary);
+                    DBUpdate::instance()->disputeParty($dispute->getPartyB());
                 }
 
                 $dispute->setType($type);
+
+                DBUpdate::instance()->dispute($dispute);
 
                 $f3->set('summary', $summary);
                 $f3->set('success_message', 'You have updated the dispute details.');

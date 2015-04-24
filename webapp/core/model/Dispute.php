@@ -2,22 +2,16 @@
 
 class Dispute {
 
-    function __construct($disputeID) {
-        $this->disputeID = $disputeID;
-        $this->refresh();
-    }
-
-    public function refresh() {
-        $data                  = DBGet::instance()->dispute($this->disputeID);
-        $this->type            = $data['type'];
-        $this->title           = $data['title'];
-        $this->status          = $data['status'];
-        $this->partyA          = new DisputeParty((int) $data['party_a'], $this->disputeID);
-        $this->partyB          = new DisputeParty((int) $data['party_b'], $this->disputeID);
-        $this->currentLifespan = LifespanFactory::instance()->getCurrentLifespan($this->disputeID);
-        $this->latestLifespan  = LifespanFactory::instance()->getLatestLifespan($this->disputeID);
-        $this->mediationState  = new MediationState($this->disputeID);
-        $this->inRoundTableCommunication = $data['round_table_communication'] === 'true';
+    function __construct($data) {
+        $this->disputeID = $data['dispute_id'];
+        $this->type      = $data['type'];
+        $this->title     = $data['title'];
+        $this->status    = $data['status'];
+        $this->partyAId  = $data['party_a'];
+        $this->partyBId  = $data['party_b'];
+        $this->partyA    = new DisputeParty(DBGet::instance()->disputeParty($data['party_a']), $this->disputeID);
+        $this->partyB    = new DisputeParty(DBGet::instance()->disputeParty($data['party_b']), $this->disputeID);
+        $this->rtc       = $data['round_table_communication'];
     }
 
     public function getType() {
@@ -32,24 +26,24 @@ class Dispute {
         return DisputeStateCalculator::instance()->getState($this, $account);
     }
 
-    public function getMediationState($account = false) {
-        return $this->mediationState;
+    public function getMediationState() {
+        return new MediationState($this->disputeID);
     }
 
     public function getCurrentLifespan() {
-        return $this->currentLifespan;
+        return LifespanFactory::instance()->getCurrentLifespan($this->disputeID);
     }
 
     public function getLatestLifespan() {
-        return $this->latestLifespan;
+        return LifespanFactory::instance()->getLatestLifespan($this->disputeID);
     }
 
-    public function getdisputeID() {
+    public function getDisputeId() {
         return $this->disputeID;
     }
 
     public function getUrl() {
-        return '/disputes/' . $this->getdisputeID();
+        return '/disputes/' . $this->getDisputeId();
     }
 
     public function getTitle() {
@@ -65,23 +59,21 @@ class Dispute {
     }
 
     public function getEvidences() {
-        return DBDispute::instance()->getEvidences($this->getDisputeId());
+        return DBQuery::instance()->getEvidences($this->getDisputeId());
     }
 
     public function inRoundTableCommunication() {
-        return $this->inRoundTableCommunication;
+        return $this->rtc;
     }
 
     public function enableRoundTableCommunication() {
-        DBDispute::instance()->markRoundTableCommunicationAs('enabled', $this->getDisputeId());
+        $this->rtc = true;
         $this->notifyAgentsOfRTC('enabled');
-        $this->refresh();
     }
 
     public function disableRoundTableCommunication() {
-        DBDispute::instance()->markRoundTableCommunicationAs('disabled', $this->getDisputeId());
+        $this->rtc = false;
         $this->notifyAgentsOfRTC('disabled');
-        $this->refresh();
     }
 
     private function notifyAgentsOfRTC($enabledOrDisabled) {
@@ -99,20 +91,15 @@ class Dispute {
     }
 
     public function closeSuccessfully() {
-        DBDispute::instance()->updateField('status', 'resolved', $this->getDisputeId());
-        $this->getCurrentLifespan()->disputeClosed();
-        $this->refresh();
+        $this->status = 'resolved';
     }
 
     public function closeUnsuccessfully() {
-        DBDispute::instance()->updateField('status', 'failed', $this->getDisputeId());
-        $this->getCurrentLifespan()->disputeClosed();
-        $this->refresh();
+        $this->status = 'failed';
     }
 
     public function setType($type) {
-        DBDispute::instance()->updateField('type', $type, $this->getDisputeId());
-        $this->refresh();
+        $this->type = $type;
     }
 
     public function canBeViewedBy($loginID) {
@@ -124,47 +111,35 @@ class Dispute {
     }
 
     public function getOpposingPartyId($loginID) {
-        // mock Agent And Organisation Accounts If Necessary
-        $mockIfNecessary = array(
-            'lawFirmA' => $this->getPartyA()->getLawFirm(),
-            'lawFirmB' => $this->getPartyB()->getLawFirm(),
-            'agentA'   => $this->getPartyA()->getAgent(),
-            'agentB'   => $this->getPartyB()->getAgent(),
-        );
-        foreach($mockIfNecessary as $key => $object) {
-            if (!$mockIfNecessary[$key]) {
-                $mockIfNecessary[$key] = new AccountMock();
-            }
-        }
+        $lawFirmA = $this->getPartyA()->getLawFirm();
+        $lawFirmB = $this->getPartyB()->getLawFirm();
+        $agentA   = $this->getPartyA()->getAgent();
+        $agentB   = $this->getPartyB()->getAgent();
 
         if ($this->getPartyA()->contains($loginID)) {
-            $agentB = $this->getPartyB()->getAgent();
-            $opposingParty = $agentB ? $agentB : $this->getPartyB()->getLawFirm();
+            $opposingParty = $agentB ? $agentB : $lawFirmB;
         }
         else {
-            $agentA = $this->getPartyA()->getAgent();
-            $opposingParty = $agentA ? $agentA : $this->getPartyA()->getLawFirm();
+            $opposingParty = $agentA ? $agentA : $lawFirmA;
         }
 
         return $opposingParty ? $opposingParty->getLoginId() : false;
     }
 
     public function isAMediationParty($partyID) {
-        if ($this->getMediationState()->inMediation()) {
-            return (
-                $partyID === $this->getMediationState()->getMediator()->getLoginId() ||
-                $partyID === $this->getMediationState()->getMediationCentre()->getLoginId()
-            );
-        }
-        return false;
+        $state = $this->getMediationState();
+        return (
+            ($state->mediationCentreDecided() && $partyID === $state->getMediationCentre()->getLoginId()) ||
+            ($state->mediatorDecided()        && $partyID === $state->getMediator()->getLoginId())
+        );
     }
 
     public function getMessages() {
-        return DBMessage::instance()->retrieveDisputeMessages($this->getdisputeID());
+        return DBQuery::instance()->retrieveDisputeMessages($this->getDisputeId());
     }
 
     public function getMessagesBetween($individualA, $individualB) {
-        return DBMessage::instance()->retrieveMediationMessages($this->getdisputeID(), $individualA, $individualB);
+        return DBQuery::instance()->retrieveMediationMessages($this->getDisputeId(), $individualA, $individualB);
     }
 
 }

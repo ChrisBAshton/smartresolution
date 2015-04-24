@@ -17,9 +17,9 @@
                     value="<?php echo $mediator->getLoginId(); ?>"
                     id="<?php echo $mediator->getLoginId(); ?>"
                     type="checkbox"
-                    <?php if ($mediator->isAvailableForDispute($dispute->getDisputeId())) {
+                    <?php /*if ($mediator->isAvailableForDispute($dispute->getDisputeId())) {
                         echo 'checked="checked"';
-                    } ?>
+                    }*/ ?>
                 />
 
                 <label for="<?php echo $mediator->getLoginId(); ?>"><?php echo $mediator->getName(); ?></label>

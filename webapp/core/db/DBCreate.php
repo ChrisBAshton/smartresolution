@@ -39,28 +39,20 @@ class DBCreate extends Prefab {
             ':type'       => $type,
             ':title'      => $title
         ));
-        $newDispute = DBQuery::instance()->getLatestRow('disputes', 'dispute_id');
+        $newDisputeID = DBQuery::instance()->getLatestId('disputes', 'dispute_id');
 
-        // sanity check
-        if ((int)$newDispute['party_a'] !== $partyID ||
-            $newDispute['type']         !== $type    ||
-            $newDispute['title']        !== $title) {
-            Utils::instance()->throwException("There was a problem creating your Dispute.");
+        $db->commit();
+        $dispute = new Dispute(DBGet::instance()->dispute((int) $newDisputeID));
+
+        if ($agentA) {
+            $this->notification(array(
+                'recipient_id' => $agentA,
+                'message'      => 'A new dispute has been assigned to you.',
+                'url'          => $dispute->getUrl()
+            ));
         }
-        else {
-            $db->commit();
-            $dispute = new Dispute((int) $newDispute['dispute_id']);
 
-            if ($agentA) {
-                $this->notification(array(
-                    'recipient_id' => $agentA,
-                    'message'      => 'A new dispute has been assigned to you.',
-                    'url'          => $dispute->getUrl()
-                ));
-            }
-
-            return $dispute;
-        }
+        return $dispute;
     }
 
     public function disputeParty($params) {
@@ -74,7 +66,7 @@ class DBCreate extends Prefab {
 
         $partyID = DBQuery::instance()->getLatestId('dispute_parties', 'party_id');
 
-        return new DisputeParty($partyID);
+        return new DisputeParty(DBGet::instance()->disputeParty($partyID));
     }
 
     /**
@@ -93,7 +85,7 @@ class DBCreate extends Prefab {
         ), $params);
         $this->insertRow('evidence', $params);
         $latestID = DBQuery::instance()->getLatestId('evidence', 'evidence_id');
-        return new Evidence($latestID);
+        return new Evidence(DBGet::instance()->evidence($latestID));
     }
 
     public function individual($individualObject) {
@@ -132,11 +124,11 @@ class DBCreate extends Prefab {
         $lifespanID = DBQuery::instance()->getLatestId('lifespans', 'lifespan_id');
 
         try {
-            $lifespan = new Lifespan($lifespanID, !$allowDatesInThePast);
+            $lifespan = new Lifespan(DBGet::instance()->lifespan($lifespanID), !$allowDatesInThePast);
             // if no exception is raised, safe to commit transaction to database
             $db->commit();
 
-            $dispute = new Dispute($params['dispute_id']);
+            $dispute = new Dispute(DBGet::instance()->dispute($params['dispute_id']));
 
             $this->notification(array(
                 'recipient_id' => $dispute->getOpposingPartyId($params['proposer']),
@@ -172,7 +164,7 @@ class DBCreate extends Prefab {
         $this->insertRow('messages', $params);
 
         $messageID = DBQuery::instance()->getLatestId('messages', 'message_id');
-        return new Message($messageID);
+        return new Message(DBGet::instance()->message($messageID));
     }
 
     /**
@@ -281,7 +273,7 @@ class DBCreate extends Prefab {
 
         $this->insertRow('mediation_offers', $params);
 
-        $dispute = new Dispute($params['dispute_id']);
+        $dispute = new Dispute(DBGet::instance()->dispute($params['dispute_id']));
 
         $this->notification(array(
             'recipient_id' => $dispute->getOpposingPartyId($params['proposer_id']),

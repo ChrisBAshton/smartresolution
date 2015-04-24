@@ -7,16 +7,13 @@ $eventFired = false;
 
 class ModuleTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
-    }
-
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass()
+    {
         shell_exec('rm ' . WEBAPP_DIR . '/modules/config.json');
     }
 
-    public function testDeclareModule() {
+    public function testDeclareModule()
+    {
 
         $allModules = ModuleController::instance()->getAllModules();
         $this->assertEquals(0, count($allModules));
@@ -75,14 +72,16 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($allModules));
     }
 
-    public function testGetModuleByKey() {
+    public function testGetModuleByKey()
+    {
         $module = ModuleController::instance()->getModuleByKey('unit_test');
         $this->assertTrue($module instanceof Module);
         $module = ModuleController::instance()->getModuleByKey('module that does not exist');
         $this->assertFalse($module);
     }
 
-    public function testModuleBecomesActive() {
+    public function testModuleBecomesActive()
+    {
         $activeModules = ModuleController::instance()->getActiveModules();
         $this->assertEquals(0, count($activeModules));
         ModuleController::instance()->getModuleByKey('unit_test')->toggleActiveness();
@@ -90,7 +89,8 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($activeModules));
     }
 
-    public function testHookedFunctionIsCalledWhenEventIsFired() {
+    public function testHookedFunctionIsCalledWhenEventIsFired()
+    {
         global $eventFired;
         $this->assertFalse($eventFired);
 
@@ -101,7 +101,8 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($eventFired);
     }
 
-    public function testDashboardAPI() {
+    public function testDashboardAPI()
+    {
         global $dashboardActions;
         $dashboardActions = array();
         ModuleController::instance()->emit('test_dashboard');
@@ -118,7 +119,8 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         ), $dashboardActions);
     }
 
-    public function testPriority() {
+    public function testPriority()
+    {
         global $dashboardActions;
         $dashboardActions = array();
         ModuleController::instance()->emit('test_priority');
@@ -138,7 +140,8 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         ), $dashboardActions);
     }
 
-    public function testModuleFunctions() {
+    public function testModuleFunctions()
+    {
         $module = ModuleController::instance()->registerModule(array(
             'key'         => 'some_key',
             'title'       => 'a title',

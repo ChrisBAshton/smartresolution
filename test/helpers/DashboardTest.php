@@ -3,8 +3,8 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class DashboardTest extends PHPUnit_Framework_TestCase
 {
-
-    public function testGetters() {
+    public function testGetters()
+    {
         $dashboard = Dashboard::instance();
         $actions = array(
             $dashboard->getLawFirmActions(),
@@ -18,7 +18,8 @@ class DashboardTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetTopLevelActions() {
+    public function testGetTopLevelActions()
+    {
         $dashboard = Dashboard::instance();
         $account   = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
         $actions   = $dashboard->getTopLevelActions($account);

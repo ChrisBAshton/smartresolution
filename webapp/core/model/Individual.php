@@ -3,15 +3,7 @@
 class Individual extends Account implements AccountInterface {
 
     function __construct($account) {
-        $this->setVariables($account);
-    }
-
-    public function setVariables($account) {
-        if (is_int($account)) {
-            $account = DBAccount::instance()->getDetailsById($account);
-        }
-
-        $this->loginId      = (int) $account['login_id'];
+        $this->loginId      = $account['login_id'];
         $this->email        = $account['email'];
         $this->forename     = $account['forename'];
         $this->surname      = $account['surname'];
@@ -35,12 +27,7 @@ class Individual extends Account implements AccountInterface {
     }
 
     public function setCV($cv) {
-        $this->setProperty('cv', $cv);
-    }
-
-    private function setProperty($key, $value) {
-        DBAccount::instance()->setAccountProperty($this->getLoginId(), $key, $value);
-        $this->setVariables($this->getLoginId());
+        $this->cv = $cv;
     }
 
     public function getName() {
@@ -67,7 +54,13 @@ class Mediator extends Individual {
     }
 
     public function isAvailableForDispute($disputeID) {
-        return DBMediation::instance()->mediatorIsAvailableForDispute($this->getLoginId(), $disputeID);
+        $availableMediators = DBMediation::instance()->getAvailableMediators($disputeID);
+        foreach($availableMediators as $mediator) {
+            if ($mediator->getLoginId() === $this->getLoginId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

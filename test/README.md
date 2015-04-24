@@ -1,0 +1,3 @@
+The directory `z_database` is so named as it should be run AFTER the `model` tests. This is because, for the time being, many of the model tests refer to fixture data in the database as we don't want to corrupt that by running the db tests (we also don't want to run the `Database::instance()->clean()` command, as it is slow!)
+
+We should be working towards removing model test dependencies on the database - database queries should exclusively reside in the database tests. When that happens, we can rename back to the conventional `db` folder, as we know that running database tests before model tests shouldn't affect the outcome of the model tests.

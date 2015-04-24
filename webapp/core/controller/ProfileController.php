@@ -30,10 +30,12 @@ class ProfileController {
 
             if ($f3->get('POST.cv')) {
                 $account->setCV($f3->get('POST.cv'));
+                DBUpdate::instance()->individual($account);
             }
 
             if ($f3->get('POST.description')) {
                 $account->setDescription($f3->get('POST.description'));
+                DBUpdate::instance()->organisation($account);
             }
 
             $f3->set('success_message', 'Profile updated.');

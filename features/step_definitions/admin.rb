@@ -2,6 +2,8 @@ def button_text(button, text)
   text == button.native.visible_text
 end
 
+$module_dir = File.expand_path('../../../webapp/modules', __FILE__)
+
 Then(/^I should see admin\-only options on the dashboard$/) do
   assert page.has_content? 'Welcome back, Administrator'
   assert page.has_content? 'Marketplace'
@@ -11,11 +13,8 @@ end
 
 When(/^I visit the SmartResolution Marketplace$/) do
   # before we visit the marketplace, make sure we've deleted the test module so we can reinstall it
-  require 'fileutils'
-  module_dir = File.expand_path('../../../webapp/modules', __FILE__)
-  FileUtils.rm_rf(module_dir + '/test')
-  FileUtils.rm(module_dir + '/config.json')
-
+  FileUtils.rm_rf($module_dir + '/test')
+  FileUtils.rm($module_dir + '/config.json')
   visit '/admin-modules-new'
 end
 
@@ -73,9 +72,10 @@ Then(/^I should be able to uninstall the module$/) do
   install_button = page.find('#module--test')
   assert button_text install_button, "Install Module"
 
-  # and indeed, we will install it again, to stop the module being removed from Git
-  # if this is the only cuke we run! This tidies up the test suite and prepares it
+  # and indeed, we will install it again, to tidy up the test suite and prepare it
   # for the module.feature tests.
   install_button.click
+  step "I visit the SmartResolution Marketplace"
+  step "I should be able to install new modules"
   step "I should be able to activate the module"
 end

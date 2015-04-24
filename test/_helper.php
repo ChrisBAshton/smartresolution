@@ -1,5 +1,10 @@
 <?php
 
+// TestHelper is the first file executed by PHPUnit, so we can safely clear the database
+// here in order to set up consistent fixture data for use by all of the unit tests.
+Database::setEnvironment('test');
+Database::clear();
+
 class TestHelper {
 
     /**
@@ -18,7 +23,7 @@ class TestHelper {
             throw new Exception("Dispute not found!!!");
         }
         else {
-            return new Dispute((int) $dispute[0]['dispute_id']);
+            return new Dispute(DBGet::instance()->dispute((int) $dispute[0]['dispute_id']));
         }
     }
 

@@ -30,6 +30,7 @@ foreach($data['organisations'] as $org) {
 
     if (isset($org['details']['description'])) {
         $organisation->setDescription($org['details']['description']);
+        DBUpdate::instance()->organisation($organisation);
     }
 
     if (isset($org['individuals'])) {
@@ -44,6 +45,7 @@ foreach($data['organisations'] as $org) {
             ));
             if (isset($individual['details']['cv'])) {
                 $account->setCV($individual['details']['cv']);
+                DBUpdate::instance()->individual($account);
             }
         }
     }
@@ -55,23 +57,29 @@ foreach($data['disputes'] as $dataItem) {
         'law_firm_a' => DBAccount::instance()->emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
+
     $agentAId = DBAccount::instance()->emailToId($dataItem['agent_a']);
     $dispute->getPartyA()->setAgent($agentAId);
+    DBUpdate::instance()->disputeParty($dispute->getPartyA());
 
     if (isset($dataItem['law_firm_b'])) {
         $dispute->getPartyB()->setLawFirm(DBAccount::instance()->emailToId($dataItem['law_firm_b']));
+        DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['agent_b'])) {
         $dispute->getPartyB()->setAgent(DBAccount::instance()->emailToId($dataItem['agent_b']));
+        DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['summary_a'])) {
         $dispute->getPartyA()->setSummary($dataItem['summary_a']);
+        DBUpdate::instance()->disputeParty($dispute->getPartyA());
     }
 
     if (isset($dataItem['summary_b'])) {
         $dispute->getPartyB()->setSummary($dataItem['summary_b']);
+        DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['lifespan'])) {
@@ -105,14 +113,16 @@ foreach($data['disputes'] as $dataItem) {
             'end_time'    => $endTime
         ), true);
 
-        $dispute->refresh();
+        DBUpdate::instance()->dispute($dispute);
 
+        $lifespan = $dispute->getCurrentLifespan();
         if ($dataItem['lifespan'] === 'declined') {
-            $dispute->getCurrentLifespan()->decline();
+            $lifespan->decline();
         }
         elseif ($dataItem['lifespan'] !== 'offered') {
-            $dispute->getCurrentLifespan()->accept();
+            $lifespan->accept();
         }
+        DBUpdate::instance()->lifespan($lifespan);
     }
 
     if (isset($dataItem['evidence'])) {
@@ -135,7 +145,7 @@ foreach($data['disputes'] as $dataItem) {
             'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
         ));
 
-        $dispute->refresh();
+        DBUpdate::instance()->dispute($dispute);
         $dispute->getMediationState()->acceptLatestProposal();
     }
 
@@ -146,7 +156,7 @@ foreach($data['disputes'] as $dataItem) {
             'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediator'])->getLoginId()
         ));
 
-        $dispute->refresh();
+        DBUpdate::instance()->dispute($dispute);
         $dispute->getMediationState()->acceptLatestProposal();
     }
 }

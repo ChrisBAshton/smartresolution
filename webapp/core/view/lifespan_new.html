@@ -13,7 +13,7 @@
             <label for="start_time">Dispute lifespan start date:</label>
             <div class="form-group">
                 <div class='input-group date datetime_picker'>
-                    <input id="start_time" name="start_time" type='text' class="form-control" />
+                    <input id="start_time" name="start_time" type='text' class="form-control" value="<?php global $f3; echo $f3->get('POST.start_time'); ?>" />
                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>
@@ -23,7 +23,7 @@
             <label for="end_time">Dispute lifespan end date:</label>
             <div class="form-group">
                 <div class='input-group date datetime_picker'>
-                    <input id="end_time" name="end_time" type='text' class="form-control" />
+                    <input id="end_time" name="end_time" type='text' class="form-control" value="<?php global $f3; echo $f3->get('POST.end_time'); ?>" />
                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>
@@ -33,7 +33,7 @@
             <label for="valid_until">Offer must be accepted by other party by:</label>
             <div class="form-group">
                 <div class='input-group date datetime_picker'>
-                    <input id="valid_until" name="valid_until" type='text' class="form-control" />
+                    <input id="valid_until" name="valid_until" type='text' class="form-control" value="<?php global $f3; echo $f3->get('POST.valid_until'); ?>" />
                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>

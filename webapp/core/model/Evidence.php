@@ -2,17 +2,26 @@
 
 class Evidence {
 
-    private $uploader;
+    private $evidenceID;
+    private $uploaderID;
     private $url;
 
-    function __construct($evidenceID) {
-        $evidence       = DBGet::instance()->evidence($evidenceID);
-        $this->uploader = new Individual((int) $evidence['uploader_id']);
-        $this->url      = $evidence['filepath'];
+    function __construct($evidence) {
+        $this->evidenceID = $evidence['evidence_id'];
+        $this->uploaderID = $evidence['uploader_id'];
+        $this->url        = $evidence['filepath'];
+    }
+
+    public function getEvidenceId() {
+        return $this->evidenceID;
+    }
+
+    public function getUploaderId() {
+        return $this->uploaderID;
     }
 
     public function getUploader() {
-        return $this->uploader;
+        return DBAccount::instance()->getAccountById($this->getUploaderId());
     }
 
     public function getUrl() {

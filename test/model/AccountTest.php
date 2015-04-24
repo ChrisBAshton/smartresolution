@@ -3,44 +3,54 @@ require_once __DIR__ . '/../../webapp/autoload.php';
 
 class AccountTest extends PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass() {
-        Database::setEnvironment('test');
-        Database::clear();
+    private function createAgent()
+    {
+        return new Agent(array(
+            'login_id'        => 1,
+            'organisation_id' => 3,
+            'email'           => 'agent_a@t.co',
+            'forename'        => 'John',
+            'surname'         => 'Smith',
+            'cv'              => false
+        ));
     }
 
-    public function testTypes() {
-        $agent           = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
-        $mediator        = DBAccount::instance()->getAccountByEmail('john.smith@we-mediate.co.uk');
-        $lawFirm         = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
-        $mediationCentre = DBAccount::instance()->getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
-        $administrator   = DBAccount::instance()->getAccountByEmail('admin@smartresolution.org');
-
-        $this->assertTrue($agent           instanceof Agent);
-        $this->assertTrue($mediator        instanceof Mediator);
-        $this->assertTrue($lawFirm         instanceof LawFirm);
-        $this->assertTrue($mediationCentre instanceof MediationCentre);
-        $this->assertTrue($administrator   instanceof Admin);
-
-        $this->assertEquals('Agent',            $agent->getRole());
-        $this->assertEquals('Mediator',         $mediator->getRole());
-        $this->assertEquals('Law Firm',         $lawFirm->getRole());
-        $this->assertEquals('Mediation Centre', $mediationCentre->getRole());
-        $this->assertEquals('Administrator',    $administrator->getRole());
+    private function createLawFirm()
+    {
+        return new LawFirm(array(
+            'login_id'        => 3,
+            'email'           => 'law_firm_a@t.co',
+            'name'            => 'Webdapper Ltd',
+            'description'     => false
+        ));
     }
 
-    public function testCommonGetters() {
-        $account = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
-
-        $this->assertTrue(is_int($account->getLoginId()));
+    public function testIndividualGetters()
+    {
+        $account = $this->createAgent();
+        $this->assertEquals(1, $account->getLoginId());
         $this->assertEquals('agent_a@t.co', $account->getEmail());
-        $this->assertEquals('Chris Ashton', $account->getName());
+        $this->assertEquals('John Smith', $account->getName());
         $this->assertTrue(is_array($account->getNotifications()));
         $this->assertTrue(is_array($account->getAllDisputes()));
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
+    }
 
-        $account = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
+    public function testIndividualSetters()
+    {
+        $account = $this->createAgent();
+        $this->assertEquals(false, $account->getRawCV());
+        $account->setCV('test');
+        $this->assertEquals('test', $account->getRawCV());
+        $this->assertEquals('<p>test</p>', trim($account->getCV()));
+        $account->setCV('#CV coming soon.');
+        $this->assertEquals('<h1 id="cv-coming-soon">CV coming soon.</h1>', trim($account->getCV()));
+    }
 
-        $this->assertTrue(is_int($account->getLoginId()));
+    public function testOrganisationGetters()
+    {
+        $account = $this->createLawFirm();
+        $this->assertEquals(3, $account->getLoginId());
         $this->assertEquals('law_firm_a@t.co', $account->getEmail());
         $this->assertEquals('Webdapper Ltd', $account->getName());
         $this->assertTrue(is_array($account->getNotifications()));
@@ -48,34 +58,9 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
     }
 
-    public function testIndividualGetters() {
-        $account = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
-        $this->assertEquals('Webdapper Ltd', $account->getOrganisation()->getName());
-
-        $account = DBAccount::instance()->getAccountByEmail('john.smith@we-mediate.co.uk');
-        $this->assertEquals('#CV coming soon.', $account->getRawCV());
-        $this->assertEquals('<h1 id="cv-coming-soon">CV coming soon.</h1>', trim($account->getCV()));
-    }
-
-    public function testSetCV() {
-        $account = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
-        $this->assertEquals(false, $account->getRawCV());
-        $account->setCV('TEST');
-        $this->assertEquals('TEST', $account->getRawCV());
-    }
-
-    public function testOrganisationGetters() {
-        $account = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
-        $this->assertTrue(is_array($account->getIndividuals('Agent')));
-        $this->assertEquals('Chris Ashton', $account->getIndividuals('Agent')[0]->getName());
-
-        $account = DBAccount::instance()->getAccountByEmail('law_firm_b@t.co');
-        $this->assertEquals('#Description coming soon', $account->getRawDescription());
-        $this->assertEquals('<h1 id="description-coming-soon">Description coming soon</h1>', trim($account->getDescription()));
-    }
-
-    public function testSetDescription() {
-        $account = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
+    public function testOrganisationSetters()
+    {
+        $account = $this->createLawFirm();
         $this->assertEquals(false, $account->getRawDescription());
         $account->setDescription('TEST');
         $this->assertEquals('TEST', $account->getRawDescription());

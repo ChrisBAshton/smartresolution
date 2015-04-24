@@ -8,27 +8,28 @@ class DisputeParty {
     private $individualID;
     private $summary;
 
-    function __construct($partyID, $disputeID = false) {
-        $this->setVariables($partyID, $disputeID);
-    }
-
-    private function setVariables($partyID, $disputeID) {
-        if ($partyID === 0) {
-            $partyDetails = array();
-        }
-        else {
-            $partyDetails = DBGet::instance()->disputeParty($partyID);
-        }
-
-        $this->partyID        = $partyID;
+    function __construct($partyDetails = array(), $disputeID = false) {
+        $this->partyID        = isset($partyDetails['party_id'])        ? $partyDetails['party_id'] : false;
+        $this->individualID   = isset($partyDetails['individual_id'])   ? $partyDetails['individual_id'] : false;
+        $this->organisationID = isset($partyDetails['organisation_id']) ? $partyDetails['organisation_id'] : false;
+        $this->summary        = isset($partyDetails['summary'])         ? $partyDetails['summary'] : false;
         $this->disputeID      = $disputeID;
-        $this->individualID   = isset($partyDetails['individual_id'])   ? (int) $partyDetails['individual_id'] : false;
-        $this->organisationID = isset($partyDetails['organisation_id']) ? (int) $partyDetails['organisation_id'] : false;
-        $this->summary        = isset($partyDetails['summary']) ? htmlspecialchars($partyDetails['summary']) : false;
     }
 
     public function getPartyId() {
         return $this->partyID;
+    }
+
+    public function getDisputeId() {
+        return $this->disputeID;
+    }
+
+    public function getLawFirmID() {
+        return $this->organisationID;
+    }
+
+    public function getAgentID() {
+        return $this->individualID;
     }
 
     public function getLawFirm() {
@@ -40,23 +41,31 @@ class DisputeParty {
     }
 
     public function getSummary() {
+        return htmlspecialchars($this->summary);
+    }
+
+    public function getRawSummary() {
         return $this->summary;
     }
 
-    public function setLawFirm($organisationId) {
-        $this->setPartyDatabaseField('organisation_id', $organisationId);
-        $this->notify($organisationId, 'A dispute has been opened against your company.');
+    public function setPartyId($partyID) {
+        $this->partyID = $partyID;
+    }
+
+    public function setLawFirm($organisationID) {
+        $this->organisationID = $organisationID;
+        $this->notify($organisationID, 'A dispute has been opened against your company.');
     }
 
     public function setAgent($individualID) {
         $this->validateBeforeSettingAgent($individualID);
-        $this->setPartyDatabaseField('individual_id', $individualID);
+        $this->individualID = $individualID;
         $this->notify($individualID, 'A new dispute has been assigned to you.');
     }
 
     private function notify($loginID, $message) {
         if ($this->disputeID) {
-            $dispute = new Dispute($this->disputeID);
+            $dispute = new Dispute(DBGet::instance()->dispute($this->disputeID));
             DBCreate::instance()->notification(array(
                 'recipient_id' => $loginID,
                 'message'      => $message,
@@ -78,30 +87,12 @@ class DisputeParty {
         }
 
         if ($agent->getOrganisation()->getLoginId() !== $this->organisationID) {
-            $utils->throwException('You can only assign agents that are in your law firm!');
+            $utils->throwException("You can only assign agents that are in your law firm! The agent's (whose ID is ". $agent->getLoginId() .") organisation ID is " . $agent->getOrganisation()->getLoginId() . " whereas the ID of the organisation in this party is " . $this->organisationID . "!");
         }
     }
 
     public function setSummary($summary) {
-        $this->setPartyDatabaseField('summary', $summary);
-    }
-
-    public function setPartyDatabaseField($field, $value) {
-        if ($this->partyID === 0 && $field === 'organisation_id') {
-            $createdParty = DBCreate::instance()->disputeParty(array(
-                'organisation_id' => $value
-            ));
-            $this->partyID = $createdParty->getPartyId();
-            DBDispute::instance()->updateDisputePartyB($this->partyID, $this->disputeID);
-        }
-        elseif ($this->getPartyId() !== 0) {
-            DBDispute::instance()->updatePartyRecord($this->getPartyId(), $field, $value);
-        }
-        else {
-            Utils::instance()->throwException("Tried setting something other than Law Firm when the record for the party has not been created yet.");
-        }
-
-        $this->setVariables($this->partyID, $this->disputeID);
+        $this->summary = $summary;
     }
 
     public function contains($loginID) {

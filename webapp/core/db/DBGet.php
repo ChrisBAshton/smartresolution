@@ -6,34 +6,70 @@
 class DBGet extends Prefab {
 
     public function dispute($disputeID) {
-        return $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
+        $details = $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['party_a']);
+        $this->convertToInt($details['party_b']);
+        $this->convertToBoolean($details['round_table_communication']);
+        return $details;
     }
 
     public function disputeParty($partyID) {
-        return $this->getRowById('dispute_parties', 'party_id', $partyID);
+        $details = $this->getRowById('dispute_parties', 'party_id', $partyID);
+
+        if ($details) {
+            $this->convertToInt($details['party_id']);
+            $this->convertToInt($details['organisation_id']);
+            $this->convertToInt($details['individual_id']);
+        }
+        else {
+            $details = array();
+        }
+
+        return $details;
     }
 
     public function evidence($evidenceID) {
-        return $this->getRowById('evidence', 'evidence_id', $evidenceID);
+        $details = $this->getRowById('evidence', 'evidence_id', $evidenceID);
+        $this->convertToInt($details['evidence_id']);
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['uploader_id']);
+        return $details;
     }
 
     public function lifespan($lifespanID) {
-        return $this->getRowById('lifespans', 'lifespan_id', $lifespanID);
+        $details = $this->getRowById('lifespans', 'lifespan_id', $lifespanID);
+        $this->convertToInt($details['lifespan_id']);
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['proposer']);
+        $this->convertToInt($details['valid_until']);
+        $this->convertToInt($details['start_time']);
+        $this->convertToInt($details['end_time']);
+        return $details;
     }
 
     public function message($messageID) {
-        return $this->getRowById('messages', 'message_id', $messageID);
+        $details = $this->getRowById('messages', 'message_id', $messageID);
+        $this->convertToInt($details['dispute_id']);
+        $this->convertToInt($details['author_id']);
+        $this->convertToInt($details['recipient_id']);
+        $this->convertToInt($details['timestamp']);
+        return $details;
     }
 
     public function notification($notificationID) {
-        return $this->getRowById('notifications', 'notification_id', $notificationID);
+        $details = $this->getRowById('notifications', 'notification_id', $notificationID);
+        $this->convertToInt($details['notification_id']);
+        $this->convertToInt($details['recipient_id']);
+        $this->convertToBoolean($details['read']);
+        return $details;
     }
 
     private function getRowById($tableName, $idName, $id, $exceptionMessage = false) {
         $rows = Database::instance()->exec(
             'SELECT * FROM ' . $tableName . ' WHERE ' . $idName . ' = :' . $idName,
             array(
-                ':' . $idName => $id
+                ':' . $idName => (int) $id
             )
         );
 
@@ -45,6 +81,14 @@ class DBGet extends Prefab {
         }
 
         return $rows[0];
+    }
+
+    private function convertToInt(&$element) {
+        $element = (int) $element;
+    }
+
+    private function convertToBoolean(&$element) {
+        $element = !($element === 'false' || $element === '0');
     }
 
 }
