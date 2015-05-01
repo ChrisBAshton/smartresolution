@@ -69,8 +69,7 @@ class LifespanFactory extends Prefab {
         }
 
         if (count($lifespans) === 1) {
-            $details = DBGet::instance()->lifespan((int) $lifespans[0]['lifespan_id']);
-            return new Lifespan($details);
+            return DBGet::instance()->lifespan((int) $lifespans[0]['lifespan_id']);
         }
 
         return false;

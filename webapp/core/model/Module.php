@@ -8,7 +8,7 @@ class Module {
         $this->key         = $config['key'];
         $this->title       = $config['title'];
         $this->description = $config['description'];
-        $this->active      = !is_null($active);
+        $this->active      = $active === true;
         $this->moduleDefinitionFunction = $moduleDefinitionFunction;
     }
 

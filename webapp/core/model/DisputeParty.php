@@ -65,7 +65,7 @@ class DisputeParty {
 
     private function notify($loginID, $message) {
         if ($this->disputeID) {
-            $dispute = new Dispute(DBGet::instance()->dispute($this->disputeID));
+            $dispute = DBGet::instance()->dispute($this->disputeID);
             DBCreate::instance()->notification(array(
                 'recipient_id' => $loginID,
                 'message'      => $message,

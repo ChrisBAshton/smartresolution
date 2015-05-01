@@ -101,7 +101,7 @@ class Lifespan implements LifespanInterface {
     }
 
     private function notifyOfLifespanStatusChange($notification) {
-        $dispute = new Dispute(DBGet::instance()->dispute($this->disputeID));
+        $dispute = DBGet::instance()->dispute($this->disputeID);
 
         DBCreate::instance()->notification(array(
             'recipient_id' => $dispute->getOpposingPartyId(Session::instance()->getAccount()),

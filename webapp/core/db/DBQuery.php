@@ -25,7 +25,7 @@ class DBQuery extends Prefab {
         );
 
         foreach($evidenceDetails as $evidence) {
-            $evidences[] = new Evidence(DBGet::instance()->evidence((int) $evidence['evidence_id']));
+            $evidences[] = DBGet::instance()->evidence((int) $evidence['evidence_id']);
         }
 
         return $evidences;
@@ -102,7 +102,7 @@ class DBQuery extends Prefab {
         }
 
         foreach($disputesDetails as $dispute) {
-            $disputes[] = new Dispute(DBGet::instance()->dispute($dispute['dispute_id']));
+            $disputes[] = DBGet::instance()->dispute($dispute['dispute_id']);
         }
         return $disputes;
     }
@@ -116,8 +116,8 @@ class DBQuery extends Prefab {
         );
 
         foreach($messageDetails as $id) {
-            $details = DBGet::instance()->message($id['message_id']);
-            array_push($messages, new Message($details));
+            $message = DBGet::instance()->message($id['message_id']);
+            array_push($messages, $message);
         }
 
         return $messages;
@@ -141,8 +141,8 @@ class DBQuery extends Prefab {
         );
 
         foreach($messageDetails as $id) {
-            $details = DBGet::instance()->message($id['message_id']);
-            array_push($messages, new Message($details));
+            $message = DBGet::instance()->message($id['message_id']);
+            array_push($messages, $message);
         }
 
         return $messages;
@@ -156,8 +156,8 @@ class DBQuery extends Prefab {
         );
 
         foreach ($notificationsDetails as $id) {
-            $details = DBGet::instance()->notification($id['notification_id']);
-            $notifications[] = new Notification($details);
+            $notification = DBGet::instance()->notification($id['notification_id']);
+            $notifications[] = $notification;
         }
 
         return $notifications;

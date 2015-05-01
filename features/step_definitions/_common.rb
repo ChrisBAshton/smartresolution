@@ -32,7 +32,6 @@ Given(/^I am logged into an Organisation account$/) do
 end
 
 Given(/^I am logged into a(?:n)? (Law Firm|Mediation Centre) account$/) do |account_type|
-  visit '/login'
   if account_type == 'Law Firm'
     Session.login_as_law_firm
   else
@@ -41,7 +40,6 @@ Given(/^I am logged into a(?:n)? (Law Firm|Mediation Centre) account$/) do |acco
 end
 
 Then(/^I am logged into a(?:n)? (Agent|Mediator) account$/) do |account_type|
-  visit '/login'
   if account_type == 'Agent'
     Session.login_as_agent
   else
@@ -55,4 +53,5 @@ end
 
 Given(/^I am logged into an Admin account$/) do
   Session.login_as_admin
+  assert((page.has_content? 'Welcome back, Administrator'), 'Cucumber could not log into admin account for some reason.')
 end
