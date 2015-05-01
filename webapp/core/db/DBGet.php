@@ -6,6 +6,10 @@
 class DBGet extends Prefab {
 
     public function dispute($disputeID) {
+        return new Dispute($this->disputeDetails($disputeID));
+    }
+
+    public function disputeDetails($disputeID) {
         $details = $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
         $this->convertToInt($details['dispute_id']);
         $this->convertToInt($details['party_a']);
@@ -15,6 +19,10 @@ class DBGet extends Prefab {
     }
 
     public function disputeParty($partyID) {
+        return new DisputeParty($this->disputePartyDetails($partyID));
+    }
+
+    public function disputePartyDetails($partyID) {
         $details = $this->getRowById('dispute_parties', 'party_id', $partyID);
 
         if ($details) {
@@ -30,6 +38,10 @@ class DBGet extends Prefab {
     }
 
     public function evidence($evidenceID) {
+        return new Evidence($this->evidenceDetails($evidenceID));
+    }
+
+    public function evidenceDetails($evidenceID) {
         $details = $this->getRowById('evidence', 'evidence_id', $evidenceID);
         $this->convertToInt($details['evidence_id']);
         $this->convertToInt($details['dispute_id']);
@@ -38,6 +50,10 @@ class DBGet extends Prefab {
     }
 
     public function lifespan($lifespanID) {
+        return new Lifespan($this->lifespanDetails($lifespanID));
+    }
+
+    public function lifespanDetails($lifespanID) {
         $details = $this->getRowById('lifespans', 'lifespan_id', $lifespanID);
         $this->convertToInt($details['lifespan_id']);
         $this->convertToInt($details['dispute_id']);
@@ -49,6 +65,10 @@ class DBGet extends Prefab {
     }
 
     public function message($messageID) {
+        return new Message($this->messageDetails($messageID));
+    }
+
+    public function messageDetails($messageID) {
         $details = $this->getRowById('messages', 'message_id', $messageID);
         $this->convertToInt($details['dispute_id']);
         $this->convertToInt($details['author_id']);
@@ -58,6 +78,10 @@ class DBGet extends Prefab {
     }
 
     public function notification($notificationID) {
+        return new Notification($this->notificationDetails($notificationID));
+    }
+
+    public function notificationDetails($notificationID) {
         $details = $this->getRowById('notifications', 'notification_id', $notificationID);
         $this->convertToInt($details['notification_id']);
         $this->convertToInt($details['recipient_id']);

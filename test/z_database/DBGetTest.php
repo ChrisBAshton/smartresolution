@@ -7,7 +7,7 @@ class DBGetTest extends PHPUnit_Framework_TestCase
     public function testGetNotification() {
         $get = DBGet::instance();
 
-        $details = $get->notification(1);
+        $details = $get->notificationDetails(1);
         $this->assertTrue(is_array($details));
         $this->assertTrue(isset($details['notification_id']));
         $this->assertTrue(isset($details['recipient_id']));
@@ -24,19 +24,19 @@ class DBGetTest extends PHPUnit_Framework_TestCase
     {
         $get = DBGet::instance();
 
-        $details = $get->dispute(1);
+        $details = $get->disputeDetails(1);
         $this->assertTrue(is_array($details));
         $this->assertTrue(isset($details['dispute_id']));
 
-        $details = $get->disputeParty(1);
+        $details = $get->disputePartyDetails(1);
         $this->assertTrue(is_array($details));
         $this->assertTrue(isset($details['party_id']));
 
-        $details = $get->evidence(1);
+        $details = $get->evidenceDetails(1);
         $this->assertTrue(is_array($details));
         $this->assertTrue(isset($details['evidence_id']));
 
-        $details = $get->lifespan(1);
+        $details = $get->lifespanDetails(1);
         $this->assertTrue(is_array($details));
         $this->assertTrue(isset($details['lifespan_id']));
 
@@ -47,7 +47,7 @@ class DBGetTest extends PHPUnit_Framework_TestCase
             'message'    => 'message'
         ));
 
-        $details = $get->message(1);
+        $details = $get->messageDetails(1);
         $this->assertTrue(is_array($details));
         $this->assertTrue(isset($details['message_id']));
     }

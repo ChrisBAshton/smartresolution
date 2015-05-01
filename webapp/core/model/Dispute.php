@@ -9,8 +9,8 @@ class Dispute {
         $this->status    = $data['status'];
         $this->partyAId  = $data['party_a'];
         $this->partyBId  = $data['party_b'];
-        $this->partyA    = new DisputeParty(DBGet::instance()->disputeParty($data['party_a']), $this->disputeID);
-        $this->partyB    = new DisputeParty(DBGet::instance()->disputeParty($data['party_b']), $this->disputeID);
+        $this->partyA    = new DisputeParty(DBGet::instance()->disputePartyDetails($data['party_a']), $this->disputeID);
+        $this->partyB    = new DisputeParty(DBGet::instance()->disputePartyDetails($data['party_b']), $this->disputeID);
         $this->rtc       = $data['round_table_communication'];
     }
 

@@ -45,7 +45,7 @@ function notificationsList ($f3) {
 function setDisputeFromParams($f3, $params) {
     try {
         $disputeID = (int)$params['disputeID'];
-        $dispute = new Dispute(DBGet::instance()->dispute($disputeID)); // if dispute does not exist, throws exception
+        $dispute = DBGet::instance()->dispute($disputeID); // if dispute does not exist, throws exception
         $f3->set('dispute', $dispute);
         return $dispute;
     }
