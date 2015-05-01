@@ -18,6 +18,11 @@ Feature: Module
   Scenario: Dispute dashboard item added
     Then I should see a custom dashboard item
 
+  Scenario: Dispute dashboard item NOT added for other dispute types
+    Given the Dispute is fully underway
+    And the Dispute type has been set to 'Other'
+    Then I should NOT see a custom dashboard item
+
   Scenario: Custom dispute-level-routing
     When I click on the custom dashboard item
     Then I should see the message 'Hello world!'

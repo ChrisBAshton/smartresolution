@@ -31,6 +31,7 @@ class DBQuery extends Prefab {
         return $evidences;
     }
 
+    // @TODO - move to DBUpdate
     public function updateDisputePartyB($partyID, $disputeID) {
         Database::instance()->exec(
             'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',

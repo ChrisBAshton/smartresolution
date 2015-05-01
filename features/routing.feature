@@ -11,6 +11,7 @@ Feature: Routing
     Examples:
       | forbidden_page       |
       | /register/individual |
+      | /admin-modules       |
 
   Scenario Outline: Accessing Organisation-only pages
     Given I am logged into an Individual account

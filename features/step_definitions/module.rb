@@ -1,12 +1,16 @@
-Given(/^the Dispute type has been set to 'Test Module'$/) do
+Given(/^the Dispute type has been set to '(.+)'$/) do |type|
   find_link('Edit').trigger('click')
-  select 'Test Module', :from => 'Dispute type:'
+  select type, :from => 'Dispute type:'
   click_button 'Update Details'
   click_link 'Return to dispute dashboard'
 end
 
 Then(/^I should see a custom dashboard item$/) do
   assert page.has_content? 'Test Dashboard Item'
+end
+
+Then(/^I should NOT see a custom dashboard item$/) do
+  assert(! (page.has_content? 'Test Dashboard Item'))
 end
 
 When(/^I click on the custom dashboard item$/) do

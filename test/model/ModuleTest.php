@@ -142,17 +142,48 @@ class ModuleTest extends PHPUnit_Framework_TestCase
 
     public function testModuleFunctions()
     {
-        $module = ModuleController::instance()->registerModule(array(
-            'key'         => 'some_key',
-            'title'       => 'a title',
-            'description' => 'my description'
-        ), function () {});
+        $module = $this->createSimpleModule();
         $this->assertTrue($module instanceof Module);
-        $this->assertFalse($module->active() === true);
+        $this->assertFalse($module->active());
         $module->toggleActiveness();
         $this->assertTrue($module->active());
         $this->assertEquals('some_key', $module->key());
         $this->assertEquals('a title', $module->title());
         $this->assertEquals('my description', $module->description());
+    }
+
+    public function testModuleNOTCalledWhenInactive()
+    {
+        global $eventFired;
+        $eventFired = false;
+
+        $module = $this->createSimpleModule(function () {
+            on('inactive_module_event', function () {
+                global $eventFired;
+                $eventFired = true;
+            });
+        });
+
+        // inactive module should NOT have its subscribed function called
+        $this->assertFalse($module->active());
+        $this->assertFalse($eventFired);
+        ModuleController::instance()->emit('inactive_module_event');
+        $this->assertFalse($eventFired); // should still be false
+
+        // sanity check - when we activate the module, the event SHOULD trigger the subscribed function
+        $module->toggleActiveness();
+        $this->assertTrue($module->active());
+        ModuleController::instance()->emit('inactive_module_event');
+        $this->assertTrue($eventFired);
+    }
+
+    private function createSimpleModule($callbackFunction = false)
+    {
+        $callbackFunction = $callbackFunction ? $callbackFunction : function() {};
+        return ModuleController::instance()->registerModule(array(
+            'key'         => 'some_key',
+            'title'       => 'a title',
+            'description' => 'my description'
+        ), $callbackFunction);
     }
 }

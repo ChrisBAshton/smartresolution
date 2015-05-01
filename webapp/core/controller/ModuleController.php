@@ -6,6 +6,16 @@ class ModuleController extends Prefab {
     private $routes  = array();
     private $subscriptions = array();
 
+    public function registerModule($config, $moduleDefinitionFunction) {
+        global $modulesConfig;
+        $module = new Module($config, $modulesConfig[$config['key']], $moduleDefinitionFunction);
+        array_push($this->modules, $module);
+        if ($module->active()) {
+            $module->callModuleDefinitionFunction();
+        }
+        return $module;
+    }
+
     /**
      * Extracts the name of the module from the results of the `debug_backtrace` function.
      * This means we don't have to manually pass the module name from inside a module definition, making the API cleaner from the perspective of the module developers.
@@ -32,16 +42,6 @@ class ModuleController extends Prefab {
         return $moduleName;
 
         Utils::instance()->throwException('Could not detect module name.');
-    }
-
-    public function registerModule($config, $moduleDefinitionFunction) {
-        global $modulesConfig;
-        $module = new Module($config, $modulesConfig[$config['key']], $moduleDefinitionFunction);
-        array_push($this->modules, $module);
-        if ($module->active()) {
-            $module->callModuleDefinitionFunction();
-        }
-        return $module;
     }
 
     public function getActiveModules() {
