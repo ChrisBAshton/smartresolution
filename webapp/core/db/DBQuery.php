@@ -19,6 +19,37 @@ class DBQuery extends Prefab {
         return $login_id;
     }
 
+    /**
+     * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
+     *
+     * @param  string $email    The email address.
+     * @param  string $password The unencrypted password.
+     * @return boolean          True if the credentials are valid, otherwise false.
+     */
+    public function validCredentials($email, $password) {
+        $loginID = DBQuery::instance()->emailToId($email);
+        $details = DBGet::instance()->accountDetails($loginID);
+
+        if (!$details) {
+            return false;
+        }
+        else {
+            return $this->correctPassword($password, $details['password']);
+        }
+    }
+
+    /**
+     * Returns true or false depending on whether or not the inputted password is a match for the encrypted password we have on file.
+     *
+     * @param  string $inputtedPassword  The unencrypted password.
+     * @param  string $encryptedPassword The encrypted password we're checking our unencrypted password against.
+     * @return boolean                   True if the inputted password is a match.
+     */
+    public function correctPassword($inputtedPassword, $encryptedPassword) {
+        $crypt = \Bcrypt::instance();
+        return $crypt->verify($inputtedPassword, $encryptedPassword);
+    }
+
     public function getIndividuals($organisationID) {
         $individuals = array();
 

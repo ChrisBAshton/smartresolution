@@ -272,6 +272,10 @@ class DBCreate extends Prefab {
         ), $obj);
         $params['type'] = $type;
 
+        if (!is_int($params['dispute_id']) || !is_int($params['proposer_id']) || !is_int($params['proposed_id'])) {
+            Utils::instance()->throwException('Incorrect type passed to mediation creation!');
+        }
+
         $this->insertRow('mediation_offers', $params);
 
         $dispute = DBGet::instance()->dispute($params['dispute_id']);

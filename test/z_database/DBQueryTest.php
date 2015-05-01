@@ -133,4 +133,21 @@ class DBQueryTest extends PHPUnit_Framework_TestCase
         $this->assertNotEquals($originalPartyID, $dispute->getPartyB()->getPartyId());
     }
 
+    public function testValidCredentials()
+    {
+        $validCredentials = DBQuery::instance()->validCredentials('law_firm_a@t.co', 'wrong password');
+        $this->assertFalse($validCredentials);
+        $validCredentials = DBQuery::instance()->validCredentials('wrong email', 'wrong password');
+        $this->assertFalse($validCredentials);
+        $validCredentials = DBQuery::instance()->validCredentials('law_firm_a@t.co', 'test');
+        $this->assertTrue($validCredentials);
+    }
+
+    public function testUserPasswordCheck()
+    {
+        $this->assertFalse(DBQuery::instance()->correctPassword('test', 'test'));
+        $this->assertFalse(DBQuery::instance()->correctPassword('test', 'random string'));
+        $this->assertTrue(DBQuery::instance()->correctPassword('test', '$2y$10$md2.JKnCBFH5IGU9MeV50OUtx35VdVcThXeeQG9QUbpm9DwYmBlq.'));
+    }
+
 }

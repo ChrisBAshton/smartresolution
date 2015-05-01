@@ -143,7 +143,7 @@ foreach($data['disputes'] as $dataItem) {
         $create->mediationCentreOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-            'proposed_id' => DBGet::instance()->account($mediationCentreLogin)
+            'proposed_id' => DBGet::instance()->account($mediationCentreLogin)->getLoginId()
         ));
 
         DBUpdate::instance()->dispute($dispute);
@@ -155,7 +155,7 @@ foreach($data['disputes'] as $dataItem) {
         $create->mediatorOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-            'proposed_id' => DBGet::instance()->account($mediatorLogin)
+            'proposed_id' => DBGet::instance()->account($mediatorLogin)->getLoginId()
         ));
 
         DBUpdate::instance()->dispute($dispute);
