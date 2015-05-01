@@ -14,7 +14,7 @@ class DisputeClosed extends DisputeDefaults implements DisputeStateInterface {
         return false;
     }
 
-    public function canWriteSummary() {
+    public function canEditSummary() {
         return false;
     }
 

@@ -18,10 +18,6 @@ abstract class DisputeDefaults {
         return false;
     }
 
-    public function canWriteSummary() {
-        return $this->account instanceof Agent;
-    }
-
     public function canNegotiateLifespan() {
         return $this->account instanceof Agent;
     }
