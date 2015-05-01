@@ -23,6 +23,13 @@ abstract class Account {
     }
 
     /**
+     * @see AccountInterface::getEmail() Implements the corresponding function in AccountInterface.
+     */
+    public function isVerified() {
+        return $this->verified;
+    }
+
+    /**
      * @see AccountInterface::getNotifications() Implements the corresponding function in AccountInterface.
      */
     public function getNotifications() {

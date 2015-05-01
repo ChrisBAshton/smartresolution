@@ -51,6 +51,11 @@ foreach($data['organisations'] as $org) {
     }
 }
 
+$unverifiedAccountLoginId = DBQuery::instance()->emailToId('unverified@t.co');
+Database::instance()->exec('UPDATE account_details SET verified = "false" WHERE login_id = :login_id',
+    array(':login_id' => $unverifiedAccountLoginId)
+);
+
 foreach($data['disputes'] as $dataItem) {
     $dispute = $create->dispute(array(
         'title'      => $dataItem['title'],
