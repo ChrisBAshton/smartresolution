@@ -113,26 +113,6 @@ class DBQueryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($dispute->inRoundTableCommunication());
     }
 
-    public function testSetDisputeParty()
-    {
-        $create          = DBCreate::instance();
-        $dispute         = TestHelper::getDisputeByTitle('Smith versus Jones');
-        $originalPartyID = $dispute->getPartyB()->getPartyId();
-        $newLawFirmId    = DBQuery::instance()->emailToId('law_firm_with_only_one_dispute@company.com');
-
-        $party = $create->disputeParty(array(
-            'organisation_id' => $newLawFirmId
-        ));
-
-        DBQuery::instance()->updateDisputePartyB($party->getPartyId(), $dispute->getDisputeId());
-
-        // as we've called the static method directly, rather than through the Dispute class,
-        // the dispute's Party will have been cached. We need to break that cache by re-grabbing the
-        // details from the database.
-        $dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
-        $this->assertNotEquals($originalPartyID, $dispute->getPartyB()->getPartyId());
-    }
-
     public function testValidCredentials()
     {
         $validCredentials = DBQuery::instance()->validCredentials('law_firm_a@t.co', 'wrong password');
