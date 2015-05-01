@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * The agents have decided to put the dispute into mediation and have negotiated a mediation centre and a mediator. It is important to note that not all disputes will necessarily reach this stage.
+ */
 class InMediation extends DisputeDefaults implements DisputeStateInterface {
 
     public function getStateDescription() {

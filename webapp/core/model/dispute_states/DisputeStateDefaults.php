@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Most dispute states inherit from this class, which defines the default permissions regarding dispute actions. Inheriting from this class means we don't have to specify long lists of true/false values where only one or two items may have changed between states.
+ */
 abstract class DisputeDefaults {
 
     public function __construct($dispute, $account) {

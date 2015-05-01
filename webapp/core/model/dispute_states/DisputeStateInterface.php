@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Interface defining a Dispute State, describing the functions that all dispute states must define.
+ */
 interface DisputeStateInterface {
 
     /**
