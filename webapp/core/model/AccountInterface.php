@@ -21,6 +21,11 @@ interface AccountInterface {
     public function getEmail();
 
     /**
+     * @return boolean True if account is verified, false if not.
+     */
+    public function isVerified();
+
+    /**
      * Gets the name of the account.
      * @return String
      */

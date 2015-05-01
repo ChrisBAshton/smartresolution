@@ -32,6 +32,10 @@ class Session
     Session.login_as_agent
   end
 
+  def self.login_as_unverified
+    Session.login_with_credentials 'unverified@t.co', 'test'
+  end
+
   def self.login_as_admin
     Session.login_with_credentials 'admin@smartresolution.org', 'test'
   end

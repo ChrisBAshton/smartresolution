@@ -43,6 +43,10 @@ Feature: Account Creation
     When I attempt to log in with invalid credentials
     Then an authentication error should be displayed
 
+  Scenario: Account login when account is not verified
+    When I attempt to log into an unverified account
+    Then I should see the message 'Your account still needs to be verified before you can log in.'
+
   Scenario: Create Agent account
     Given I am logged into a Law Firm account
     Then I should be able to create an Agent account

@@ -3,8 +3,9 @@
 class Admin extends Account implements AccountInterface {
 
     function __construct($account) {
-        $this->loginId = $account['login_id'];
-        $this->email   = $account['email'];
+        $this->loginId  = $account['login_id'];
+        $this->email    = $account['email'];
+        $this->verified = $account['verified'];
     }
 
     public function getName() {
