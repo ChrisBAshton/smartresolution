@@ -7,6 +7,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
     {
         return new Agent(array(
             'login_id'        => 1,
+            'verified'        => true,
             'organisation_id' => 3,
             'email'           => 'agent_a@t.co',
             'forename'        => 'John',
@@ -19,6 +20,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
     {
         return new LawFirm(array(
             'login_id'        => 3,
+            'verified'        => true,
             'email'           => 'law_firm_a@t.co',
             'name'            => 'Webdapper Ltd',
             'description'     => false
@@ -34,6 +36,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($account->getNotifications()));
         $this->assertTrue(is_array($account->getAllDisputes()));
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
+        $this->assertTrue($account->isVerified());
     }
 
     public function testIndividualSetters()
@@ -56,6 +59,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($account->getNotifications()));
         $this->assertTrue(is_array($account->getAllDisputes()));
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
+        $this->assertTrue($account->isVerified());
     }
 
     public function testOrganisationSetters()

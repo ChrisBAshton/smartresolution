@@ -5,6 +5,7 @@ class Organisation extends Account implements AccountInterface {
     function __construct($account) {
         $this->loginId     = $account['login_id'];
         $this->email       = $account['email'];
+        $this->verified    = $account['verified'];
         $this->name        = $account['name'];
         $this->description = $account['description'];
     }
