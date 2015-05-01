@@ -9,6 +9,26 @@ class DBGet extends Prefab {
         return new Dispute($this->disputeDetails($disputeID));
     }
 
+    public function disputeParty($partyID) {
+        return new DisputeParty($this->disputePartyDetails($partyID));
+    }
+
+    public function evidence($evidenceID) {
+        return new Evidence($this->evidenceDetails($evidenceID));
+    }
+
+    public function lifespan($lifespanID) {
+        return new Lifespan($this->lifespanDetails($lifespanID));
+    }
+
+    public function message($messageID) {
+        return new Message($this->messageDetails($messageID));
+    }
+
+    public function notification($notificationID) {
+        return new Notification($this->notificationDetails($notificationID));
+    }
+
     public function disputeDetails($disputeID) {
         $details = $this->getRowById('disputes', 'dispute_id', $disputeID, "The dispute you are trying to view does not exist.");
         $this->convertToInt($details['dispute_id']);
@@ -16,10 +36,6 @@ class DBGet extends Prefab {
         $this->convertToInt($details['party_b']);
         $this->convertToBoolean($details['round_table_communication']);
         return $details;
-    }
-
-    public function disputeParty($partyID) {
-        return new DisputeParty($this->disputePartyDetails($partyID));
     }
 
     public function disputePartyDetails($partyID) {
@@ -37,20 +53,12 @@ class DBGet extends Prefab {
         return $details;
     }
 
-    public function evidence($evidenceID) {
-        return new Evidence($this->evidenceDetails($evidenceID));
-    }
-
     public function evidenceDetails($evidenceID) {
         $details = $this->getRowById('evidence', 'evidence_id', $evidenceID);
         $this->convertToInt($details['evidence_id']);
         $this->convertToInt($details['dispute_id']);
         $this->convertToInt($details['uploader_id']);
         return $details;
-    }
-
-    public function lifespan($lifespanID) {
-        return new Lifespan($this->lifespanDetails($lifespanID));
     }
 
     public function lifespanDetails($lifespanID) {
@@ -64,10 +72,6 @@ class DBGet extends Prefab {
         return $details;
     }
 
-    public function message($messageID) {
-        return new Message($this->messageDetails($messageID));
-    }
-
     public function messageDetails($messageID) {
         $details = $this->getRowById('messages', 'message_id', $messageID);
         $this->convertToInt($details['dispute_id']);
@@ -75,10 +79,6 @@ class DBGet extends Prefab {
         $this->convertToInt($details['recipient_id']);
         $this->convertToInt($details['timestamp']);
         return $details;
-    }
-
-    public function notification($notificationID) {
-        return new Notification($this->notificationDetails($notificationID));
     }
 
     public function notificationDetails($notificationID) {
