@@ -125,7 +125,7 @@ class MediationController {
         }
         else {
             try {
-                $mediationCentre = DBAccount::instance()->getAccountById((int) $mediationCentreId);
+                $mediationCentre = DBGet::instance()->account((int) $mediationCentreId);
 
                 DBCreate::instance()->mediationCentreOffer(array(
                     'dispute_id'  => $dispute->getDisputeId(),
@@ -150,7 +150,7 @@ class MediationController {
 
         if ($mediatorId) {
             try {
-                $mediator = DBAccount::instance()->getAccountById((int) $mediatorId);
+                $mediator = DBGet::instance()->account((int) $mediatorId);
 
                 DBCreate::instance()->mediatorOffer(array(
                     'dispute_id'  => $dispute->getDisputeId(),
@@ -182,7 +182,7 @@ class MediationController {
     public function viewMessages($f3, $params) {
         $this->setUp($f3, $params);
         $recipientID = (int) $params['recipientID'];
-        if (!$this->dispute->canBeViewedBy($recipientID) || DBAccount::instance()->getAccountById($recipientID) instanceof Organisation) {
+        if (!$this->dispute->canBeViewedBy($recipientID) || DBGet::instance()->account($recipientID) instanceof Organisation) {
             errorPage("The account you're trying to send a message to is not involved in this dispute!");
         }
         $this->viewMessagesWith($recipientID);

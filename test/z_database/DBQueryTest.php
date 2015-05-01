@@ -4,9 +4,9 @@ require_once __DIR__ . '/../_helper.php';
 
 // global variables for this class
 $disputeID  = 2; // made up, doesn't matter
-$agentAId   = DBAccount::instance()->emailToId('agent_a@t.co');
-$agentBId   = DBAccount::instance()->emailToId('agent_b@t.co');
-$mediatorId = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
+$agentAId   = DBQuery::instance()->emailToId('agent_a@t.co');
+$agentBId   = DBQuery::instance()->emailToId('agent_b@t.co');
+$mediatorId = DBQuery::instance()->emailToId('john.smith@we-mediate.co.uk');
 
 class DBQueryTest extends PHPUnit_Framework_TestCase
 {
@@ -60,6 +60,12 @@ class DBQueryTest extends PHPUnit_Framework_TestCase
         $this->mediatorId = $mediatorId;
     }
 
+    public function testGetIdFromEmail()
+    {
+        $testUser = DBQuery::instance()->emailToId('law_firm_a@t.co');
+        $this->assertEquals(2, $testUser);
+    }
+
     public function testGetDisputeMessages()
     {
         $messages = DBQuery::instance()->retrieveDisputeMessages($this->disputeID);
@@ -107,24 +113,21 @@ class DBQueryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($dispute->inRoundTableCommunication());
     }
 
-    public function testSetDisputeParty()
+    public function testValidCredentials()
     {
-        $create          = DBCreate::instance();
-        $dispute         = TestHelper::getDisputeByTitle('Smith versus Jones');
-        $originalPartyID = $dispute->getPartyB()->getPartyId();
-        $newLawFirmId    = DBAccount::instance()->emailToId('law_firm_with_only_one_dispute@company.com');
+        $validCredentials = DBQuery::instance()->validCredentials('law_firm_a@t.co', 'wrong password');
+        $this->assertFalse($validCredentials);
+        $validCredentials = DBQuery::instance()->validCredentials('wrong email', 'wrong password');
+        $this->assertFalse($validCredentials);
+        $validCredentials = DBQuery::instance()->validCredentials('law_firm_a@t.co', 'test');
+        $this->assertTrue($validCredentials);
+    }
 
-        $party = $create->disputeParty(array(
-            'organisation_id' => $newLawFirmId
-        ));
-
-        DBQuery::instance()->updateDisputePartyB($party->getPartyId(), $dispute->getDisputeId());
-
-        // as we've called the static method directly, rather than through the Dispute class,
-        // the dispute's Party will have been cached. We need to break that cache by re-grabbing the
-        // details from the database.
-        $dispute = TestHelper::getDisputeByTitle('Smith versus Jones');
-        $this->assertNotEquals($originalPartyID, $dispute->getPartyB()->getPartyId());
+    public function testUserPasswordCheck()
+    {
+        $this->assertFalse(DBQuery::instance()->correctPassword('test', 'test'));
+        $this->assertFalse(DBQuery::instance()->correctPassword('test', 'random string'));
+        $this->assertTrue(DBQuery::instance()->correctPassword('test', '$2y$10$md2.JKnCBFH5IGU9MeV50OUtx35VdVcThXeeQG9QUbpm9DwYmBlq.'));
     }
 
 }

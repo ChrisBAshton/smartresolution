@@ -8,7 +8,7 @@ class Individual extends Account implements AccountInterface {
         $this->forename     = $account['forename'];
         $this->surname      = $account['surname'];
         $this->cv           = $account['cv'];
-        $this->organisation = DBAccount::instance()->getAccountById($account['organisation_id']);
+        $this->organisation = DBGet::instance()->account($account['organisation_id']);
     }
 
     public function getRawCV() {

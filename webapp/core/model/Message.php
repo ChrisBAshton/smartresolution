@@ -35,7 +35,7 @@ class Message {
     }
 
     public function author() {
-        return DBAccount::instance()->getAccountById($this->authorID);
+        return DBGet::instance()->account($this->authorID);
     }
 
     // based on http://starikovs.com/2011/11/10/php-new-line-to-paragraph/

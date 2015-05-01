@@ -28,8 +28,8 @@ class TestHelper {
     }
 
     public static function createNewDispute() {
-        $lawFirm = DBAccount::instance()->emailToId('law_firm_a@t.co');
-        $agent = DBAccount::instance()->emailToId('agent_a@t.co');
+        $lawFirm = DBQuery::instance()->emailToId('law_firm_a@t.co');
+        $agent = DBQuery::instance()->emailToId('agent_a@t.co');
 
         return DBCreate::instance()->dispute(array(
             'law_firm_a' => $lawFirm,
@@ -38,5 +38,10 @@ class TestHelper {
             'title'      => 'Smith versus Jones',
             'summary'    => 'This is my summary'
         ));
+    }
+
+    public static function getAccountByEmail($email) {
+        $loginID = DBQuery::instance()->emailToId($email);
+        return DBGet::instance()->account($loginID);
     }
 }

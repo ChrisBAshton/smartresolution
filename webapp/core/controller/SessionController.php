@@ -34,7 +34,7 @@ class SessionController {
     function loginPost ($f3) {
         $email = $f3->get('POST.email');
         $password = $f3->get('POST.password');
-        $validCredentials = DBAccount::instance()->validCredentials($email, $password);
+        $validCredentials = DBQuery::instance()->validCredentials($email, $password);
 
         if ($validCredentials) {
             $this->session->create($email, $password);

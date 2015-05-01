@@ -6,7 +6,7 @@ class LifespanFactoryTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $account        = DBAccount::instance();
+        $account        = DBQuery::instance();
         $this->agentA   = $account->emailToId('agent_a@t.co');
 
         $this->dispute = DBCreate::instance()->dispute(array(

@@ -79,18 +79,18 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testAuthorisationLogicIsCorrect()
     {
         $dispute = TestHelper::createNewDispute();
-        $this->assertTrue($dispute->canBeViewedBy(DBAccount::instance()->emailToId('law_firm_a@t.co')));
-        $this->assertTrue($dispute->canBeViewedBy(DBAccount::instance()->emailToId('agent_a@t.co')));
-        $this->assertFalse($dispute->canBeViewedBy(DBAccount::instance()->emailToId('law_firm_b@t.co')));
-        $this->assertFalse($dispute->canBeViewedBy(DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk')));
+        $this->assertTrue($dispute->canBeViewedBy(DBQuery::instance()->emailToId('law_firm_a@t.co')));
+        $this->assertTrue($dispute->canBeViewedBy(DBQuery::instance()->emailToId('agent_a@t.co')));
+        $this->assertFalse($dispute->canBeViewedBy(DBQuery::instance()->emailToId('law_firm_b@t.co')));
+        $this->assertFalse($dispute->canBeViewedBy(DBQuery::instance()->emailToId('john.smith@we-mediate.co.uk')));
     }
 
     public function testDisputeWorkflowCorrect()
     {
         $dispute  = TestHelper::createNewDispute();
-        $state    = $dispute->getState(DBAccount::instance()->getAccountByEmail('agent_a@t.co'));
-        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
-        $agentB   = DBAccount::instance()->emailToId('agent_b@t.co');
+        $state    = $dispute->getState(TestHelper::getAccountByEmail('agent_a@t.co'));
+        $lawFirmB = DBQuery::instance()->emailToId('law_firm_b@t.co');
+        $agentB   = DBQuery::instance()->emailToId('agent_b@t.co');
 
         // dispute should be able to be opened against a law firm - we've only just created it
         $this->assertTrue($state->canOpenDispute());
@@ -104,10 +104,10 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testGetOpposingPartyId()
     {
         $dispute = TestHelper::createNewDispute();
-        $lawFirmA = DBAccount::instance()->emailToId('law_firm_a@t.co');
-        $agentA   = DBAccount::instance()->emailToId('agent_a@t.co');
-        $lawFirmB = DBAccount::instance()->emailToId('law_firm_b@t.co');
-        $agentB   = DBAccount::instance()->emailToId('agent_b@t.co');
+        $lawFirmA = DBQuery::instance()->emailToId('law_firm_a@t.co');
+        $agentA   = DBQuery::instance()->emailToId('agent_a@t.co');
+        $lawFirmB = DBQuery::instance()->emailToId('law_firm_b@t.co');
+        $agentB   = DBQuery::instance()->emailToId('agent_b@t.co');
         $dispute->getPartyB()->setLawFirm($lawFirmB);
         $dispute->getPartyB()->setAgent($agentB);
 
@@ -118,8 +118,8 @@ class DisputeTest extends PHPUnit_Framework_TestCase
     public function testIsAMediationParty()
     {
         $dispute = TestHelper::getDisputeByTitle('Dispute that is in mediation');
-        $mediationCentre = DBAccount::instance()->emailToId('mediation_centre_email@we-mediate.co.uk');
-        $mediator = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
+        $mediationCentre = DBQuery::instance()->emailToId('mediation_centre_email@we-mediate.co.uk');
+        $mediator = DBQuery::instance()->emailToId('john.smith@we-mediate.co.uk');
 
         // the mediation centre and mediator associated with the dispute should be
         // classed as being part of the 'mediation party'
@@ -137,7 +137,7 @@ class DisputeTest extends PHPUnit_Framework_TestCase
             'tim@also-mediate.co'
         );
         foreach($shouldNotPass as $email) {
-            $this->assertFalse($dispute->isAMediationParty(DBAccount::instance()->emailToId($email)));
+            $this->assertFalse($dispute->isAMediationParty(DBQuery::instance()->emailToId($email)));
         }
     }
 

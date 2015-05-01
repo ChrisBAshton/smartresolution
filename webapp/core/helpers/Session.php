@@ -5,7 +5,11 @@ class Session extends Prefab {
 
     public function getAccount() {
         $email = Utils::instance()->getValue($_SESSION, 'ODR_Email', false);
-        return $email ? DBAccount::instance()->getAccountByEmail($email) : false;
+        if (!$email) {
+            return false;
+        }
+        $loginID = DBQuery::instance()->emailToId($email);
+        return DBGet::instance()->account($loginID);
     }
 
     public function create($email, $password) {

@@ -11,7 +11,7 @@ class DBUpdate extends Prefab {
             ));
             $partyID = $createdParty->getPartyId();
             $disputeParty->setPartyId($partyID);
-            DBQuery::instance()->updateDisputePartyB($partyID, $disputeParty->getDisputeId());
+            $this->updateDisputePartyB($partyID, $disputeParty->getDisputeId());
         }
         elseif ($disputeParty->getPartyId() !== 0) {
             $lawFirmID = ($disputeParty->getLawFirmID() === 0) ? NULL : $disputeParty->getLawFirmID();
@@ -34,6 +34,16 @@ class DBUpdate extends Prefab {
         else {
             Utils::instance()->throwException("Tried setting something other than Law Firm when the record for the party has not been created yet.");
         }
+    }
+
+    public function updateDisputePartyB($partyID, $disputeID) {
+        Database::instance()->exec(
+            'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',
+            array(
+                ':party_id'   => $partyID,
+                ':dispute_id' => $disputeID
+            )
+        );
     }
 
     public function lifespan($lifespan) {

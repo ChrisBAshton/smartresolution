@@ -5,6 +5,16 @@
  */
 class DBGet extends Prefab {
 
+    /**
+     * Gets an account by its login ID.
+     * @param  int $loginID  The login ID.
+     * @return Account       The account object.
+     */
+    public function account($loginID) {
+        $account = $this->accountDetails($loginID);
+        return $this->arrayToAccountObject($account);
+    }
+
     public function dispute($disputeID) {
         return new Dispute($this->disputeDetails($disputeID));
     }
@@ -27,6 +37,31 @@ class DBGet extends Prefab {
 
     public function notification($notificationID) {
         return new Notification($this->notificationDetails($notificationID));
+    }
+
+    public function accountDetails($loginID) {
+        $individual    = $this->getAccountRowByLoginId('individuals',    $loginID);
+        $organisation  = $this->getAccountRowByLoginId('organisations',  $loginID);
+        $administrator = $this->getAccountRowByLoginId('administrators', $loginID);
+        $details       = false;
+
+        if (count($individual) === 1) {
+            $details = $individual[0];
+        }
+        else if (count($organisation) === 1) {
+            $details = $organisation[0];
+        }
+        else if (count($administrator) === 1) {
+            $details = $administrator[0];
+            $details['type'] = 'administrator';
+        }
+
+        if ($details) {
+            $this->convertToInt($details['login_id']);
+            $this->convertToBoolean($details['verified']);
+        }
+
+        return $details;
     }
 
     public function disputeDetails($disputeID) {
@@ -89,6 +124,14 @@ class DBGet extends Prefab {
         return $details;
     }
 
+    private function convertToInt(&$element) {
+        $element = (int) $element;
+    }
+
+    private function convertToBoolean(&$element) {
+        $element = !($element === 'false' || $element === '0');
+    }
+
     private function getRowById($tableName, $idName, $id, $exceptionMessage = false) {
         $rows = Database::instance()->exec(
             'SELECT * FROM ' . $tableName . ' WHERE ' . $idName . ' = :' . $idName,
@@ -107,12 +150,39 @@ class DBGet extends Prefab {
         return $rows[0];
     }
 
-    private function convertToInt(&$element) {
-        $element = (int) $element;
+    private function getAccountRowByLoginId($table, $loginID) {
+        return Database::instance()->exec(
+            'SELECT * FROM account_details INNER JOIN ' . $table . ' ON account_details.login_id = ' . $table . '.login_id WHERE account_details.login_id = :loginID',
+            array(
+                ':loginID' => $loginID
+            )
+        );
     }
 
-    private function convertToBoolean(&$element) {
-        $element = !($element === 'false' || $element === '0');
+    /**
+     * Converts an account details (name, email, etc) into an account object of the correct type, e.g. Agent, Law Firm, etc.
+     * @param  array<Mixed> $account    The account details
+     * @return Account  The account object.
+     */
+    private function arrayToAccountObject($account) {
+        if (!$account) {
+            return false;
+        }
+
+        switch($account['type']) {
+            case "mediator":
+                return new Mediator($account);
+            case "agent":
+                return new Agent($account);
+            case "law_firm":
+                return new LawFirm($account);
+            case "mediation_centre":
+                return new MediationCentre($account);
+            case "administrator":
+                return new Admin($account);
+            default:
+                Utils::instance()->throwException("Invalid account type.");
+        }
     }
 
 }

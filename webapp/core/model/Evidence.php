@@ -21,7 +21,7 @@ class Evidence {
     }
 
     public function getUploader() {
-        return DBAccount::instance()->getAccountById($this->getUploaderId());
+        return DBGet::instance()->account($this->getUploaderId());
     }
 
     public function getUrl() {

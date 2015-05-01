@@ -2,6 +2,54 @@
 
 class DBQuery extends Prefab {
 
+    /**
+     * Given an email, returns the login ID of the account.
+     *
+     * @param  string $email
+     * @return int
+     */
+    public function emailToId($email) {
+        $login_id = Database::instance()->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
+            ':email' => $email
+        ));
+        if (!$login_id) {
+            return false;
+        }
+        $login_id = (int) $login_id[0]['login_id'];
+        return $login_id;
+    }
+
+    /**
+     * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
+     *
+     * @param  string $email    The email address.
+     * @param  string $password The unencrypted password.
+     * @return boolean          True if the credentials are valid, otherwise false.
+     */
+    public function validCredentials($email, $password) {
+        $loginID = DBQuery::instance()->emailToId($email);
+        $details = DBGet::instance()->accountDetails($loginID);
+
+        if (!$details) {
+            return false;
+        }
+        else {
+            return $this->correctPassword($password, $details['password']);
+        }
+    }
+
+    /**
+     * Returns true or false depending on whether or not the inputted password is a match for the encrypted password we have on file.
+     *
+     * @param  string $inputtedPassword  The unencrypted password.
+     * @param  string $encryptedPassword The encrypted password we're checking our unencrypted password against.
+     * @return boolean                   True if the inputted password is a match.
+     */
+    public function correctPassword($inputtedPassword, $encryptedPassword) {
+        $crypt = \Bcrypt::instance();
+        return $crypt->verify($inputtedPassword, $encryptedPassword);
+    }
+
     public function getIndividuals($organisationID) {
         $individuals = array();
 
@@ -11,7 +59,7 @@ class DBQuery extends Prefab {
         );
 
         foreach($individualsDetails as $individual) {
-            $individuals[] = DBAccount::instance()->getAccountById($individual['login_id']);
+            $individuals[] = DBGet::instance()->account($individual['login_id']);
         }
 
         return $individuals;
@@ -29,17 +77,6 @@ class DBQuery extends Prefab {
         }
 
         return $evidences;
-    }
-
-    // @TODO - move to DBUpdate
-    public function updateDisputePartyB($partyID, $disputeID) {
-        Database::instance()->exec(
-            'UPDATE disputes SET party_b = :party_id WHERE dispute_id = :dispute_id',
-            array(
-                ':party_id'   => $partyID,
-                ':dispute_id' => $disputeID
-            )
-        );
     }
 
     /**
@@ -197,12 +234,12 @@ class DBQuery extends Prefab {
     public function ensureCorrectAccountTypes($accountTypes) {
         $correctAccountTypes = true;
         if (isset($accountTypes['law_firm'])) {
-            if (!DBAccount::instance()->getAccountById($accountTypes['law_firm']) instanceof LawFirm) {
+            if (!DBGet::instance()->account($accountTypes['law_firm']) instanceof LawFirm) {
                 $correctAccountTypes = false;
             }
         }
         if (isset($accountTypes['agent'])) {
-            if (!DBAccount::instance()->getAccountById($accountTypes['agent']) instanceof Agent) {
+            if (!DBGet::instance()->account($accountTypes['agent']) instanceof Agent) {
                 $correctAccountTypes = false;
             }
         }
