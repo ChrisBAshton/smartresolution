@@ -4,9 +4,9 @@ require_once __DIR__ . '/../_helper.php';
 
 // global variables for this class
 $disputeID  = 2; // made up, doesn't matter
-$agentAId   = DBAccount::instance()->emailToId('agent_a@t.co');
-$agentBId   = DBAccount::instance()->emailToId('agent_b@t.co');
-$mediatorId = DBAccount::instance()->emailToId('john.smith@we-mediate.co.uk');
+$agentAId   = DBQuery::instance()->emailToId('agent_a@t.co');
+$agentBId   = DBQuery::instance()->emailToId('agent_b@t.co');
+$mediatorId = DBQuery::instance()->emailToId('john.smith@we-mediate.co.uk');
 
 class DBQueryTest extends PHPUnit_Framework_TestCase
 {
@@ -58,6 +58,12 @@ class DBQueryTest extends PHPUnit_Framework_TestCase
         $this->agentAId   = $agentAId;
         $this->agentBId   = $agentBId;
         $this->mediatorId = $mediatorId;
+    }
+
+    public function testGetIdFromEmail()
+    {
+        $testUser = DBQuery::instance()->emailToId('law_firm_a@t.co');
+        $this->assertEquals(2, $testUser);
     }
 
     public function testGetDisputeMessages()
@@ -112,7 +118,7 @@ class DBQueryTest extends PHPUnit_Framework_TestCase
         $create          = DBCreate::instance();
         $dispute         = TestHelper::getDisputeByTitle('Smith versus Jones');
         $originalPartyID = $dispute->getPartyB()->getPartyId();
-        $newLawFirmId    = DBAccount::instance()->emailToId('law_firm_with_only_one_dispute@company.com');
+        $newLawFirmId    = DBQuery::instance()->emailToId('law_firm_with_only_one_dispute@company.com');
 
         $party = $create->disputeParty(array(
             'organisation_id' => $newLawFirmId

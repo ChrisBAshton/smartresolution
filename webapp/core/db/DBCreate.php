@@ -9,7 +9,7 @@ class DBCreate extends Prefab {
             ':login_id' => $login_id,
         ));
         Database::instance()->commit();
-        return DBAccount::instance()->getAccountById($login_id);
+        return DBGet::instance()->account($login_id);
     }
 
     public function dispute($details) {
@@ -101,7 +101,7 @@ class DBCreate extends Prefab {
         $params['login_id'] = $login_id;
         $this->insertRow('individuals', $params);
         Database::instance()->commit();
-        return DBAccount::instance()->getAccountById($login_id);
+        return DBGet::instance()->account($login_id);
     }
 
     /**
@@ -201,7 +201,7 @@ class DBCreate extends Prefab {
         $this->insertRow('organisations', $params);
         Database::instance()->commit();
 
-        return DBAccount::instance()->getAccountById($login_id);
+        return DBGet::instance()->account($login_id);
     }
 
 // --------------------------------------------------------------------------- the functions from this point onwards do not return an object like the rest of the createX API. Maybe these should be extracted?? Or made private?? (Whereas the above are public.)
@@ -218,7 +218,8 @@ class DBCreate extends Prefab {
             Utils::instance()->throwException("The minimum required to register is an email and password!");
         }
 
-        if (DBAccount::instance()->getAccountByEmail($object['email'])) {
+        $loginID = DBQuery::instance()->emailToId($object['email']);
+        if (DBGet::instance()->account($loginID)) {
             Utils::instance()->throwException("An account is already registered to that email address.");
         }
 
@@ -228,7 +229,7 @@ class DBCreate extends Prefab {
             ':password' => $crypt->hash($object['password'])
         ));
 
-        $login_id = DBAccount::instance()->emailToId($object['email']);
+        $login_id = DBQuery::instance()->emailToId($object['email']);
         if (!$login_id) {
             Utils::instance()->throwException("Could not retrieve login_id. Abort.");
         }

@@ -54,21 +54,21 @@ foreach($data['organisations'] as $org) {
 foreach($data['disputes'] as $dataItem) {
     $dispute = $create->dispute(array(
         'title'      => $dataItem['title'],
-        'law_firm_a' => DBAccount::instance()->emailToId($dataItem['law_firm_a']),
+        'law_firm_a' => DBQuery::instance()->emailToId($dataItem['law_firm_a']),
         'type'       => $dataItem['type']
     ));
 
-    $agentAId = DBAccount::instance()->emailToId($dataItem['agent_a']);
+    $agentAId = DBQuery::instance()->emailToId($dataItem['agent_a']);
     $dispute->getPartyA()->setAgent($agentAId);
     DBUpdate::instance()->disputeParty($dispute->getPartyA());
 
     if (isset($dataItem['law_firm_b'])) {
-        $dispute->getPartyB()->setLawFirm(DBAccount::instance()->emailToId($dataItem['law_firm_b']));
+        $dispute->getPartyB()->setLawFirm(DBQuery::instance()->emailToId($dataItem['law_firm_b']));
         DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
     if (isset($dataItem['agent_b'])) {
-        $dispute->getPartyB()->setAgent(DBAccount::instance()->emailToId($dataItem['agent_b']));
+        $dispute->getPartyB()->setAgent(DBQuery::instance()->emailToId($dataItem['agent_b']));
         DBUpdate::instance()->disputeParty($dispute->getPartyB());
     }
 
@@ -139,10 +139,11 @@ foreach($data['disputes'] as $dataItem) {
     }
 
     if (isset($dataItem['mediation_centre'])) {
+        $mediationCentreLogin = DBQuery::instance()->emailToId($dataItem['mediation_centre']);
         $create->mediationCentreOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-            'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediation_centre'])->getLoginId()
+            'proposed_id' => DBGet::instance()->account($mediationCentreLogin)
         ));
 
         DBUpdate::instance()->dispute($dispute);
@@ -150,10 +151,11 @@ foreach($data['disputes'] as $dataItem) {
     }
 
     if (isset($dataItem['mediator'])) {
+        $mediatorLogin = DBQuery::instance()->emailToId($dataItem['mediator']);
         $create->mediatorOffer(array(
             'dispute_id'  => $dispute->getDisputeId(),
             'proposer_id' => $dispute->getPartyA()->getAgent()->getLoginId(),
-            'proposed_id' => DBAccount::instance()->getAccountByEmail($dataItem['mediator'])->getLoginId()
+            'proposed_id' => DBGet::instance()->account($mediatorLogin)
         ));
 
         DBUpdate::instance()->dispute($dispute);

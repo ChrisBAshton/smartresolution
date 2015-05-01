@@ -21,7 +21,7 @@ class DashboardTest extends PHPUnit_Framework_TestCase
     public function testGetTopLevelActions()
     {
         $dashboard = Dashboard::instance();
-        $account   = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
+        $account   = TestHelper::getAccountByEmail('agent_a@t.co');
         $actions   = $dashboard->getTopLevelActions($account);
         $this->assertEquals(
             array(

@@ -13,53 +13,47 @@ class DBAccountTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($validCredentials);
     }
 
-    public function testGetIdFromEmail()
-    {
-        $testUser = DBAccount::instance()->emailToId('law_firm_a@t.co');
-        $this->assertEquals(2, $testUser);
-    }
-
     public function testGetDBAccountIds()
     {
-        $testUser = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
+        $testUser = TestHelper::getAccountByEmail('law_firm_a@t.co');
         $this->assertEquals('Webdapper Ltd', $testUser->getName());
-        $testUser = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
+        $testUser = TestHelper::getAccountByEmail('agent_a@t.co');
         $this->assertEquals('Chris Ashton', $testUser->getName());
-        $testUser = DBAccount::instance()->getAccountByEmail('user_does_not_exist@t.co');
+        $testUser = TestHelper::getAccountByEmail('user_does_not_exist@t.co');
         $this->assertFalse($testUser);
     }
 
     public function testGetDBAccountTypes()
     {
-        $testUser = DBAccount::instance()->getAccountByEmail('law_firm_a@t.co');
+        $testUser = TestHelper::getAccountByEmail('law_firm_a@t.co');
         $this->assertEquals('Law Firm', $testUser->getRole());
         $this->assertFalse($testUser instanceof Admin);
         $this->assertTrue($testUser instanceof Organisation);
         $this->assertTrue($testUser instanceof LawFirm);
         $this->assertFalse($testUser instanceof Individual);
         $this->assertFalse($testUser instanceof MediationCentre);
-        $testUser = DBAccount::instance()->getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
+        $testUser = TestHelper::getAccountByEmail('mediation_centre_email@we-mediate.co.uk');
         $this->assertEquals('Mediation Centre', $testUser->getRole());
         $this->assertFalse($testUser instanceof Admin);
         $this->assertTrue($testUser instanceof Organisation);
         $this->assertTrue($testUser instanceof MediationCentre);
         $this->assertFalse($testUser instanceof Individual);
         $this->assertFalse($testUser instanceof LawFirm);
-        $testUser = DBAccount::instance()->getAccountByEmail('agent_a@t.co');
+        $testUser = TestHelper::getAccountByEmail('agent_a@t.co');
         $this->assertEquals('Agent', $testUser->getRole());
         $this->assertFalse($testUser instanceof Admin);
         $this->assertTrue($testUser instanceof Individual);
         $this->assertTrue($testUser instanceof Agent);
         $this->assertFalse($testUser instanceof Organisation);
         $this->assertFalse($testUser instanceof Mediator);
-        $testUser = DBAccount::instance()->getAccountByEmail('john.smith@we-mediate.co.uk');
+        $testUser = TestHelper::getAccountByEmail('john.smith@we-mediate.co.uk');
         $this->assertEquals('Mediator', $testUser->getRole());
         $this->assertFalse($testUser instanceof Admin);
         $this->assertTrue($testUser instanceof Individual);
         $this->assertTrue($testUser instanceof Mediator);
         $this->assertFalse($testUser instanceof Organisation);
         $this->assertFalse($testUser instanceof Agent);
-        $testUser = DBAccount::instance()->getAccountByEmail('admin@smartresolution.org');
+        $testUser = TestHelper::getAccountByEmail('admin@smartresolution.org');
         $this->assertEquals('Administrator', $testUser->getRole());
         $this->assertTrue($testUser instanceof Admin);
         $this->assertFalse($testUser instanceof Individual);

@@ -7,23 +7,6 @@
 class DBAccount extends Prefab {
 
     /**
-     * Given an email, returns the login ID of the account.
-     *
-     * @param  string $email
-     * @return int
-     */
-    public function emailToId($email) {
-        $login_id = Database::instance()->exec('SELECT login_id FROM account_details WHERE email = :email LIMIT 1', array(
-            ':email' => $email
-        ));
-        if (!$login_id) {
-            return false;
-        }
-        $login_id = (int) $login_id[0]['login_id'];
-        return $login_id;
-    }
-
-    /**
      * Returns true or false depending on whether or not the provided email and password combination match an account in the database.
      *
      * @param  string $email    The email address.
@@ -52,25 +35,19 @@ class DBAccount extends Prefab {
         return $crypt->verify($inputtedPassword, $encryptedPassword);
     }
 
-    /**
-     * Gets an account by its login ID.
-     * @param  int $id                  The login ID.
-     * @return Account  The account object.
-     */
-    public function getAccountById($id) {
-        $account = $this->getDetailsBy('login_id', $id);
-        return $this->arrayToAccountObject($account);
-    }
 
-    /**
-     * Gets an account by its email address.
-     * @param  string $email            The account email address.
-     * @return Account  The account object.
-     */
-    public function getAccountByEmail($email) {
-        $account = $this->getDetailsBy('email', $email);
-        return $this->arrayToAccountObject($account);
-    }
+
+
+
+    // /**
+    //  * Gets an account by its login ID.
+    //  * @param  int $id                  The login ID.
+    //  * @return Account  The account object.
+    //  */
+    // public function getAccountById($id) {
+    //     $account = $this->getDetailsBy('login_id', $id);
+    //     return $this->arrayToAccountObject($account);
+    // }
 
     /**
      * Returns the database record corresponding to the provided primary key and value.
@@ -103,31 +80,31 @@ class DBAccount extends Prefab {
     }
 
 
-    /**
-     * Converts an account details (name, email, etc) into an account object of the correct type, e.g. Agent, Law Firm, etc.
-     * @param  array<Mixed> $account    The account details
-     * @return Account  The account object.
-     */
-    private function arrayToAccountObject($account) {
-        if (!$account) {
-            return false;
-        }
+    // *
+    //  * Converts an account details (name, email, etc) into an account object of the correct type, e.g. Agent, Law Firm, etc.
+    //  * @param  array<Mixed> $account    The account details
+    //  * @return Account  The account object.
 
-        switch($account['type']) {
-            case "mediator":
-                return new Mediator($account);
-            case "agent":
-                return new Agent($account);
-            case "law_firm":
-                return new LawFirm($account);
-            case "mediation_centre":
-                return new MediationCentre($account);
-            case "administrator":
-                return new Admin($account);
-            default:
-                Utils::instance()->throwException("Invalid account type.");
-        }
-    }
+    // private function arrayToAccountObject($account) {
+    //     if (!$account) {
+    //         return false;
+    //     }
+
+    //     switch($account['type']) {
+    //         case "mediator":
+    //             return new Mediator($account);
+    //         case "agent":
+    //             return new Agent($account);
+    //         case "law_firm":
+    //             return new LawFirm($account);
+    //         case "mediation_centre":
+    //             return new MediationCentre($account);
+    //         case "administrator":
+    //             return new Admin($account);
+    //         default:
+    //             Utils::instance()->throwException("Invalid account type.");
+    //     }
+    // }
 
     /**
      * Return the database record corresponding to the provided table name, key and value.
