@@ -37,15 +37,23 @@ class SessionController {
         $validCredentials = DBQuery::instance()->validCredentials($email, $password);
 
         if ($validCredentials) {
-            $this->session->create($email, $password);
-            header('Location: /dashboard');
+            $loginID = DBQuery::instance()->emailToId($email);
+            $account = DBGet::instance()->account($loginID);
+            if ($account->isVerified()) {
+                $this->session->create($email, $password);
+                header('Location: /dashboard');
+            }
+            else {
+                $f3->set('error_message', 'Your account still needs to be verified before you can log in.');
+            }
         }
         else {
             $f3->set('error_message', 'Invalid login details.');
-            $f3->set('user_email', $email);
-            $f3->set('content','login.html');
-            echo View::instance()->render('layout.html');
         }
+
+        $f3->set('user_email', $email);
+        $f3->set('content','login.html');
+        echo View::instance()->render('layout.html');
     }
 
     function logout ($f3) {

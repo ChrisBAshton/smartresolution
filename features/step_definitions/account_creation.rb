@@ -42,6 +42,10 @@ When(/^I attempt to log in with invalid credentials$/) do
   click_button 'Login'
 end
 
+When(/^I attempt to log into an unverified account$/) do
+  Session.login_as_unverified
+end
+
 Then(/^an authentication error should be displayed$/) do
   page.driver.save_screenshot 'features/screenshots/login_success--after.jpg'
   assert page.has_content?('Invalid login details.')

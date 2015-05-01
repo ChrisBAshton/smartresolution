@@ -23,6 +23,13 @@ organisations:
             type:     agent
             forename: John
             surname:  Smith
+      - account_details:
+            email:    unverified@t.co
+            password: test
+        details:
+            type:     agent
+            forename: Unverified
+            surname:  Agent
   - account_details:
         email:    law_firm_b@t.co
         password: test
