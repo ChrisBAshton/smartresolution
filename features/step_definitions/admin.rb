@@ -5,7 +5,6 @@ end
 $module_dir = File.expand_path('../../../webapp/modules', __FILE__)
 
 Then(/^I should see admin\-only options on the dashboard$/) do
-  assert page.has_content? 'Welcome back, Administrator'
   assert page.has_content? 'Marketplace'
   assert page.has_content? 'Modules'
   assert page.has_content? 'Customise'
