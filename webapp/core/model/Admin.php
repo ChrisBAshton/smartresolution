@@ -2,6 +2,10 @@
 
 class Admin extends Account implements AccountInterface {
 
+    private $loginId;
+    private $email;
+    private $verified;
+
     function __construct($account) {
         $this->loginId  = $account['login_id'];
         $this->email    = $account['email'];

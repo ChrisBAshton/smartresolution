@@ -2,6 +2,14 @@
 
 class Individual extends Account implements AccountInterface {
 
+    private $loginId;
+    private $email;
+    private $verified;
+    private $forename;
+    private $surname;
+    private $cv;
+    private $organisation;
+
     function __construct($account) {
         $this->loginId      = $account['login_id'];
         $this->email        = $account['email'];

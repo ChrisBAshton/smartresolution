@@ -2,6 +2,7 @@
 
 class MediationState {
 
+    private $disputeID;
     private $mediationCentreOffer;
     private $mediatorOffer;
 

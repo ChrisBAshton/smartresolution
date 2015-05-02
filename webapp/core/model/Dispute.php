@@ -2,6 +2,16 @@
 
 class Dispute {
 
+    private $disputeID;
+    private $type;
+    private $title;
+    private $status;
+    private $partyAId;
+    private $partyBId;
+    private $partyA;
+    private $partyB;
+    private $rtc;
+
     function __construct($data) {
         $this->disputeID = $data['dispute_id'];
         $this->type      = $data['type'];

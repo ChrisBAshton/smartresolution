@@ -3,10 +3,10 @@
 class DisputeParty {
 
     private $partyID;
-    private $disputeID;
-    private $organisationID;
     private $individualID;
+    private $organisationID;
     private $summary;
+    private $disputeID;
 
     function __construct($partyDetails = array(), $disputeID = false) {
         $this->partyID        = isset($partyDetails['party_id'])        ? $partyDetails['party_id'] : false;
