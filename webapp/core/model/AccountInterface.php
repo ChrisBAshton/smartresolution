@@ -4,7 +4,7 @@ interface AccountInterface {
 
     /**
      * Constructor should create a sub-classed Account object.
-     * @param Array $account Associative array corresponding to the account, taken from the database.
+     * @param array $account Associative array corresponding to the account, taken from the database.
      */
     public function __construct($account);
 
@@ -16,7 +16,7 @@ interface AccountInterface {
 
     /**
      * Gets the email associated with the account.
-     * @return String
+     * @return string
      */
     public function getEmail();
 
@@ -27,7 +27,7 @@ interface AccountInterface {
 
     /**
      * Gets the name of the account.
-     * @return String
+     * @return string
      */
     public function getName();
 
@@ -45,7 +45,7 @@ interface AccountInterface {
 
     /**
      * Gets the URL to the account's public profile.
-     * @return Url
+     * @return string
      */
     public function getUrl();
 
@@ -59,7 +59,7 @@ interface AccountInterface {
     /**
      * Account should be rendered as follows:
      *     <a href="/link/to/account/profile">Account Name</a>
-     * @return String
+     * @return string
      */
     public function __toString();
 }
