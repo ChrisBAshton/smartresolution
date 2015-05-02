@@ -5,11 +5,11 @@
  */
 class Organisation extends Account implements AccountInterface {
 
-    private $loginId;
-    private $email;
-    private $verified;
-    private $name;
-    private $description;
+    protected $loginId;
+    protected $email;
+    protected $verified;
+    protected $name;
+    protected $description;
 
     /**
      * Organisation constructor.

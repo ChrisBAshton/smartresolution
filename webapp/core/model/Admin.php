@@ -5,9 +5,9 @@
  */
 class Admin extends Account implements AccountInterface {
 
-    private $loginId;
-    private $email;
-    private $verified;
+    protected $loginId;
+    protected $email;
+    protected $verified;
 
     /**
      * Admin constructor.

@@ -1,13 +1,25 @@
 <?php
 
+/**
+ * Links admin-related HTTP requests to admin-related functions and views.
+ */
 class AdminController {
 
     private $moduleDirectory;
 
+    /**
+     * AdminController constructor.
+     */
     function __construct() {
         $this->moduleDirectory = __DIR__ . '/../../modules';
     }
 
+    /**
+     * Shows the SmartResolution Marketplace.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params [description]
+     * @return [type]         [description]
+     */
     function showMarketplace($f3, $params) {
         $account = mustBeLoggedInAsAn('Admin');
         $modules = json_decode(file_get_contents('http://smartresolution.org/marketplace/feed'), true);

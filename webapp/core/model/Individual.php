@@ -5,13 +5,13 @@
  */
 class Individual extends Account implements AccountInterface {
 
-    private $loginId;
-    private $email;
-    private $verified;
-    private $forename;
-    private $surname;
-    private $cv;
-    private $organisation;
+    protected $loginId;
+    protected $email;
+    protected $verified;
+    protected $forename;
+    protected $surname;
+    protected $cv;
+    protected $organisation;
 
     /**
      * Individual constructor.
