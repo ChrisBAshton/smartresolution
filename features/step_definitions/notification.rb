@@ -32,3 +32,29 @@ Then(/^the URL should be clean, with no notification parameters$/) do
   assert_equal '/disputes/2', URL.get_current_uri_path
   assert_nil URL.get_current_uri_params
 end
+
+Given(/^my dispute is in mediation$/) do
+  $dispute_id = DBL.dispute_title_to_id 'Dispute that is in mediation'
+end
+
+When(/^I send a message to the other Agent in a dispute$/) do
+  $dispute_id = DBL.dispute_title_to_id 'Smith versus Jones'
+  visit '/disputes/' + $dispute_id + '/chat'
+  fill_in 'message', :with => 'This is a test message'
+  click_button 'Send message'
+end
+
+Then(/^they should get a notification$/) do
+  Session.login_with_credentials 'agent_b@t.co', 'test'
+  visit '/notifications'
+  assert page.has_content? 'Chris Ashton has sent you a message'
+  puts page.body
+end
+
+When(/^I send a message to the mediator of a dispute$/) do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+When(/^I send a message to the agent of a dispute$/) do
+  pending # Write code here that turns the phrase above into concrete actions
+end

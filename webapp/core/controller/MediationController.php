@@ -289,10 +289,16 @@ class MediationController {
                 'recipient_id' => (int) $recipientID
             ));
 
+            // notification should link to /mediation or the more complex url depending on who is the recipient.
+            $notificationUrl = $this->dispute->getUrl() . '/mediation-chat/' . $this->account->getLoginId();
+            if ($this->account instanceof Mediator) {
+                $notificationUrl = $this->dispute->getUrl() . '/mediation';
+            }
+
             DBCreate::instance()->notification(array(
                 'recipient_id' => (int) $recipientID,
                 'message'      => $this->account->getName() . ' has sent you a message.',
-                'url'          => $this->dispute->getUrl() . '/mediation'
+                'url'          => $notificationUrl
             ));
         }
 
