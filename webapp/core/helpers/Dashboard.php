@@ -1,7 +1,18 @@
 <?php
 
+/**
+ * Determines the top-level dashboard items on the homescreen, according to account type.
+ */
 class Dashboard extends Prefab {
 
+    /**
+     * Retrieves the top-level dashboard items, including any module-specific modifications.
+     * @param  Account $account Account whose context will affect the dashboard items.
+     * @return array            Array of dashboard items.
+     *         string array['title']
+     *         string array['image']
+     *         string array['href']
+     */
     public function getTopLevelActions($account) {
         global $dashboardActions;
 
@@ -26,6 +37,11 @@ class Dashboard extends Prefab {
         return $dashboardActions;
     }
 
+    /**
+     * Returns the dashboard items that are specific to Law Firms.
+     * @return array
+     * @see  Dashboard::getTopLevelActions For details on the returned array.
+     */
     public function getLawFirmActions() {
         return array(
             array(
@@ -51,6 +67,11 @@ class Dashboard extends Prefab {
         );
     }
 
+    /**
+     * Returns the dashboard items that are specific to Mediation Centres.
+     * @return array
+     * @see  Dashboard::getTopLevelActions For details on the returned array.
+     */
     public function getMediationCentreActions() {
         return array(
             array(
@@ -71,6 +92,11 @@ class Dashboard extends Prefab {
         );
     }
 
+    /**
+     * Returns the dashboard items that are specific to Agents.
+     * @return array
+     * @see  Dashboard::getTopLevelActions For details on the returned array.
+     */
     public function getAgentActions() {
         return array(
             array(
@@ -86,6 +112,11 @@ class Dashboard extends Prefab {
         );
     }
 
+    /**
+     * Returns the dashboard items that are specific to Mediators.
+     * @return array
+     * @see  Dashboard::getTopLevelActions For details on the returned array.
+     */
     public function getMediatorActions() {
         return array(
             array(
@@ -101,6 +132,11 @@ class Dashboard extends Prefab {
         );
     }
 
+    /**
+     * Returns the dashboard items that are specific to Admins.
+     * @return array
+     * @see  Dashboard::getTopLevelActions For details on the returned array.
+     */
     public function getAdminActions() {
         return array(
             array(
