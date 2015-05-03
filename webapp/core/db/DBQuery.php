@@ -216,12 +216,36 @@ class DBQuery extends Prefab {
      * @param  int $loginId        Login ID of the account.
      * @return array<Notification> List of unread notifications.
      */
-    public function getNotificationsForLoginId($loginId) {
-        $notifications = array();
+    public function getUnreadNotificationsForLoginId($loginId) {
+        return $this->getNotifications($loginId, true);
+    }
 
-        $notificationsDetails = Database::instance()->exec('SELECT notification_id FROM notifications WHERE recipient_id = :login_id AND read = "false" ORDER BY notification_id DESC',
-            array(':login_id' => $loginId)
-        );
+    /**
+     * Retrieves all of the notifications (read or otherwise) for the given login ID.
+     * @param  int $loginId        Login ID of the account.
+     * @return array<Notification> List of notifications.
+     */
+    public function getAllNotificationsForLoginId($loginId) {
+        return $this->getNotifications($loginId);
+    }
+
+    /**
+     * Retrieves all of the notifications matching the given login ID and query.
+     * @param  int     $loginId    Login ID of the account to retrieve notifications for.
+     * @param  boolean $unreadOnly (Optional) True if we only want to retrieve unread messages. Defaults to false.
+     * @return bool          [description]
+     */
+    private function getNotifications($loginId, $unreadOnly = false) {
+        $notifications = array();
+        $query = 'SELECT notification_id FROM notifications WHERE recipient_id = :login_id';
+
+        if ($unreadOnly) {
+            $query .= ' AND read = "false"';
+        }
+
+        $query .= ' ORDER BY notification_id DESC';
+
+        $notificationsDetails = Database::instance()->exec($query, array(':login_id' => $loginId));
 
         foreach ($notificationsDetails as $id) {
             $notification = DBGet::instance()->notification($id['notification_id']);

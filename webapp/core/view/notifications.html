@@ -2,22 +2,30 @@
 
 <div class="list">
     <?php
-    $notifications = Session::instance()->getAccount()->getNotifications();
-    if (count($notifications) === 0) {
+    $unreadNotifications = Session::instance()->getAccount()->getUnreadNotifications();
+
+    if (count($unreadNotifications) === 0) {
         echo '
             <div class="list__item col-sm-12">
             <p class="bg-padded bg-info">You have no new notifications.</p>
             </div>
         ';
     }
-    else {
-        foreach($notifications as $notification) {
-            echo '
-            <div class="list__item col-sm-12">
-                <a class="notification__link" href="' . $notification->getUrl() . '?mark_notification_as_read=' . $notification->getNotificationId() . '">' . $notification->getMessage() . '</a>
-            </div>
-            ';
-        }
+
+    $notifications = Session::instance()->getAccount()->getAllNotifications();
+
+    foreach($notifications as $notification) {
+        echo '
+        <div class="list__item col-sm-12">
+        ';
+        echo $notification->hasBeenRead() ? '<span style="opacity: 0.7">' : '<strong>';
+        echo '
+            <a class="notification__link" href="' . $notification->getUrl() . '?mark_notification_as_read=' . $notification->getNotificationId() . '">' . $notification->getMessage() . '</a>
+        ';
+        echo $notification->hasBeenRead() ? '</span>' : '</strong>';
+        echo '
+        </div>
+        ';
     }
     ?>
 

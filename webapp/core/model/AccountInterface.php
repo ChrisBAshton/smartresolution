@@ -38,7 +38,13 @@ interface AccountInterface {
      * Gets all unread notifications associated with the account.
      * @return array<Notification>
      */
-    public function getNotifications();
+    public function getUnreadNotifications();
+
+    /**
+     * Gets all notifications (read or otherwise) associated with the account.
+     * @return array<Notification>
+     */
+    public function getAllNotifications();
 
     /**
      * Gets all disputes associated with the account.
