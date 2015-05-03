@@ -25,7 +25,7 @@ Then(/^the notification should be marked as read$/) do
   # Notifications should appear between the welcome and the logout.
   # If not, we have no notifications and the notification has therefore
   # been marked as read.
-  assert page.has_content?('Welcome back, Bob Hope | Logout')
+  assert page.has_content?('Welcome back, Bob Hope | No new notifications | Logout')
 end
 
 Then(/^the URL should be clean, with no notification parameters$/) do

@@ -32,9 +32,6 @@ declare_module(array(
     });
 });
 
-/**
- * @internal
- */
 function show_test_screen() {
 
     $databaseEntries = get_multiple('my_test_table.*');
@@ -49,9 +46,6 @@ function show_test_screen() {
     );
 }
 
-/**
- * @internal
- */
 class TestModule {
     public function topLevelRoute() {
         render_markdown(get_module_url() . '/about.md');

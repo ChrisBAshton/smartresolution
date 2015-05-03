@@ -33,7 +33,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $account->getLoginId());
         $this->assertEquals('agent_a@t.co', $account->getEmail());
         $this->assertEquals('John Smith', $account->getName());
-        $this->assertTrue(is_array($account->getNotifications()));
+        $this->assertTrue(is_array($account->getAllNotifications()));
         $this->assertTrue(is_array($account->getAllDisputes()));
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
         $this->assertTrue($account->isVerified());
@@ -56,7 +56,7 @@ class AccountTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(3, $account->getLoginId());
         $this->assertEquals('law_firm_a@t.co', $account->getEmail());
         $this->assertEquals('Webdapper Ltd', $account->getName());
-        $this->assertTrue(is_array($account->getNotifications()));
+        $this->assertTrue(is_array($account->getAllNotifications()));
         $this->assertTrue(is_array($account->getAllDisputes()));
         $this->assertEquals('/accounts/' . $account->getLoginId(), $account->getUrl());
         $this->assertTrue($account->isVerified());

@@ -216,10 +216,30 @@ class DBQuery extends Prefab {
      * @param  int $loginId        Login ID of the account.
      * @return array<Notification> List of unread notifications.
      */
-    public function getNotificationsForLoginId($loginId) {
+    public function getUnreadNotificationsForLoginId($loginId) {
         $notifications = array();
 
         $notificationsDetails = Database::instance()->exec('SELECT notification_id FROM notifications WHERE recipient_id = :login_id AND read = "false" ORDER BY notification_id DESC',
+            array(':login_id' => $loginId)
+        );
+
+        foreach ($notificationsDetails as $id) {
+            $notification = DBGet::instance()->notification($id['notification_id']);
+            $notifications[] = $notification;
+        }
+
+        return $notifications;
+    }
+
+    /**
+     * Retrieves all of the notifications (read or otherwise) for the given login ID.
+     * @param  int $loginId        Login ID of the account.
+     * @return array<Notification> List of unread notifications.
+     */
+    public function getAllNotificationsForLoginId($loginId) {
+        $notifications = array();
+
+        $notificationsDetails = Database::instance()->exec('SELECT notification_id FROM notifications WHERE recipient_id = :login_id ORDER BY notification_id DESC',
             array(':login_id' => $loginId)
         );
 

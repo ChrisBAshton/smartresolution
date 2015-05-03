@@ -24,12 +24,12 @@
 				            <p>
 				                Welcome back, <?php echo $account->getName() ; ?>
 				                <?php
-    								$notifications = Session::instance()->getAccount()->getNotifications();
+    								$notifications = Session::instance()->getAccount()->getUnreadNotifications();
 				                    if (count($notifications) > 0) {
 				                        echo ' | <a href="/notifications" class="notification_link"><img src="/core/view/images/notification--red.png" /> ' . count($notifications) . ' notifications</a> | ';
 				                    }
 				                    else {
-				                        echo ' | ';
+				                        echo ' | <a href="/notifications" class="notification_link">No new notifications</a> | ';
 				                    }
 				                ?>
 				                <a href="/logout">Logout</a>

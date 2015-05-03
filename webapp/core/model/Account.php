@@ -30,10 +30,17 @@ abstract class Account {
     }
 
     /**
-     * @see AccountInterface::getNotifications() Implements the corresponding function in AccountInterface.
+     * @see AccountInterface::getUnreadNotifications() Implements the corresponding function in AccountInterface.
      */
-    public function getNotifications() {
-        return DBQuery::instance()->getNotificationsForLoginId($this->getLoginId());
+    public function getUnreadNotifications() {
+        return DBQuery::instance()->getUnreadNotificationsForLoginId($this->getLoginId());
+    }
+
+    /**
+     * @see AccountInterface::getAllNotifications() Implements the corresponding function in AccountInterface.
+     */
+    public function getAllNotifications() {
+        return DBQuery::instance()->getAllNotificationsForLoginId($this->getLoginId());
     }
 
     /**
