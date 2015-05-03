@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * The agents have managed to negotiate a lifespan and there is nothing more to do to initiate the dispute. When the start date is surpassed, the dispute is underway and the agents are free to perform all dispute-related actions. When the end date passes, the dispute is automatically closed.
+ */
 class LifespanNegotiated extends DisputeDefaults implements DisputeStateInterface {
 
     public function getStateDescription() {

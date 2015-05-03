@@ -1,4 +1,7 @@
 <?php
+/**
+ * api.php contains all of the global methods exposed to the modules. Internally, these global methods call classes that are contained in the core platform, but modules should refrain from calling those classes. Modules should ONLY interact with the system through the global methods defined here.
+ */
 
 /**
  * Global variable, used internally for defining the Home/Dispute dashboards. You should only interact with it through the functions provided, e.g. dashboard_add_item().
@@ -6,10 +9,6 @@
  * @internal    We don't want this variable to appear in the Module Developer documentation, since it might change.
  */
 $dashboardActions = array();
-
-/**
- * api.php contains all of the global methods exposed to the modules. Internally, these global methods call classes that are contained in the core platform, but modules should refrain from calling those classes. Modules should ONLY interact with the systme through the global methods defined here.
- */
 
 /**
  * Defines the module in the system.
@@ -60,7 +59,8 @@ function route($route, $handler) {
 }
 
 /**
- * Adds multiple items to the end of the dashboard, in the order passed. For full description and parameter list, see `dashboard_add_item`.
+ * Adds multiple items to the end of the dashboard, in the order passed.
+ * @see dashboard_add_item For full description and parameter list, see `dashboard_add_item`.
  */
 function dashboard_add_items($items, $addToFront = false) {
     $items = array_reverse($items); // since each added item is pushed to the beginning of the array, and thus the beginning of the menu, if we want the items to appear in the menu in the order they were passed then we need to reverse the array.
@@ -129,6 +129,10 @@ function get_dispute_id() {
     return (int) $f3->get('PARAMS')['disputeID'];
 }
 
+/**
+ * Gets the login ID of the currently logged in user.
+ * @return int User's login ID.
+ */
 function get_login_id() {
     return Session::instance()->getAccount()->getLoginId();
 }
@@ -190,6 +194,7 @@ function declare_table($tableName, $columns) {
  * Gets the value of a column in a module-specific table.
  *
  * @param  string $tableAndColumn Dot-separated table and column, e.g. 'table_name.column_name'
+ * @param  array  $andClause      (Optional) Specify additional constraints, e.g. array('verified' => true). In this example, we'd get the value of table_name.column_name WHERE verified = true.
  * @return Unknown|boolean        Returns the value as it is stored in the database. Beware: this does not cast to integer or boolean, so you'll need to manually cast type where appropriate. Returns boolean false if no record is found.
  */
 function get($tableAndColumn, $andClause = array()) {
@@ -197,7 +202,10 @@ function get($tableAndColumn, $andClause = array()) {
     return ModuleController::instance()->queryModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
 }
 
-// where multiple rows are expected.
+/**
+ * Gets the values of a column in a module-specific table. This should be called over `get` if multiple rows are expected.
+ * @see get     For the full list of parameter and return values.
+ */
 function get_multiple($tableAndColumn, $andClause = array()) {
     $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
     return ModuleController::instance()->getRowsFromModuleTable($moduleName, $tableAndColumn, get_dispute_id(), $andClause);
@@ -214,6 +222,18 @@ function set($tableAndColumn, $value) {
     return ModuleController::instance()->setModuleTableValue($moduleName, $tableAndColumn, $value, get_dispute_id());
 }
 
+/**
+ * Creates a row in the database. e.g.
+ *
+ *   createRow('answers', array(
+ *       'agent_id' => get_login_id(),
+ *       'question' => $questionID,
+ *       'answer'   => $value
+ *   ));
+ *
+ * @param  string $table  Table name
+ * @param  array  $values Associative array of table columns and the values to set.
+ */
 function createRow($table, $values = array()) {
     $moduleName = ModuleController::instance()->extractModuleNameFromStackTrace(debug_backtrace());
     return ModuleController::instance()->createModuleTableRow($moduleName, $table, $values, get_dispute_id());

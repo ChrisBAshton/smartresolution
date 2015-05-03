@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Exposes some useful utility functions used across SmartResolution.
+ */
 class Utils extends Prefab {
 
     /**

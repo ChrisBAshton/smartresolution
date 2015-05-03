@@ -1,14 +1,24 @@
 <?php
 
+/**
+ * Links admin-related HTTP requests to admin-related functions and views.
+ */
 class AdminController {
 
     private $moduleDirectory;
 
+    /**
+     * AdminController constructor.
+     */
     function __construct() {
         $this->moduleDirectory = __DIR__ . '/../../modules';
     }
 
-    function showMarketplace($f3, $params) {
+    /**
+     * Shows the SmartResolution Marketplace.
+     * @param  F3 $f3         The base F3 object
+     */
+    function showMarketplace($f3) {
         $account = mustBeLoggedInAsAn('Admin');
         $modules = json_decode(file_get_contents('http://smartresolution.org/marketplace/feed'), true);
         $f3->set('modules', $modules);
@@ -16,7 +26,11 @@ class AdminController {
         echo View::instance()->render('layout.html');
     }
 
-    function showModulesPage($f3, $params) {
+    /**
+     * Shows modules page, showing which modules are installed and whether or not they are active.
+     * @param  F3 $f3 The base F3 object.
+     */
+    function showModulesPage($f3) {
         $account = mustBeLoggedInAsAn('Admin');
 
         $modules = ModuleController::instance()->getAllModules();
@@ -26,14 +40,32 @@ class AdminController {
         echo View::instance()->render('layout.html');
     }
 
-    function toggleModule($f3, $params) {
+    /**
+     * Shows the Admin Customise page.
+     * @param  F3 $f3 The base F3 object.
+     */
+    function showCustomisePage($f3) {
+        $account = mustBeLoggedInAsAn('Admin');
+        $f3->set('content', 'admin_customise.html');
+        echo View::instance()->render('layout.html');
+    }
+
+    /**
+     * POST function; toggles a given module's activity state. Then redirects to modules page.
+     * @param  F3 $f3 The base F3 object.
+     */
+    function toggleModule($f3) {
         $moduleName = $f3->get('POST.module');
         $module = ModuleController::instance()->getModuleByKey($moduleName);
         $module->toggleActiveness();
         header('Location: /admin-modules');
     }
 
-    function deleteModule($f3, $params) {
+    /**
+     * POST function; deletes the given module. Then redirects to modules page.
+     * @param  F3 $f3 The base F3 object.
+     */
+    function deleteModule($f3) {
         mustBeLoggedInAsAn('Admin');
         $moduleName = $f3->get('GET.id');
         $moduleDirectory = $this->moduleDirectory . '/' . $moduleName;
@@ -42,7 +74,13 @@ class AdminController {
         header('Location: /admin-modules');
     }
 
-    function downloadModule($f3, $params) {
+    /**
+     * POST function; downloads the given module to the system. Then redirects to modules page.
+     * If the module could not be installed, an error page is triggered.
+     *
+     * @param  F3 $f3 The base F3 object.
+     */
+    function downloadModule($f3) {
         $account      = mustBeLoggedInAsAn('Admin');
         $downloadLink = $f3->get('GET.url');
         $zipLocation  = $this->moduleDirectory . '/tmp.zip';
@@ -62,18 +100,23 @@ class AdminController {
         }
     }
 
-    function showCustomisePage($f3, $params) {
-        $account = mustBeLoggedInAsAn('Admin');
-        $f3->set('content', 'admin_customise.html');
-        echo View::instance()->render('layout.html');
-    }
-
+    /**
+     * Removes the config.json representing the installed modules and their activity states.
+     * On the next page load, config.json will be re-initialised; it will look for every directory
+     * in the modules folder and put the declared module in the JSON. All modules will be inactive
+     * (except for special modules). One day, this should be improved so that installed modules that
+     * were already active remain active after updating the module config.
+     */
     function updateModuleConfig() {
-        // remove config.json, it will get re-initialised on next page load.
         unlink($this->moduleDirectory . '/config.json');
     }
 
-    // copied from http://php.net/rmdir#98622
+    /**
+     * Recursively removes a directory. Copied from:
+     *     http://php.net/rmdir#98622
+     *
+     * @param  string $dir Filepath to directory to remove.
+     */
     function rrmdir($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);

@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * Calculates the current state of the dispute, instantiating a DisputeState object which can then be queried, making business logic easy to query in the controllers/models.
+ */
 class DisputeStateCalculator extends Prefab {
 
+    /**
+     * Retrieves the dispute's calculated state.
+     * @param  Dispute         $dispute Dispute whose state we need to calculate.
+     * @param  Account|boolean $account (Optional) The account whose context we want to pass to the querying of the state. For example, a state->canUploadEvidence() call may return true or false depending on the user querying the state. Defaults to the currently logged in account.
+     * @return DisputeState
+     */
     public function getState($dispute, $account = false) {
         if (!$account) {
             $account = Session::instance()->getAccount();
@@ -11,6 +20,11 @@ class DisputeStateCalculator extends Prefab {
         return new $stateClass($dispute, $account);
     }
 
+    /**
+     * Calculates the state of the dispute.
+     * @param  Dispute $dispute
+     * @return DisputeState
+     */
     public function calculateStateClass($dispute) {
         if ($dispute->getStatus() !== 'ongoing') {
             return "DisputeClosed";
@@ -48,6 +62,15 @@ class DisputeStateCalculator extends Prefab {
         }
     }
 
+    /**
+     * Retrieves an array of actions to be rendered to the dispute dashboard, according to the state of the dispute.
+     * @param  Dispute $dispute The dispute whose dashboard we're rendering.
+     * @param  Account $account The account whose context will affect which options are on the dashboard.
+     * @return array            Array of dashboard items.
+     *         string array['title']
+     *         string array['image']
+     *         string array['href']
+     */
     public function getActions($dispute, $account) {
         global $dashboardActions;
         $this->setDefaultActions($dispute, $account);
@@ -55,6 +78,11 @@ class DisputeStateCalculator extends Prefab {
         return $dashboardActions;
     }
 
+    /**
+     * Sets the default dispute dashboard actions (according to the dispute state), BEFORE any module modifications.
+     * @param Dispute $dispute
+     * @param Account $account
+     */
     public function setDefaultActions($dispute, $account) {
         global $dashboardActions;
         $dashboardActions = array();
@@ -127,6 +155,12 @@ class DisputeStateCalculator extends Prefab {
         }
     }
 
+    /**
+     * Calculates the mediator-specific options for the dispute dashboard. Only applies if the given account is a Mediator and the dispute is in mediation.
+     * @param  Dispute $dispute
+     * @param  Account $account
+     * @return array     Dashboard actions.
+     */
     private function getMediatorSpecificOptions($dispute, $account) {
         global $dashboardActions;
 

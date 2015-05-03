@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * Links HTTP requests to view items of evidence with evidence-related functions and views.
+ */
 class EvidenceController {
 
+    /**
+     * View the list of evidence for the given dispute. If logged in account is not authorised, error page is raised.
+     *
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     public function view ($f3, $params) {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
@@ -16,7 +25,11 @@ class EvidenceController {
     }
 
     /**
+     * POST function; uploads an item of evidence (a file from the user's computer to the SmartResolution installation).
      * Based on http://fatfreeframework.com/web#receive
+     *
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
      */
     public function upload ($f3, $params) {
         $account = mustBeLoggedIn();
@@ -30,7 +43,7 @@ class EvidenceController {
 
         $web = \Web::instance();
         $files = $web->receive(
-            'EvidenceController->uploadFile', // callback
+            'EvidenceController->validate', // callback
             false,        // overwrite - true or false
             function($fileBaseName, $formFieldName) {
                 return strtolower(time() . '__' . $fileBaseName);
@@ -70,17 +83,17 @@ class EvidenceController {
     }
 
     /**
-     * Callback function to the file upload.
+     * Callback function to the file upload, validating that the file is the right type and size, etc.
      *
      * @param  File    $file          The file to be uploaded.
      * @param  string  $formFieldName The corresponding form name.
      * @return boolean                True if file upload was successful, otherwise false.
      */
-    public function uploadFile ($file, $formFieldName) {
+    public function validate ($file, $formFieldName) {
 
         /* $file looks like:
           array(5) {
-              ["name"] =>     string(19) "csshat_quittung.png"
+              ["name"] =>     string(19) "csshat_quittung.png" // $file['name'] already contains the slugged name now
               ["type"] =>     string(9) "image/png"
               ["tmp_name"] => string(14) "/tmp/php2YS85Q"
               ["error"] =>    int(0)
@@ -88,14 +101,12 @@ class EvidenceController {
             }
         */
 
-        // $file['name'] already contains the slugged name now
-
-        // if bigger than 2 MB
-        if ($file['size'] > (2 * 1024 * 1024)) {
+        $maxFileSize = (2 * 1024 * 1024); // 2MB
+        if ($file['size'] > $maxFileSize) {
             return false;
         }
 
-        // type check
+        // @TODO - type check
 
         return true;
     }

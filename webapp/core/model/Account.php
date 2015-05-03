@@ -23,7 +23,7 @@ abstract class Account {
     }
 
     /**
-     * @see AccountInterface::getEmail() Implements the corresponding function in AccountInterface.
+     * @see AccountInterface::isVerified() Implements the corresponding function in AccountInterface.
      */
     public function isVerified() {
         return $this->verified;
@@ -51,14 +51,14 @@ abstract class Account {
     }
 
     /**
-     * @see AccountInterface::getUrl()  Implements the corresponding function in AccountInterface.
+     * @see AccountInterface::getRole()  Implements the corresponding function in AccountInterface.
      */
     public function getRole() {
         Utils::instance()->throwException('ACCOUNT TYPE MUST BE SET IN SUBCLASS');
     }
 
     /**
-     * @see AccountInterface::toString() Implements the corresponding function in AccountInterface.
+     * @see AccountInterface::__toString() Implements the corresponding function in AccountInterface.
      */
     public function __toString() {
         return '<a href="' . $this->getUrl() . '">' . $this->getName() . '</a>';

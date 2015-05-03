@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * Database connector class which creates new rows in the database.
+ */
 class DBCreate extends Prefab {
 
+    /**
+     * Creates a new admin in the database.
+     * @param  array $params Admin details.
+     *         int   $params['login_id'] Login ID of the admin.
+     * @return Admin The newly created admin.
+     */
     public function admin($params) {
         Database::instance()->begin();
         $login_id = $this->dbAccount($params);
@@ -12,6 +21,16 @@ class DBCreate extends Prefab {
         return DBGet::instance()->account($login_id);
     }
 
+    /**
+     * Creates a new dispute in the database.
+     * @param  array  $details Dispute details.
+     *         int    $details['law_firm_a'] Login ID of the law firm creating the dispute.
+     *         string $details['type']       The dispute type ('Other', 'Maritime Collision', etc).
+     *         string $details['title']      The title of the dispute.
+     *         int    $details['agent_a']    The login ID of the agent assigned to the dispute.
+     *         string $details['summary']    Party A's summary of the dispute.
+     * @return Dispute The newly created dispute.
+     */
     public function dispute($details) {
         $lawFirmA = (int) Utils::instance()->getValue($details, 'law_firm_a');
         $type     = Utils::instance()->getValue($details, 'type');
@@ -55,6 +74,14 @@ class DBCreate extends Prefab {
         return $dispute;
     }
 
+    /**
+     * Creates a new dispute party in the database.
+     * @param  array  $params Dispute party details.
+     *         int    $params['organisation_id'] Login ID of the party's law firm.
+     *         int    $params['individual_id']   Login ID of the party's agent.
+     *         string $params['summary']         Party's summary of the dispute.
+     * @return DisputeParty The newly created dispute party.
+     */
     public function disputeParty($params) {
         $params = Utils::instance()->requiredParams(array(
             'organisation_id' => true,
@@ -88,15 +115,23 @@ class DBCreate extends Prefab {
         return DBGet::instance()->evidence($latestID);
     }
 
-    public function individual($individualObject) {
+    /**
+     * Creates a new individual in the database.
+     * @param  array  $params             Individual details.
+     *         string $params['type']     Type of individual ('agent', 'mediator').
+     *         string $params['forename'] Forename.
+     *         string $params['surname']  Surname.
+     * @return Account The newly created Individual.
+     */
+    public function individual($params) {
         Database::instance()->begin();
-        $login_id = $this->dbAccount($individualObject);
+        $login_id = $this->dbAccount($params);
         $params = Utils::instance()->requiredParams(array(
             'type'            => true,
             'organisation_id' => true,
             'forename'        => false,
             'surname'         => false
-        ), $individualObject);
+        ), $params);
 
         $params['login_id'] = $login_id;
         $this->insertRow('individuals', $params);
@@ -187,7 +222,14 @@ class DBCreate extends Prefab {
         return new Notification($notificationID);
     }
 
-
+    /**
+     * Creates a new organisation in the database.
+     * @param  array  $orgObject                Organisation details.
+     *         string $orgObject['type']        Type of organisation ('law_firm', 'mediation_centre').
+     *         string $orgObject['name']        Organisation name
+     *         string $orgObject['description'] Organisation description.
+     * @return Account The newly created Organisation.
+     */
     public function organisation($orgObject) {
         $params = Utils::instance()->requiredParams(array(
             'type'        => true,
@@ -205,7 +247,6 @@ class DBCreate extends Prefab {
     }
 
 // --------------------------------------------------------------------------- the functions from this point onwards do not return an object like the rest of the createX API. Maybe these should be extracted?? Or made private?? (Whereas the above are public.)
-
 
     /**
      * Stores account details in the database.
@@ -287,6 +328,11 @@ class DBCreate extends Prefab {
         ));
     }
 
+    /**
+     * Inserts a row of data into the given table.
+     * @param  string $tableName    Name of the table.
+     * @param  array  $columnValues Associative array of columns and values.
+     */
     private function insertRow($tableName, $columnValues) {
         $columns = array();
         $values  = array();

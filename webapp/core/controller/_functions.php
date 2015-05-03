@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Are there any success or error messages to display? Returns a boolean.
+ * @return boolean True if there is a message to display, otherwise false.
+ */
 function noSystemMessages() {
     return (
         !Base::instance()->get('success_message') &&
@@ -7,6 +11,10 @@ function noSystemMessages() {
     );
 }
 
+/**
+ * Requires that the user accessing this page is logged into an account. If not, raises an error page. If logged in, the account representing the logged in user is returned.
+ * @return Account The logged in user.
+ */
 function mustBeLoggedIn() {
     $session = Session::instance();
     if ($session->loggedIn()) {
@@ -20,6 +28,12 @@ function mustBeLoggedIn() {
     return $account;
 }
 
+/**
+ * Requires that the logged in user is a specific account type, such as an Agent. Raises an error if the logged in user is NOT that account type.
+ * Sometimes, you may want the logged in user to be an Agent or a Mediator (i.e. an Individual). In this case, 'Individual' can be passed to the function, it will still work. Go polymorphism!
+ * @param  string $accountType Account type required, e.g. 'Agent', 'Individual', 'MediationCentre' etc
+ * @return Account             Returns the account representing the logged in user.
+ */
 function mustBeLoggedInAsAn($accountType) {
     $account = mustBeLoggedIn();
     if ( !is_a($account, $accountType) ) {
@@ -28,6 +42,11 @@ function mustBeLoggedInAsAn($accountType) {
     return $account;
 }
 
+/**
+ * Displays the given error message within the standard SmartResolution layout and ceases all further PHP processing.
+ * Conceptually, this function is the 'catch' part of a try-catch block: it should only be displayed when the user has done something unexpected or something has otherwise gone wrong.
+ * @param  string $errorMessage Error message to display.
+ */
 function errorPage($errorMessage) {
     global $f3;
     $f3->set('error_message', $errorMessage);
@@ -36,12 +55,16 @@ function errorPage($errorMessage) {
     die();
 }
 
-function notificationsList ($f3) {
-    mustBeLoggedIn();
-    $f3->set('content','notifications.html');
-    echo View::instance()->render('layout.html');
-}
-
+/**
+ * Returns the dispute object corresponding to the dispute ID of the URL, e.g.
+ * /disputes/@disputeID => $params['disputeID'] => 1337
+ * => returns the Dispute object corresponding to ID 1337.
+ *
+ * Triggers error page if dispute cannot be found.
+ *
+ * @param  F3 $f3         The base F3 object.
+ * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+ */
 function setDisputeFromParams($f3, $params) {
     try {
         $disputeID = (int)$params['disputeID'];
@@ -54,6 +77,12 @@ function setDisputeFromParams($f3, $params) {
     }
 }
 
+/**
+ * Returns a human-readable date and time from a UNIX timestamp.
+ * @param  int $unixTimestamp UNIX timestamp to convert.
+ * @return string             Human-readable date and time.
+ * @todo  move to Utils?
+ */
 function prettyTime($unixTimestamp) {
     return date('d/m/Y H:i:s', $unixTimestamp);
 }
@@ -66,6 +95,7 @@ function prettyTime($unixTimestamp) {
  *
  * @param  int $seconds Number of seconds calculated.
  * @return string       Formatted time.
+ * @todo  move to Utils?
  */
 function secondsToTime($seconds) {
     $dtF = new DateTime("@0");

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * All law firms and agents have been assigned. Now a lifespan must be negotiated.
+ */
 class DisputeOpened extends DisputeDefaults implements DisputeStateInterface {
 
     public function getStateDescription() {
