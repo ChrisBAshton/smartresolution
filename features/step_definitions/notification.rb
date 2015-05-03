@@ -33,28 +33,35 @@ Then(/^the URL should be clean, with no notification parameters$/) do
   assert_nil URL.get_current_uri_params
 end
 
-Given(/^my dispute is in mediation$/) do
-  $dispute_id = DBL.dispute_title_to_id 'Dispute that is in mediation'
+Given(/^I am logged into the '(.+)' account$/) do |email|
+  Session.login_with_credentials email, 'test'
 end
 
-When(/^I send a message to the other Agent in a dispute$/) do
-  $dispute_id = DBL.dispute_title_to_id 'Smith versus Jones'
-  visit '/disputes/' + $dispute_id + '/chat'
+Then(/^'(.+)' should get a notification that '(.+)' has sent them a message$/) do |email, sender|
+  Session.login_with_credentials email, 'test'
+  visit '/notifications'
+  assert page.has_content? sender + ' has sent you a message'
+end
+
+def send_test_message
   fill_in 'message', :with => 'This is a test message'
   click_button 'Send message'
 end
 
-Then(/^they should get a notification$/) do
-  Session.login_with_credentials 'agent_b@t.co', 'test'
-  visit '/notifications'
-  assert page.has_content? 'Chris Ashton has sent you a message'
-  puts page.body
+When(/^I send a message to the other Agent in the '(.+)' dispute$/) do |dispute_title|
+  $dispute_id = DBL.dispute_title_to_id dispute_title
+  visit '/disputes/' + $dispute_id + '/chat'
+  send_test_message
 end
 
-When(/^I send a message to the mediator of a dispute$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+When(/^I send a message to the mediator in the '(.+)' dispute$/) do |dispute_title|
+  $dispute_id = DBL.dispute_title_to_id dispute_title
+  visit '/disputes/' + $dispute_id + '/mediation'
+  send_test_message
 end
 
-When(/^I send a message to the agent of a dispute$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+When(/^I send a message to '(.+)' in the 'Dispute that is in mediation' dispute$/) do |email|
+  agent_id = DBL.email_to_id email
+  visit '/disputes/' + $dispute_id + '/mediation-chat/' + agent_id
+  send_test_message
 end
