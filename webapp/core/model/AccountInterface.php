@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Interface describing an Account and all of the functions that any Account classes must implement.
+ */
 interface AccountInterface {
 
     /**
