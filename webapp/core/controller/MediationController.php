@@ -272,7 +272,7 @@ class MediationController {
     }
 
     /**
-     * POST method; creates a new agent-mediator message and redirects back to the specific 1:1 chat stream URL.
+     * POST method; creates a new mediator-agent/agent-mediator message and redirects back to the specific 1:1 chat stream URL.
      * @param  F3 $f3         The base F3 object.
      * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
      */
@@ -288,6 +288,12 @@ class MediationController {
                 'message'      => $message,
                 'recipient_id' => (int) $recipientID
             ));
+
+            DBCreate::instance()->notification(array(
+                'recipient_id' => (int) $recipientID,
+                'message'      => $this->account->getName() . ' has sent you a message.',
+                'url'          => $this->dispute->getUrl() . '/mediation'
+            ));
         }
 
         header('Location: ' . $this->dispute->getUrl() . '/mediation-chat/' . $recipientID);
@@ -297,8 +303,6 @@ class MediationController {
      * POST method; enables or disables round-table communication.
      * @param  F3 $f3         The base F3 object.
      * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
-     *
-     * @todo  refactor. This should do dispute->state->canEnableRoundTableCommunication($account). Delegate the business logic to the state pattern, don't encode it in the controller. This principle needs to be applied elsewhere too.
      */
     public function roundTableCommunication($f3, $params) {
         $this->setUp($f3, $params);

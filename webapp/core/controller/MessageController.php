@@ -34,6 +34,11 @@ class MessageController {
                 'author_id'  => $this->account->getLoginId(),
                 'message'    => $message
             ));
+            DBCreate::instance()->notification(array(
+                'recipient_id' => $this->dispute->getOpposingPartyId($this->account->getLoginId()),
+                'message'      => $this->account->getName() . ' has sent you a message.',
+                'url'          => $this->dispute->getUrl() . '/chat'
+            ));
         }
         header('Location: ' . $this->dispute->getUrl() . '/chat');
     }
