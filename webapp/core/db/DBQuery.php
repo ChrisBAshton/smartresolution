@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Database connector class defining miscellaneous queries used across the system.
+ */
 class DBQuery extends Prefab {
 
     /**
@@ -50,6 +53,11 @@ class DBQuery extends Prefab {
         return $crypt->verify($inputtedPassword, $encryptedPassword);
     }
 
+    /**
+     * Returns a list of individuals associated with the given organisation.
+     * @param  int $organisationID The ID of the organisation whose individuals we want to retrieve.
+     * @return array<Individual>   List of associated individuals.
+     */
     public function getIndividuals($organisationID) {
         $individuals = array();
 
@@ -65,6 +73,11 @@ class DBQuery extends Prefab {
         return $individuals;
     }
 
+    /**
+     * Retrieves all of the evidence associated with the given dispute.
+     * @param  int $disputeID  ID of the dispute.
+     * @return array<Evidence> List of associated evidence.
+     */
     public function getEvidences($disputeID) {
         $evidences = array();
         $evidenceDetails = Database::instance()->exec(
@@ -144,6 +157,11 @@ class DBQuery extends Prefab {
         return $disputes;
     }
 
+    /**
+     * Retrieves all of the agent-agent/round-table communication messages for a given dispute.
+     * @param  int $disputeID ID of the dispute.
+     * @return array<Message> Array of messages, in reverse chronological order.
+     */
     public function retrieveDisputeMessages($disputeID) {
         $messages = array();
 
@@ -160,6 +178,14 @@ class DBQuery extends Prefab {
         return $messages;
     }
 
+    /**
+     * Retrieves all of the agent-mediator/mediator-agent messages for the given dispute. This handles messages that were both sent and received between the two individuals involved.
+     *
+     * @param  int $disputeID   ID of the dispute.
+     * @param  int $individualA ID of the first individual.
+     * @param  int $individualB ID of the second individual.
+     * @return array<Message>   Array of messages, in reverse chronological order.
+     */
     public function retrieveMediationMessages($disputeID, $individualA, $individualB) {
         $messages = array();
 
@@ -185,6 +211,11 @@ class DBQuery extends Prefab {
         return $messages;
     }
 
+    /**
+     * Retrieves all of the unread notifications for the given login ID.
+     * @param  int $loginId        Login ID of the account.
+     * @return array<Notification> List of unread notifications.
+     */
     public function getNotificationsForLoginId($loginId) {
         $notifications = array();
 
