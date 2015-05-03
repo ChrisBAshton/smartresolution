@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * Links dispute-related HTTP requests to dispute-related functions and views.
+ */
 class DisputeController {
 
+    /**
+     * View a specific dispute. If the logged in account doesn't have permission, an error page is raised.
+     *
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function viewDispute ($f3, $params) {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
@@ -18,6 +27,10 @@ class DisputeController {
         }
     }
 
+    /**
+     * View a list of all disputes associated with the logged in account.
+     * @param  F3 $f3         The base F3 object.
+     */
     function viewDisputes ($f3) {
         $account  = mustBeLoggedIn();
         $f3->set('disputes', $account->getAllDisputes());
@@ -25,6 +38,10 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Go to the 'new dispute' page. Organisations can create a new dispute from this page.
+     * @param  F3 $f3         The base F3 object.
+     */
     function newDisputeGet ($f3) {
         mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
@@ -43,6 +60,11 @@ class DisputeController {
         }
     }
 
+    /**
+     * Submit the details of the new dispute. This is a post method that creates the dispute and then
+     * redirects you to the created dispute.
+     * @param  F3 $f3         The base F3 object.
+     */
     function newDisputePost ($f3) {
         mustBeLoggedInAsAn('Organisation');
 
@@ -73,6 +95,12 @@ class DisputeController {
         $this->newDisputeGet($f3);
     }
 
+    /**
+     * Go to the 'assign dispute' page. Organisations can assign their newly created dispute to one of
+     * their agents.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function assignDisputeGet ($f3, $params) {
         mustBeLoggedInAsAn('Organisation');
         $agents  = $f3->get('account')->getAgents();
@@ -87,6 +115,12 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Submit the dispute assignment. This is a post method that assigns the given dispute to
+     * the given agent.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function assignDisputePost ($f3, $params) {
         mustBeLoggedInAsAn('Organisation');
         $dispute = setDisputeFromParams($f3, $params);
@@ -108,6 +142,11 @@ class DisputeController {
         }
     }
 
+    /**
+     * Go to the 'open dispute' page. Agents can open the dispute against another organisation.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function openDisputeGet ($f3, $params) {
         $account = mustBeLoggedInAsAn('Agent');
         $dispute = setDisputeFromParams($f3, $params);
@@ -126,6 +165,11 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Submit the details of opening the dispute against another law firm. This is a post method.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function openDisputePost ($f3, $params) {
         mustBeLoggedInAsAn('Agent');
         $lawFirmB = $f3->get('POST.law_firm_b');
@@ -144,6 +188,11 @@ class DisputeController {
         }
     }
 
+    /**
+     * Go to the 'close dispute' page. Either agent can close the dispute (successfully or unsuccessfully) at any time.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function closeDisputeGet ($f3, $params) {
         mustBeLoggedInAsAn('Agent');
         setDisputeFromParams($f3, $params);
@@ -151,6 +200,11 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * POST method to close the dispute.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
     function closeDisputePost ($f3, $params) {
         $account = mustBeLoggedInAsAn('Agent');
         $dispute = setDisputeFromParams($f3, $params);
@@ -181,7 +235,67 @@ class DisputeController {
         echo View::instance()->render('layout.html');
     }
 
-    private function commonSummaryActions($f3, $params, $callback) {
+    /**
+     * Accesses the dispute edit page.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
+    function editGet ($f3, $params) {
+        $this->performValidationChecksThen($f3, $params, function ($f3, $account, $dispute) {
+            if ($dispute->getPartyA()->contains($account->getLoginId())) {
+                $party = $dispute->getPartyA();
+            }
+            else {
+                $party = $dispute->getPartyB();
+            }
+            $f3->set('summary', $party->getSummary());
+        });
+    }
+
+    /**
+     * Posts to the dispute edit page.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     */
+    function editPost($f3, $params) {
+        $this->performValidationChecksThen($f3, $params, function ($f3, $account, $dispute) {
+
+            $summary = $f3->get('POST.dispute_summary');
+            $type    = $f3->get('POST.type');
+
+            if (!$summary) {
+                $f3->set('error_message', 'You must fill in a summary.');
+                $f3->set('summary', '');
+            }
+            elseif (!$type) {
+                $f3->set('error_message', 'You must select a dispute type.');
+            }
+            else {
+                if ($dispute->getPartyA()->contains($account->getLoginId())) {
+                    $partyToEdit = $dispute->getPartyA();
+                }
+                elseif($dispute->getPartyB()->contains($account->getLoginId())) {
+                    $partyToEdit = $dispute->getPartyB();
+                }
+
+                $partyToEdit->setSummary($summary);
+                DBUpdate::instance()->disputeParty($partyToEdit);
+                $dispute->setType($type);
+                DBUpdate::instance()->dispute($dispute);
+
+                $f3->set('summary', $summary);
+                $f3->set('success_message', 'You have updated the dispute details.');
+            }
+        });
+    }
+
+    /**
+     * Performs some of the common checks before accessing or posting to the dispute edit page.
+     * @param  F3 $f3             The base F3 object.
+     * @param  array $params      The parsed URL parameters, e.g. /disputes/@disputeID => $params['disputeID'] => 1337
+     * @param  function $callback The action to perform - either viewing or posting to the dispute edit page.
+     */
+    private function performValidationChecksThen($f3, $params, $callback) {
         $account = mustBeLoggedIn();
         $dispute = setDisputeFromParams($f3, $params);
 
@@ -199,50 +313,5 @@ class DisputeController {
         $f3->set('modules', $modules);
         $f3->set('content', 'dispute_edit.html');
         echo View::instance()->render('layout.html');
-    }
-
-    function editGet ($f3, $params) {
-        $this->commonSummaryActions($f3, $params, function ($f3, $account, $dispute) {
-            if ($dispute->getPartyA()->contains($account->getLoginId())) {
-                $party = $dispute->getPartyA();
-            }
-            else {
-                $party = $dispute->getPartyB();
-            }
-            $f3->set('summary', $party->getSummary());
-        });
-    }
-
-    function editPost($f3, $params) {
-        $this->commonSummaryActions($f3, $params, function ($f3, $account, $dispute) {
-
-            $summary = $f3->get('POST.dispute_summary');
-            $type    = $f3->get('POST.type');
-
-            if (!$summary) {
-                $f3->set('error_message', 'You must fill in a summary.');
-                $f3->set('summary', '');
-            }
-            elseif (!$type) {
-                $f3->set('error_message', 'You must select a dispute type.');
-            }
-            else {
-                if ($dispute->getPartyA()->contains($account->getLoginId())) {
-                    $dispute->getPartyA()->setSummary($summary);
-                    DBUpdate::instance()->disputeParty($dispute->getPartyA());
-                }
-                elseif($dispute->getPartyB()->contains($account->getLoginId())) {
-                    $dispute->getPartyB()->setSummary($summary);
-                    DBUpdate::instance()->disputeParty($dispute->getPartyB());
-                }
-
-                $dispute->setType($type);
-
-                DBUpdate::instance()->dispute($dispute);
-
-                $f3->set('summary', $summary);
-                $f3->set('success_message', 'You have updated the dispute details.');
-            }
-        });
     }
 }

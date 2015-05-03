@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * Links profile-related HTTP requests to their actions.
+ */
 class ProfileController {
 
+    /**
+     * View an account's profile. This applies to all account types, e.g. LawFirm, Mediator, Admin, etc.
+     *
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /profile/@accountID => $params['accountID'] => 1337
+     */
     public function view($f3, $params) {
         mustBeLoggedIn();
         $accountID = (int) $params['accountID'];
@@ -11,6 +20,11 @@ class ProfileController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Edit the logged in account's details.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /profile/@accountID => $params['accountID'] => 1337
+     */
     public function edit($f3, $params) {
         $account = mustBeLoggedIn();
 
@@ -25,6 +39,11 @@ class ProfileController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * If the edit page was accessed with the POST method, apply the edits persistently and set a success message.
+     * @param  F3 $f3         The base F3 object.
+     * @param  array $params  The parsed URL parameters, e.g. /profile/@accountID => $params['accountID'] => 1337
+     */
     private function handlePost($f3, $account) {
         if (count($f3->get('POST')) > 0) {
 
@@ -41,5 +60,4 @@ class ProfileController {
             $f3->set('success_message', 'Profile updated.');
         }
     }
-
 }

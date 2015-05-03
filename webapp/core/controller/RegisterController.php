@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * Links registration HTTP requests to their actions.
+ */
 class RegisterController {
 
+    /**
+     * Loads the organisation registration page. Must NOT be logged in to access this page. Logged in users are automatically redirected to their dashboard.
+     * @param  F3 $f3         The base F3 object.
+     */
     function organisationGet ($f3) {
         if (Session::instance()->loggedIn()) {
             header('Location: /dashboard');
@@ -10,6 +17,10 @@ class RegisterController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Submits the organisation registration information. If successful, creates a new organisation, otherwise sets an error message.
+     * @param  F3 $f3         The base F3 object.
+     */
     function organisationPost($f3) {
         $email    = $f3->get('POST.email');
         $password = $f3->get('POST.password');
@@ -38,12 +49,20 @@ class RegisterController {
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Loads the individual registration page. This must be done from within a logged in Organisation account, as only Organisations can register Individual accounts.
+     * @param  F3 $f3         The base F3 object.
+     */
     function individualGet ($f3) {
         mustBeLoggedInAsAn('Organisation');
         $f3->set('content','register_individual.html');
         echo View::instance()->render('layout.html');
     }
 
+    /**
+     * Submits the individual registration information. If successful, creates a new individual, otherwise sets an error message.
+     * @param  F3 $f3         The base F3 object.
+     */
     function individualPost ($f3) {
         mustBeLoggedInAsAn('Organisation');
 

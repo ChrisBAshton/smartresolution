@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * The adaptor between the global module API functions and the core platform.
+ */
 class ModuleController extends Prefab {
 
     private $modules = array();

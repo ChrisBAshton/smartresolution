@@ -71,7 +71,11 @@ $routes = array(
     'POST /disputes/@disputeID/lifespan/respond'  => 'LifespanController->acceptOrDecline',
 
     // notifications
-    'GET /notifications' => 'notificationsList',
+    'GET /notifications' => function ($f3) {
+        mustBeLoggedIn();
+        $f3->set('content','notifications.html');
+        echo View::instance()->render('layout.html');
+    },
 
     // admin options
     'GET /admin-modules'         => 'AdminController->showModulesPage',
