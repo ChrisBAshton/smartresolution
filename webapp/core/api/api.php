@@ -138,6 +138,30 @@ function get_login_id() {
 }
 
 /**
+ * Creates a notification.
+ * @param  int    $loginID The ID of the recipient of the notification.
+ * @param  string $message The notification message.
+ * @param  string $url     The notification's associated URL.
+ */
+function notify($loginID, $message, $url) {
+    DBCreate::instance()->notification(array(
+        'recipient_id' => $loginID,
+        'message'      => $message,
+        'url'          => $url
+    ));
+}
+
+/**
+ * Returns the login ID of the opposing agent.
+ * @param  int $loginID e.g. Login ID of Agent A
+ * @return int          e.g. Login ID of Agent B
+ */
+function other_agent_to($loginID) {
+    $dispute = DBGet::instance()->dispute(get_dispute_id());
+    return $dispute->getOpposingPartyId($loginID);
+}
+
+/**
  * Renders a HTML template.
  *
  * @param  string $template  Path to the template, e.g. get_module_url() . '/views/index.html'
