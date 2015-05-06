@@ -177,6 +177,29 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($eventFired);
     }
 
+    public function testModuleNotifications()
+    {
+        $module = $this->createSimpleModule(function () {
+            on('send_notification', function () {
+                notify(1, 'some message', '/some-url');
+            });
+        });
+        $module->toggleActiveness();
+
+        ModuleController::instance()->emit('send_notification');
+
+        $notification = Database::instance()->exec(
+            'SELECT * FROM notifications WHERE recipient_id = :recipientID AND message = :message AND url = :url',
+            array(
+                ':recipientID' => 1,
+                ':message'     => 'some message',
+                ':url'         => '/some-url'
+            )
+        );
+
+        $this->assertEquals(1, count($notification));
+    }
+
     private function createSimpleModule($callbackFunction = false)
     {
         $callbackFunction = $callbackFunction ? $callbackFunction : function() {};

@@ -85,7 +85,6 @@ class Message {
         return $this->recipientID;
     }
 
-    //
     /**
      * Defines how message should be rendered when the object is directly rendered in HTML through 'echo'.
      *
